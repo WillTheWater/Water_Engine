@@ -1,3 +1,26 @@
-add_executable(GAME_NAME
+add_executable(${GAME_NAME}
 	${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp
 )
+
+target_link_libraries(${GAME_NAME} PUBLIC sfml-graphics)
+target_link_libraries(${GAME_NAME} PUBLIC sfml-window)
+target_link_libraries(${GAME_NAME} PUBLIC sfml-system)
+target_link_libraries(${GAME_NAME} PUBLIC sfml-audio)
+target_link_libraries(${GAME_NAME} PUBLIC sfml-main)
+target_link_libraries(${GAME_NAME} PUBLIC sfml-network)
+
+function(LibToCopy LIB_NAME TARGET_NAME)
+add_custom_command(TARGET ${TARGET_NAME}
+    POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        $<TARGET_FILE:${LIB_NAME}>
+        $<TARGET_FILE_DIR:${TARGET_NAME}>
+)
+endfunction()
+
+LibToCopy(sfml-graphics ${GAME_NAME})
+LibToCopy(sfml-window ${GAME_NAME})
+LibToCopy(sfml-system ${GAME_NAME})
+LibToCopy(sfml-audio ${GAME_NAME})
+LibToCopy(sfml-main ${GAME_NAME})
+LibToCopy(sfml-network ${GAME_NAME})

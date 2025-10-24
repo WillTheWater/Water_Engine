@@ -1,7 +1,8 @@
 #include <iostream>
+#include <SFML/Graphics.hpp>
 
 int main()
 {
-	std::cout << "Hello World!";
-	retrun 0;
+	sf::Window window(sf::VideoMode({ 800, 600 }), "Test Window");
+	return 0;
 }
