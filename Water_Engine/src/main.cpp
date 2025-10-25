@@ -1,8 +1,8 @@
-#include <iostream>
-#include <SFML/Graphics.hpp>
+#include <memory>
+#include "Framework/Application.h"
 
 int main()
 {
-	sf::Window window(sf::VideoMode({ 800, 600 }), "Test Window");
-	return 0;
+    std::unique_ptr<we::Application> App{ std::make_unique<we::Application>() };
+    App->Run();
 }
