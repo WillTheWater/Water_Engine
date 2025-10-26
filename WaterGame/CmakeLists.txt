@@ -1,0 +1,22 @@
+add_executable(${WATER_GAME}
+	${CMAKE_CURRENT_SOURCE_DIR}/include/GameFramework/Game.h
+	${CMAKE_CURRENT_SOURCE_DIR}/src/GameFramework/Game.cpp
+)
+
+target_include_directories(${WATER_GAME} PUBLIC
+	${CMAKE_CURRENT_SOURCE_DIR}/include
+)
+
+target_link_libraries(${WATER_GAME} PUBLIC ${WATER_ENGINE})
+
+function(CopyToDirectory LIB_NAME TARGET_NAME)
+    add_custom_command(TARGET ${TARGET_NAME}
+    POST_BUILD
+    COMMAND
+    ${CMAKE_COMMAND} -E copy_directory
+    $<TARGET_FILE_DIR:${LIB_NAME}>
+    $<TARGET_FILE_DIR:${TARGET_NAME}>
+)
+endfunction()
+
+CopyToDirectory(${WATER_ENGINE} ${WATER_GAME})

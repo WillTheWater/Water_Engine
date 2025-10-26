@@ -13,8 +13,9 @@ namespace we
 	private:
 		void TickGlobal(float DeltaTime);
 		void Renderer();
-		virtual void Render() = 0;
-		virtual void Tick(float DeltaTime) = 0;
+
+		virtual void Render();
+		virtual void Tick(float DeltaTime);
 
 		sf::RenderWindow Window;
 

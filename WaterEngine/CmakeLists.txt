@@ -1,0 +1,48 @@
+add_library(${WATER_ENGINE} STATIC
+	${CMAKE_CURRENT_SOURCE_DIR}/include/Framework/Application.h
+	${CMAKE_CURRENT_SOURCE_DIR}/src/Framework/Application.cpp
+
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/Framework/Core.h
+	${CMAKE_CURRENT_SOURCE_DIR}/src/Framework/Core.cpp
+
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/EntryPoint.h
+	${CMAKE_CURRENT_SOURCE_DIR}/src/EntryPoint.cpp
+)
+
+target_include_directories(${WATER_ENGINE} PUBLIC
+	${CMAKE_CURRENT_SOURCE_DIR}/include
+)
+
+include(FetchContent)
+
+FetchContent_Declare(
+	SFML
+	GIT_REPOSITORY https://github.com/SFML/SFML
+	GIT_TAG 3.0.2
+	GIT_SHALLOW FALSE
+)
+FetchContent_MakeAvailable(SFML)
+
+target_link_libraries(${WATER_ENGINE} PUBLIC sfml-graphics)
+target_link_libraries(${WATER_ENGINE} PUBLIC sfml-window)
+target_link_libraries(${WATER_ENGINE} PUBLIC sfml-system)
+target_link_libraries(${WATER_ENGINE} PUBLIC sfml-audio)
+target_link_libraries(${WATER_ENGINE} PUBLIC sfml-main)
+target_link_libraries(${WATER_ENGINE} PUBLIC sfml-network)
+
+function(LibToCopy LIB_NAME TARGET_NAME)
+    add_custom_command(TARGET ${TARGET_NAME}
+    POST_BUILD
+    COMMAND
+    ${CMAKE_COMMAND} -E copy_if_different
+    $<TARGET_FILE:${LIB_NAME}>
+    $<TARGET_FILE_DIR:${TARGET_NAME}>
+)
+endfunction()
+
+LibToCopy(sfml-graphics ${WATER_ENGINE})
+LibToCopy(sfml-window ${WATER_ENGINE})
+LibToCopy(sfml-system ${WATER_ENGINE})
+LibToCopy(sfml-audio ${WATER_ENGINE})
+LibToCopy(sfml-main ${WATER_ENGINE})
+LibToCopy(sfml-network ${WATER_ENGINE})

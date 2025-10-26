@@ -1,5 +1,5 @@
 #include "Framework/Application.h"
-#include <iostream>
+#include "Framework/Core.h"
 
 namespace we
 {
@@ -24,13 +24,16 @@ namespace we
                 if (event->is<sf::Event::Closed>())
                     Window.close();
             }
-			AccumulatedTime += TickClock.restart().asSeconds();
+			float FrameTick = TickClock.restart().asSeconds();
+			AccumulatedTime += FrameTick;
 			while (AccumulatedTime > TargetDeltaTime)
 			{
 				AccumulatedTime -= TargetDeltaTime;
 				TickGlobal(TargetDeltaTime);
 				Renderer();
 			}
+			LOG("Tick: %f", 1.f / FrameTick)
+
         }
 	}
 	void Application::TickGlobal(float DeltaTime)
@@ -42,5 +45,11 @@ namespace we
 		Window.clear();
 		Render();
 		Window.display();
+	}
+	void Application::Render()
+	{
+	}
+	void Application::Tick(float DeltaTime)
+	{
 	}
 }
