@@ -11,8 +11,10 @@ namespace we
 		void Run();
 
 	private:
-		void Tick(float DeltaTime);
-		void Render();
+		void TickGlobal(float DeltaTime);
+		void Renderer();
+		virtual void Render() = 0;
+		virtual void Tick(float DeltaTime) = 0;
 
 		sf::RenderWindow Window;
 

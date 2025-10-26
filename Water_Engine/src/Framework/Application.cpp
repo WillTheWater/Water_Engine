@@ -24,20 +24,23 @@ namespace we
                 if (event->is<sf::Event::Closed>())
                     Window.close();
             }
+			AccumulatedTime += TickClock.restart().asSeconds();
+			while (AccumulatedTime > TargetDeltaTime)
+			{
+				AccumulatedTime -= TargetDeltaTime;
+				TickGlobal(TargetDeltaTime);
+				Renderer();
+			}
         }
-		AccumulatedTime += TickClock.restart().asSeconds();
-		while (AccumulatedTime > TargetDeltaTime)
-		{
-			AccumulatedTime -= TargetDeltaTime;
-			Tick(TargetDeltaTime);
-			Render();
-		}
 	}
-	void Application::Tick(float DeltaTime)
+	void Application::TickGlobal(float DeltaTime)
 	{
-		std::cout << "FPS: " << 1.f / DeltaTime << std::endl;
+		Tick(DeltaTime);
 	}
-	void Application::Render()
+	void Application::Renderer()
 	{
+		Window.clear();
+		Render();
+		Window.display();
 	}
 }
