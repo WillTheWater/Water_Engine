@@ -1,12 +1,14 @@
 #include "Framework/Application.h"
 #include "Framework/Core.h"
+#include "Framework/World.h"
 
 namespace we
 {
 	Application::Application()
 		: Window{ sf::VideoMode({ 1920, 1080 }), "Game Window" },
 		TargetFramerate{60.f},
-		TickClock{}
+		TickClock{},
+		CurrentWorld{nullptr}
 	{
 		
 	}
@@ -32,13 +34,16 @@ namespace we
 				TickGlobal(TargetDeltaTime);
 				Renderer();
 			}
-			LOG("Tick: %f", 1.f / FrameTick)
-
         }
 	}
 	void Application::TickGlobal(float DeltaTime)
 	{
 		Tick(DeltaTime);
+
+		if (CurrentWorld)
+		{
+			CurrentWorld->TickGlobal(DeltaTime);
+		}
 	}
 	void Application::Renderer()
 	{

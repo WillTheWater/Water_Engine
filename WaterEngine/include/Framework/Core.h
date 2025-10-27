@@ -1,3 +1,4 @@
+#pragma once
 #include <stdio.h>
 #include <memory>
 #include <map>
@@ -18,7 +19,7 @@ namespace we
 	using List = std::vector<T>;
 
 	template<typename Key, typename Type, typename P = std::less<Key>>
-	using Map = std::map<Key, Value, P>;
+	using Map = std::map<Key, Type, P>;
 	
 	template<typename Key, typename Type, typename Hasher = std::hash<Key>>
 	using Dictionary = std::unordered_map<Key, Type, Hasher>;

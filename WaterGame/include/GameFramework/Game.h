@@ -5,5 +5,7 @@ namespace we
 {
 	class Game : public Application
 	{
+	public:
+		Game();
 	};
 }

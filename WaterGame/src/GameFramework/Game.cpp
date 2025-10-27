@@ -1,4 +1,5 @@
 #include "GameFramework/Game.h"
+#include "Framework/World.h"
 
 we::Application* GetApplication()
 {
@@ -7,5 +8,8 @@ we::Application* GetApplication()
 
 namespace we
 {
-
+	Game::Game()
+	{
+		LoadWorld<World>();
+	}
 }
