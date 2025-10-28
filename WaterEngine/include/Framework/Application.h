@@ -1,3 +1,5 @@
+// Stoic Ronin Studio
+
 #pragma once
 
 #include <SFML/Graphics.hpp>
