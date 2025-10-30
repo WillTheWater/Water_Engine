@@ -1,5 +1,8 @@
+﻿﻿// Copyright (C) 2025 Stoic Ronin Studio. All Rights Reserved.
+
 #include "GameFramework/Game.h"
 #include "Framework/World.h"
+#include "Framework/Actor.h"
 
 we::Application* GetApplication()
 {
@@ -10,6 +13,7 @@ namespace we
 {
 	Game::Game()
 	{
-		LoadWorld<World>();
+		weak<World> NewWorld = LoadWorld<World>();
+		NewWorld.lock()->SpawnActor<Actor>();
 	}
 }

@@ -1,11 +1,16 @@
+﻿﻿// Copyright (C) 2025 Stoic Ronin Studio. All Rights Reserved.
+
 #include "Framework/World.h"
 #include "Framework/Core.h"
+#include "Framework/Actor.h"
 
 namespace we
 {
 	World::World(Application* OwningApp)
-		: OwningApp {OwningApp},
-		bHasBegunPlay {false}
+		: OwningApp{OwningApp},
+		Actors{},
+		PendingActors{},
+		bHasBegunPlay{false}
 	{
 	}
 
@@ -24,16 +29,28 @@ namespace we
 
 	void World::TickGlobal(float DeltaTime)
 	{
+		for (auto Actor : PendingActors)
+		{
+			Actors.push_back(Actor);
+			Actor->BeginPlayGlobal();
+		}
+
+		PendingActors.clear();
+
+		for (auto Actor : Actors)
+		{
+			Actor->Tick(DeltaTime);
+		}
 		Tick(DeltaTime);
 	}
 
 	void World::BeginPlay()
 	{
-		LOG("BeginPlay Called")
+		LOG("World BeginPlay Called")
 	}
 
 	void World::Tick(float DeltaTime)
 	{
-		LOG("Ticking: %f", 1.f/DeltaTime)
+	
 	}
 }
