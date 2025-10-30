@@ -1,6 +1,4 @@
-﻿﻿// Copyright (C) 2025 Stoic Ronin Studio. All Rights Reserved.
-
-#pragma once
+﻿#pragma once
 
 #include <SFML/Graphics.hpp>
 #include "Framework/Core.h"

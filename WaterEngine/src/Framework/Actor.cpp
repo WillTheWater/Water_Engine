@@ -1,5 +1,4 @@
-﻿﻿// Copyright (C) 2025 Stoic Ronin Studio. All Rights Reserved.
-
+﻿
 #include "Framework/Actor.h"
 #include "Framework/Core.h"
 
@@ -12,6 +11,10 @@ namespace we
 
 	}
 
+	Actor::~Actor()
+	{
+	}
+
 	void Actor::BeginPlayGlobal()
 	{
 		if (!bHasBegunPlay)
@@ -21,7 +24,7 @@ namespace we
 		}
 	}
 
-	void Actor::BeginPlay();
+	void Actor::BeginPlay()
 	{
 		LOG("Actor BeginPlay Called!")
 	}

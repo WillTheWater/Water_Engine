@@ -1,6 +1,4 @@
-﻿﻿// Copyright (C) 2025 Stoic Ronin Studio. All Rights Reserved.
-
-#pragma once
+﻿#pragma once
 #include <Framework/Application.h>
 
 namespace we

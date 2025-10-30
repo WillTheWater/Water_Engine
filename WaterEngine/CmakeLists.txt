@@ -9,7 +9,6 @@ add_library(${WATER_ENGINE} STATIC
 	${CMAKE_CURRENT_SOURCE_DIR}/src/Framework/Actor.cpp
 
     ${CMAKE_CURRENT_SOURCE_DIR}/include/Framework/Core.h
-	${CMAKE_CURRENT_SOURCE_DIR}/src/Framework/Core.cpp
 
     ${CMAKE_CURRENT_SOURCE_DIR}/include/EntryPoint.h
 	${CMAKE_CURRENT_SOURCE_DIR}/src/EntryPoint.cpp

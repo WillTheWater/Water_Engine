@@ -1,9 +1,8 @@
-﻿﻿// Copyright (C) 2025 Stoic Ronin Studio. All Rights Reserved.
-
-#pragma once
+﻿#pragma once
 #include <stdio.h>
 #include <memory>
 #include <map>
+#include <vector>
 #include <unordered_map>
 
 namespace we

@@ -1,6 +1,4 @@
-﻿﻿// Copyright (C) 2025 Stoic Ronin Studio. All Rights Reserved.
-
-#include "Framework/World.h"
+﻿#include "Framework/World.h"
 #include "Framework/Core.h"
 #include "Framework/Actor.h"
 

@@ -1,5 +1,3 @@
-// Copyright (C) 2025 Stoic Ronin Studio. All Rights Reserved.
-
 #pragma once
 
 namespace we
@@ -10,6 +8,7 @@ namespace we
 	{
 	public:
 		Actor(World* OwningWorld);
+		virtual ~Actor();
 
 		void BeginPlayGlobal();
 		virtual void BeginPlay();
