@@ -4,13 +4,12 @@
 
 namespace we
 {
-	Application::Application()
-		: Window{ sf::VideoMode({ 1920, 1080 }), "Game Window" },
-		TargetFramerate{60.f},
+	Application::Application(unsigned int WindowWidth, unsigned int WindowHeight, const std::string& WindowTitle, std::uint32_t WindowStyle)
+		: Window{ sf::VideoMode({ WindowWidth, WindowHeight }), WindowTitle, WindowStyle },
+		TargetFramerate{ 60.f },
 		TickClock{},
-		CurrentWorld{nullptr}
+		CurrentWorld{ nullptr }
 	{
-		
 	}
 
 	void Application::Run()

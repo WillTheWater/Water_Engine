@@ -2,6 +2,7 @@
 
 #include <SFML/Graphics.hpp>
 #include "Framework/Core.h"
+#include <stdint.h>
 
 namespace we
 {
@@ -10,7 +11,7 @@ namespace we
 	class Application
 	{
 	public:
-		Application();
+		Application(unsigned int WindowWidth, unsigned int WindowHeight, const std::string& WindowTitle, std::uint32_t WindowStyle);
 		void Run();
 
 		template<typename WorldType>
