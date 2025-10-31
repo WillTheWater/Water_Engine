@@ -1,10 +1,11 @@
 #pragma once
+#include "Framework/Object.h"
 
 namespace we
 {
 	class World;
 
-	class Actor
+	class Actor : public Object
 	{
 	public:
 		Actor(World* OwningWorld);

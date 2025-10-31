@@ -13,6 +13,7 @@ namespace we
 
 	Actor::~Actor()
 	{
+		LOG("Actor Destroyed")
 	}
 
 	void Actor::BeginPlayGlobal()
@@ -31,6 +32,5 @@ namespace we
 
 	void Actor::Tick(float DeltaTime)
 	{
-		LOG("Actor Ticking")
 	}
 }

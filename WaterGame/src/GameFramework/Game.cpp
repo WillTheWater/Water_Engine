@@ -13,5 +13,18 @@ namespace we
 	{
 		weak<World> NewWorld = LoadWorld<World>();
 		NewWorld.lock()->SpawnActor<Actor>();
+		ActorToDestroy = NewWorld.lock()->SpawnActor<Actor>();
+		Counter = 0;
+	}
+	void Game::Tick(float DeltaTime)
+	{
+		Counter += DeltaTime;
+		if (Counter > 2.f)
+		{
+			if (!ActorToDestroy.expired())
+			{
+				ActorToDestroy.lock()->Destroy();
+			}
+		}
 	}
 }

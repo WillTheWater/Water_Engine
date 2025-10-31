@@ -35,10 +35,19 @@ namespace we
 
 		PendingActors.clear();
 
-		for (auto Actor : Actors)
+		for (auto i = Actors.begin(); i != Actors.end(); )
 		{
-			Actor->Tick(DeltaTime);
+			if (i->get()->IsPendingDestroy())
+			{
+				i = Actors.erase(i);
+			}
+			else
+			{
+				i->get()->Tick(DeltaTime);
+				i++;
+			}
 		}
+
 		Tick(DeltaTime);
 	}
 
