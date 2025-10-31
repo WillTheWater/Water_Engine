@@ -52,6 +52,10 @@ namespace we
 	}
 	void Application::Render()
 	{
+		if (CurrentWorld)
+		{
+			CurrentWorld->Render(Window);
+		}
 	}
 	void Application::Tick(float DeltaTime)
 	{

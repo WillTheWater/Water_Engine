@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "Framework/Core.h"
+#include "SFML/Graphics.hpp"
 
 namespace we
 {
@@ -14,6 +15,7 @@ namespace we
 
 		void BeginPlayGlobal();
 		void TickGlobal(float DeltaTime);
+		void Render(sf::RenderWindow& Window);
 
 		template<typename ActorType>
 		weak<Actor> SpawnActor();

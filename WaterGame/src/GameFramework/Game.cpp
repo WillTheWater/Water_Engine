@@ -15,6 +15,7 @@ namespace we
 		weak<World> NewWorld = LoadWorld<World>();
 		NewWorld.lock()->SpawnActor<Actor>();
 		ActorToDestroy = NewWorld.lock()->SpawnActor<Actor>();
+		ActorToDestroy.lock()->SetTexture("C:/Dev/WaterEngine/WaterGame/assets/character/idle/idle_down_40x40.png");
 		Counter = 0;
 	}
 	void Game::Tick(float DeltaTime)

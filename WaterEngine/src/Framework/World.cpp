@@ -60,4 +60,12 @@ namespace we
 	{
 	
 	}
+
+	void World::Render(sf::RenderWindow& Window)
+	{
+		for (auto& Actor : Actors)
+		{
+			Actor->Render(Window);
+		}
+	}
 }
