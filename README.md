@@ -30,5 +30,5 @@
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/YourUsername/WaterEngine.git
+git clone https://github.com/WillTheWater/WaterEngine.git
 cd WaterEngine
