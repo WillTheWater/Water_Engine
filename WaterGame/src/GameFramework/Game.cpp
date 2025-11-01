@@ -1,6 +1,7 @@
 ﻿#include "GameFramework/Game.h"
 #include "Framework/World.h"
 #include "Framework/Actor.h"
+#include "config.h"
 
 we::Application* GetApplication()
 {
@@ -15,7 +16,7 @@ namespace we
 		weak<World> NewWorld = LoadWorld<World>();
 		NewWorld.lock()->SpawnActor<Actor>();
 		ActorToDestroy = NewWorld.lock()->SpawnActor<Actor>();
-		ActorToDestroy.lock()->SetTexture("C:/Dev/WaterEngine/WaterGame/assets/character/idle/idle_down_40x40.png");
+		ActorToDestroy.lock()->SetTexture(GetAssetDirectory() + "character/idle/idle_down_40x40.png");
 		Counter = 0;
 	}
 	void Game::Tick(float DeltaTime)

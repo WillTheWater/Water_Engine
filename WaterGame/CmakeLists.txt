@@ -20,3 +20,20 @@ function(CopyToDirectory LIB_NAME TARGET_NAME)
 endfunction()
 
 CopyToDirectory(${WATER_ENGINE} ${WATER_GAME})
+
+set(ASSET_FOLDER_NAME "assets")
+set(ASSET_SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/${ASSET_FOLDER_NAME}")
+
+add_custom_command(
+    TARGET ${WATER_GAME}
+    POST_BUILD
+    COMMAND
+    ${CMAKE_COMMAND} -E copy_directory
+    ${ASSET_SRC_DIR}
+    $<TARGET_FILE_DIR:${WATER_GAME}>/${ASSET_FOLDER_NAME}
+)
+
+configure_file(
+    "config.h.in"
+    "${CMAKE_CURRENT_SOURCE_DIR}/include/config.h" ESCAPE_QUOTES
+)
