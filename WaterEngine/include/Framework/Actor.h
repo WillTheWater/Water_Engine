@@ -19,7 +19,17 @@ namespace we
 		virtual void Tick(float DeltaTime);
 
 		void SetTexture(const std::string& TexturePath);
+		void SetActorScale(float NewScale);
 		void Render(sf::RenderWindow& Window);
+
+		void SetActorLocation(const sf::Vector2f& NewLocation);
+		void SetActorRotation(const sf::Angle& NewRotation);
+		sf::Vector2f GetActorLocation() const;
+		sf::Angle GetActorRotation() const;
+		void AddActorLocationOffset(const sf::Vector2f& Offset);
+		void AddActorRotationOffset(const sf::Angle& RotOffset);
+		sf::Vector2f GetActorFowardVector() const;
+		sf::Vector2f GetActorRightVector() const;
 
 	private:
 		World* OwningWorld;
@@ -27,5 +37,6 @@ namespace we
 
 		shared<sf::Texture> ATexture;
 		shared<sf::Sprite> ASprite;
+		void CenterPivot();
 	};
 }

@@ -1,6 +1,7 @@
 ﻿#include "Framework/Application.h"
 #include "Framework/Core.h"
 #include "Framework/World.h"
+#include "Framework/AssetManager.h"
 
 namespace we
 {
@@ -8,6 +9,8 @@ namespace we
 		: Window{ sf::VideoMode({ WindowWidth, WindowHeight }), WindowTitle, WindowStyle },
 		TargetFramerate{ 60.f },
 		TickClock{},
+		GarbageCollectionClock{},
+		CollectionInterval{2.f},
 		CurrentWorld{ nullptr }
 	{
 	}
@@ -42,6 +45,11 @@ namespace we
 		if (CurrentWorld)
 		{
 			CurrentWorld->TickGlobal(DeltaTime);
+		}
+		if (GarbageCollectionClock.getElapsedTime().asSeconds() >= CollectionInterval)
+		{
+			GarbageCollectionClock.restart();
+			AssetManager::GetAssetManager().GarbageCollectionCycle();
 		}
 	}
 	void Application::Renderer()

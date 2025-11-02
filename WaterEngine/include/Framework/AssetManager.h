@@ -9,6 +9,7 @@ namespace we
 	public:
 		static AssetManager& GetAssetManager();
 		shared<sf::Texture> LoadTexture(const std::string& TexturePath);
+		void GarbageCollectionCycle();
 
 	protected:
 		AssetManager();

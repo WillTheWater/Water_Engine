@@ -29,6 +29,22 @@ namespace we
 		return shared<sf::Texture> {nullptr};
 	}
 
+	void AssetManager::GarbageCollectionCycle()
+	{
+		for (auto i = LoadedTextures.begin(); i != LoadedTextures.end();)
+		{
+			if (i->second.unique())
+			{
+				LOG("Texture Collected: %s", i->first.c_str())
+				i = LoadedTextures.erase(i);
+			}
+			else
+			{
+				i++;
+			}
+		}
+	}
+
 	AssetManager::AssetManager()
 	{
 

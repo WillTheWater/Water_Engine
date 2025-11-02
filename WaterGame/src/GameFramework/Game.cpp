@@ -17,17 +17,10 @@ namespace we
 		NewWorld.lock()->SpawnActor<Actor>();
 		ActorToDestroy = NewWorld.lock()->SpawnActor<Actor>();
 		ActorToDestroy.lock()->SetTexture(GetAssetDirectory() + "character/idle/idle_down_40x40.png");
-		Counter = 0;
+		ActorToDestroy.lock()->SetActorLocation(sf::Vector2f{1920/2,1080/2});
+		ActorToDestroy.lock()->SetActorScale(2.f);
 	}
 	void Game::Tick(float DeltaTime)
 	{
-		Counter += DeltaTime;
-		if (Counter > 2.f)
-		{
-			if (!ActorToDestroy.expired())
-			{
-				ActorToDestroy.lock()->Destroy();
-			}
-		}
 	}
 }

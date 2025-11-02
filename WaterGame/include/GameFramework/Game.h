@@ -14,7 +14,6 @@ namespace we
 		virtual void Tick(float DeltaTime) override;
 
 	private:
-		float Counter;
 		weak<Actor> ActorToDestroy;
 	};
 }

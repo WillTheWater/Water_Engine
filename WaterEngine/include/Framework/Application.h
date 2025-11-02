@@ -28,6 +28,8 @@ namespace we
 		sf::RenderWindow Window;
 		float TargetFramerate;
 		sf::Clock TickClock;
+		sf::Clock GarbageCollectionClock;
+		float CollectionInterval;
 
 		shared<World> CurrentWorld;
 	};
