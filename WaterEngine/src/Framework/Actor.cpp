@@ -1,16 +1,15 @@
-﻿
-#include "Framework/Actor.h"
+﻿#include "Framework/Actor.h"
 #include "Framework/Core.h"
+#include "Framework/AssetManager.h"
 
 namespace we
 {
 	Actor::Actor(World* OwningWorld, const std::string& TexturePath)
 		: OwningWorld{OwningWorld},
 		bHasBegunPlay{false},
-		ATexture{},
-		ASprite{ATexture}
+		ATexture{nullptr},
+		ASprite{nullptr}
 	{
-
 	}
 
 	Actor::~Actor()
@@ -45,15 +44,24 @@ namespace we
 	}
 	void Actor::SetTexture(const std::string& TexturePath)
 	{
-		ATexture.loadFromFile(TexturePath);
-		ASprite.setTexture(ATexture);
-		int TextureWidth = ATexture.getSize().x;
-		int TextureHeight = ATexture.getSize().y;
-		ASprite.setTextureRect(sf::IntRect{ sf::Vector2i{}, sf::Vector2i{TextureWidth, TextureHeight} });
+		ATexture = AssetManager::GetAssetManager().LoadTexture(TexturePath);
+		if (!ATexture)
+		{
+			LOG("Actor: Failed to load texture: %s", TexturePath.c_str());
+			return;
+		}
+
+		ASprite = shared<sf::Sprite>(new sf::Sprite(*ATexture));
+
+		int TextureWidth = static_cast<int>(ATexture->getSize().x);
+		int TextureHeight = static_cast<int>(ATexture->getSize().y);
+		ASprite->setTextureRect(sf::IntRect({ 0, 0 }, { TextureWidth, TextureHeight }));
+
+		LOG("Actor: Sprite created for %s", TexturePath.c_str());
 	}
 	void Actor::Render(sf::RenderWindow& Window)
 	{
-		if (IsPendingDestroy()) { return; }
-		Window.draw(ASprite);
+		if (IsPendingDestroy() || !ASprite) { return; }
+		Window.draw(*ASprite);
 	}
 }

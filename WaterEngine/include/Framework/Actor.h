@@ -25,7 +25,7 @@ namespace we
 		World* OwningWorld;
 		bool bHasBegunPlay;
 
-		sf::Texture ATexture;
-		sf::Sprite ASprite;
+		shared<sf::Texture> ATexture;
+		shared<sf::Sprite> ASprite;
 	};
 }
