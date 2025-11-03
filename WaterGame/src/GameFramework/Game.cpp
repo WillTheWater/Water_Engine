@@ -1,6 +1,7 @@
 ﻿#include "GameFramework/Game.h"
 #include "Framework/World.h"
 #include "Framework/Actor.h"
+#include "Character/Character.h"
 #include "config.h"
 
 we::Application* GetApplication()
@@ -15,10 +16,11 @@ namespace we
 	{
 		weak<World> NewWorld = LoadWorld<World>();
 		NewWorld.lock()->SpawnActor<Actor>();
-		ActorToDestroy = NewWorld.lock()->SpawnActor<Actor>();
-		ActorToDestroy.lock()->SetTexture(GetAssetDirectory() + "character/idle/idle_down_40x40.png");
-		ActorToDestroy.lock()->SetActorLocation(sf::Vector2f{1920/2,1080/2});
-		ActorToDestroy.lock()->SetActorScale(2.f);
+		TestPlayer = NewWorld.lock()->SpawnActor<Character>();
+		TestPlayer.lock()->SetTexture(GetAssetDirectory() + "character/idle/idle_down_40x40.png");
+		TestPlayer.lock()->SetActorLocation(sf::Vector2f{1920/2,1080/2});
+		TestPlayer.lock()->SetActorScale(2.f);
+		TestPlayer.lock()->SetVelocity(sf::Vector2f{ 0.f, -200.f });
 	}
 	void Game::Tick(float DeltaTime)
 	{

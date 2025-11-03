@@ -1,6 +1,12 @@
 add_executable(${WATER_GAME}
 	${CMAKE_CURRENT_SOURCE_DIR}/include/GameFramework/Game.h
 	${CMAKE_CURRENT_SOURCE_DIR}/src/GameFramework/Game.cpp
+
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/Character/Character.h
+	${CMAKE_CURRENT_SOURCE_DIR}/src/Character/Character.cpp
+
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/Character/Player.h
+	${CMAKE_CURRENT_SOURCE_DIR}/src/Character/Player.cpp
 )
 
 target_include_directories(${WATER_GAME} PUBLIC

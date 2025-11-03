@@ -18,7 +18,7 @@ namespace we
 		void Render(sf::RenderWindow& Window);
 
 		template<typename ActorType>
-		weak<Actor> SpawnActor();
+		weak<ActorType> SpawnActor();
 
 	private:
 		void BeginPlay();
@@ -32,9 +32,9 @@ namespace we
 	};
 
 	template<typename ActorType>
-	weak<Actor> World::SpawnActor()
+	weak<ActorType> World::SpawnActor()
 	{
-		shared<Actor> NewActor{ new ActorType{this} };
+		shared<ActorType> NewActor{ new ActorType{this} };
 		PendingActors.push_back(NewActor);
 		return NewActor;
 	}
