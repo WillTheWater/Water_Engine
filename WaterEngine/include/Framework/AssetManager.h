@@ -10,6 +10,7 @@ namespace we
 		static AssetManager& GetAssetManager();
 		shared<sf::Texture> LoadTexture(const std::string& TexturePath);
 		void GarbageCollectionCycle();
+		void SetAssetRootDirctory(const std::string& Directory);
 
 	protected:
 		AssetManager();
@@ -17,5 +18,6 @@ namespace we
 	private:
 		static unique<AssetManager> UAssetManager;
 		Dictionary<std::string, shared<sf::Texture>> LoadedTextures;
+		std::string RootDirectory;
 	};
 }

@@ -45,7 +45,13 @@ namespace we
 		}
 	}
 
+	void AssetManager::SetAssetRootDirctory(const std::string& Directory)
+	{
+		RootDirectory = Directory;
+	}
+
 	AssetManager::AssetManager()
+		: RootDirectory{}
 	{
 
 	}
