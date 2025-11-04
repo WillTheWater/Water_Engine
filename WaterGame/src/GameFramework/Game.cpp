@@ -1,6 +1,7 @@
 ﻿#include "GameFramework/Game.h"
 #include "Framework/World.h"
 #include "Framework/Actor.h"
+#include "Framework/Assetmanager.h"
 #include "Character/Character.h"
 #include "config.h"
 
@@ -14,6 +15,7 @@ namespace we
 	Game::Game()
 		: Application{1920, 1080, "Game Window", sf::Style::Default}
 	{
+		AssetManager::GetAssetManager().SetAssetRootDirctory(GetAssetDirectory());
 		weak<World> NewWorld = LoadWorld<World>();
 		NewWorld.lock()->SpawnActor<Actor>();
 		TestPlayer = NewWorld.lock()->SpawnActor<Character>();
