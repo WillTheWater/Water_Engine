@@ -37,13 +37,12 @@ namespace we
 
 	void Actor::BeginPlay()
 	{
-		LOG("Actor BeginPlay Called!")
 	}
 
 	void Actor::Tick(float DeltaTime)
 	{
 	}
-	void Actor::SetTexture(const std::string& TexturePath)
+	void Actor::SetTexture(const std::string& TexturePath, int FrameWidth, int FrameHeight, float SpriteScale)
 	{
 		ATexture = AssetManager::GetAssetManager().LoadTexture(TexturePath);
 		if (!ATexture)
@@ -56,7 +55,20 @@ namespace we
 
 		int TextureWidth = static_cast<int>(ATexture->getSize().x);
 		int TextureHeight = static_cast<int>(ATexture->getSize().y);
-		ASprite->setTextureRect(sf::IntRect({ 0, 0 }, { TextureWidth, TextureHeight }));
+
+		FrameSize = { FrameWidth, FrameHeight };
+
+		if (FrameWidth > 0 && FrameHeight > 0)
+		{
+			ASprite->setTextureRect(sf::IntRect({ 0, 0 }, { FrameWidth, FrameHeight }));
+		}
+		else
+		{
+			ASprite->setTextureRect(sf::IntRect({ 0, 0 }, { TextureWidth, TextureHeight }));
+		}
+
+		ASprite->setScale({ SpriteScale, SpriteScale });
+
 		CenterPivot();
 
 		LOG("Actor: Sprite created for %s", TexturePath.c_str());

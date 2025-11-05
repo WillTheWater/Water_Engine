@@ -18,7 +18,7 @@ namespace we
 		virtual void BeginPlay();
 		virtual void Tick(float DeltaTime);
 
-		void SetTexture(const std::string& TexturePath);
+		void SetTexture(const std::string& TexturePath, int FrameWidth = 0, int FrameHeight = 0, float SpriteScale = 1.f);
 		void SetActorScale(float NewScale);
 		void Render(sf::RenderWindow& Window);
 
@@ -38,5 +38,8 @@ namespace we
 		shared<sf::Texture> ATexture;
 		shared<sf::Sprite> ASprite;
 		void CenterPivot();
+
+		sf::Vector2i FrameSize{ 0, 0 };
+		int CurrentFrame = 0;
 	};
 }

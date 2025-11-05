@@ -5,7 +5,7 @@
 namespace we
 {
 	class Actor;
-	class Character;
+	class PlayerCharacter;
 
 	class Game : public Application
 	{
@@ -15,6 +15,6 @@ namespace we
 		virtual void Tick(float DeltaTime) override;
 
 	private:
-		weak<Character> TestPlayer;
+		weak<PlayerCharacter> TestPlayer;
 	};
 }

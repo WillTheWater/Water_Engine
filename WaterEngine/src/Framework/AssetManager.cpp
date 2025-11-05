@@ -21,7 +21,7 @@ namespace we
 			return FoundTexture->second;
 		}
 		shared<sf::Texture> NewTexture{ new sf::Texture };
-		if (NewTexture->loadFromFile(TexturePath))
+		if (NewTexture->loadFromFile(RootDirectory + TexturePath))
 		{
 			LoadedTextures.insert({ TexturePath, NewTexture });
 			return NewTexture;
