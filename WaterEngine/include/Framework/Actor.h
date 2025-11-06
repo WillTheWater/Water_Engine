@@ -18,6 +18,8 @@ namespace we
 		virtual void BeginPlay();
 		virtual void Tick(float DeltaTime);
 
+		sf::Vector2u GetWindowSize() const;
+
 		void SetTexture(const std::string& TexturePath, int FrameWidth = 0, int FrameHeight = 0, float SpriteScale = 1.f);
 		void SetActorScale(float NewScale);
 		void Render(sf::RenderWindow& Window);
@@ -30,6 +32,7 @@ namespace we
 		void AddActorRotationOffset(const sf::Angle& RotOffset);
 		sf::Vector2f GetActorFowardVector() const;
 		sf::Vector2f GetActorRightVector() const;
+		sf::FloatRect GetSpriteBounds() const { return ASprite->getGlobalBounds(); }
 
 	private:
 		World* OwningWorld;

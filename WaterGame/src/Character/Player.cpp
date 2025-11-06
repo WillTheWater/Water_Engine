@@ -6,7 +6,7 @@ namespace we
 	PlayerCharacter::PlayerCharacter(World* OwningWorld, const std::string& TexturePath)
 		: Character{ OwningWorld, TexturePath},
 		MoveInput{},
-		MovementSpeed{ 200.f }
+		MovementSpeed{ 600.f }
 	{
 		SetTexture(TexturePath, 40, 40, 4);
 	}
@@ -34,6 +34,7 @@ namespace we
 		{
 			MoveInput.x = 1.f;
 		}
+		SetWindowBoundery();
 		NomalizeInput();
 	}
 	void PlayerCharacter::ConsumeIput(float DeltaTime)
@@ -41,9 +42,35 @@ namespace we
 		SetVelocity(MoveInput * MovementSpeed);
 		MoveInput.x = MoveInput.y = 0.f;
 	}
+	void PlayerCharacter::SetWindowBoundery()
+	{
+		sf::FloatRect SpriteBounds = GetSpriteBounds();
+		sf::Vector2u WindowSize = GetWindowSize();
+		sf::Vector2f WindowSizef(static_cast<float>(WindowSize.x),
+			static_cast<float>(WindowSize.y));
+		
+		// Prevent horizontal movement out of bounds
+		if (SpriteBounds.position.x <= 0.f && MoveInput.x < 0.f)
+		{
+			MoveInput.x = 0.f;
+		}
+		else if (SpriteBounds.position.x + SpriteBounds.size.x >= WindowSizef.x && MoveInput.x > 0.f)
+		{
+			MoveInput.x = 0.f;
+		}
+
+		// Prevent vertical movement out of bounds
+		if (SpriteBounds.position.y <= 0.f && MoveInput.y < 0.f)
+		{
+			MoveInput.y = 0.f;
+		}
+		else if (SpriteBounds.position.y + SpriteBounds.size.y >= WindowSizef.y && MoveInput.y > 0.f)
+		{
+			MoveInput.y = 0.f;
+		}
+	}
 	void PlayerCharacter::NomalizeInput()
 	{
 		Normalize(MoveInput);
-		LOG("MoveInput: %f, %f", MoveInput.x, MoveInput.y)
 	}
 }

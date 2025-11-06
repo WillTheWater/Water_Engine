@@ -2,6 +2,7 @@
 #include "Framework/Core.h"
 #include "Framework/AssetManager.h"
 #include "Framework/MathUtility.h"
+#include "Framework/World.h"
 
 namespace we
 {
@@ -42,6 +43,12 @@ namespace we
 	void Actor::Tick(float DeltaTime)
 	{
 	}
+
+	sf::Vector2u Actor::GetWindowSize() const
+	{
+		return OwningWorld->GetWindowSize();
+	}
+
 	void Actor::SetTexture(const std::string& TexturePath, int FrameWidth, int FrameHeight, float SpriteScale)
 	{
 		ATexture = AssetManager::GetAssetManager().LoadTexture(TexturePath);
