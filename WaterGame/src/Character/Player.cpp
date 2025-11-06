@@ -1,4 +1,5 @@
 #include "Character/Player.h"
+#include "Framework/MathUtility.h"
 
 namespace we
 {
@@ -33,10 +34,16 @@ namespace we
 		{
 			MoveInput.x = 1.f;
 		}
+		NomalizeInput();
 	}
 	void PlayerCharacter::ConsumeIput(float DeltaTime)
 	{
 		SetVelocity(MoveInput * MovementSpeed);
 		MoveInput.x = MoveInput.y = 0.f;
+	}
+	void PlayerCharacter::NomalizeInput()
+	{
+		Normalize(MoveInput);
+		LOG("MoveInput: %f, %f", MoveInput.x, MoveInput.y)
 	}
 }

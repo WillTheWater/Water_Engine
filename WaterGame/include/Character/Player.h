@@ -17,6 +17,7 @@ namespace we
 	private:
 		void HandleInput();
 		void ConsumeIput(float DeltaTime);
+		void NomalizeInput();
 		sf::Vector2f MoveInput;
 		float MovementSpeed;
 	};
