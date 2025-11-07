@@ -1,12 +1,14 @@
 #include "Character/Player.h"
 #include "Framework/MathUtility.h"
+#include "Weapons/Gun.h"
 
 namespace we
 {
 	PlayerCharacter::PlayerCharacter(World* OwningWorld, const std::string& TexturePath)
 		: Character{ OwningWorld, TexturePath},
 		MoveInput{},
-		MovementSpeed{ 600.f }
+		MovementSpeed{ 600.f },
+		Handgun{ new Gun{this}}
 	{
 		SetTexture(TexturePath, 40, 40, 4);
 	}
@@ -15,6 +17,13 @@ namespace we
 		Character::Tick(DeltaTime);
 		HandleInput();
 		ConsumeIput(DeltaTime);
+	}
+	void PlayerCharacter::Shoot()
+	{
+		if (Handgun)
+		{
+			Handgun->Shoot();
+		}
 	}
 	void PlayerCharacter::HandleInput()
 	{
@@ -36,6 +45,11 @@ namespace we
 		}
 		SetWindowBoundery();
 		NomalizeInput();
+
+		if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Right))
+		{
+			Shoot();
+		}
 	}
 	void PlayerCharacter::ConsumeIput(float DeltaTime)
 	{

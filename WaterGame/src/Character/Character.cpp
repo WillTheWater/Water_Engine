@@ -8,13 +8,20 @@ namespace we
 	{
 
 	}
+
 	void Character::Tick(float DeltaTime)
 	{
 		Actor::Tick(DeltaTime);
 		AddActorLocationOffset(GetVelocity() * DeltaTime);
 	}
+
 	void Character::SetVelocity(const sf::Vector2f NewVelocity)
 	{
 		Velocity = NewVelocity;
+	}
+
+	void Character::Shoot()
+	{
+
 	}
 }
