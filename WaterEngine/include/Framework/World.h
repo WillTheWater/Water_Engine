@@ -17,8 +17,8 @@ namespace we
 		void TickGlobal(float DeltaTime);
 		void Render(sf::RenderWindow& Window);
 
-		template<typename ActorType>
-		weak<ActorType> SpawnActor();
+		template<typename ActorType, typename... Args>
+		weak<ActorType> SpawnActor(Args... args);
 
 		sf::Vector2u GetWindowSize() const;
 
@@ -33,10 +33,11 @@ namespace we
 		List<shared<Actor>> PendingActors;
 	};
 
-	template<typename ActorType>
-	weak<ActorType> World::SpawnActor()
+
+	template<typename ActorType, typename... Args>
+	weak<ActorType> World::SpawnActor(Args... args)
 	{
-		shared<ActorType> NewActor{ new ActorType{this} };
+		shared<ActorType> NewActor{ new ActorType(this, args...) };
 		PendingActors.push_back(NewActor);
 		return NewActor;
 	}

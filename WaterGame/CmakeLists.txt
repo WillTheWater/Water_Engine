@@ -13,6 +13,9 @@ add_executable(${WATER_GAME}
 
     ${CMAKE_CURRENT_SOURCE_DIR}/include/Weapons/Gun.h
 	${CMAKE_CURRENT_SOURCE_DIR}/src/Weapons/Gun.cpp
+
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/Weapons/Projectile.h
+	${CMAKE_CURRENT_SOURCE_DIR}/src/Weapons/Projectile.cpp
 )
 
 target_include_directories(${WATER_GAME} PUBLIC

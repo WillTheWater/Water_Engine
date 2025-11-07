@@ -16,7 +16,6 @@ namespace we
 
 	Actor::~Actor()
 	{
-		LOG("Actor Destroyed")
 	}
 
 	void Actor::BeginPlayGlobal()
@@ -77,8 +76,6 @@ namespace we
 		ASprite->setScale({ SpriteScale, SpriteScale });
 
 		CenterPivot();
-
-		LOG("Actor: Sprite created for %s", TexturePath.c_str());
 	}
 	void Actor::SetActorScale(float NewScale)
 	{
@@ -93,18 +90,22 @@ namespace we
 	}
 	void Actor::SetActorLocation(const sf::Vector2f& NewLocation)
 	{
+		if (!ASprite) { return; }
 		ASprite->setPosition(NewLocation);
 	}
 	void Actor::SetActorRotation(const sf::Angle& NewRotation)
 	{
+		if (!ASprite) { return; }
 		ASprite->setRotation(NewRotation);
 	}
 	sf::Vector2f Actor::GetActorLocation() const
 	{
+		if (!ASprite) { return sf::Vector2f{}; }
 		return ASprite->getPosition();
 	}
 	sf::Angle Actor::GetActorRotation() const
 	{
+		if (!ASprite) { return sf::Angle{}; }
 		return ASprite->getRotation();
 	}
 	void Actor::AddActorLocationOffset(const sf::Vector2f& Offset)
@@ -125,6 +126,7 @@ namespace we
 	}
 	void Actor::CenterPivot()
 	{
+		if (!ASprite) { return; }
 		sf::FloatRect localBounds = ASprite->getLocalBounds();
 		ASprite->setOrigin({ localBounds.size.x / 2.f, localBounds.size.y / 2.f });
 	}

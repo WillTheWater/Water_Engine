@@ -1,5 +1,7 @@
 #include "Weapons/Gun.h"
 #include "Framework/Core.h"
+#include "Framework/World.h"
+#include "Weapons/Projectile.h"
 
 namespace we
 {
@@ -21,6 +23,8 @@ namespace we
 	void Gun::ShootImplimentation()
 	{
 		CooldownTimer.restart();
-		LOG("Shoot")
+		weak<Projectile> Bullet = GetOwner()->GetWorld()->SpawnActor<Projectile>(GetOwner(), "Bullet/Fire_Bullet_8x5.png");
+		Bullet.lock()->SetActorLocation(GetOwner()->GetActorLocation());
+		Bullet.lock()->SetActorRotation(GetOwner()->GetActorRotation());
 	}
 }

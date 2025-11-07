@@ -18,6 +18,8 @@ namespace we
 		virtual void BeginPlay();
 		virtual void Tick(float DeltaTime);
 
+		World* GetWorld() const { return OwningWorld; }
+
 		sf::Vector2u GetWindowSize() const;
 
 		void SetTexture(const std::string& TexturePath, int FrameWidth = 0, int FrameHeight = 0, float SpriteScale = 1.f);
