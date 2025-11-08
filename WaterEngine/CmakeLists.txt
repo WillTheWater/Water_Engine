@@ -37,26 +37,26 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(SFML)
 
-target_link_libraries(${WATER_ENGINE} PUBLIC sfml-graphics)
-target_link_libraries(${WATER_ENGINE} PUBLIC sfml-window)
-target_link_libraries(${WATER_ENGINE} PUBLIC sfml-system)
-target_link_libraries(${WATER_ENGINE} PUBLIC sfml-audio)
-target_link_libraries(${WATER_ENGINE} PUBLIC sfml-main)
-target_link_libraries(${WATER_ENGINE} PUBLIC sfml-network)
+FetchContent_Declare(
+    Box2D
+    GIT_REPOSITORY https://github.com/erincatto/box2d.git
+    GIT_TAG v3.1.1
+	GIT_SHALLOW FALSE
+)
+FetchContent_MakeAvailable(Box2D)
+
+target_link_libraries(${WATER_ENGINE} PUBLIC sfml-graphics box2d)
 
 function(LibToCopy LIB_NAME TARGET_NAME)
     add_custom_command(TARGET ${TARGET_NAME}
-    POST_BUILD
-    COMMAND
-    ${CMAKE_COMMAND} -E copy_if_different
-    $<TARGET_FILE:${LIB_NAME}>
-    $<TARGET_FILE_DIR:${TARGET_NAME}>
-)
+        POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            $<TARGET_FILE:${LIB_NAME}>
+            $<TARGET_FILE_DIR:${TARGET_NAME}>
+    )
 endfunction()
 
-LibToCopy(sfml-graphics ${WATER_ENGINE})
-LibToCopy(sfml-window ${WATER_ENGINE})
-LibToCopy(sfml-system ${WATER_ENGINE})
-LibToCopy(sfml-audio ${WATER_ENGINE})
-LibToCopy(sfml-main ${WATER_ENGINE})
-LibToCopy(sfml-network ${WATER_ENGINE})
+if (BUILD_SHARED_LIBS)
+    LibToCopy(sfml-graphics ${WATER_ENGINE})
+    LibToCopy(box2d ${WATER_ENGINE})
+endif()

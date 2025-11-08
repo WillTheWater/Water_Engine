@@ -97,7 +97,6 @@ namespace we
 		sf::Vector2f SpriteLocation = GetActorLocation();
 		if (SpriteLocation.x < -SpriteWidth || SpriteLocation.x > WindowWidth + SpriteWidth || SpriteLocation.y < -SpriteHeight || SpriteLocation.y > WindowHeight + SpriteHeight)
 		{
-			LOG("Out of Bounds")
 			return true;
 		}
 		return false;
