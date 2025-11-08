@@ -25,6 +25,7 @@ namespace we
 		void SetTexture(const std::string& TexturePath, int FrameWidth = 0, int FrameHeight = 0, float SpriteScale = 1.f);
 		void SetActorScale(float NewScale);
 		void Render(sf::RenderWindow& Window);
+		bool IsOutOfBounds() const;
 
 		void SetActorLocation(const sf::Vector2f& NewLocation);
 		void SetActorRotation(const sf::Angle& NewRotation);
@@ -34,7 +35,7 @@ namespace we
 		void AddActorRotationOffset(const sf::Angle& RotOffset);
 		sf::Vector2f GetActorFowardVector() const;
 		sf::Vector2f GetActorRightVector() const;
-		sf::FloatRect GetSpriteBounds() const { return ASprite->getGlobalBounds(); }
+		sf::FloatRect GetSpriteBounds() const;
 
 	private:
 		World* OwningWorld;

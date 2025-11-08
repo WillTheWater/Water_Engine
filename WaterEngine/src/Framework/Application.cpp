@@ -50,6 +50,10 @@ namespace we
 		{
 			GarbageCollectionClock.restart();
 			AssetManager::GetAssetManager().GarbageCollectionCycle();
+			if (CurrentWorld)
+			{
+				CurrentWorld->GarbageCollectionCycle();
+			}
 		}
 	}
 	void Application::Renderer()

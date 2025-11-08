@@ -16,6 +16,7 @@ namespace we
 		void BeginPlayGlobal();
 		void TickGlobal(float DeltaTime);
 		void Render(sf::RenderWindow& Window);
+		void GarbageCollectionCycle();
 
 		template<typename ActorType, typename... Args>
 		weak<ActorType> SpawnActor(Args... args);

@@ -88,6 +88,20 @@ namespace we
 		if (IsPendingDestroy() || !ASprite) { return; }
 		Window.draw(*ASprite);
 	}
+	bool Actor::IsOutOfBounds() const
+	{
+		float WindowWidth = GetWindowSize().x;
+		float WindowHeight = GetWindowSize().y;
+		float SpriteWidth = GetSpriteBounds().size.x;
+		float SpriteHeight = GetSpriteBounds().size.y;
+		sf::Vector2f SpriteLocation = GetActorLocation();
+		if (SpriteLocation.x < -SpriteWidth || SpriteLocation.x > WindowWidth + SpriteWidth || SpriteLocation.y < -SpriteHeight || SpriteLocation.y > WindowHeight + SpriteHeight)
+		{
+			LOG("Out of Bounds")
+			return true;
+		}
+		return false;
+	}
 	void Actor::SetActorLocation(const sf::Vector2f& NewLocation)
 	{
 		if (!ASprite) { return; }
@@ -123,6 +137,10 @@ namespace we
 	sf::Vector2f Actor::GetActorRightVector() const
 	{
 		return RotationToVector(GetActorRotation() + sf::degrees(90.f));
+	}
+	sf::FloatRect Actor::GetSpriteBounds() const
+	{
+		return ASprite->getGlobalBounds();
 	}
 	void Actor::CenterPivot()
 	{

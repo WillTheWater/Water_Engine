@@ -38,15 +38,8 @@ namespace we
 
 		for (auto i = Actors.begin(); i != Actors.end(); )
 		{
-			if (i->get()->IsPendingDestroy())
-			{
-				i = Actors.erase(i);
-			}
-			else
-			{
-				i->get()->Tick(DeltaTime);
-				i++;
-			}
+			i->get()->Tick(DeltaTime);
+			i++;	
 		}
 
 		Tick(DeltaTime);
@@ -67,6 +60,21 @@ namespace we
 		for (auto& Actor : Actors)
 		{
 			Actor->Render(Window);
+		}
+	}
+
+	void World::GarbageCollectionCycle()
+	{
+		for (auto i = Actors.begin(); i != Actors.end(); )
+		{
+			if (i->get()->IsPendingDestroy())
+			{
+				i = Actors.erase(i);
+			}
+			else
+			{
+				i++;
+			}
 		}
 	}
 
