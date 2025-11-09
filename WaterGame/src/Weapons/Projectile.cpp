@@ -10,6 +10,11 @@ namespace we
 	{
 		SetTexture("Bullet/Fire_Bullet_8x5.png", 8, 5, 2.f);
 	}
+	void Projectile::BeginPlay()
+	{
+		Actor::BeginPlay();
+		SetEnablePhysics(true);
+	}
 	void Projectile::Tick(float DeltaTime)
 	{
 		Actor::Tick(DeltaTime);

@@ -3,6 +3,7 @@
 #include "Framework/AssetManager.h"
 #include "Framework/MathUtility.h"
 #include "Framework/World.h"
+#include "Framework/PhysicsSystem.h"
 
 namespace we
 {
@@ -10,7 +11,9 @@ namespace we
 		: OwningWorld{OwningWorld},
 		bHasBegunPlay{false},
 		ATexture{nullptr},
-		ASprite{nullptr}
+		ASprite{nullptr},
+		bPhysicsEnabled{false},
+		APhysicsBody{ b2_nullBodyId }
 	{
 	}
 
@@ -141,10 +144,47 @@ namespace we
 	{
 		return ASprite->getGlobalBounds();
 	}
+	void Actor::SetEnablePhysics(bool Enabled)
+	{
+		bPhysicsEnabled = Enabled;
+		if (bPhysicsEnabled)
+		{
+			InitializePhysics();
+		}
+		else
+		{
+			UninitializePhysics();
+		}
+	}
 	void Actor::CenterPivot()
 	{
 		if (!ASprite) { return; }
 		sf::FloatRect localBounds = ASprite->getLocalBounds();
 		ASprite->setOrigin({ localBounds.size.x / 2.f, localBounds.size.y / 2.f });
+	}
+	void Actor::InitializePhysics()
+	{
+		if (APhysicsBody.index1 == 0)
+		{
+			APhysicsBody = PhysicsSystem::GetPhysiscSystem().AddListener(this);
+		}
+	}
+	void Actor::UninitializePhysics()
+	{
+		if (APhysicsBody.index1 != 0)
+		{
+			PhysicsSystem::GetPhysiscSystem().RemoveListener(APhysicsBody);
+		}
+	}
+	void Actor::UpdatePhysicsTransforms()
+	{
+		if (APhysicsBody.index1 != 0)
+		{
+			float PhysicsScale = PhysicsSystem::GetPhysiscSystem().GetPhysicsScale();
+			b2Vec2 Position{ GetActorLocation().x * PhysicsScale, GetActorLocation().y * PhysicsScale };
+			b2Rot Rotation = b2MakeRot(GetActorRotation().asRadians());
+
+			b2Body_SetTransform(APhysicsBody, Position, Rotation);
+		}
 	}
 }

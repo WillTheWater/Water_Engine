@@ -9,6 +9,7 @@ namespace we
 	public:
 		Projectile(World* OwningWorld, Actor* OwningActor, const std::string& TexturePath, float Velocity = 1800.f , float Damage = 10.f);
 
+		virtual void BeginPlay() override;
 		virtual void Tick(float DeltaTime) override;
 
 		void Move(float DeltaTime);

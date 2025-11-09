@@ -14,6 +14,7 @@ namespace we
 
 		void Step(float DeltaTime);
 		b2BodyId AddListener(Actor* Listener);
+		void RemoveListener(b2BodyId PhysicsBodyToRemove);
 		float GetPhysicsScale() const { return PhysicsScale; }
 
 	protected:

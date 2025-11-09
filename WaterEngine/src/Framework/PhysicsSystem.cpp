@@ -67,4 +67,8 @@ namespace we
 
         return bodyId;
 	}
+	void PhysicsSystem::RemoveListener(b2BodyId PhysicsBodyToRemove)
+	{
+		//TODO: Remove PB
+	}
 }

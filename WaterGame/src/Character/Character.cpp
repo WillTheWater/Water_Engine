@@ -9,6 +9,12 @@ namespace we
 
 	}
 
+	void Character::BeginPlay()
+	{
+		Actor::BeginPlay();
+		SetEnablePhysics(true);
+	}
+
 	void Character::Tick(float DeltaTime)
 	{
 		Actor::Tick(DeltaTime);

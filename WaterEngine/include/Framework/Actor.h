@@ -2,6 +2,7 @@
 #include "Framework/Object.h"
 #include "SFML/Graphics.hpp"
 #include "Framework/Core.h"
+#include "box2d/id.h"
 
 namespace we
 {
@@ -37,9 +38,12 @@ namespace we
 		sf::Vector2f GetActorRightVector() const;
 		sf::FloatRect GetSpriteBounds() const;
 
+		void SetEnablePhysics(bool Enabled);
+
 	private:
 		World* OwningWorld;
 		bool bHasBegunPlay;
+		bool bPhysicsEnabled;
 
 		shared<sf::Texture> ATexture;
 		shared<sf::Sprite> ASprite;
@@ -47,5 +51,9 @@ namespace we
 
 		sf::Vector2i FrameSize{ 0, 0 };
 		int CurrentFrame = 0;
+		b2BodyId APhysicsBody;
+		void InitializePhysics();
+		void UninitializePhysics();
+		void UpdatePhysicsTransforms();
 	};
 }
