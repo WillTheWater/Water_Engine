@@ -2,6 +2,7 @@
 #include "Framework/Core.h"
 #include "Framework/World.h"
 #include "Framework/AssetManager.h"
+#include "Framework/PhysicsSystem.h"
 
 namespace we
 {
@@ -46,6 +47,9 @@ namespace we
 		{
 			CurrentWorld->TickGlobal(DeltaTime);
 		}
+
+		PhysicsSystem::GetPhysiscSystem().Step(DeltaTime);
+
 		if (GarbageCollectionClock.getElapsedTime().asSeconds() >= CollectionInterval)
 		{
 			GarbageCollectionClock.restart();

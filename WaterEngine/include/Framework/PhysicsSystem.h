@@ -5,10 +5,16 @@
 
 namespace we
 {
+	class Actor;
+
 	class PhysicsSystem
 	{
 	public:
 		static PhysicsSystem& GetPhysiscSystem();
+
+		void Step(float DeltaTime);
+		b2BodyId AddListener(Actor* Listener);
+		float GetPhysicsScale() const { return PhysicsScale; }
 
 	protected:
 		PhysicsSystem();
@@ -18,5 +24,6 @@ namespace we
 		b2WorldId PhysicsWorld;
 		b2WorldDef WorldDef;
 		float PhysicsScale;
+		int VelocityIteration;
 	};
 }
