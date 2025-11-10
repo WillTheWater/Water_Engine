@@ -29,6 +29,9 @@ namespace we
 
 		int subStepCount = VelocityIteration; 
 		b2World_Step(PhysicsWorld, DeltaTime, subStepCount);
+
+		PhysicsEvents = b2World_GetContactEvents(PhysicsWorld);
+
 	}
 
 	b2BodyId PhysicsSystem::AddListener(Actor* Listener)
@@ -70,5 +73,28 @@ namespace we
 	void PhysicsSystem::RemoveListener(b2BodyId PhysicsBodyToRemove)
 	{
 		//TODO: Remove PB
+	}
+	bool PhysicsSystem::BeginOverlap(b2BodyId ActorA, b2BodyId ActorB)
+	{
+
+		for (int i = 0; i < PhysicsEvents.beginCount; ++i)
+		{
+			const auto& ev = PhysicsEvents.beginEvents[i];
+			b2BodyId evBodyA = b2Shape_GetBody(ev.shapeIdA);
+			b2BodyId evBodyB = b2Shape_GetBody(ev.shapeIdB);
+
+			if ((evBodyA.index1 == ActorA.index1 && evBodyB.index1 == ActorB.index1) ||
+				(evBodyA.index1 == ActorB.index1 && evBodyB.index1 == ActorA.index1))
+			{
+				LOG("Begin Overlap")
+				return true;
+			}
+		}
+
+		return false;
+	}
+	bool PhysicsSystem::EndOverlap(b2BodyId ActorA, b2BodyId ActorB)
+	{
+		return false;
 	}
 }
