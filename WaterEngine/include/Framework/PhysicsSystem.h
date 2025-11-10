@@ -3,6 +3,8 @@
 #include <box2d/box2d.h>
 #include "Framework/Core.h"
 
+
+
 namespace we
 {
 	class Actor;
@@ -17,6 +19,9 @@ namespace we
 		void RemoveListener(b2BodyId PhysicsBodyToRemove);
 		float GetPhysicsScale() const { return PhysicsScale; }
 
+		bool BeginOverlap(b2BodyId  ActorA, b2BodyId  ActorB);
+		bool EndOverlap(b2BodyId  ActorA, b2BodyId  ActorB);
+
 	protected:
 		PhysicsSystem();
 
@@ -26,5 +31,6 @@ namespace we
 		b2WorldDef WorldDef;
 		float PhysicsScale;
 		int VelocityIteration;
+		b2ContactEvents PhysicsEvents;
 	};
 }

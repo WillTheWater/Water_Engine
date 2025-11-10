@@ -108,11 +108,13 @@ namespace we
 	{
 		if (!ASprite) { return; }
 		ASprite->setPosition(NewLocation);
+		UpdatePhysicsTransforms();
 	}
 	void Actor::SetActorRotation(const sf::Angle& NewRotation)
 	{
 		if (!ASprite) { return; }
 		ASprite->setRotation(NewRotation);
+		UpdatePhysicsTransforms();
 	}
 	sf::Vector2f Actor::GetActorLocation() const
 	{
