@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.30.3)
 
-project(StoicRoninStudioWaterEngine
+project(WaterEngine
 	VERSION 1.0.0 ## NewIteration.Features.BugFixes
 	LANGUAGES C CXX
 )

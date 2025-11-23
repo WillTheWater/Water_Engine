@@ -7,6 +7,6 @@ std::string GetAssetDirectory()
 #ifdef  NDEBUG
 	return "assets/";
 #else
-	return "C:/Dev/WaterEngine/WaterGame/assets/";
+	return "C:/Dev/Water_Engine/WaterGame/assets/";
 #endif
 }
