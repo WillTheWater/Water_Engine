@@ -7,11 +7,14 @@
 namespace we
 {
 	class World;
+	class Renderer;
 
 	class Application
 	{
 	public:
 		Application(unsigned int WindowWidth, unsigned int WindowHeight, const std::string& WindowTitle, std::uint32_t WindowStyle);
+		~Application();
+
 		void Run();
 
 		template<typename WorldType>
@@ -22,12 +25,14 @@ namespace we
 
 	private:
 		void TickGlobal(float DeltaTime);
-		void Renderer();
+		void RendererCycle();
 
-		virtual void Render();
+		virtual void Render(Renderer& GameRenderer);
 		virtual void Tick(float DeltaTime);
 
 		sf::RenderWindow Window;
+		unique<Renderer> GameRenderer;
+
 		float TargetFramerate;
 		sf::Clock TickClock;
 		sf::Clock GarbageCollectionClock;

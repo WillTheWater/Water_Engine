@@ -3,6 +3,7 @@
 #include "Framework/World.h"
 #include "Framework/AssetManager.h"
 #include "Framework/PhysicsSystem.h"
+#include "Framework/Renderer.h"
 
 namespace we
 {
@@ -11,8 +12,13 @@ namespace we
 		TargetFramerate{ 60.f },
 		TickClock{},
 		GarbageCollectionClock{},
-		CollectionInterval{2.f},
-		CurrentWorld{ nullptr }
+		CollectionInterval{ 2.f },
+		CurrentWorld{ nullptr },
+		GameRenderer{ std::make_unique<Renderer>(Window) }
+	{
+	}
+
+	Application::~Application()
 	{
 	}
 
@@ -22,22 +28,22 @@ namespace we
 		float AccumulatedTime = 0.f;
 		float TargetDeltaTime = 1.f / TargetFramerate;
 
-        while (Window.isOpen())
-        {
-            while (const std::optional event = Window.pollEvent())
-            {
-                if (event->is<sf::Event::Closed>())
-                    Window.close();
-            }
+		while (Window.isOpen())
+		{
+			while (const std::optional event = Window.pollEvent())
+			{
+				if (event->is<sf::Event::Closed>())
+					Window.close();
+			}
 			float FrameTick = TickClock.restart().asSeconds();
 			AccumulatedTime += FrameTick;
 			while (AccumulatedTime > TargetDeltaTime)
 			{
 				AccumulatedTime -= TargetDeltaTime;
 				TickGlobal(TargetDeltaTime);
-				Renderer();
+				RendererCycle();
 			}
-        }
+		}
 	}
 	void Application::TickGlobal(float DeltaTime)
 	{
@@ -60,17 +66,19 @@ namespace we
 			}
 		}
 	}
-	void Application::Renderer()
+	void Application::RendererCycle()
 	{
-		Window.clear();
-		Render();
-		Window.display();
+		if (!GameRenderer) return;
+
+		GameRenderer->Clear();
+		Render(*GameRenderer);
+		GameRenderer->Display();
 	}
-	void Application::Render()
+	void Application::Render(Renderer& GameRenderer)
 	{
 		if (CurrentWorld)
 		{
-			CurrentWorld->Render(Window);
+			CurrentWorld->Render(GameRenderer);
 		}
 	}
 	void Application::Tick(float DeltaTime)

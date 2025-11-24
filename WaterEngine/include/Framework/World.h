@@ -6,6 +6,7 @@ namespace we
 {
 	class Application;
 	class Actor;
+	class Renderer;
 
 	class World
 	{
@@ -15,7 +16,9 @@ namespace we
 
 		void BeginPlayGlobal();
 		void TickGlobal(float DeltaTime);
-		void Render(sf::RenderWindow& Window);
+
+		void Render(Renderer& GameRenderer);
+
 		void GarbageCollectionCycle();
 
 		template<typename ActorType, typename... Args>
@@ -33,7 +36,6 @@ namespace we
 		List<shared<Actor>> Actors;
 		List<shared<Actor>> PendingActors;
 	};
-
 
 	template<typename ActorType, typename... Args>
 	weak<ActorType> World::SpawnActor(Args... args)

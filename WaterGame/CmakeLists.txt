@@ -1,29 +1,32 @@
+# WaterGame/CMakeLists.txt
+
 add_executable(${WATER_GAME}
-	${CMAKE_CURRENT_SOURCE_DIR}/include/GameFramework/Game.h
-	${CMAKE_CURRENT_SOURCE_DIR}/src/GameFramework/Game.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/GameFramework/Game.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/GameFramework/Game.cpp
 
     ${CMAKE_CURRENT_SOURCE_DIR}/include/Character/Character.h
-	${CMAKE_CURRENT_SOURCE_DIR}/src/Character/Character.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Character/Character.cpp
 
     ${CMAKE_CURRENT_SOURCE_DIR}/include/Character/Player.h
-	${CMAKE_CURRENT_SOURCE_DIR}/src/Character/Player.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Character/Player.cpp
 
     ${CMAKE_CURRENT_SOURCE_DIR}/include/Weapons/Ranged.h
-	${CMAKE_CURRENT_SOURCE_DIR}/src/Weapons/Ranged.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Weapons/Ranged.cpp
 
     ${CMAKE_CURRENT_SOURCE_DIR}/include/Weapons/Gun.h
-	${CMAKE_CURRENT_SOURCE_DIR}/src/Weapons/Gun.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Weapons/Gun.cpp
 
     ${CMAKE_CURRENT_SOURCE_DIR}/include/Weapons/Projectile.h
-	${CMAKE_CURRENT_SOURCE_DIR}/src/Weapons/Projectile.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Weapons/Projectile.cpp
 )
 
 target_include_directories(${WATER_GAME} PUBLIC
-	${CMAKE_CURRENT_SOURCE_DIR}/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 
 target_link_libraries(${WATER_GAME} PUBLIC ${WATER_ENGINE})
 
+# Copy engine build output directory into the game output directory (kept from original)
 function(CopyToDirectory LIB_NAME TARGET_NAME)
     add_custom_command(TARGET ${TARGET_NAME}
     POST_BUILD
@@ -44,7 +47,7 @@ add_custom_command(
     POST_BUILD
     COMMAND
     ${CMAKE_COMMAND} -E copy_directory
-    ${ASSET_SRC_DIR}
+    "${ASSET_SRC_DIR}"
     $<TARGET_FILE_DIR:${WATER_GAME}>/${ASSET_FOLDER_NAME}
 )
 

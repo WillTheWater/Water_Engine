@@ -10,7 +10,7 @@ namespace we
 		MovementSpeed{ 600.f },
 		Handgun{ new Gun{this}}
 	{
-		SetTexture(TexturePath, 40, 40, 4);
+		SetTexture(TexturePath, 4);
 	}
 	void PlayerCharacter::Tick(float DeltaTime)
 	{

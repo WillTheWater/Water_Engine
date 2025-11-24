@@ -2,14 +2,15 @@
 #include "Framework/Core.h"
 #include "Framework/Actor.h"
 #include "Framework/Application.h"
+#include "Framework/Renderer.h"
 
 namespace we
 {
 	World::World(Application* OwningApp)
-		: OwningApp{OwningApp},
+		: OwningApp{ OwningApp },
 		Actors{},
 		PendingActors{},
-		bHasBegunPlay{false}
+		bHasBegunPlay{ false }
 	{
 	}
 
@@ -39,7 +40,7 @@ namespace we
 		for (auto i = Actors.begin(); i != Actors.end(); )
 		{
 			i->get()->Tick(DeltaTime);
-			i++;	
+			i++;
 		}
 
 		Tick(DeltaTime);
@@ -52,14 +53,14 @@ namespace we
 
 	void World::Tick(float DeltaTime)
 	{
-	
+
 	}
 
-	void World::Render(sf::RenderWindow& Window)
+	void World::Render(Renderer& GameRenderer)
 	{
 		for (auto& Actor : Actors)
 		{
-			Actor->Render(Window);
+			Actor->Render(GameRenderer);
 		}
 	}
 

@@ -1,42 +1,47 @@
-add_library(${WATER_ENGINE} STATIC
-	${CMAKE_CURRENT_SOURCE_DIR}/include/Framework/Application.h
-	${CMAKE_CURRENT_SOURCE_DIR}/src/Framework/Application.cpp
-	
-	${CMAKE_CURRENT_SOURCE_DIR}/include/Framework/World.h
-	${CMAKE_CURRENT_SOURCE_DIR}/src/Framework/World.cpp
-	
-	${CMAKE_CURRENT_SOURCE_DIR}/include/Framework/Actor.h
-	${CMAKE_CURRENT_SOURCE_DIR}/src/Framework/Actor.cpp
-	
-	${CMAKE_CURRENT_SOURCE_DIR}/include/Framework/Object.h
-	${CMAKE_CURRENT_SOURCE_DIR}/src/Framework/Object.cpp
-	
-	${CMAKE_CURRENT_SOURCE_DIR}/include/Framework/AssetManager.h
-	${CMAKE_CURRENT_SOURCE_DIR}/src/Framework/AssetManager.cpp
-	
-	${CMAKE_CURRENT_SOURCE_DIR}/include/Framework/MathUtility.h
-	${CMAKE_CURRENT_SOURCE_DIR}/src/Framework/MathUtility.cpp
+# WaterEngine/CMakeLists.txt
 
-	${CMAKE_CURRENT_SOURCE_DIR}/include/Framework/PhysicsSystem.h
-	${CMAKE_CURRENT_SOURCE_DIR}/src/Framework/PhysicsSystem.cpp
+add_library(${WATER_ENGINE} STATIC
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/Framework/Application.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Framework/Application.cpp
+
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/Framework/World.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Framework/World.cpp
+
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/Framework/Actor.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Framework/Actor.cpp
+
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/Framework/Object.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Framework/Object.cpp
+
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/Framework/AssetManager.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Framework/AssetManager.cpp
+
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/Framework/Renderer.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Framework/Renderer.cpp
+
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/Framework/MathUtility.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Framework/MathUtility.cpp
+
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/Framework/PhysicsSystem.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Framework/PhysicsSystem.cpp
 
     ${CMAKE_CURRENT_SOURCE_DIR}/include/Framework/Core.h
 
     ${CMAKE_CURRENT_SOURCE_DIR}/include/EntryPoint.h
-	${CMAKE_CURRENT_SOURCE_DIR}/src/EntryPoint.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/EntryPoint.cpp
 )
 
 target_include_directories(${WATER_ENGINE} PUBLIC
-	${CMAKE_CURRENT_SOURCE_DIR}/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 
 include(FetchContent)
 
 FetchContent_Declare(
-	SFML
-	GIT_REPOSITORY https://github.com/SFML/SFML
-	GIT_TAG 3.0.2
-	GIT_SHALLOW FALSE
+    SFML
+    GIT_REPOSITORY https://github.com/SFML/SFML
+    GIT_TAG 3.0.2
+    GIT_SHALLOW FALSE
 )
 FetchContent_MakeAvailable(SFML)
 
@@ -44,13 +49,16 @@ FetchContent_Declare(
     Box2D
     GIT_REPOSITORY https://github.com/erincatto/box2d.git
     GIT_TAG v3.1.1
-	GIT_SHALLOW FALSE
+    GIT_SHALLOW FALSE
 )
 FetchContent_MakeAvailable(Box2D)
 
-target_link_libraries(${WATER_ENGINE} PUBLIC sfml-graphics)
-target_link_libraries(${WATER_ENGINE} PUBLIC box2d)
+target_link_libraries(${WATER_ENGINE} PUBLIC
+    sfml-graphics
+    box2d
+)
 
+# Helper: copy runtime (kept like original, invoked only when using shared builds)
 function(LibToCopy LIB_NAME TARGET_NAME)
     add_custom_command(TARGET ${TARGET_NAME}
         POST_BUILD
@@ -61,6 +69,8 @@ function(LibToCopy LIB_NAME TARGET_NAME)
 endfunction()
 
 if (BUILD_SHARED_LIBS)
+    # only relevant if engine is built shared; since engine is static by design this block will be skipped,
+    # but we keep it in place to match original behavior if the project option changes.
     LibToCopy(sfml-graphics ${WATER_ENGINE})
     LibToCopy(box2d ${WATER_ENGINE})
 endif()

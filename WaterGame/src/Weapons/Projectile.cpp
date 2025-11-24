@@ -8,7 +8,7 @@ namespace we
 		Velocity{ Velocity },
 		Damage{ Damage }
 	{
-		SetTexture("Bullet/Fire_Bullet_8x5.png", 8, 5, 2.f);
+		SetTexture("Bullet/Fire_Bullet_8x5.png", 2.f);
 	}
 	void Projectile::BeginPlay()
 	{

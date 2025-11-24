@@ -4,15 +4,16 @@
 #include "Framework/MathUtility.h"
 #include "Framework/World.h"
 #include "Framework/PhysicsSystem.h"
+#include "Framework/Renderer.h"
 
 namespace we
 {
 	Actor::Actor(World* OwningWorld, const std::string& TexturePath)
-		: OwningWorld{OwningWorld},
-		bHasBegunPlay{false},
-		ATexture{nullptr},
-		ASprite{nullptr},
-		bPhysicsEnabled{false},
+		: OwningWorld{ OwningWorld },
+		bHasBegunPlay{ false },
+		ATexture{ nullptr },
+		ASprite{ nullptr },
+		bPhysicsEnabled{ false },
 		APhysicsBody{ b2_nullBodyId }
 	{
 	}
@@ -51,7 +52,7 @@ namespace we
 		return OwningWorld->GetWindowSize();
 	}
 
-	void Actor::SetTexture(const std::string& TexturePath, int FrameWidth, int FrameHeight, float SpriteScale)
+	void Actor::SetTexture(const std::string& TexturePath, float SpriteScale)
 	{
 		ATexture = AssetManager::GetAssetManager().LoadTexture(TexturePath);
 		if (!ATexture)
@@ -62,8 +63,18 @@ namespace we
 
 		ASprite = shared<sf::Sprite>(new sf::Sprite(*ATexture));
 
+		ASprite->setScale({ SpriteScale, SpriteScale });
+
 		int TextureWidth = static_cast<int>(ATexture->getSize().x);
 		int TextureHeight = static_cast<int>(ATexture->getSize().y);
+		ASprite->setTextureRect(sf::IntRect({ 0, 0 }, { TextureWidth, TextureHeight }));
+
+		CenterPivot();
+	}
+
+	void Actor::SetSpriteFrame(int FrameWidth, int FrameHeight)
+	{
+		if (!ASprite || !ATexture) { return; }
 
 		FrameSize = { FrameWidth, FrameHeight };
 
@@ -73,24 +84,28 @@ namespace we
 		}
 		else
 		{
+			int TextureWidth = static_cast<int>(ATexture->getSize().x);
+			int TextureHeight = static_cast<int>(ATexture->getSize().y);
 			ASprite->setTextureRect(sf::IntRect({ 0, 0 }, { TextureWidth, TextureHeight }));
 		}
 
-		ASprite->setScale({ SpriteScale, SpriteScale });
-
 		CenterPivot();
 	}
+
 	void Actor::SetActorScale(float NewScale)
 	{
 		if (!ASprite) { return; }
 
 		ASprite->setScale({ NewScale, NewScale });
 	}
-	void Actor::Render(sf::RenderWindow& Window)
+
+	void Actor::Render(Renderer& GameRenderer)
 	{
 		if (IsPendingDestroy() || !ASprite) { return; }
-		Window.draw(*ASprite);
+
+		GameRenderer.DrawSprite(*ASprite);
 	}
+
 	bool Actor::IsOutOfBounds() const
 	{
 		float WindowWidth = GetWindowSize().x;
