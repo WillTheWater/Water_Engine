@@ -9,6 +9,5 @@
 - **2D Rendering** via SFML 3  
 - **Physics Simulation** powered by Box2D  
 - **Actor System** for modular game objects  
-- **Scene Management** with easy initialization and switching  
-- **Custom Input Handling** for keyboard and mouse  
+- **Scene Management** with easy initialization and switching
 - **Resource Management** for textures, fonts, and other assets  
