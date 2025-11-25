@@ -1,43 +1,42 @@
 #pragma once
-#include "Framework/Object.h"
-#include "SFML/Graphics.hpp"
 #include "Framework/Core.h"
-#include "box2d/id.h"
+#include <SFML/Graphics.hpp>
+#include <box2d/box2d.h>
 
 namespace we
 {
 	class World;
-	class Renderer;
 
-	class Actor : public Object
+	class Actor
 	{
 	public:
-		// --- Core Lifecycle ---
 		Actor(World* OwningWorld, const std::string& TexturePath = "");
 		virtual ~Actor();
 
+		// Game Loop
 		void BeginPlayGlobal();
 		void TickGlobal(float DeltaTime);
+
+		// Virtual Hooks
 		virtual void BeginPlay();
 		virtual void Tick(float DeltaTime);
-		void Render(Renderer& GameRenderer);
 
-		// --- World Access ---
+		// Core State
+		bool IsPendingDestroy() const { return bPendingDestroy; }
+		void Destroy() { bPendingDestroy = true; }
+
+		// World Access
 		World* GetWorld() const { return OwningWorld; }
 		sf::Vector2u GetWindowSize() const;
-		bool IsOutOfBounds() const;
 
-		// --- Texture & Visuals ---
-		// Simplified: Only sets the texture and creates the sprite.
-		void SetTexture(const std::string& TexturePath, float SpriteScale = 1.f);
-		void SetActorScale(float NewScale);
-
-		// New function for spritesheet control
+		// Rendering & Assets
+		void SetTexture(const std::string& TexturePath, float SpriteScale = 1.0f);
 		void SetSpriteFrame(int FrameWidth, int FrameHeight);
-
+		void SetActorScale(float NewScale);
+		void Render(class Renderer& GameRenderer);
 		sf::FloatRect GetSpriteBounds() const;
 
-		// --- Transform ---
+		// Transform
 		void SetActorLocation(const sf::Vector2f& NewLocation);
 		void SetActorRotation(const sf::Angle& NewRotation);
 		sf::Vector2f GetActorLocation() const;
@@ -47,23 +46,37 @@ namespace we
 		sf::Vector2f GetActorFowardVector() const;
 		sf::Vector2f GetActorRightVector() const;
 
-		// --- Physics ---
+		// Physics Interface (Crucial for synchronization from PhysicsSystem)
+		void SetPhysicsTransform(const b2Vec2& Position, const b2Rot& Rotation);
+
+		// Physics Management (New)
 		void SetEnablePhysics(bool Enabled);
+		b2BodyId GetPhysicsBodyId() const { return APhysicsBody; }
 
-	private:
-		World* OwningWorld;
-		bool bHasBegunPlay;
-		bool bPhysicsEnabled;
 
-		shared<sf::Texture> ATexture;
-		shared<sf::Sprite> ASprite;
+	protected:
+		// Utility
 		void CenterPivot();
+		bool IsOutOfBounds() const;
 
-		sf::Vector2i FrameSize{ 0, 0 };
-		int CurrentFrame = 0;
-		b2BodyId APhysicsBody;
+		// Physics Helpers (Internal)
 		void InitializePhysics();
 		void UninitializePhysics();
-		void UpdatePhysicsTransforms();
+		void UpdatePhysicsTransforms(); // For manually setting Box2D position from SFML
+
+	private:
+		// Core State
+		World* OwningWorld;
+		bool bHasBegunPlay;
+		bool bPendingDestroy = false;
+
+		// Rendering
+		shared<sf::Texture> ATexture;
+		shared<sf::Sprite> ASprite;
+		sf::Vector2i FrameSize;
+
+		// Physics
+		bool bPhysicsEnabled;
+		b2BodyId APhysicsBody; // The handle to the Box2D body
 	};
 }

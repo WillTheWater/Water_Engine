@@ -61,10 +61,12 @@ namespace we
 			return;
 		}
 
+		// Create the sprite, initializing it with the loaded texture
 		ASprite = shared<sf::Sprite>(new sf::Sprite(*ATexture));
 
 		ASprite->setScale({ SpriteScale, SpriteScale });
 
+		// Ensure the texture rect covers the whole texture initially
 		int TextureWidth = static_cast<int>(ATexture->getSize().x);
 		int TextureHeight = static_cast<int>(ATexture->getSize().y);
 		ASprite->setTextureRect(sf::IntRect({ 0, 0 }, { TextureWidth, TextureHeight }));
@@ -84,6 +86,7 @@ namespace we
 		}
 		else
 		{
+			// Reset to full texture size if invalid frame size is passed
 			int TextureWidth = static_cast<int>(ATexture->getSize().x);
 			int TextureHeight = static_cast<int>(ATexture->getSize().y);
 			ASprite->setTextureRect(sf::IntRect({ 0, 0 }, { TextureWidth, TextureHeight }));
@@ -101,9 +104,26 @@ namespace we
 
 	void Actor::Render(Renderer& GameRenderer)
 	{
+		// Removed !ATexture check, as ASprite requires ATexture to be set
 		if (IsPendingDestroy() || !ASprite) { return; }
 
 		GameRenderer.DrawSprite(*ASprite);
+	}
+
+	// NEW: Updates visual transform based on physics engine output
+	void Actor::SetPhysicsTransform(const b2Vec2& Position, const b2Rot& Rotation)
+	{
+		if (!ASprite) { return; }
+
+		// FIX: Changed PhysicsSystem::GetPhysiscSystem() to PhysicsSystem::Get()
+		float InverseScale = 1.0f / PhysicsSystem::Get().GetPhysicsScale();
+
+		// Convert meters (Box2D) to pixels (SFML)
+		ASprite->setPosition({ Position.x * InverseScale, Position.y * InverseScale });
+
+		// Convert radians (Box2D) to degrees (SFML)
+		// Corrected: b2Rot is a struct in v3.1, so we use the helper function to get the angle.
+		ASprite->setRotation(sf::radians(b2Rot_GetAngle(Rotation)));
 	}
 
 	bool Actor::IsOutOfBounds() const
@@ -183,21 +203,24 @@ namespace we
 	{
 		if (APhysicsBody.index1 == 0)
 		{
-			APhysicsBody = PhysicsSystem::GetPhysiscSystem().AddListener(this);
+			// FIX: Changed PhysicsSystem::GetPhysiscSystem() to PhysicsSystem::Get()
+			APhysicsBody = PhysicsSystem::Get().AddListener(this);
 		}
 	}
 	void Actor::UninitializePhysics()
 	{
 		if (APhysicsBody.index1 != 0)
 		{
-			PhysicsSystem::GetPhysiscSystem().RemoveListener(APhysicsBody);
+			// FIX: Changed PhysicsSystem::GetPhysiscSystem() to PhysicsSystem::Get()
+			PhysicsSystem::Get().RemoveListener(APhysicsBody);
 		}
 	}
 	void Actor::UpdatePhysicsTransforms()
 	{
 		if (APhysicsBody.index1 != 0)
 		{
-			float PhysicsScale = PhysicsSystem::GetPhysiscSystem().GetPhysicsScale();
+			// FIX: Changed PhysicsSystem::GetPhysiscSystem() to PhysicsSystem::Get()
+			float PhysicsScale = PhysicsSystem::Get().GetPhysicsScale();
 			b2Vec2 Position{ GetActorLocation().x * PhysicsScale, GetActorLocation().y * PhysicsScale };
 			b2Rot Rotation = b2MakeRot(GetActorRotation().asRadians());
 

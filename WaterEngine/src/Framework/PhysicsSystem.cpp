@@ -1,100 +1,136 @@
 #include "Framework/PhysicsSystem.h"
 #include "Framework/Actor.h"
+#include "Framework/Core.h"
 
 namespace we
 {
-	unique<PhysicsSystem> PhysicsSystem::PhysicsSysm{ nullptr };
+	unique<PhysicsSystem> PhysicsSystem::Instance{ nullptr };
 
-	PhysicsSystem::PhysicsSystem()
-		: PhysicsScale{ 0.1f },
-		VelocityIteration{4}
+	PhysicsSystem& PhysicsSystem::Get()
 	{
-		WorldDef = b2DefaultWorldDef();
-		WorldDef.gravity = { 0.0f, 0.f }; // { 0.f, -9.8f } Default Gravity
-		PhysicsWorld = b2CreateWorld(&WorldDef);
+		if (!Instance)
+		{
+			Instance = unique<PhysicsSystem>(new PhysicsSystem());
+		}
+		return *Instance;
 	}
 
-	PhysicsSystem& PhysicsSystem::GetPhysiscSystem()
+	PhysicsSystem::PhysicsSystem()
+		: PhysicsScale{ 0.01f }, // 100 pixels = 1 meter
+		VelocityIterations{ 4 }
 	{
-		if (!PhysicsSysm)
+		LOG("PhysicsSystem: --- Initializing Box2D v3.1 ---");
+
+		// 1. Get the default definition (CRITICAL in v3)
+		WorldDef = b2DefaultWorldDef();
+
+		// 2. Customize gravity (optional, but good for testing)
+		WorldDef.gravity = { 0.0f, 9.8f };
+
+		// 3. Create the world handle
+		PhysicsWorld = b2CreateWorld(&WorldDef);
+
+		if (b2World_IsValid(PhysicsWorld))
 		{
-			PhysicsSysm = std::move(unique<PhysicsSystem>{new PhysicsSystem});
+			LOG("PhysicsSystem: [SUCCESS] World Created. ID: %d", PhysicsWorld.index1);
 		}
-		return *PhysicsSysm;
+		else
+		{
+			LOG("PhysicsSystem: [FATAL] Failed to create World.");
+		}
+	}
+
+	PhysicsSystem::~PhysicsSystem()
+	{
+		if (b2World_IsValid(PhysicsWorld))
+		{
+			b2DestroyWorld(PhysicsWorld);
+			LOG("PhysicsSystem: World Destroyed.");
+		}
 	}
 
 	void PhysicsSystem::Step(float DeltaTime)
 	{
-		if (!b2World_IsValid(PhysicsWorld)) { return; } 
+		if (!b2World_IsValid(PhysicsWorld)) return;
 
-		int subStepCount = VelocityIteration; 
-		b2World_Step(PhysicsWorld, DeltaTime, subStepCount);
+		// The v3 Step function
+		b2World_Step(PhysicsWorld, DeltaTime, VelocityIterations);
+	}
 
-		PhysicsEvents = b2World_GetContactEvents(PhysicsWorld);
-
+	bool PhysicsSystem::IsWorldValid() const
+	{
+		return b2World_IsValid(PhysicsWorld);
 	}
 
 	b2BodyId PhysicsSystem::AddListener(Actor* Listener)
 	{
-		if (!Listener || Listener->IsPendingDestroy()) { return b2_nullBodyId; }
+		if (!Listener || Listener->IsPendingDestroy() || !IsWorldValid()) { return b2_nullBodyId; }
 
-        b2BodyDef bodyDef = b2DefaultBodyDef();
-        bodyDef.type = b2_dynamicBody;
-        bodyDef.position = {
-            Listener->GetActorLocation().x * GetPhysicsScale(),
-            Listener->GetActorLocation().y * GetPhysicsScale()
-        };
+		float pScale = GetPhysicsScale();
 
-        bodyDef.rotation = b2MakeRot((Listener->GetActorRotation().asRadians()));
+		// --- 1. Define and Create Body ---
+		b2BodyDef bodyDef = b2DefaultBodyDef();
+		bodyDef.type = b2_dynamicBody; // Start with dynamic body for movement/gravity testing
+		bodyDef.position = {
+			Listener->GetActorLocation().x * pScale,
+			Listener->GetActorLocation().y * pScale
+		};
+		bodyDef.rotation = b2MakeRot(Listener->GetActorRotation().asRadians());
 
-        bodyDef.userData = Listener;
+		// Store the Actor pointer in Box2D's userData for retrieval during synchronization/collisions
+		bodyDef.userData = Listener;
 
-        b2BodyId bodyId = b2CreateBody(PhysicsWorld, &bodyDef);
+		b2BodyId bodyId = b2CreateBody(PhysicsWorld, &bodyDef);
 
-        if (!b2Body_IsValid(bodyId))
-            return b2_nullBodyId;
-
-        auto bounds = Listener->GetSpriteBounds();
-        b2Polygon boxShape = b2MakeBox(
-            bounds.size.x * 0.5f * GetPhysicsScale(),
-            bounds.size.y * 0.5f * GetPhysicsScale()
-        );
-
-        b2ShapeDef shapeDef = b2DefaultShapeDef();
-        shapeDef.density = 1.0f;
-        shapeDef.material = b2DefaultSurfaceMaterial();
-        shapeDef.isSensor = true;
-        shapeDef.userData = Listener;
-
-        b2CreatePolygonShape(bodyId, &shapeDef, &boxShape);
-
-        return bodyId;
-	}
-	void PhysicsSystem::RemoveListener(b2BodyId PhysicsBodyToRemove)
-	{
-		//TODO: Remove PB
-	}
-	bool PhysicsSystem::BeginOverlap(b2BodyId ActorA, b2BodyId ActorB)
-	{
-
-		for (int i = 0; i < PhysicsEvents.beginCount; ++i)
+		if (!b2Body_IsValid(bodyId))
 		{
-			const auto& ev = PhysicsEvents.beginEvents[i];
-			b2BodyId evBodyA = b2Shape_GetBody(ev.shapeIdA);
-			b2BodyId evBodyB = b2Shape_GetBody(ev.shapeIdB);
-
-			if ((evBodyA.index1 == ActorA.index1 && evBodyB.index1 == ActorB.index1) ||
-				(evBodyA.index1 == ActorB.index1 && evBodyB.index1 == ActorA.index1))
-			{
-				LOG("Begin Overlap")
-				return true;
-			}
+			// FIX: Removed GetName().c_str() since Actor doesn't define GetName() yet.
+			LOG("PhysicsSystem: Failed to create body for an Actor.");
+			return b2_nullBodyId;
 		}
 
-		return false;
+		// --- 2. Define and Create Shape (Collider) ---
+		sf::FloatRect bounds = Listener->GetSpriteBounds();
+
+		// Box2D uses half-extents, so divide the sprite bounds by 2, and then scale.
+		b2Polygon boxShape = b2MakeBox(
+			bounds.size.x * 0.5f * pScale,
+			bounds.size.y * 0.5f * pScale
+		);
+
+		b2ShapeDef shapeDef = b2DefaultShapeDef();
+		shapeDef.density = 1.0f;
+		shapeDef.material = b2DefaultSurfaceMaterial();
+
+		// Set to false for solid collision/gravity effects
+		shapeDef.isSensor = false;
+		shapeDef.userData = Listener;
+
+		b2CreatePolygonShape(bodyId, &shapeDef, &boxShape);
+
+		// --- 3. Track Body ---
+		Bodies.push_back(bodyId);
+		// FIX: Removed GetName().c_str() since Actor doesn't define GetName() yet.
+		LOG("PhysicsSystem: Added body %u for an Actor.", bodyId.index1);
+
+		return bodyId;
 	}
-	bool PhysicsSystem::EndOverlap(b2BodyId ActorA, b2BodyId ActorB)
+
+	void PhysicsSystem::RemoveListener(b2BodyId PhysicsBodyToRemove)
 	{
-		return false;
+		if (!b2Body_IsValid(PhysicsBodyToRemove) || !IsWorldValid()) { return; }
+
+		// 1. Remove from our tracking vector (CRITICAL for v3.1)
+		// Replaced std::erase_if (C++20) with C++17 Erase-Remove Idiom
+		Bodies.erase(
+			std::remove_if(Bodies.begin(), Bodies.end(), [&](b2BodyId id) {
+				return id.index1 == PhysicsBodyToRemove.index1;
+				}),
+			Bodies.end()
+		);
+
+		// 2. Destroy the body in the Box2D world
+		b2DestroyBody(PhysicsBodyToRemove);
+		LOG("PhysicsSystem: Destroyed body %u.", PhysicsBodyToRemove.index1);
 	}
 }
