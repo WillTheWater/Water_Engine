@@ -41,8 +41,8 @@ namespace we
 			{
 				AccumulatedTime -= TargetDeltaTime;
 				TickGlobal(TargetDeltaTime);
-				RendererCycle();
 			}
+			RendererCycle();
 		}
 	}
 	void Application::TickGlobal(float DeltaTime)
