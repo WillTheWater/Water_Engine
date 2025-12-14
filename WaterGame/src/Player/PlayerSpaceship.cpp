@@ -11,6 +11,11 @@ namespace we
 	{
 	}
 
+	void PlayerSpaceship::BeginPlay()
+	{
+		Actor::BeginPlay();
+	}
+
 	void PlayerSpaceship::Tick(float DeltaTime)
 	{
 		Spaceship::Tick(DeltaTime);
@@ -36,6 +41,7 @@ namespace we
 		{
 			MovementInput.x = 1.f;
 		}
+		ClampToWindow();
 		NormalizeInput();
 	}
 
@@ -48,5 +54,21 @@ namespace we
 	{
 		SetVelocity(MovementInput * Speed);
 		MovementInput.x = MovementInput.y = 0.f;
+	}
+
+	void PlayerSpaceship::ClampToWindow()
+	{
+		const sf::Vector2u windowSize = GetWindowSize();
+		sf::Vector2f position = GetActorLocation();
+
+		const sf::FloatRect bounds = GetSpriteBounds();
+
+		const float halfWidth = bounds.size.x * 0.5f;
+		const float halfHeight = bounds.size.y * 0.5f;
+
+		position.x = clamp(position.x, halfWidth, windowSize.x - halfWidth);
+		position.y = clamp(position.y, halfHeight, windowSize.y - halfHeight);
+
+		SetActorLocation(position);
 	}
 }

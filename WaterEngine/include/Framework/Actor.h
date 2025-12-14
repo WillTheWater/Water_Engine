@@ -30,6 +30,8 @@ namespace we
 		void SetActorScale(float NewScale);
 		void Render(class Renderer& GameRenderer);
 		sf::FloatRect GetSpriteBounds() const;
+		sf::Vector2u GetTextureSize() const { return ATexture->getSize(); }
+		sf::Vector2f GetSpriteScale() const { return ASprite->getScale(); }
 
 		void SetActorLocation(const sf::Vector2f& NewLocation);
 		void SetActorRotation(const sf::Angle& NewRotation);

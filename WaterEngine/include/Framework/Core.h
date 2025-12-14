@@ -12,6 +12,12 @@ namespace we
 	using string = std::string;
 
 	template<typename T>
+	inline T clamp(const T& value, const T& min, const T& max)
+	{
+		return std::clamp(value, min, max);
+	}
+
+	template<typename T>
 	using unique = std::unique_ptr<T>;
 
 	template<typename T>

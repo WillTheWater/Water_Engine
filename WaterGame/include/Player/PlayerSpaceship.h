@@ -8,12 +8,14 @@ namespace we
 	public:
 		PlayerSpaceship(World* OwningWorld, const string& TexturePath = "SpaceShooterRedux/PNG/playerShip1_orange.png");
 
+		virtual void BeginPlay() override;
 		virtual void Tick(float DeltaTime) override;
 		void SetSpeed(float NewSpeed) { Speed = NewSpeed; }
 	private:
 		void HandleInput();
 		void NormalizeInput();
 		void ConsumeInput(float DeltaTime);
+		void ClampToWindow();
 		sf::Vector2f MovementInput;
 		float Speed;
 	};
