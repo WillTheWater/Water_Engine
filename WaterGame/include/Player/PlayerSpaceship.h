@@ -3,6 +3,8 @@
 
 namespace we
 {
+	class BulletShooter;
+
 	class PlayerSpaceship : public Spaceship
 	{
 	public:
@@ -10,6 +12,7 @@ namespace we
 
 		virtual void BeginPlay() override;
 		virtual void Tick(float DeltaTime) override;
+		virtual void Shoot() override;
 		void SetSpeed(float NewSpeed) { Speed = NewSpeed; }
 	private:
 		void HandleInput();
@@ -18,5 +21,7 @@ namespace we
 		void ClampToWindow();
 		sf::Vector2f MovementInput;
 		float Speed;
+
+		unique<BulletShooter> PlayerShooter;
 	};
 }

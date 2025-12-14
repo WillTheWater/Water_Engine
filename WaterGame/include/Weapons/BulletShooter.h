@@ -1,20 +1,19 @@
 #pragma once
-
 #include "SFML/System.hpp"
-#include "Weapons/Ranged.h"
+#include "Weapons/Shooter.h"
 
 namespace we
 {
-	class Gun : public RangedWeapon
+	class BulletShooter : public Shooter
 	{
 	public:
-		Gun(Actor* OwningActor, float CooldownTime = 0.8f);
+		BulletShooter(Actor* OwningActor, float CooldownTime = 0.3f);
 
 		virtual bool IsOnCooldown() const override;
 
 	private:
 		virtual void ShootImplimentation() override;
-		sf::Clock CooldownTimer;
-		float CooldownTime;
+		sf::Clock CooldownClock;
+		float Cooldown;
 	};
 }

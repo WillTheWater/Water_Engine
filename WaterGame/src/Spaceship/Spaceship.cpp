@@ -8,11 +8,18 @@ namespace we
 	{
 
 	}
+
 	void Spaceship::Tick(float DeltaTime)
 	{
 		Actor::Tick(DeltaTime);
 		AddActorLocationOffset(GetVelocity() * DeltaTime);
 	}
+
+	void Spaceship::Shoot()
+	{
+
+	}
+
 	void Spaceship::SetVelocity(sf::Vector2f NewVelocity)
 	{
 		Velocity = NewVelocity;

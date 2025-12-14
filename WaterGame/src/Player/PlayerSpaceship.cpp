@@ -1,6 +1,7 @@
 #include "Player/PlayerSpaceship.h"
 #include "SFML/System.hpp"
 #include "Framework/MathUtility.h"
+#include "Weapons/BulletShooter.h"
 
 namespace we
 {
@@ -8,6 +9,7 @@ namespace we
 		: Spaceship{OwningWorld, TexturePath}
 		, MovementInput{}
 		, Speed{700.f}
+		, PlayerShooter{ new BulletShooter{this} }
 	{
 	}
 
@@ -21,6 +23,14 @@ namespace we
 		Spaceship::Tick(DeltaTime);
 		HandleInput();
 		ConsumeInput(DeltaTime);
+	}
+
+	void PlayerSpaceship::Shoot()
+	{
+		if (PlayerShooter)
+		{
+			PlayerShooter->Shoot();
+		}
 	}
 
 	void PlayerSpaceship::HandleInput()
@@ -43,6 +53,10 @@ namespace we
 		}
 		ClampToWindow();
 		NormalizeInput();
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space))
+		{
+			Shoot();
+		}
 	}
 
 	void PlayerSpaceship::NormalizeInput()
