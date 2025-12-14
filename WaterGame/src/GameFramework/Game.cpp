@@ -18,8 +18,9 @@ namespace we
 		AssetManager::GetAssetManager().SetAssetRootDirctory(GetAssetDirectory());
 		weak<World> NewWorld = LoadWorld<World>();
 		NewWorld.lock()->SpawnActor<Actor>();
-		TestPlayer = NewWorld.lock()->SpawnActor<PlayerCharacter>();
-		TestPlayer.lock()->SetActorLocation(sf::Vector2f{1920/2,1080/2});
+		TestPlayer = NewWorld.lock()->SpawnActor<Actor>();
+		TestPlayer.lock()->SetTexture("SpaceShooterRedux/PNG/playerShip1_orange.png");
+		TestPlayer.lock()->SetActorLocation(sf::Vector2f{ static_cast<float>(GetWindowSize().x / 2), static_cast<float>(GetWindowSize().y / 2) });
 	}
 	void Game::Tick(float DeltaTime)
 	{

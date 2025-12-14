@@ -15,6 +15,6 @@ namespace we
 		virtual void Tick(float DeltaTime) override;
 
 	private:
-		weak<PlayerCharacter> TestPlayer;
+		weak<Actor> TestPlayer;
 	};
 }

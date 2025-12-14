@@ -45,6 +45,7 @@ namespace we
 			RendererCycle();
 		}
 	}
+
 	void Application::TickGlobal(float DeltaTime)
 	{
 		Tick(DeltaTime);
@@ -66,6 +67,7 @@ namespace we
 			}
 		}
 	}
+
 	void Application::RendererCycle()
 	{
 		if (!GameRenderer) return;
@@ -74,6 +76,7 @@ namespace we
 		Render(*GameRenderer);
 		GameRenderer->Display();
 	}
+
 	void Application::Render(Renderer& GameRenderer)
 	{
 		if (CurrentWorld)
@@ -81,6 +84,7 @@ namespace we
 			CurrentWorld->Render(GameRenderer);
 		}
 	}
+
 	void Application::Tick(float DeltaTime)
 	{
 	}
