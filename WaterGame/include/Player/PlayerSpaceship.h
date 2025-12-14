@@ -12,6 +12,7 @@ namespace we
 		void SetSpeed(float NewSpeed) { Speed = NewSpeed; }
 	private:
 		void HandleInput();
+		void NormalizeInput();
 		void ConsumeInput(float DeltaTime);
 		sf::Vector2f MovementInput;
 		float Speed;

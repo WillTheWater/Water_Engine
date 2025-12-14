@@ -1,12 +1,13 @@
 #include "Player/PlayerSpaceship.h"
 #include "SFML/System.hpp"
+#include "Framework/MathUtility.h"
 
 namespace we
 {
 	PlayerSpaceship::PlayerSpaceship(World* OwningWorld, const string& TexturePath)
 		: Spaceship{OwningWorld, TexturePath}
 		, MovementInput{}
-		, Speed{200.f}
+		, Speed{700.f}
 	{
 	}
 
@@ -35,6 +36,12 @@ namespace we
 		{
 			MovementInput.x = 1.f;
 		}
+		NormalizeInput();
+	}
+
+	void PlayerSpaceship::NormalizeInput()
+	{
+		Normalize(MovementInput);
 	}
 
 	void PlayerSpaceship::ConsumeInput(float DeltaTime)
