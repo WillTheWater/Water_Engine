@@ -4,20 +4,11 @@ add_executable(${WATER_GAME}
     ${CMAKE_CURRENT_SOURCE_DIR}/include/GameFramework/Game.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/GameFramework/Game.cpp
 
-    ${CMAKE_CURRENT_SOURCE_DIR}/include/Character/Character.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Character/Character.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/Spaceship/Spaceship.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Spaceship/Spaceship.cpp
 
-    ${CMAKE_CURRENT_SOURCE_DIR}/include/Character/Player.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Character/Player.cpp
-
-    ${CMAKE_CURRENT_SOURCE_DIR}/include/Weapons/Ranged.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Weapons/Ranged.cpp
-
-    ${CMAKE_CURRENT_SOURCE_DIR}/include/Weapons/Gun.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Weapons/Gun.cpp
-
-    ${CMAKE_CURRENT_SOURCE_DIR}/include/Weapons/Projectile.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Weapons/Projectile.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/Player/PlayerSpaceship.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Player/PlayerSpaceship.cpp
 )
 
 target_include_directories(${WATER_GAME} PUBLIC
