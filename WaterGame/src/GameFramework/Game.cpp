@@ -20,7 +20,6 @@ namespace we
 		NewWorld.lock()->SpawnActor<Actor>();
 		TestPlayer = NewWorld.lock()->SpawnActor<PlayerSpaceship>();
 		TestPlayer.lock()->SetActorLocation(sf::Vector2f{ static_cast<float>(GetWindowSize().x / 2), static_cast<float>(GetWindowSize().y / 2) });
-		TestPlayer.lock()->SetVelocity({ 0.f, -100 });
 	}
 	void Game::Tick(float DeltaTime)
 	{
