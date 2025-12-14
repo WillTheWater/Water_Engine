@@ -16,6 +16,7 @@ namespace we
 		bPhysicsEnabled{ false },
 		APhysicsBody{ b2_nullBodyId }
 	{
+		SetTexture(TexturePath);
 	}
 
 	Actor::~Actor()
@@ -55,19 +56,11 @@ namespace we
 	void Actor::SetTexture(const string& TexturePath, float SpriteScale)
 	{
 		ATexture = AssetManager::GetAssetManager().LoadTexture(TexturePath);
-		if (!ATexture)
-		{
-			LOG("Actor: Failed to load texture: %s", TexturePath.c_str());
-			return;
-		}
+		if (!ATexture) { return; }
 
-		ASprite = shared<sf::Sprite>(new sf::Sprite(*ATexture));
+		ASprite = std::make_shared<sf::Sprite>(*ATexture);
 
 		ASprite->setScale({ SpriteScale, SpriteScale });
-
-		int TextureWidth = static_cast<int>(ATexture->getSize().x);
-		int TextureHeight = static_cast<int>(ATexture->getSize().y);
-		ASprite->setTextureRect(sf::IntRect({ 0, 0 }, { TextureWidth, TextureHeight }));
 
 		CenterPivot();
 	}

@@ -15,34 +15,28 @@ namespace we
 
 	shared<sf::Texture> AssetManager::LoadTexture(const std::string& TexturePath)
 	{
-		auto FoundTexture = LoadedTextures.find(TexturePath);
-		if (FoundTexture != LoadedTextures.end())
-		{
-			return FoundTexture->second;
-		}
-		shared<sf::Texture> NewTexture{ new sf::Texture };
-		if (NewTexture->loadFromFile(RootDirectory + TexturePath))
-		{
-			LoadedTextures.insert({ TexturePath, NewTexture });
-			return NewTexture;
-		}
-		return shared<sf::Texture> {nullptr};
+		return LoadAsset<sf::Texture>(TexturePath, LoadedTextures,
+			[](sf::Texture& tex, const string& path)
+			{
+				return tex.loadFromFile(path);
+			}
+		);
+	}
+
+	shared<sf::Font> AssetManager::LoadFont(const string& FontPath)
+	{
+		return LoadAsset<sf::Font>(FontPath, LoadedFonts,
+			[](sf::Font& font, const string& path)
+			{
+				return font.openFromFile(path);
+			}
+		);
 	}
 
 	void AssetManager::GarbageCollectionCycle()
 	{
-		for (auto i = LoadedTextures.begin(); i != LoadedTextures.end();)
-		{
-			if (i->second.unique())
-			{
-				LOG("Texture Collected: %s", i->first.c_str())
-				i = LoadedTextures.erase(i);
-			}
-			else
-			{
-				i++;
-			}
-		}
+		GarbageCollect(LoadedTextures);
+		GarbageCollect(LoadedFonts);
 	}
 
 	void AssetManager::SetAssetRootDirctory(const std::string& Directory)

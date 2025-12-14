@@ -2,7 +2,7 @@
 #include "Framework/World.h"
 #include "Framework/Actor.h"
 #include "Framework/Assetmanager.h"
-#include "Spaceship/Spaceship.h"
+#include "Player/PlayerSpaceship.h"
 #include "config.h"
 
 we::Application* GetApplication()
@@ -18,8 +18,7 @@ namespace we
 		AssetManager::GetAssetManager().SetAssetRootDirctory(GetAssetDirectory());
 		weak<World> NewWorld = LoadWorld<World>();
 		NewWorld.lock()->SpawnActor<Actor>();
-		TestPlayer = NewWorld.lock()->SpawnActor<Spaceship>();
-		TestPlayer.lock()->SetTexture("SpaceShooterRedux/PNG/playerShip1_orange.png");
+		TestPlayer = NewWorld.lock()->SpawnActor<PlayerSpaceship>();
 		TestPlayer.lock()->SetActorLocation(sf::Vector2f{ static_cast<float>(GetWindowSize().x / 2), static_cast<float>(GetWindowSize().y / 2) });
 		TestPlayer.lock()->SetVelocity({ 0.f, -100 });
 	}
