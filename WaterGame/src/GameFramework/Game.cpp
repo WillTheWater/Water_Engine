@@ -15,7 +15,7 @@ namespace we
 	Game::Game()
 		: Application{1920, 1080, "Game Window", sf::Style::Default}
 	{
-		AssetManager::GetAssetManager().SetAssetRootDirctory(GetAssetDirectory());
+		AssetManager::Get().SetAssetRootDirctory(GetAssetDirectory());
 		weak<World> NewWorld = LoadWorld<World>();
 		NewWorld.lock()->SpawnActor<Actor>();
 		TestPlayer = NewWorld.lock()->SpawnActor<PlayerSpaceship>();

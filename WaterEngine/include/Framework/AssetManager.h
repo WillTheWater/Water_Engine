@@ -7,7 +7,7 @@ namespace we
 	class AssetManager
 	{
 	public:
-		static AssetManager& GetAssetManager();
+		static AssetManager& Get();
 		shared<sf::Texture> LoadTexture(const string& TexturePath);
 		shared<sf::Font> LoadFont(const string& FontPath);
 		void GarbageCollectionCycle();

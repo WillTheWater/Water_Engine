@@ -4,7 +4,7 @@ namespace we
 {
 	unique<AssetManager> AssetManager::UAssetManager{nullptr};
 
-	AssetManager& AssetManager::GetAssetManager()
+	AssetManager& AssetManager::Get()
 	{
 		if (!UAssetManager)
 		{

@@ -55,12 +55,10 @@ namespace we
 			CurrentWorld->TickGlobal(DeltaTime);
 		}
 
-		PhysicsSystem::Get().Step(DeltaTime);
-
 		if (GarbageCollectionClock.getElapsedTime().asSeconds() >= CollectionInterval)
 		{
 			GarbageCollectionClock.restart();
-			AssetManager::GetAssetManager().GarbageCollectionCycle();
+			AssetManager::Get().GarbageCollectionCycle();
 			if (CurrentWorld)
 			{
 				CurrentWorld->GarbageCollectionCycle();

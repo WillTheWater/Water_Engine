@@ -1,7 +1,6 @@
 #pragma once
 #include "Framework/Core.h"
 #include <SFML/Graphics.hpp>
-#include <box2d/box2d.h>
 
 namespace we
 {
@@ -45,18 +44,11 @@ namespace we
 		sf::VertexArray ForwardVectorDebugShape(float Length = 150.f, sf::Color Color = sf::Color::Red) const;
 		void SetShouldDrawDebugShapes(bool ToDraw) { bDrawDebug = ToDraw; }
 
-		void SetPhysicsTransform(const b2Vec2& Position, const b2Rot& Rotation);
-
 		void SetEnablePhysics(bool Enabled);
-		b2BodyId GetPhysicsBodyId() const { return APhysicsBody; }
 
 	protected:
 		void CenterPivot();
 		bool IsOutOfBounds() const;
-
-		void InitializePhysics();
-		void UninitializePhysics();
-		void UpdatePhysicsTransforms();
 
 	private:
 		World* OwningWorld;
@@ -70,6 +62,5 @@ namespace we
 		sf::Vector2f LocalForward = { 1.f, 0.f };
 
 		bool bPhysicsEnabled;
-		b2BodyId APhysicsBody;
 	};
 }
