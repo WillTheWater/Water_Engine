@@ -1,5 +1,7 @@
 #include "Weapons/BulletShooter.h"
 #include "Framework/Core.h"
+#include "Weapons/Bullet.h"
+#include "Framework/World.h"
 
 namespace we
 {
@@ -22,7 +24,8 @@ namespace we
 	void BulletShooter::ShootImplimentation()
 	{
 		CooldownClock.restart();
-		LOG("Shoot")
-
+		weak<Bullet> NewBullet = GetOwner()->GetWorld()->SpawnActor<Bullet>(GetOwner(), "SpaceShooterRedux/PNG/Lasers/laserBlue16.png");
+		NewBullet.lock()->SetActorLocation(GetOwner()->GetActorLocation() + sf::Vector2f{0.f, -50.f});
+		NewBullet.lock()->SetActorRotation(GetOwner()->GetActorRotation());
 	}
 }

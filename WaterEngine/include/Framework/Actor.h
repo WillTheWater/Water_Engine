@@ -39,14 +39,16 @@ namespace we
 		sf::Angle GetActorRotation() const;
 		void AddActorLocationOffset(const sf::Vector2f& Offset);
 		void AddActorRotationOffset(const sf::Angle& RotOffset);
+		void SetLocalForwardVector(sf::Vector2f& Forward);
 		sf::Vector2f GetActorFowardVector() const;
 		sf::Vector2f GetActorRightVector() const;
+		sf::VertexArray ForwardVectorDebugShape(float Length = 150.f, sf::Color Color = sf::Color::Red) const;
+		void SetShouldDrawDebugShapes(bool ToDraw) { bDrawDebug = ToDraw; }
 
 		void SetPhysicsTransform(const b2Vec2& Position, const b2Rot& Rotation);
 
 		void SetEnablePhysics(bool Enabled);
 		b2BodyId GetPhysicsBodyId() const { return APhysicsBody; }
-
 
 	protected:
 		void CenterPivot();
@@ -60,10 +62,12 @@ namespace we
 		World* OwningWorld;
 		bool bHasBegunPlay;
 		bool bPendingDestroy = false;
+		bool bDrawDebug = false;
 
 		shared<sf::Texture> ATexture;
 		shared<sf::Sprite> ASprite;
 		sf::Vector2i FrameSize;
+		sf::Vector2f LocalForward = { 1.f, 0.f };
 
 		bool bPhysicsEnabled;
 		b2BodyId APhysicsBody;

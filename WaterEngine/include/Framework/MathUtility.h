@@ -5,6 +5,7 @@
 namespace we
 {
 	sf::Vector2f RotationToVector(const sf::Angle Rotation);
+	sf::Angle VectorToRotation(const sf::Vector2f Vector);
 
 	template<typename T>
 	float GetVectorLength(const sf::Vector2<T>& Vector)

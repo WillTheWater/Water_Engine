@@ -14,6 +14,7 @@ namespace we
 		void Display();
 
 		void DrawSprite(const sf::Sprite& SpriteToDraw);
+		void DrawDebugShape(const sf::VertexArray& Vertices);
 
 	private:
 		sf::RenderWindow& Window;

@@ -16,6 +16,8 @@ namespace we
 	void PlayerSpaceship::BeginPlay()
 	{
 		Actor::BeginPlay();
+		SetLocalForwardVector(sf::Vector2f{ 0,-1 });
+		SetShouldDrawDebugShapes(false);
 	}
 
 	void PlayerSpaceship::Tick(float DeltaTime)

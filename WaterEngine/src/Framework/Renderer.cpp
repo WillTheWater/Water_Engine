@@ -21,4 +21,8 @@ namespace we
 	{
 		Window.draw(SpriteToDraw);
 	}
+	void Renderer::DrawDebugShape(const sf::VertexArray& Vertices)
+	{
+		Window.draw(Vertices);
+	}
 }

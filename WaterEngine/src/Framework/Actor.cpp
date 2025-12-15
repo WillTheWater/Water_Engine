@@ -97,6 +97,10 @@ namespace we
 		if (IsPendingDestroy() || !ASprite) { return; }
 
 		GameRenderer.DrawSprite(*ASprite);
+		if (bDrawDebug)
+		{
+			GameRenderer.DrawDebugShape(ForwardVectorDebugShape());
+		}
 	}
 
 	void Actor::SetPhysicsTransform(const b2Vec2& Position, const b2Rot& Rotation)
@@ -123,44 +127,106 @@ namespace we
 		}
 		return false;
 	}
+
 	void Actor::SetActorLocation(const sf::Vector2f& NewLocation)
 	{
 		if (!ASprite) { return; }
 		ASprite->setPosition(NewLocation);
 		UpdatePhysicsTransforms();
 	}
+
 	void Actor::SetActorRotation(const sf::Angle& NewRotation)
 	{
 		if (!ASprite) { return; }
 		ASprite->setRotation(NewRotation);
 		UpdatePhysicsTransforms();
 	}
+
 	sf::Vector2f Actor::GetActorLocation() const
 	{
 		if (!ASprite) { return sf::Vector2f{}; }
 		return ASprite->getPosition();
 	}
+
 	sf::Angle Actor::GetActorRotation() const
 	{
 		if (!ASprite) { return sf::Angle{}; }
 		return ASprite->getRotation();
 	}
+
 	void Actor::AddActorLocationOffset(const sf::Vector2f& Offset)
 	{
 		SetActorLocation(GetActorLocation() + Offset);
 	}
+
 	void Actor::AddActorRotationOffset(const sf::Angle& RotOffset)
 	{
 		SetActorRotation(GetActorRotation() + RotOffset);
 	}
+
+	void Actor::SetLocalForwardVector(sf::Vector2f& Forward)
+	{
+		LocalForward = Normalize(Forward);
+	}
+
 	sf::Vector2f Actor::GetActorFowardVector() const
 	{
-		return RotationToVector(GetActorRotation());
+		const float r = GetActorRotation().asRadians();
+
+		const float cosR = std::cos(r);
+		const float sinR = std::sin(r);
+
+		// 2D rotation matrix
+		return
+		{
+			LocalForward.x * cosR - LocalForward.y * sinR,
+			LocalForward.x * sinR + LocalForward.y * cosR
+		};
 	}
+
 	sf::Vector2f Actor::GetActorRightVector() const
 	{
 		return RotationToVector(GetActorRotation() + sf::degrees(90.f));
 	}
+
+	sf::VertexArray Actor::ForwardVectorDebugShape(float Length, sf::Color Color) const
+	{
+		const sf::Vector2f start = GetActorLocation();
+		const sf::Vector2f forward = GetActorFowardVector();
+		const sf::Vector2f end = start + forward * Length;
+
+		sf::VertexArray arrow(sf::PrimitiveType::Lines);
+
+		arrow.append({ start, Color });
+		arrow.append({ end,   Color });
+
+		constexpr float HeadSize = 10.f;
+		constexpr float HeadAngle = 25.f * 3.14159265f / 180.f;
+
+		const float angle = std::atan2(forward.y, forward.x);
+
+		const sf::Vector2f left =
+		{
+			end.x - HeadSize * std::cos(angle - HeadAngle),
+			end.y - HeadSize * std::sin(angle - HeadAngle)
+		};
+
+		const sf::Vector2f right =
+		{
+			end.x - HeadSize * std::cos(angle + HeadAngle),
+			end.y - HeadSize * std::sin(angle + HeadAngle)
+		};
+
+		arrow.append({ end,  Color });
+		arrow.append({ left, Color });
+
+		arrow.append({ end,  Color });
+		arrow.append({ right, Color });
+
+		return arrow;
+	}
+
+
 	sf::FloatRect Actor::GetSpriteBounds() const
 	{
 		return ASprite->getGlobalBounds();
@@ -177,12 +243,14 @@ namespace we
 			UninitializePhysics();
 		}
 	}
+
 	void Actor::CenterPivot()
 	{
 		if (!ASprite) { return; }
 		sf::FloatRect localBounds = ASprite->getLocalBounds();
 		ASprite->setOrigin({ localBounds.size.x / 2.f, localBounds.size.y / 2.f });
 	}
+
 	void Actor::InitializePhysics()
 	{
 		if (APhysicsBody.index1 == 0)
@@ -190,6 +258,7 @@ namespace we
 			APhysicsBody = PhysicsSystem::Get().AddListener(this);
 		}
 	}
+
 	void Actor::UninitializePhysics()
 	{
 		if (APhysicsBody.index1 != 0)
@@ -197,6 +266,7 @@ namespace we
 			PhysicsSystem::Get().RemoveListener(APhysicsBody);
 		}
 	}
+
 	void Actor::UpdatePhysicsTransforms()
 	{
 		if (APhysicsBody.index1 != 0)
