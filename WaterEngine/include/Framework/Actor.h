@@ -1,12 +1,15 @@
 #pragma once
 #include "Framework/Core.h"
 #include <SFML/Graphics.hpp>
+#include "Framework/Object.h"
+
+class b2Body;
 
 namespace we
 {
 	class World;
 
-	class Actor
+	class Actor : public Object
 	{
 	public:
 		Actor(World* OwningWorld, const string& TexturePath = "");
@@ -17,9 +20,9 @@ namespace we
 
 		virtual void BeginPlay();
 		virtual void Tick(float DeltaTime);
+		virtual void Destroy() override;
 
 		bool IsPendingDestroy() const { return bPendingDestroy; }
-		void Destroy() { bPendingDestroy = true; }
 
 		World* GetWorld() const { return OwningWorld; }
 		sf::Vector2u GetWindowSize() const;
@@ -44,7 +47,9 @@ namespace we
 		sf::VertexArray ForwardVectorDebugShape(float Length = 150.f, sf::Color Color = sf::Color::Red) const;
 		void SetShouldDrawDebugShapes(bool ToDraw) { bDrawDebug = ToDraw; }
 
-		void SetEnablePhysics(bool Enabled);
+		void SetPhysicsEnabled(bool Enabled);
+		virtual void OnActorBeginOverlap(Actor* OtherActor);
+		virtual void OnActorEndOverlap(Actor* OtherActor);
 
 	protected:
 		void CenterPivot();
@@ -61,6 +66,10 @@ namespace we
 		sf::Vector2i FrameSize;
 		sf::Vector2f LocalForward = { 1.f, 0.f };
 
+		b2Body* PhysicsBody;
+		void InitialziePhysics();
+		void UninitialziePhysics();
+		void UpdatePhysicsBodyTransform();
 		bool bPhysicsEnabled;
 	};
 }

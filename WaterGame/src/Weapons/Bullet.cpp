@@ -10,6 +10,12 @@ namespace we
 	{
 	}
 
+	void Bullet::BeginPlay()
+	{
+		Actor::BeginPlay();
+		SetPhysicsEnabled(true);
+	}
+
 	void Bullet::Tick(float DeltaTime)
 	{
 		Actor::Tick(DeltaTime);

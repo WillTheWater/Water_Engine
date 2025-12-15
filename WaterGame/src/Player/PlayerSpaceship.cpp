@@ -17,6 +17,7 @@ namespace we
 	{
 		Actor::BeginPlay();
 		SetLocalForwardVector(sf::Vector2f{ 0,-1 });
+		SetPhysicsEnabled(true);
 		SetShouldDrawDebugShapes(false);
 	}
 

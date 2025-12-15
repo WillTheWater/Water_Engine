@@ -5,15 +5,17 @@
 #include "Framework/World.h"
 #include "Framework/PhysicsSystem.h"
 #include "Framework/Renderer.h"
+#include "box2d/b2_body.h"
 
 namespace we
 {
 	Actor::Actor(World* OwningWorld, const string& TexturePath)
-		: OwningWorld{ OwningWorld },
-		bHasBegunPlay{ false },
-		ATexture{ nullptr },
-		ASprite{ nullptr },
-		bPhysicsEnabled{ false }
+		: OwningWorld{ OwningWorld }
+		, bHasBegunPlay{ false }
+		, ATexture{ nullptr }
+		, ASprite{ nullptr }
+		, PhysicsBody{nullptr}
+		, bPhysicsEnabled{ false }
 	{
 		SetTexture(TexturePath);
 	}
@@ -45,6 +47,12 @@ namespace we
 
 	void Actor::Tick(float DeltaTime)
 	{
+	}
+
+	void Actor::Destroy()
+	{
+		UninitialziePhysics();
+		Object::Destroy();
 	}
 
 	sf::Vector2u Actor::GetWindowSize() const
@@ -116,16 +124,46 @@ namespace we
 		return false;
 	}
 
+	void Actor::InitialziePhysics()
+	{
+		if (!PhysicsBody)
+		{
+			PhysicsBody = PhysicsSystem::Get().AddListener(this);
+		}
+	}
+
+	void Actor::UninitialziePhysics()
+	{
+		if (PhysicsBody)
+		{
+			PhysicsSystem::Get().RemoveListener(PhysicsBody);
+			PhysicsBody = nullptr;
+		}
+	}
+
+	void Actor::UpdatePhysicsBodyTransform()
+	{
+		if (PhysicsBody)
+		{
+			float PhysicsScale = PhysicsSystem::Get().GetPhysicsScale();
+			b2Vec2 Pos{ GetActorLocation().x * PhysicsScale, GetActorLocation().y * PhysicsScale };
+			float Rot = GetActorRotation().asRadians();
+			PhysicsBody->SetTransform(Pos, Rot);
+		}
+	}
+
 	void Actor::SetActorLocation(const sf::Vector2f& NewLocation)
 	{
 		if (!ASprite) { return; }
 		ASprite->setPosition(NewLocation);
+		UpdatePhysicsBodyTransform();
 	}
 
 	void Actor::SetActorRotation(const sf::Angle& NewRotation)
 	{
 		if (!ASprite) { return; }
 		ASprite->setRotation(NewRotation);
+		UpdatePhysicsBodyTransform();
 	}
 
 	sf::Vector2f Actor::GetActorLocation() const
@@ -162,7 +200,6 @@ namespace we
 		const float cosR = std::cos(r);
 		const float sinR = std::sin(r);
 
-		// 2D rotation matrix
 		return
 		{
 			LocalForward.x * cosR - LocalForward.y * sinR,
@@ -212,21 +249,32 @@ namespace we
 		return arrow;
 	}
 
-
 	sf::FloatRect Actor::GetSpriteBounds() const
 	{
 		return ASprite->getGlobalBounds();
 	}
 
-	void Actor::SetEnablePhysics(bool Enabled)
+	void Actor::SetPhysicsEnabled(bool Enabled)
 	{
 		bPhysicsEnabled = Enabled;
 		if (bPhysicsEnabled)
 		{
+			InitialziePhysics();
 		}
 		else
 		{
+			UninitialziePhysics();
 		}
+	}
+
+	void Actor::OnActorBeginOverlap(Actor* OtherActor)
+	{
+		LOG("Begin Overlap")
+	}
+
+	void Actor::OnActorEndOverlap(Actor* OtherActor)
+	{
+		LOG("End Overlap")
 	}
 
 	void Actor::CenterPivot()

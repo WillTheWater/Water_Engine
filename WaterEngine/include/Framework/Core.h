@@ -5,6 +5,7 @@
 #include <map>
 #include <vector>
 #include <unordered_map>
+#include <unordered_set>
 #include <string>
 
 namespace we
@@ -31,6 +32,9 @@ namespace we
 
 	template<typename T>
 	using List = std::vector<T>;
+	
+	template<typename T>
+	using Set = std::unordered_set<T>;
 
 	template<typename Key, typename Type, typename P = std::less<Key>>
 	using Map = std::map<Key, Type, P>;

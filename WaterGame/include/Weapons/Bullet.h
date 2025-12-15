@@ -8,6 +8,7 @@ namespace we
 	public:
 		Bullet(World* OwningWorld, Actor* OwningActor, const string TexturePath, float Velocity = 1000.f, float Damage = 10.f);
 
+		virtual void BeginPlay() override;
 		virtual void Tick(float DeltaTime) override;
 
 		void SetVelocity(float NewVelocity) { Velocity = NewVelocity; }
