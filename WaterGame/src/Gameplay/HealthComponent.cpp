@@ -5,8 +5,8 @@ namespace we
 {
 	HealthComponent::HealthComponent(Actor* OwningActor, float Health, float MaxHealth)
 		: ActorComponent{ OwningActor }
-		, CurrentHealth{Health}
-		, MaxHealth{MaxHealth}
+		, CurrentHealth{ Health }
+		, MaxHealth{ MaxHealth }
 	{
 
 	}

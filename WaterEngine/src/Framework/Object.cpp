@@ -16,7 +16,16 @@ namespace we
 
 	void Object::Destroy()
 	{
+		OnDestroy.Broadcast(this);
 		bIsPendingDestroy = true;
 	}
 
+	weak<Object> Object::GetObject()
+	{
+		return weak_from_this();
+	}
+	weak<const Object> Object::GetObject() const
+	{
+		return weak_from_this();
+	}
 }

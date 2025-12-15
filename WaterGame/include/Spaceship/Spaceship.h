@@ -17,6 +17,7 @@ namespace we
 		sf::Vector2f GetVelocity() const { return Velocity; }
 
 	private:
+		void OnHealthChaged(float Amount, float Health, float MaxHealth);
 		HealthComponent HealthComp;
 		sf::Vector2f Velocity;
 	};

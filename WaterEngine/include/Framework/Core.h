@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <memory>
 #include <optional>
+#include <functional>
 #include <map>
 #include <vector>
 #include <unordered_map>

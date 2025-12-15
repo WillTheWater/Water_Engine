@@ -12,6 +12,11 @@ namespace we
 
 	void Spaceship::BeginPlay()
 	{
+		Actor::BeginPlay();
+		SetPhysicsEnabled(true);
+		HealthComp.OnHealthChanged.Bind(GetObject(), &Spaceship::OnHealthChaged);
+		HealthComp.OnHealthChanged.Broadcast(15, 90, 100);
+
 	}
 
 	void Spaceship::Tick(float DeltaTime)
@@ -28,5 +33,10 @@ namespace we
 	void Spaceship::SetVelocity(sf::Vector2f NewVelocity)
 	{
 		Velocity = NewVelocity;
+	}
+
+	void Spaceship::OnHealthChaged(float Amount, float Health, float MaxHealth)
+	{
+		LOG("Delegat: Amt = %f, Heath = %f/%f", Amount, Health, MaxHealth)
 	}
 }

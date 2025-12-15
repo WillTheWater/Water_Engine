@@ -1,5 +1,6 @@
 #pragma once
 #include "Framework/ActorComponent.h"
+#include "Framework/Delegate.h"
 
 namespace we
 {
@@ -12,6 +13,8 @@ namespace we
 		void SetCurrentHealth(float NewHealth) { CurrentHealth = NewHealth; }
 		float GetMaxHealth() const { return MaxHealth; }
 		void ChangeHealth(float Amount);
+
+		Delegate<float, float, float> OnHealthChanged;
 
 	private:
 		void TakeDamage(float Amount);
