@@ -14,6 +14,10 @@ namespace we
 	{
 		Actor::Tick(DeltaTime);
 		Move(DeltaTime);
+		if (IsOutOfBounds())
+		{
+			Destroy();
+		}
 	}
 
 	void Bullet::Move(float DeltaTime)
