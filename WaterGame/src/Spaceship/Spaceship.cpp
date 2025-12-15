@@ -4,9 +4,14 @@ namespace we
 {
 	Spaceship::Spaceship(World* OwningWorld, const string& TexturePath)
 		: Actor{OwningWorld, TexturePath}
+		, HealthComp{this, 100, 100}
 		, Velocity{}
 	{
 
+	}
+
+	void Spaceship::BeginPlay()
+	{
 	}
 
 	void Spaceship::Tick(float DeltaTime)

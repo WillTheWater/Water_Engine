@@ -5,6 +5,7 @@ namespace we
 {
 	class HealthComponent : public ActorComponent
 	{
+	public:
 		HealthComponent(Actor* OwningActor, float Health, float MaxHealth);
 
 		float GetCurrentHealth() const { return CurrentHealth; }
@@ -15,7 +16,7 @@ namespace we
 	private:
 		void TakeDamage(float Amount);
 		void OnDeath();
-		void HealthRegen();
+		void HealthRegen(float Amount);
 		float CurrentHealth;
 		float MaxHealth;
 	};

@@ -1,4 +1,5 @@
 #include "Gameplay/HealthComponent.h"
+#include "Framework/Core.h"
 
 namespace we
 {
@@ -33,11 +34,25 @@ namespace we
 		}
 		else
 		{
-			HealthRegen();
+			HealthRegen(Amount);
 		}
 	}
 
 	void HealthComponent::TakeDamage(float Amount)
 	{
+		LOG("Taken %f Damage: Health is %f/%f", Amount, CurrentHealth, MaxHealth)
+	}
+
+	void HealthComponent::OnDeath()
+	{
+		LOG("You Died!")
+	}
+
+	void HealthComponent::HealthRegen(float Amount)
+	{
+		if (CurrentHealth != MaxHealth)
+		{
+			LOG("%f", CurrentHealth)
+		}
 	}
 }
