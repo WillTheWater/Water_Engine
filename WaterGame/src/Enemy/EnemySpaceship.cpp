@@ -1,4 +1,5 @@
 #include "Enemy/EnemySpaceship.h"
+#include "Framework/EActorTypes.h"
 
 namespace we
 {
@@ -6,7 +7,7 @@ namespace we
 		: Spaceship{OwningWorld, TexturePath}
 		, CollisionDamage{CollisionDamage}
 	{
-	
+		SetActorID(EActorID::Enemy);
 	}
 
 	void EnemySpaceship::Tick(float DeltTime)

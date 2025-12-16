@@ -3,7 +3,7 @@
 
 namespace we
 {
-	class EnemySpaceship :public Spaceship
+	class EnemySpaceship : public Spaceship
 	{
 	public:
 		EnemySpaceship(World* OwningWorld, const string& TexturePath, float CollisionDamage = 1000.f);

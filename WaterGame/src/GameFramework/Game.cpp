@@ -3,6 +3,7 @@
 #include "Framework/Actor.h"
 #include "Framework/Assetmanager.h"
 #include "Player/PlayerSpaceship.h"
+#include "Enemy/Fighter.h"
 #include "config.h"
 
 we::Application* GetApplication()
@@ -20,11 +21,8 @@ namespace we
 		TestPlayer = NewWorld.lock()->SpawnActor<PlayerSpaceship>();
 		TestPlayer.lock()->SetActorLocation(sf::Vector2f{ static_cast<float>(GetWindowSize().x / 2), static_cast<float>(GetWindowSize().y / 2) });
 
-		Tester = NewWorld.lock()->SpawnActor<Spaceship>();
-		Tester.lock()->SetTexture("SpaceShooterRedux/PNG/playerShip1_orange.png");
-		Tester.lock()->SetActorLocation(sf::Vector2f{ 250,250 });
-		Tester.lock()->SetActorID(EActorID::Enemy);
-		Tester.lock()->SetPhysicsEnabled(true);
+		weak<Fighter> Tester = NewWorld.lock()->SpawnActor<Fighter>();
+		Tester.lock()->SetActorLocation(sf::Vector2f{ static_cast<float>(GetWindowSize().x / 2), 10 });
 	}
 	void Game::Tick(float DeltaTime)
 	{
