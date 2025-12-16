@@ -15,8 +15,8 @@ namespace we
 		Actor::BeginPlay();
 		SetPhysicsEnabled(true);
 		HealthComp.OnHealthChanged.Bind(GetObject(), &Spaceship::OnHealthChaged);
-		HealthComp.OnHealthChanged.Broadcast(15, 90, 100);
-
+		HealthComp.OnTakeDamage.Bind(GetObject(), &Spaceship::Damage);
+		HealthComp.OnDeath.Bind(GetObject(), &Spaceship::Die);
 	}
 
 	void Spaceship::Tick(float DeltaTime)
@@ -27,7 +27,11 @@ namespace we
 
 	void Spaceship::Shoot()
 	{
+	}
 
+	void Spaceship::Damage(float Amount)
+	{
+		HealthComp.ChangeHealth(-Amount);
 	}
 
 	void Spaceship::SetVelocity(sf::Vector2f NewVelocity)
@@ -37,6 +41,17 @@ namespace we
 
 	void Spaceship::OnHealthChaged(float Amount, float Health, float MaxHealth)
 	{
-		LOG("Delegat: Amt = %f, Heath = %f/%f", Amount, Health, MaxHealth)
+		LOG("Heath: %f", Health)
+	}
+
+	void Spaceship::Damage(float Amount, float Health, float MaxHealth)
+	{
+		LOG("Take %f Damage", Amount)
+	}
+
+	void Spaceship::Die()
+	{
+		LOG("Blow Up!")
+		Destroy();
 	}
 }

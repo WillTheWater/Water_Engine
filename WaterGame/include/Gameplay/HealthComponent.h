@@ -15,11 +15,12 @@ namespace we
 		void ChangeHealth(float Amount);
 
 		Delegate<float, float, float> OnHealthChanged;
+		Delegate<float, float, float> OnTakeDamage;
+		Delegate<> OnDeath;
 
 	private:
 		void TakeDamage(float Amount);
-		void OnDeath();
-		void HealthRegen(float Amount);
+		void Death();
 		float CurrentHealth;
 		float MaxHealth;
 	};

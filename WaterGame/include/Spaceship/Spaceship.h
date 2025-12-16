@@ -13,11 +13,15 @@ namespace we
 		virtual void Tick(float DeltaTime) override;
 		virtual void Shoot();
 
+		virtual void Damage(float Amount) override;
+
 		void SetVelocity(sf::Vector2f NewVelocity);
 		sf::Vector2f GetVelocity() const { return Velocity; }
 
 	private:
-		void OnHealthChaged(float Amount, float Health, float MaxHealth);
+		virtual void OnHealthChaged(float Amount, float Health, float MaxHealth);
+		virtual void Damage(float Amount, float Health, float MaxHealth);
+		virtual void Die();
 		HealthComponent HealthComp;
 		sf::Vector2f Velocity;
 	};

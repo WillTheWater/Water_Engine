@@ -20,9 +20,10 @@ namespace we
 		TestPlayer = NewWorld.lock()->SpawnActor<PlayerSpaceship>();
 		TestPlayer.lock()->SetActorLocation(sf::Vector2f{ static_cast<float>(GetWindowSize().x / 2), static_cast<float>(GetWindowSize().y / 2) });
 
-		weak<Spaceship> Tester = NewWorld.lock()->SpawnActor<Spaceship>();
+		Tester = NewWorld.lock()->SpawnActor<Spaceship>();
 		Tester.lock()->SetTexture("SpaceShooterRedux/PNG/playerShip1_orange.png");
 		Tester.lock()->SetActorLocation(sf::Vector2f{ 250,250 });
+		Tester.lock()->SetActorID(EActorID::Enemy);
 		Tester.lock()->SetPhysicsEnabled(true);
 	}
 	void Game::Tick(float DeltaTime)

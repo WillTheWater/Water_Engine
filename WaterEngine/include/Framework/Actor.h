@@ -2,6 +2,7 @@
 #include "Framework/Core.h"
 #include <SFML/Graphics.hpp>
 #include "Framework/Object.h"
+#include "EActorTypes.h"
 
 class b2Body;
 
@@ -22,8 +23,6 @@ namespace we
 		virtual void Tick(float DeltaTime);
 		virtual void Destroy() override;
 
-		bool IsPendingDestroy() const { return bPendingDestroy; }
-
 		World* GetWorld() const { return OwningWorld; }
 		sf::Vector2u GetWindowSize() const;
 
@@ -34,6 +33,12 @@ namespace we
 		sf::FloatRect GetSpriteBounds() const;
 		sf::Vector2u GetTextureSize() const { return ATexture->getSize(); }
 		sf::Vector2f GetSpriteScale() const { return ASprite->getScale(); }
+
+		EActorID GetActorID() const { return ActorID; }
+		void SetActorID(EActorID NewID) { ActorID = NewID; }
+		static EActorID GetNeutralActorID() { return NeutralID; }
+		bool IsHostile(Actor* OtherActor);
+		virtual void Damage(float Amount);
 
 		void SetActorLocation(const sf::Vector2f& NewLocation);
 		void SetActorRotation(const sf::Angle& NewRotation);
@@ -58,7 +63,6 @@ namespace we
 	private:
 		World* OwningWorld;
 		bool bHasBegunPlay;
-		bool bPendingDestroy = false;
 		bool bDrawDebug = false;
 
 		shared<sf::Texture> ATexture;
@@ -71,5 +75,8 @@ namespace we
 		void UninitialziePhysics();
 		void UpdatePhysicsBodyTransform();
 		bool bPhysicsEnabled;
+
+		EActorID ActorID;
+		const static EActorID NeutralID = EActorID::Neutral;
 	};
 }

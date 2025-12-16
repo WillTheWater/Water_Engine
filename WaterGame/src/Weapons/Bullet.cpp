@@ -8,6 +8,7 @@ namespace we
 		, Velocity{Velocity}
 		, Damage{Damage}
 	{
+		SetActorID(OwningActor->GetActorID());
 	}
 
 	void Bullet::BeginPlay()
@@ -23,6 +24,16 @@ namespace we
 		if (IsOutOfBounds())
 		{
 			Destroy();
+		}
+	}
+
+	void Bullet::OnActorBeginOverlap(Actor* OtherActor)
+	{
+		LOG("Bullet Hit")
+		if (IsHostile(OtherActor))
+		{
+			OtherActor->Damage(GetDamage());
+			LOG("Bullet Damage")
 		}
 	}
 

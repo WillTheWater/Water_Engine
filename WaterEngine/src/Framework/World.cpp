@@ -48,7 +48,6 @@ namespace we
 
 	void World::BeginPlay()
 	{
-		LOG("World BeginPlay Called")
 	}
 
 	void World::Tick(float DeltaTime)

@@ -6,6 +6,7 @@
 #include "Framework/PhysicsSystem.h"
 #include "Framework/Renderer.h"
 #include "box2d/b2_body.h"
+#include "Framework/EActorTypes.h"
 
 namespace we
 {
@@ -16,12 +17,14 @@ namespace we
 		, ASprite{ nullptr }
 		, PhysicsBody{nullptr}
 		, bPhysicsEnabled{ false }
+		, ActorID{GetNeutralActorID()}
 	{
 		SetTexture(TexturePath);
 	}
 
 	Actor::~Actor()
 	{
+		LOG("Actor Destroyed")
 	}
 
 	void Actor::BeginPlayGlobal()
@@ -152,6 +155,19 @@ namespace we
 		}
 	}
 
+	bool Actor::IsHostile(Actor* OtherActor)
+	{
+		if (GetActorID() == EActorID::Neutral || OtherActor->GetActorID() == EActorID::Neutral)
+		{
+			return false;
+		}
+		return GetActorID() != OtherActor->GetActorID();
+	}
+
+	void Actor::Damage(float Amount)
+	{
+	}
+
 	void Actor::SetActorLocation(const sf::Vector2f& NewLocation)
 	{
 		if (!ASprite) { return; }
@@ -269,12 +285,10 @@ namespace we
 
 	void Actor::OnActorBeginOverlap(Actor* OtherActor)
 	{
-		LOG("Begin Overlap")
 	}
 
 	void Actor::OnActorEndOverlap(Actor* OtherActor)
 	{
-		LOG("End Overlap")
 	}
 
 	void Actor::CenterPivot()

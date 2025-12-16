@@ -13,8 +13,11 @@ namespace we
 
 		void SetVelocity(float NewVelocity) { Velocity = NewVelocity; }
 		void SetDamage(float NewDamage) { Damage = NewDamage; }
+		float GetDamage() const { return Damage; }
 
+		virtual void OnActorBeginOverlap(Actor* OtherActor) override;
 	private:
+
 		void Move(float DeltaTime);
 		Actor* OwningActor;
 		float Velocity;

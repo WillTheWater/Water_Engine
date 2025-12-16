@@ -12,6 +12,7 @@
 namespace we
 {
 	using string = std::string;
+	using uint8 = unsigned char;
 
 	template<typename T>
 	inline T clamp(const T& value, const T& min, const T& max)

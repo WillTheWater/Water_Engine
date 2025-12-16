@@ -8,13 +8,13 @@
 namespace we
 {
 	Application::Application(unsigned int WindowWidth, unsigned int WindowHeight, const std::string& WindowTitle, std::uint32_t WindowStyle)
-		: Window{ sf::VideoMode({ WindowWidth, WindowHeight }), WindowTitle, WindowStyle },
-		TargetFramerate{ 60.f },
-		TickClock{},
-		GarbageCollectionClock{},
-		CollectionInterval{ 2.f },
-		CurrentWorld{ nullptr },
-		GameRenderer{ std::make_unique<Renderer>(Window) }
+		: Window{ sf::VideoMode({ WindowWidth, WindowHeight }), WindowTitle, WindowStyle }
+		, TargetFramerate{ 60.f } 
+		, TickClock{}
+		, GarbageCollectionClock{} 
+		, CollectionInterval{ 2.f }
+		, CurrentWorld{ nullptr }
+		, GameRenderer{ std::make_unique<Renderer>(Window) }
 	{
 	}
 

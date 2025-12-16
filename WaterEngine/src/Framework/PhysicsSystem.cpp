@@ -92,7 +92,7 @@ namespace we
 
 		if (ActorB && !ActorB->IsPendingDestroy())
 		{
-			ActorA->OnActorBeginOverlap(ActorA);
+			ActorB->OnActorBeginOverlap(ActorA);
 		}
 	}
 

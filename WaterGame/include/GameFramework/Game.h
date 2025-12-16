@@ -6,6 +6,7 @@ namespace we
 {
 	class Actor;
 	class PlayerSpaceship;
+	class Spaceship;
 
 	class Game : public Application
 	{
@@ -16,5 +17,6 @@ namespace we
 
 	private:
 		weak<PlayerSpaceship> TestPlayer;
+		weak<Spaceship> Tester;
 	};
 }

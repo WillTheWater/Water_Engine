@@ -11,6 +11,7 @@ namespace we
 		, Speed{700.f}
 		, PlayerShooter{ new BulletShooter{this} }
 	{
+		SetActorID(EActorID::Player);
 	}
 
 	void PlayerSpaceship::BeginPlay()

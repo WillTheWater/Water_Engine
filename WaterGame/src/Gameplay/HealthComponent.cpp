@@ -13,46 +13,39 @@ namespace we
 
 	void HealthComponent::ChangeHealth(float Amount)
 	{
-		if (Amount == 0) { return; }
-		if (CurrentHealth == 0) { return; }
+		if (Amount == 0) return;
+		if (CurrentHealth == 0) return;
+
 		CurrentHealth += Amount;
-		if (CurrentHealth <= 0)
+		if (CurrentHealth < 0)
 		{
-			CurrentHealth = 0.f;
+			CurrentHealth = 0;
 		}
+
 		if (CurrentHealth > MaxHealth)
 		{
 			CurrentHealth = MaxHealth;
 		}
+
+		OnHealthChanged.Broadcast(Amount, CurrentHealth, MaxHealth);
+
 		if (Amount < 0)
 		{
 			TakeDamage(-Amount);
 			if (CurrentHealth <= 0)
 			{
-				CurrentHealth = 0.f;
+				Death();
 			}
-		}
-		else
-		{
-			HealthRegen(Amount);
 		}
 	}
 
 	void HealthComponent::TakeDamage(float Amount)
 	{
-		LOG("Taken %f Damage: Health is %f/%f", Amount, CurrentHealth, MaxHealth)
+		OnTakeDamage.Broadcast(Amount, CurrentHealth, MaxHealth);
 	}
 
-	void HealthComponent::OnDeath()
+	void HealthComponent::Death()
 	{
-		LOG("You Died!")
-	}
-
-	void HealthComponent::HealthRegen(float Amount)
-	{
-		if (CurrentHealth != MaxHealth)
-		{
-			LOG("%f", CurrentHealth)
-		}
+		OnDeath.Broadcast();
 	}
 }
