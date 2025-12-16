@@ -1,5 +1,6 @@
 #include "Spaceship/Spaceship.h"
 #include "Framework/MathUtility.h"
+#include "VFX/Explosion.h"
 
 namespace we
 {
@@ -73,6 +74,9 @@ namespace we
 
 	void Spaceship::Die()
 	{
+		Explosion* ExpVFX = new Explosion();
+		ExpVFX->SpawnExplosion(GetWorld(), GetActorLocation());
 		Destroy();
+		delete ExpVFX;
 	}
 }

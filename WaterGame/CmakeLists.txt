@@ -24,6 +24,9 @@ add_executable(${WATER_GAME}
 
     ${CMAKE_CURRENT_SOURCE_DIR}/include/Gameplay/HealthComponent.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Gameplay/HealthComponent.cpp
+
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/VFX/Explosion.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/VFX/Explosion.cpp
 )
 
 target_include_directories(${WATER_GAME} PUBLIC
