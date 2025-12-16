@@ -1,4 +1,5 @@
 #include "Spaceship/Spaceship.h"
+#include "Framework/MathUtility.h"
 
 namespace we
 {
@@ -6,6 +7,9 @@ namespace we
 		: Actor{OwningWorld, TexturePath}
 		, HealthComp{this, 100, 100}
 		, Velocity{}
+		, BlinkTimer{0.f}
+		, BlickDuration{0.2f}
+		, BlinkColor{255, 0, 0, 255}
 	{
 
 	}
@@ -23,6 +27,7 @@ namespace we
 	{
 		Actor::Tick(DeltaTime);
 		AddActorLocationOffset(GetVelocity() * DeltaTime);
+		UpdateBlink(DeltaTime);
 	}
 
 	void Spaceship::Shoot()
@@ -34,6 +39,24 @@ namespace we
 		HealthComp.ChangeHealth(-Amount);
 	}
 
+	void Spaceship::Blink()
+	{
+		if (BlinkTimer == 0)
+		{
+			BlinkTimer = BlickDuration;
+		}
+	}
+
+	void Spaceship::UpdateBlink(float DeltaTime)
+	{
+		if (BlinkTimer > 0)
+		{
+			BlinkTimer -= DeltaTime;
+			BlinkTimer = BlinkTimer > 0 ? BlinkTimer : 0.f;
+			GetSprite().setColor(LerpColor(sf::Color::White, BlinkColor, BlinkTimer));
+		}
+	}
+
 	void Spaceship::SetVelocity(sf::Vector2f NewVelocity)
 	{
 		Velocity = NewVelocity;
@@ -41,17 +64,15 @@ namespace we
 
 	void Spaceship::OnHealthChaged(float Amount, float Health, float MaxHealth)
 	{
-		LOG("Heath: %f", Health)
 	}
 
 	void Spaceship::Damage(float Amount, float Health, float MaxHealth)
 	{
-		LOG("Take %f Damage", Amount)
+		Blink();
 	}
 
 	void Spaceship::Die()
 	{
-		LOG("Blow Up!")
 		Destroy();
 	}
 }

@@ -29,11 +29,10 @@ namespace we
 
 	void Bullet::OnActorBeginOverlap(Actor* OtherActor)
 	{
-		LOG("Bullet Hit")
 		if (IsHostile(OtherActor))
 		{
 			OtherActor->Damage(GetDamage());
-			LOG("Bullet Damage")
+			Destroy();
 		}
 	}
 

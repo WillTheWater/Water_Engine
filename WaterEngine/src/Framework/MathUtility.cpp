@@ -2,7 +2,6 @@
 
 namespace we
 {
-
     sf::Vector2f RotationToVector(const sf::Angle Rotation)
     {
         const float radians = Rotation.asRadians();
@@ -14,20 +13,19 @@ namespace we
         return sf::radians(std::atan2(Vector.y, Vector.x));
     }
 
-	float LerpFloat(float a, float b, float alpha)
+	float Lerp(float Start, float Target, float Alpha)
 	{
-		if (alpha > 1) alpha = 1;
-		if (alpha < 0) alpha = 0;
-
-		return a + (b - a) * alpha;
+		if (Alpha > 1) Alpha = 1;
+		if (Alpha < 0) Alpha = 0;
+		return Start + (Target - Start) * Alpha;
 	}
 
-	float RandomRange(float min, float max)
+	float RandomRange(float Min, float Max)
 	{
 		std::random_device rd;
 		std::mt19937 gen(rd());
 
-		std::uniform_real_distribution<float> distribution{ min, max };
+		std::uniform_real_distribution<float> distribution{ Min, Max };
 
 		return distribution(gen);
 	}
@@ -41,21 +39,21 @@ namespace we
 		return randVec;
 	}
 
-	sf::Color LerpColor(const sf::Color& a, const sf::Color& b, float alpha)
+	sf::Color LerpColor(const sf::Color& Start, const sf::Color& Target, float Alpha)
 	{
-		int lerpR = LerpFloat(a.r, b.r, alpha);
-		int lerpG = LerpFloat(a.g, b.g, alpha);
-		int lerpB = LerpFloat(a.b, b.b, alpha);
-		int lerpA = LerpFloat(a.a, b.a, alpha);
+		int lerpR = Lerp(Start.r, Start.r, Alpha);
+		int lerpG = Lerp(Start.g, Target.g, Alpha);
+		int lerpB = Lerp(Start.b, Target.b, Alpha);
+		int lerpA = Lerp(Start.a, Target.a, Alpha);
 
 		return sf::Color(lerpR, lerpG, lerpB, lerpA);
 	}
 
-	sf::Vector2f LerpVector(const sf::Vector2f& a, const sf::Vector2f& b, float alpha)
+	sf::Vector2f LerpVector(const sf::Vector2f& Start, const sf::Vector2f& Target, float Alpha)
 	{
-		float lerpX = LerpFloat(a.x, b.x, alpha);
-		float lerpY = LerpFloat(a.y, b.y, alpha);
-		return sf::Vector2f(lerpX, lerpY);
+		float lerpX = Lerp(Start.x, Target.x, Alpha);
+		float lerpY = Lerp(Start.y, Target.y, Alpha);
 
+		return sf::Vector2f(lerpX, lerpY);
 	}
 }

@@ -23,7 +23,8 @@ namespace we
 		virtual void Tick(float DeltaTime);
 		virtual void Destroy() override;
 
-		World* GetWorld() const { return OwningWorld; }
+		const World* GetWorld() const { return OwningWorld; }
+		World* GetWorld() { return OwningWorld; }
 		sf::Vector2u GetWindowSize() const;
 
 		void SetTexture(const std::string& TexturePath, float SpriteScale = 1.0f);
@@ -51,6 +52,8 @@ namespace we
 		sf::Vector2f GetActorRightVector() const;
 		sf::VertexArray ForwardVectorDebugShape(float Length = 150.f, sf::Color Color = sf::Color::Red) const;
 		void SetShouldDrawDebugShapes(bool ToDraw) { bDrawDebug = ToDraw; }
+		sf::Sprite& GetSprite() { return *ASprite;}
+		const sf::Sprite& GetSprite() const { return *ASprite;}
 
 		void SetPhysicsEnabled(bool Enabled);
 		virtual void OnActorBeginOverlap(Actor* OtherActor);

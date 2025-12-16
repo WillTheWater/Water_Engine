@@ -15,6 +15,8 @@ namespace we
 
 		virtual void Damage(float Amount) override;
 
+		void Blink();
+		void UpdateBlink(float DeltaTime);
 		void SetVelocity(sf::Vector2f NewVelocity);
 		sf::Vector2f GetVelocity() const { return Velocity; }
 
@@ -24,5 +26,9 @@ namespace we
 		virtual void Die();
 		HealthComponent HealthComp;
 		sf::Vector2f Velocity;
+
+		float BlinkTimer;
+		float BlickDuration;
+		sf::Color BlinkColor;
 	};
 }

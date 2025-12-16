@@ -77,7 +77,7 @@ namespace we
 		const sf::Vector2u windowSize = GetWindowSize();
 		sf::Vector2f position = GetActorLocation();
 
-		const sf::FloatRect bounds = GetSpriteBounds();
+		const sf::FloatRect bounds = GetSprite().getGlobalBounds();
 
 		const float halfWidth = bounds.size.x * 0.5f;
 		const float halfHeight = bounds.size.y * 0.5f;

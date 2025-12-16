@@ -8,13 +8,11 @@ namespace we
 	sf::Vector2f RotationToVector(const sf::Angle Rotation);
 	sf::Angle VectorToRotation(const sf::Vector2f Vector);
 
-	sf::Color LerpColor(const sf::Color& a, const sf::Color& b, float alpha);
+	float Lerp(float Start, float Target, float Alpha);
+	sf::Color LerpColor(const sf::Color& Start, const sf::Color& Target, float Alpha);
+	sf::Vector2f LerpVector(const sf::Vector2f& Start, const sf::Vector2f& Target, float Alpha);
 
-	sf::Vector2f LerpVector(const sf::Vector2f& a, const sf::Vector2f& b, float alpha);
-
-	float LerpFloat(float a, float b, float alpha);
-
-	float RandomRange(float min, float max);
+	float RandomRange(float Min, float Max);
 	sf::Vector2f RandomUnitVector();
 
 	template<typename T>
@@ -41,4 +39,5 @@ namespace we
 
 		return vector;
 	}
+
 }

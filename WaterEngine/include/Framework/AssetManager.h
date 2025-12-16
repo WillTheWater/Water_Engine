@@ -54,7 +54,6 @@ namespace we
 		{
 			if (it->second.unique())
 			{
-				LOG("Texture Collected: %s", it->first.c_str())
 				it = Cache.erase(it);
 			}
 			else
