@@ -61,7 +61,7 @@ namespace we
 
 	protected:
 		void CenterPivot();
-		bool IsOutOfBounds() const;
+		bool IsOutOfBounds(float Allowance = 10.f) const;
 
 	private:
 		World* OwningWorld;

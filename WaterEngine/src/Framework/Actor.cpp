@@ -113,14 +113,16 @@ namespace we
 		}
 	}
 
-	bool Actor::IsOutOfBounds() const
+	bool Actor::IsOutOfBounds(float Allowance) const
 	{
 		float WindowWidth = GetWindowSize().x;
 		float WindowHeight = GetWindowSize().y;
+
 		float SpriteWidth = GetSpriteBounds().size.x;
 		float SpriteHeight = GetSpriteBounds().size.y;
+
 		sf::Vector2f SpriteLocation = GetActorLocation();
-		if (SpriteLocation.x < -SpriteWidth || SpriteLocation.x > WindowWidth + SpriteWidth || SpriteLocation.y < -SpriteHeight || SpriteLocation.y > WindowHeight + SpriteHeight)
+		if (SpriteLocation.x < -SpriteWidth - Allowance || SpriteLocation.x > WindowWidth + SpriteWidth + Allowance || SpriteLocation.y < -SpriteHeight - Allowance || SpriteLocation.y > WindowHeight + SpriteHeight + Allowance)
 		{
 			return true;
 		}
@@ -157,6 +159,7 @@ namespace we
 
 	bool Actor::IsHostile(Actor* OtherActor)
 	{
+		if (OtherActor == nullptr) {return false; }
 		if (GetActorID() == EActorID::Neutral || OtherActor->GetActorID() == EActorID::Neutral)
 		{
 			return false;
