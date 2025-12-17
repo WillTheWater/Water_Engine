@@ -143,6 +143,7 @@ namespace we
 		if (PhysicsBody)
 		{
 			PhysicsSystem::Get().RemoveListener(PhysicsBody);
+			PhysicsBody->GetUserData().pointer = reinterpret_cast<uintptr_t>(nullptr);
 			PhysicsBody = nullptr;
 		}
 	}

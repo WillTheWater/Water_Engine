@@ -35,6 +35,11 @@ namespace we
 		}
 	}
 
+	void PlayerSpaceship::Damage(float Amount)
+	{
+		Spaceship::Damage(Amount);
+	}
+
 	void PlayerSpaceship::HandleInput()
 	{
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W))

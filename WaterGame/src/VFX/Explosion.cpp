@@ -25,11 +25,16 @@ namespace we
 		{
 			string ParticalPath = ParticalImagePaths[(int)RandomRange(0, ParticalImagePaths.size())];
 			weak<Partical> NewPartical = World->SpawnActor<Partical>(ParticalPath);
-			NewPartical.lock()->RandomLifetime(LifetimeMin, LifetimeMax);
-			NewPartical.lock()->SetActorLocation(SpawnLocation);
-			NewPartical.lock()->RandomSize(SizeMin, SizeMax);
-			NewPartical.lock()->RandomVelocity(SpeedMin, SpeedMax);
-			NewPartical.lock()->GetSprite().setColor(sf::Color{ (uint8_t)RandomRange(0,255), (uint8_t)RandomRange(0,255), (uint8_t)RandomRange(0,255), (uint8_t)255 });
+			auto ParticleShared = NewPartical.lock();
+			if (!ParticleShared)
+			{
+				continue;
+			}
+			ParticleShared->RandomLifetime(LifetimeMin, LifetimeMax);
+			ParticleShared->SetActorLocation(SpawnLocation);
+			ParticleShared->RandomSize(SizeMin, SizeMax);
+			ParticleShared->RandomVelocity(SpeedMin, SpeedMax);
+			ParticleShared->GetSprite().setColor(sf::Color{ (uint8_t)RandomRange(0,255), (uint8_t)RandomRange(0,255), (uint8_t)RandomRange(0,255), (uint8_t)255 });
 		}
 	}
 }

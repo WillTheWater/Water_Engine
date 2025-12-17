@@ -14,6 +14,7 @@ namespace we
 		virtual void Tick(float DeltaTime) override;
 		virtual void Shoot() override;
 		void SetSpeed(float NewSpeed) { Speed = NewSpeed; }
+		virtual void Damage(float Amount) override;
 
 	private:
 		void HandleInput();

@@ -1,4 +1,5 @@
 #include "Weapons/Shooter.h"
+#include "Framework/Actor.h"
 
 namespace we
 {
@@ -9,6 +10,9 @@ namespace we
 
 	void Shooter::Shoot()
 	{
+		if (!OwningActor || OwningActor->IsPendingDestroy())
+			return;
+
 		if (CanShoot() && !IsOnCooldown())
 		{
 			ShootImplimentation();
