@@ -8,6 +8,7 @@ namespace we
 	class Application;
 	class Actor;
 	class Renderer;
+	class Level;
 
 	class World : public Object
 	{
@@ -21,6 +22,8 @@ namespace we
 		void Render(Renderer& GameRenderer);
 
 		void GarbageCollectionCycle();
+
+		void AddLevel(const shared<Level>& NewLevel);
 
 		template<typename ActorType, typename... Args>
 		weak<ActorType> SpawnActor(Args... args);
@@ -36,6 +39,11 @@ namespace we
 
 		List<shared<Actor>> Actors;
 		List<shared<Actor>> PendingActors;
+		List<shared<Level>> Levels;
+		int CurrentLevelIndex;
+		virtual void InitLevels();
+		virtual void EndLevels();
+		void LoadNextLevel();
 	};
 
 	template<typename ActorType, typename... Args>

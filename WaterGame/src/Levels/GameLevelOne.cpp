@@ -4,6 +4,7 @@
 #include "Player/PlayerSpaceship.h"
 #include "Enemy/Fighter.h"
 #include "Framework/TimerManager.h"
+#include "GameMode/Level.h"
 
 namespace we
 {
@@ -24,5 +25,10 @@ namespace we
 
 	void LevelOne::Tick(float DeltaTime)
 	{
+	}
+
+	void LevelOne::InitLevels()
+	{
+		AddLevel(shared<Level>{new Level{ this }});
 	}
 }

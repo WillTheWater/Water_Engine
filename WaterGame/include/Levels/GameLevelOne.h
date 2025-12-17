@@ -18,8 +18,6 @@ namespace we
 		virtual void BeginPlay() override;
 		virtual void Tick(float DeltaTime) override;
 		weak<PlayerSpaceship> TestPlayer;
-		
-		void TimerCB();
-		TimerHandle TestHandle;
+		virtual void InitLevels() override;
 	};
 }

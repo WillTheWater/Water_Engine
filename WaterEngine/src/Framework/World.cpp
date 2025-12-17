@@ -3,14 +3,17 @@
 #include "Framework/Actor.h"
 #include "Framework/Application.h"
 #include "Framework/Renderer.h"
+#include "GameMode/Level.h"
 
 namespace we
 {
 	World::World(Application* OwningApp)
-		: OwningApp{ OwningApp },
-		Actors{},
-		PendingActors{},
-		bHasBegunPlay{ false }
+		: OwningApp{ OwningApp }
+		, Actors{}
+		, PendingActors{}
+		, bHasBegunPlay{ false }
+		, Levels{}
+		, CurrentLevelIndex{-1}
 	{
 	}
 
@@ -24,6 +27,8 @@ namespace we
 		{
 			bHasBegunPlay = true;
 			BeginPlay();
+			InitLevels();
+			LoadNextLevel();
 		}
 	}
 
@@ -43,6 +48,11 @@ namespace we
 			i++;
 		}
 
+		if (CurrentLevelIndex >= 0 && CurrentLevelIndex < Levels.size())
+		{
+			Levels[CurrentLevelIndex]->TickLevel(DeltaTime);
+		}
+
 		Tick(DeltaTime);
 	}
 
@@ -53,6 +63,28 @@ namespace we
 	void World::Tick(float DeltaTime)
 	{
 
+	}
+
+	void World::InitLevels()
+	{
+	}
+
+	void World::EndLevels()
+	{
+	}
+
+	void World::LoadNextLevel()
+	{
+		CurrentLevelIndex++;
+		if (CurrentLevelIndex >= 0 && CurrentLevelIndex < Levels.size())
+		{
+			Levels[CurrentLevelIndex]->OnLevelEnd.Bind(GetObject(), &World::LoadNextLevel);
+			Levels[CurrentLevelIndex]->BeginLevel();
+		}
+		else
+		{
+			EndLevels();
+		}
 	}
 
 	void World::Render(Renderer& GameRenderer)
@@ -76,6 +108,23 @@ namespace we
 				i++;
 			}
 		}
+
+		for (auto i = Levels.begin(); i != Levels.end();)
+		{
+			if (i->get()->IsLevelFinished())
+			{
+				i = Levels.erase(i);
+			}
+			else
+			{
+				i++;
+			}
+		}
+	}
+
+	void World::AddLevel(const shared<Level>& NewLevel)
+	{
+		Levels.push_back(NewLevel);
 	}
 
 	sf::Vector2u World::GetWindowSize() const
