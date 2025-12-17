@@ -12,17 +12,18 @@ namespace we
 		virtual void BeginPlay() override;
 		virtual void Tick(float DeltaTime) override;
 		virtual void Shoot();
-
 		virtual void Damage(float Amount) override;
 
-		void Blink();
-		void UpdateBlink(float DeltaTime);
-		void SetVelocity(sf::Vector2f NewVelocity);
+		HealthComponent& GetHealthComponent() { return HealthComp; }
 		sf::Vector2f GetVelocity() const { return Velocity; }
 
+		void SetVelocity(sf::Vector2f NewVelocity);
+
 	private:
+		void Blink();
+		void UpdateBlink(float DeltaTime);
 		virtual void OnHealthChaged(float Amount, float Health, float MaxHealth);
-		virtual void Damage(float Amount, float Health, float MaxHealth);
+		virtual void TakeDamage(float Amount, float Health, float MaxHealth);
 		virtual void Die();
 		HealthComponent HealthComp;
 		sf::Vector2f Velocity;

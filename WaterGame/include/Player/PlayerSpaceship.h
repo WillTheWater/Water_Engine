@@ -3,7 +3,7 @@
 
 namespace we
 {
-	class BulletShooter;
+	class Shooter;
 
 	class PlayerSpaceship : public Spaceship
 	{
@@ -14,6 +14,7 @@ namespace we
 		virtual void Tick(float DeltaTime) override;
 		virtual void Shoot() override;
 		void SetSpeed(float NewSpeed) { Speed = NewSpeed; }
+
 	private:
 		void HandleInput();
 		void NormalizeInput();
@@ -22,6 +23,6 @@ namespace we
 		sf::Vector2f MovementInput;
 		float Speed;
 
-		unique<BulletShooter> PlayerShooter;
+		unique<Shooter> PlayerShooter;
 	};
 }

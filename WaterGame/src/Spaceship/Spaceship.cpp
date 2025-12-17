@@ -20,7 +20,7 @@ namespace we
 		Actor::BeginPlay();
 		SetPhysicsEnabled(true);
 		HealthComp.OnHealthChanged.Bind(GetObject(), &Spaceship::OnHealthChaged);
-		HealthComp.OnTakeDamage.Bind(GetObject(), &Spaceship::Damage);
+		HealthComp.OnTakeDamage.Bind(GetObject(), &Spaceship::TakeDamage);
 		HealthComp.OnDeath.Bind(GetObject(), &Spaceship::Die);
 	}
 
@@ -67,7 +67,7 @@ namespace we
 	{
 	}
 
-	void Spaceship::Damage(float Amount, float Health, float MaxHealth)
+	void Spaceship::TakeDamage(float Amount, float Health, float MaxHealth)
 	{
 		Blink();
 	}

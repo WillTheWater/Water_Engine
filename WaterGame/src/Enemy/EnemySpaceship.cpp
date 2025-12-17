@@ -13,7 +13,7 @@ namespace we
 	void EnemySpaceship::Tick(float DeltTime)
 	{
 		Spaceship::Tick(DeltTime);
-		if (IsOutOfBounds(GetSpriteBounds().size.x))
+		if (IsOutOfBounds(GetSpriteBounds().size.x * 2.f))
 		{
 			Destroy();
 		}
@@ -22,6 +22,7 @@ namespace we
 	void EnemySpaceship::OnActorBeginOverlap(Actor* OtherActor)
 	{
 		Spaceship::OnActorBeginOverlap(OtherActor);
+		LOG("Overlaped")
 		if (IsHostile(OtherActor))
 		{
 			OtherActor->Damage(CollisionDamage);
