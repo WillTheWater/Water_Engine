@@ -20,15 +20,9 @@ namespace we
 
 	void LevelOne::BeginPlay()
 	{
-		TimerManager::Get().SetTimer(GetObject(), &LevelOne::TestTimerCB, 2.0f, true);
 	}
 
 	void LevelOne::Tick(float DeltaTime)
 	{
-	}
-
-	void LevelOne::TestTimerCB()
-	{
-		LOG("Timer Callback Test")
 	}
 }

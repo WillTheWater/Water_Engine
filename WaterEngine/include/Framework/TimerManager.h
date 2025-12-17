@@ -25,12 +25,15 @@ namespace we
 		static TimerManager& Get();
 
 		template<typename ClassName>
-		void SetTimer(weak<Object> ObjectRef, void(ClassName::* Callback)(), float Duration, bool Loop = false)
+		unsigned int SetTimer(weak<Object> ObjectRef, void(ClassName::* Callback)(), float Duration, bool Loop = false)
 		{
-			Timers.push_back(Timer(ObjectRef, [=] {(static_cast<ClassName*>(ObjectRef.lock().get())->*Callback)();}, Duration, Loop));
+			TimerIndex++;
+			Timers.insert({ TimerIndex, Timer(ObjectRef, [=] {(static_cast<ClassName*>(ObjectRef.lock().get())->*Callback)(); }, Duration, Loop) });
+			return TimerIndex;
 		}
 
 		void UpdateTimer(float DeltaTime);
+		void ClearTimer(unsigned int TimerIndex);
 
 	protected:
 		TimerManager();
@@ -38,6 +41,7 @@ namespace we
 
 	private:
 		static unique<TimerManager> TimerMgr;
-		List<Timer> Timers;		
+		static unsigned int TimerIndex;
+		Dictionary<unsigned int, Timer> Timers;		
 	};
 }

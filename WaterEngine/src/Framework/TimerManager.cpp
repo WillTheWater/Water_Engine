@@ -40,6 +40,7 @@ namespace we
 		bIsExpired = true;
 	}
 
+	unsigned int TimerManager::TimerIndex = 0;
 	unique<TimerManager> TimerManager::TimerMgr{ nullptr };
 	
 	TimerManager::TimerManager()
@@ -49,9 +50,26 @@ namespace we
 
 	void TimerManager::UpdateTimer(float DeltaTime)
 	{
-		for (auto& Timer : Timers)
+		for (auto& Timer = Timers.begin(); Timer != Timers.end();)
 		{
-			Timer.TickTimer(DeltaTime);
+			if (Timer->second.Expired())
+			{
+				Timer = Timers.erase(Timer);
+			}
+			else
+			{
+				Timer->second.TickTimer(DeltaTime);
+				Timer++;
+			}
+		}
+	}
+
+	void TimerManager::ClearTimer(unsigned int TimerIndex)
+	{
+		auto TimerHash = Timers.find(TimerIndex);
+		if (TimerHash != Timers.end())
+		{
+			TimerHash->second.SetExpired();
 		}
 	}
 
