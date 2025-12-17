@@ -13,7 +13,7 @@ namespace we
 	Actor::Actor(World* OwningWorld, const string& TexturePath)
 		: OwningWorld{ OwningWorld }
 		, bHasBegunPlay{ false }
-		, ATexture{ nullptr }
+		, ATexture{}
 		, ASprite{ nullptr }
 		, PhysicsBody{nullptr}
 		, bPhysicsEnabled{ false }
@@ -107,6 +107,7 @@ namespace we
 		if (IsPendingDestroy() || !ASprite) { return; }
 
 		GameRenderer.DrawSprite(*ASprite);
+
 		if (bDrawDebug)
 		{
 			GameRenderer.DrawDebugShape(ForwardVectorDebugShape());
@@ -159,12 +160,19 @@ namespace we
 
 	bool Actor::IsHostile(Actor* OtherActor)
 	{
-		if (OtherActor == nullptr) {return false; }
-		if (GetActorID() == EActorID::Neutral || OtherActor->GetActorID() == EActorID::Neutral)
-		{
+		if (!OtherActor)
 			return false;
-		}
-		return GetActorID() != OtherActor->GetActorID();
+
+		const EActorID MyID = GetActorID();
+		const EActorID OtherID = OtherActor->GetActorID();
+
+		if (MyID == EActorID::Neutral || OtherID == EActorID::Neutral)
+			return false;
+
+		if (MyID == OtherID)
+			return false;
+
+		return true;
 	}
 
 	void Actor::Damage(float Amount)

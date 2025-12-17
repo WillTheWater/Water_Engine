@@ -25,6 +25,7 @@ namespace we
 		if (IsHostile(OtherActor))
 		{
 			OtherActor->Damage(CollisionDamage);
+			LOG("Hit")
 		}
 	}
 }
