@@ -1,6 +1,7 @@
 #pragma once
 #include "Framework/World.h"
 #include "Framework/Core.h"
+#include "Framework/TimerManager.h"
 
 namespace we
 {
@@ -17,5 +18,8 @@ namespace we
 		virtual void BeginPlay() override;
 		virtual void Tick(float DeltaTime) override;
 		weak<PlayerSpaceship> TestPlayer;
+		
+		void TimerCB();
+		TimerHandle TestHandle;
 	};
 }

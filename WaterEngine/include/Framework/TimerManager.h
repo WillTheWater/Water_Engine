@@ -1,8 +1,33 @@
+#pragma once
 #include "Framework/Core.h"
 #include "Framework/Object.h"
 
 namespace we
 {
+	struct TimerHandle
+	{
+	public:
+		TimerHandle();
+
+		unsigned int GetTimerKey() const { return TimerKey; }
+
+	private:
+		unsigned int TimerKey;
+		static unsigned int TimerKeyIndex;
+		static unsigned int GetNextTimerKey() { return TimerKeyIndex++; }
+	};
+
+	struct TimerHashFunction
+	{
+	public:
+		std::size_t operator()(const TimerHandle& Handle) const
+		{
+			return Handle.GetTimerKey();
+		}
+	};
+
+	bool operator==(const TimerHandle& lhs, const TimerHandle& rhs);
+
 	struct Timer
 	{
 	public:
@@ -25,15 +50,15 @@ namespace we
 		static TimerManager& Get();
 
 		template<typename ClassName>
-		unsigned int SetTimer(weak<Object> ObjectRef, void(ClassName::* Callback)(), float Duration, bool Loop = false)
+		TimerHandle SetTimer(weak<Object> ObjectRef, void(ClassName::* Callback)(), float Duration, bool Loop = false)
 		{
-			TimerIndex++;
-			Timers.insert({ TimerIndex, Timer(ObjectRef, [=] {(static_cast<ClassName*>(ObjectRef.lock().get())->*Callback)(); }, Duration, Loop) });
-			return TimerIndex;
+			TimerHandle NewHandle{};
+			Timers.insert({ NewHandle, Timer(ObjectRef, [=] {(static_cast<ClassName*>(ObjectRef.lock().get())->*Callback)(); }, Duration, Loop) });
+			return NewHandle;
 		}
 
 		void UpdateTimer(float DeltaTime);
-		void ClearTimer(unsigned int TimerIndex);
+		void ClearTimer(TimerHandle Handle);
 
 	protected:
 		TimerManager();
@@ -41,7 +66,6 @@ namespace we
 
 	private:
 		static unique<TimerManager> TimerMgr;
-		static unsigned int TimerIndex;
-		Dictionary<unsigned int, Timer> Timers;		
+		Dictionary<TimerHandle, Timer, TimerHashFunction> Timers;
 	};
 }

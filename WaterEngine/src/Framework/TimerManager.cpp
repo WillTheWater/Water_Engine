@@ -2,6 +2,12 @@
 
 namespace we
 {
+	unsigned int TimerHandle::TimerKeyIndex = 0;
+	TimerHandle::TimerHandle()
+		: TimerKey{GetNextTimerKey()}
+	{
+	}
+
 	Timer::Timer(weak<Object> ObjectRef, std::function<void()> Callback, float Duration, bool Loop)
 		: Listener{ObjectRef, Callback}
 		, Duration{Duration}
@@ -40,7 +46,6 @@ namespace we
 		bIsExpired = true;
 	}
 
-	unsigned int TimerManager::TimerIndex = 0;
 	unique<TimerManager> TimerManager::TimerMgr{ nullptr };
 	
 	TimerManager::TimerManager()
@@ -64,15 +69,14 @@ namespace we
 		}
 	}
 
-	void TimerManager::ClearTimer(unsigned int TimerIndex)
+	void TimerManager::ClearTimer(TimerHandle Handle)
 	{
-		auto TimerHash = Timers.find(TimerIndex);
+		auto TimerHash = Timers.find(Handle);
 		if (TimerHash != Timers.end())
 		{
 			TimerHash->second.SetExpired();
 		}
 	}
-
 
 	TimerManager& TimerManager::Get()
 	{
@@ -83,4 +87,8 @@ namespace we
 		return *TimerMgr;
 	}
 
+	bool operator==(const TimerHandle& lhs, const TimerHandle& rhs)
+	{
+		return lhs.GetTimerKey() == rhs.GetTimerKey();
+	}
 }
