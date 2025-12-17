@@ -4,6 +4,7 @@
 #include "Framework/AssetManager.h"
 #include "Framework/PhysicsSystem.h"
 #include "Framework/Renderer.h"
+#include "Framework/TimerManager.h"
 
 namespace we
 {
@@ -55,6 +56,7 @@ namespace we
 			CurrentWorld->TickGlobal(DeltaTime);
 		}
 
+		TimerManager::Get().UpdateTimer(DeltaTime);
 		PhysicsSystem::Get().Step(DeltaTime);
 
 		if (GarbageCollectionClock.getElapsedTime().asSeconds() >= CollectionInterval)

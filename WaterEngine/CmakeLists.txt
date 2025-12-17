@@ -22,6 +22,9 @@ add_library(${WATER_ENGINE} STATIC
     ${CMAKE_CURRENT_SOURCE_DIR}/include/Framework/AssetManager.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Framework/AssetManager.cpp
 
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/Framework/TimerManager.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Framework/TimerManager.cpp
+
     ${CMAKE_CURRENT_SOURCE_DIR}/include/Framework/Renderer.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Framework/Renderer.cpp
 

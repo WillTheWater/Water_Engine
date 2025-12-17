@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "Framework/Core.h"
 #include "SFML/Graphics.hpp"
+#include "Framework/Object.h"
 
 namespace we
 {
@@ -8,7 +9,7 @@ namespace we
 	class Actor;
 	class Renderer;
 
-	class World
+	class World : public Object
 	{
 	public:
 		World(Application* OwningApp);
@@ -27,8 +28,8 @@ namespace we
 		sf::Vector2u GetWindowSize() const;
 
 	private:
-		void BeginPlay();
-		void Tick(float DeltaTime);
+		virtual void BeginPlay();
+		virtual void Tick(float DeltaTime);
 
 		Application* OwningApp;
 		bool bHasBegunPlay;

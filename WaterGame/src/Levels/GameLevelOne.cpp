@@ -3,6 +3,7 @@
 #include "Framework/Assetmanager.h"
 #include "Player/PlayerSpaceship.h"
 #include "Enemy/Fighter.h"
+#include "Framework/TimerManager.h"
 
 namespace we
 {
@@ -14,5 +15,20 @@ namespace we
 
 		weak<Fighter> Tester = SpawnActor<Fighter>();
 		Tester.lock()->SetActorLocation(sf::Vector2f{ static_cast<float>(GetWindowSize().x / 2), 10 });
+
+	}
+
+	void LevelOne::BeginPlay()
+	{
+		TimerManager::Get().SetTimer(GetObject(), &LevelOne::TestTimerCB, 2.0f, true);
+	}
+
+	void LevelOne::Tick(float DeltaTime)
+	{
+	}
+
+	void LevelOne::TestTimerCB()
+	{
+		LOG("Timer Callback Test")
 	}
 }

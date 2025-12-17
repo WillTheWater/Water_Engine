@@ -2,15 +2,15 @@
 
 namespace we
 {
-	unique<AssetManager> AssetManager::UAssetManager{nullptr};
+	unique<AssetManager> AssetManager::AssetMgr{nullptr};
 
 	AssetManager& AssetManager::Get()
 	{
-		if (!UAssetManager)
+		if (!AssetMgr)
 		{
-			UAssetManager = std::move(unique<AssetManager>{new AssetManager});
+			AssetMgr = std::move(unique<AssetManager>{new AssetManager});
 		}
-		return *UAssetManager;
+		return *AssetMgr;
 	}
 
 	shared<sf::Texture> AssetManager::LoadTexture(const std::string& TexturePath)

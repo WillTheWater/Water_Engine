@@ -23,7 +23,7 @@ namespace we
 		template<typename MapType>
 		void GarbageCollect(MapType& Cache);
 
-		static unique<AssetManager> UAssetManager;
+		static unique<AssetManager> AssetMgr;
 		Dictionary<std::string, shared<sf::Texture>> LoadedTextures;
 		Dictionary<string, shared<sf::Font>> LoadedFonts;
 		std::string RootDirectory;
