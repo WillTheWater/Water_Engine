@@ -12,8 +12,12 @@ namespace we
 
 		virtual void Tick(float DeltaTime) override;
 
+		void OscillateX(float DeltaTime);
+
 	private:
 		virtual void Shoot() override;
 		unique<BulletShooter> Shooter;
+		float OscTime;
+
 	};
 }
