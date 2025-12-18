@@ -26,8 +26,7 @@ namespace we
 		CooldownClock.restart();
 		weak<Bullet> NewBullet = GetOwner()->GetWorld()->SpawnActor<Bullet>(GetOwner(), "SpaceShooterRedux/PNG/Lasers/laserBlue16.png");
 		auto BulletPtr = NewBullet.lock();
-		if (!BulletPtr)
-			return;
+		if (!BulletPtr) { return; }
 
 		BulletPtr->SetActorLocation(GetOwner()->GetActorLocation());
 		BulletPtr->SetActorRotation(GetOwner()->GetActorRotation());

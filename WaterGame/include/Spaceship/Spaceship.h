@@ -15,9 +15,9 @@ namespace we
 		virtual void Damage(float Amount) override;
 
 		HealthComponent& GetHealthComponent() { return HealthComp; }
-		sf::Vector2f GetVelocity() const { return Velocity; }
 
-		void SetVelocity(sf::Vector2f NewVelocity);
+		sf::Vector2f GetVelocity() const { return Velocity; }
+		void SetVelocity(const sf::Vector2f& NewVelocity);
 
 	private:
 		void Blink();

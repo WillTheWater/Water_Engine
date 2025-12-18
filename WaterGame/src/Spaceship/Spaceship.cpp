@@ -58,7 +58,7 @@ namespace we
 		}
 	}
 
-	void Spaceship::SetVelocity(sf::Vector2f NewVelocity)
+	void Spaceship::SetVelocity(const sf::Vector2f& NewVelocity)
 	{
 		Velocity = NewVelocity;
 	}

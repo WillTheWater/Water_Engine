@@ -17,7 +17,6 @@ namespace we
 
 		virtual void OnActorBeginOverlap(Actor* OtherActor) override;
 	private:
-
 		void Move(float DeltaTime);
 		Actor* OwningActor;
 		float Velocity;

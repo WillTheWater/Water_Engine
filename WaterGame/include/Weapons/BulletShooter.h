@@ -7,7 +7,7 @@ namespace we
 	class BulletShooter : public Shooter
 	{
 	public:
-		BulletShooter(Actor* OwningActor, float CooldownTime = 0.3f);
+		BulletShooter(Actor* OwningActor, float CooldownTime = 0.5f);
 
 		virtual bool IsOnCooldown() const override;
 

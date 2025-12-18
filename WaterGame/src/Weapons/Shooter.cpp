@@ -10,8 +10,7 @@ namespace we
 
 	void Shooter::Shoot()
 	{
-		if (!OwningActor || OwningActor->IsPendingDestroy())
-			return;
+		if (!OwningActor || OwningActor->IsPendingDestroy()) { return; }
 
 		if (CanShoot() && !IsOnCooldown())
 		{

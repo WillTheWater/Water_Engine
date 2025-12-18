@@ -9,7 +9,7 @@ namespace we
 		: Spaceship{OwningWorld, TexturePath}
 		, MovementInput{}
 		, Speed{700.f}
-		, PlayerShooter{ new BulletShooter{this} }
+		, PlayerShooter{ new BulletShooter{this, 0.15f} }
 	{
 		SetActorID(EActorID::Player);
 	}
