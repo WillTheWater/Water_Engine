@@ -24,7 +24,6 @@ namespace we
 
 	Actor::~Actor()
 	{
-		LOG("Actor Destroyed")
 	}
 
 	void Actor::BeginPlayGlobal()

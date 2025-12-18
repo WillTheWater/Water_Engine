@@ -15,7 +15,7 @@ namespace we
 		TestPlayer.lock()->SetActorLocation(sf::Vector2f{ static_cast<float>(GetWindowSize().x / 2), static_cast<float>(GetWindowSize().y / 2) });
 
 		weak<Fighter> Tester = SpawnActor<Fighter>();
-		Tester.lock()->SetActorLocation(sf::Vector2f{ static_cast<float>(GetWindowSize().x / 2), 10 });
+		Tester.lock()->SetActorLocation(sf::Vector2f{ static_cast<float>(GetWindowSize().x - 500), 100 });
 
 	}
 

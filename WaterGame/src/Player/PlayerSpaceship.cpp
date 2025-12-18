@@ -11,6 +11,7 @@ namespace we
 		, Speed{700.f}
 		, PlayerShooter{ new BulletShooter{this, 0.15f} }
 	{
+		SetPhysicsEnabled(true);
 		SetActorID(EActorID::Player);
 	}
 

@@ -7,7 +7,7 @@ namespace we
 		: EnemySpaceship{OwningWorld, TexturePath}
 		, Shooter{ new BulletShooter{this} }
 	{
-		SetVelocity(Velocity);
+		//SetVelocity(Velocity);
 		SetLocalForwardVector(sf::Vector2f{0, 1});
 	}
 

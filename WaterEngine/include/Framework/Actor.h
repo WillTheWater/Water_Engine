@@ -38,7 +38,6 @@ namespace we
 		void SetTexture(const std::string& TexturePath, float SpriteScale = 1.0f);
 		void SetSpriteFrame(int FrameWidth, int FrameHeight);
 		void SetActorScale(float NewScale);
-		void SetActorID(EActorID NewID) { ActorID = NewID; }
 		void SetActorLocation(const sf::Vector2f& NewLocation);
 		void SetActorRotation(const sf::Angle& NewRotation);
 		void AddActorLocationOffset(const sf::Vector2f& Offset);
@@ -50,13 +49,15 @@ namespace we
 		sf::FloatRect GetSpriteBounds() const;
 		sf::Vector2u GetTextureSize() const { return ATexture->getSize(); }
 		sf::Vector2f GetSpriteScale() const { return ASprite->getScale(); }
-		EActorID GetActorID() const { return ActorID; }
-		static EActorID GetNeutralActorID() { return NeutralID; }
 		sf::Vector2f GetActorLocation() const;
 		sf::Angle GetActorRotation() const;
 		sf::Sprite& GetSprite() { return *ASprite;}
 		const sf::Sprite& GetSprite() const { return *ASprite;}
 		bool IsOutOfBounds(float Allowance = 10.f) const;
+		
+		void SetActorID(EActorID NewID) { ActorID = NewID; }
+		EActorID GetActorID() const { return ActorID; }
+		static EActorID GetNeutralActorID() { return NeutralID; }
 
 	private:
 		void InitialziePhysics();

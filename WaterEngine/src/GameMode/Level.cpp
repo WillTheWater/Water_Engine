@@ -11,12 +11,12 @@ namespace we
 
 	void Level::BeginLevel()
 	{
-		LOG("Level Begin")
+		//LOG("Level Begin")
 	}
 
 	void Level::TickLevel(float DeltaTime)
 	{
-		LOG("Level Tick")
+		//LOG("Level Tick")
 	}
 
 	void Level::LevelEnd()
@@ -28,6 +28,6 @@ namespace we
 
 	void Level::EndLevel()
 	{
-		LOG("Level Has Ended")
+		//LOG("Level Has Ended")
 	}
 }
