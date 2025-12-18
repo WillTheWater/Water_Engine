@@ -36,6 +36,9 @@ add_executable(${WATER_GAME}
 
     ${CMAKE_CURRENT_SOURCE_DIR}/include/Levels/GameLevelOne.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Levels/GameLevelOne.cpp
+
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/Levels/FighterLevel.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Levels/FighterLevel.cpp
 )
 
 target_include_directories(${WATER_GAME} PUBLIC

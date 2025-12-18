@@ -5,6 +5,7 @@
 #include "Enemy/Fighter.h"
 #include "Framework/TimerManager.h"
 #include "GameMode/Level.h"
+#include "Levels/FighterLevel.h"
 
 namespace we
 {
@@ -13,9 +14,6 @@ namespace we
 	{
 		TestPlayer = SpawnActor<PlayerSpaceship>();
 		TestPlayer.lock()->SetActorLocation(sf::Vector2f{ static_cast<float>(GetWindowSize().x / 2), static_cast<float>(GetWindowSize().y / 2) });
-
-		weak<Fighter> Tester = SpawnActor<Fighter>();
-		Tester.lock()->SetActorLocation(sf::Vector2f{ static_cast<float>(GetWindowSize().x - 500), 100 });
 
 	}
 
@@ -29,6 +27,6 @@ namespace we
 
 	void LevelOne::InitLevels()
 	{
-		AddLevel(shared<Level>{new Level{ this }});
+		AddLevel(shared<FighterLevel>{new FighterLevel{ this }});
 	}
 }
