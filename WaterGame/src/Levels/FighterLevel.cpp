@@ -6,7 +6,7 @@ namespace we
 {
 	FighterLevel::FighterLevel(World* World)
 		: Level{World}
-		, SpawnInterval{2.f}
+		, SpawnInterval{3.5f}
 		, SwitchInterval{6.f}
 		, SpawnDistance{100.f}
 		, SpawnLocationOne{0.f, 0.f}
@@ -22,8 +22,12 @@ namespace we
 	void FighterLevel::BeginLevel()
 	{
 		auto WindowSize = GetWorld()->GetWindowSize();
-		SpawnLocationOne = sf::Vector2f{ SpawnDistance, -100.f };
-		SpawnLocationOne = sf::Vector2f{ WindowSize.x - SpawnDistance, -100.f };
+
+		const float ySpawn = -100.f;
+		SpawnLocationOne = sf::Vector2f{ WindowSize.x * (1.f / 3.f), ySpawn };
+		SpawnLocationTwo = sf::Vector2f{ WindowSize.x * (2.f / 3.f), ySpawn };
+
+		SpawnLocation = SpawnLocationOne;
 
 		SwitchRow();
 	}
@@ -53,21 +57,28 @@ namespace we
 
 	void FighterLevel::SwitchRow()
 	{
-		if (RowsSpawned == RowsToSpawn)
+		if (RowsSpawned >= RowsToSpawn)
 		{
 			EndLevel();
 			return;
 		}
 
-		if (SpawnLocation == SpawnLocationOne)
-		{
-			SpawnLocation = SpawnLocationTwo;
-		}
-		else
-		{
-			SpawnLocation = SpawnLocationOne;
-		}
-		SpawnTimerHandle = TimerManager::Get().SetTimer(GetObject(), &FighterLevel::SpawnFighter, SpawnInterval, true);
+		CurrentFighterCount = 0;
+
+		SpawnLocation =
+			(SpawnLocation == SpawnLocationOne)
+			? SpawnLocationTwo
+			: SpawnLocationOne;
+
+		SpawnTimerHandle =
+			TimerManager::Get().SetTimer(
+				GetObject(),
+				&FighterLevel::SpawnFighter,
+				SpawnInterval,
+				true
+			);
+
 		RowsSpawned++;
 	}
+
 }
