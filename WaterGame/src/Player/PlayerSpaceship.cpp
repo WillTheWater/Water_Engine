@@ -11,13 +11,12 @@ namespace we
 		, Speed{700.f}
 		, PlayerShooter{ new BulletShooter{this, 0.15f} }
 	{
-		SetPhysicsEnabled(true);
 		SetActorID(EActorID::Player);
 	}
 
 	void PlayerSpaceship::BeginPlay()
 	{
-		Actor::BeginPlay();
+		Spaceship::BeginPlay();
 		SetLocalForwardVector(sf::Vector2f{ 0,-1 });
 	}
 
@@ -34,11 +33,6 @@ namespace we
 		{
 			PlayerShooter->Shoot();
 		}
-	}
-
-	void PlayerSpaceship::Damage(float Amount)
-	{
-		Spaceship::Damage(Amount);
 	}
 
 	void PlayerSpaceship::HandleInput()

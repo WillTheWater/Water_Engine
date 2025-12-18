@@ -31,11 +31,6 @@ namespace we
 	{
 		if (!OtherActor) return;
 
-		LOG("Bullet Overlap: MyID=%d, OtherID=%d, IsHostile=%d",
-			static_cast<int>(GetActorID()),
-			static_cast<int>(OtherActor->GetActorID()),
-			static_cast<int>(IsHostile(OtherActor)));
-
 		if (IsHostile(OtherActor))
 		{
 			OtherActor->Damage(GetDamage());

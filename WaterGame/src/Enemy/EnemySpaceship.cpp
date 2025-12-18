@@ -22,11 +22,9 @@ namespace we
 	void EnemySpaceship::OnActorBeginOverlap(Actor* OtherActor)
 	{
 		Spaceship::OnActorBeginOverlap(OtherActor);
-		LOG("Overlaped")
 		if (IsHostile(OtherActor))
 		{
 			OtherActor->Damage(CollisionDamage);
-			LOG("Hit")
 		}
 	}
 }
