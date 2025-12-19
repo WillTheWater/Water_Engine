@@ -9,6 +9,7 @@ namespace we
 		, Damage{Damage}
 	{
 		SetActorID(OwningActor->GetActorID());
+		FireDirection = OwningActor->GetActorFowardVector();
 	}
 
 	void Bullet::BeginPlay()
@@ -40,6 +41,6 @@ namespace we
 
 	void Bullet::Move(float DeltaTime)
 	{
-		AddActorLocationOffset(OwningActor->GetActorFowardVector() * Velocity * DeltaTime);
+		AddActorLocationOffset(FireDirection * Velocity * DeltaTime);
 	}
 }

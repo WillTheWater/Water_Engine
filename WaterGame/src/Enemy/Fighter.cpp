@@ -13,6 +13,11 @@ namespace we
 		SetLocalForwardVector(sf::Vector2f{0, 1});
 	}
 
+	void Fighter::BeginPlay()
+	{
+		Spaceship::BeginPlay();
+	}
+
 	void Fighter::Tick(float DeltaTime)
 	{
 		EnemySpaceship::Tick(DeltaTime);
@@ -22,14 +27,19 @@ namespace we
 
 	void Fighter::OscillateX(float DeltaTime)
 	{
-		if (IsPendingDestroy())
-			return;
-		OscTime += DeltaTime;
-		float Amplitude = 300.f;
-		float Frequency = 0.2f;
-		const float XOffset = std::sin(OscTime * 2.f * 3.14159265f * Frequency) * Amplitude;
+		static constexpr float Amplitude = 120.f;
+		static constexpr float Frequency = 0.5f;
 
-		AddActorLocationOffset({ XOffset * DeltaTime, 0 });
+		OscTime += DeltaTime;
+
+		const float XVelocity =
+			std::cos(OscTime * 2.f * 3.14159265f * Frequency)
+			* Amplitude
+			* Frequency
+			* 2.f
+			* 3.14159265f;
+
+		AddActorLocationOffset({ XVelocity * DeltaTime, 0.f });
 	}
 
 
