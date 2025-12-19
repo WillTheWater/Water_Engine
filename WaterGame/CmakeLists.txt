@@ -19,6 +19,9 @@ add_executable(${WATER_GAME}
     ${CMAKE_CURRENT_SOURCE_DIR}/include/Enemy/TwinFighter.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Enemy/TwinFighter.cpp
 
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/Enemy/Destroyer.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Enemy/Destroyer.cpp
+
     ${CMAKE_CURRENT_SOURCE_DIR}/include/Gameplay/HealthComponent.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Gameplay/HealthComponent.cpp
 
@@ -45,6 +48,9 @@ add_executable(${WATER_GAME}
 
     ${CMAKE_CURRENT_SOURCE_DIR}/include/Levels/TwinFighterLevel.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Levels/TwinFighterLevel.cpp
+
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/Levels/DestroyerLevel.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Levels/DestroyerLevel.cpp
 )
 
 target_include_directories(${WATER_GAME} PUBLIC
