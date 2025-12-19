@@ -15,6 +15,9 @@ namespace we
 		, bHasBegunPlay{ false }
 		, ATexture{}
 		, ASprite{ nullptr }
+		, ActorLocation{}
+		, ActorRotation{}
+		, ActorScale{ sf::Vector2f{1.f, 1.f} }
 		, PhysicsBody{nullptr}
 		, bPhysicsEnabled{ false }
 		, ActorID{GetNeutralActorID()}
@@ -78,8 +81,6 @@ namespace we
 	{
 		if (!ASprite || !ATexture) { return; }
 
-		FrameSize = { FrameWidth, FrameHeight };
-
 		if (FrameWidth > 0 && FrameHeight > 0)
 		{
 			ASprite->setTextureRect(sf::IntRect({ 0, 0 }, { FrameWidth, FrameHeight }));
@@ -94,11 +95,13 @@ namespace we
 		CenterPivot();
 	}
 
-	void Actor::SetActorScale(float NewScale)
+	void Actor::SetActorScale(const sf::Vector2f NewScale)
 	{
-		if (!ASprite) { return; }
-
-		ASprite->setScale({ NewScale, NewScale });
+		ActorScale = NewScale;
+		if (ASprite)
+		{
+			ASprite->setScale(NewScale);
+		}
 	}
 
 	void Actor::Render(Renderer& GameRenderer)
@@ -181,28 +184,16 @@ namespace we
 
 	void Actor::SetActorLocation(const sf::Vector2f& NewLocation)
 	{
-		if (!ASprite) { return; }
+		ActorLocation = NewLocation;
 		ASprite->setPosition(NewLocation);
 		UpdatePhysicsBodyTransform();
 	}
 
 	void Actor::SetActorRotation(const sf::Angle& NewRotation)
 	{
-		if (!ASprite) { return; }
+		ActorRotation = NewRotation;
 		ASprite->setRotation(NewRotation);
 		UpdatePhysicsBodyTransform();
-	}
-
-	sf::Vector2f Actor::GetActorLocation() const
-	{
-		if (!ASprite) { return sf::Vector2f{}; }
-		return ASprite->getPosition();
-	}
-
-	sf::Angle Actor::GetActorRotation() const
-	{
-		if (!ASprite) { return sf::Angle{}; }
-		return ASprite->getRotation();
 	}
 
 	void Actor::AddActorLocationOffset(const sf::Vector2f& Offset)
