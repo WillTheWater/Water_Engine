@@ -21,6 +21,5 @@ namespace we
 		Actor* OwningActor;
 		float Velocity;
 		float Damage;
-		sf::Vector2f FireDirection;
 	};
 }

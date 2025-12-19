@@ -25,7 +25,7 @@ namespace we
 
 	void BulletShooter::ShootImplimentation()
 	{
-		sf::Vector2f OwnerForward = GetOwner()->GetActorFowardVector();
+		sf::Vector2f OwnerForward = GetOwner()->GetActorForwardVector();
 		sf::Vector2f OwnerRight = GetOwner()->GetActorRightVector();
 
 		CooldownClock.restart();

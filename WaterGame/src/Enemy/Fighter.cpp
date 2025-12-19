@@ -10,7 +10,8 @@ namespace we
 
 	{
 		SetVelocity(Velocity);
-		SetLocalForwardVector(sf::Vector2f{0, 1});
+		SetActorRotation(sf::degrees(90.f));
+		SetSpriteRotationOffset(sf::degrees(-90));
 	}
 
 	void Fighter::Tick(float DeltaTime)

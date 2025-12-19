@@ -48,18 +48,19 @@ namespace we
 		sf::Vector2f GetActorLocation() const { return ActorLocation; };
 		sf::Angle GetActorRotation() const { return ActorRotation; };
 
-		void SetLocalForwardVector(sf::Vector2f& Forward);
-		sf::Vector2f GetActorFowardVector() const;
+		sf::Vector2f GetActorForwardVector() const;
 		sf::Vector2f GetActorRightVector() const;
-		bool IsOutOfBounds(float Allowance = 10.f) const;
+		bool IsActorOutOfBounds(float Allowance = 10.f) const;
 
 		void SetTexture(const std::string& TexturePath, float SpriteScale = 1.0f);
+		void SetSpriteLocationOffset(const sf::Vector2f& Position);
+		void SetSpriteRotationOffset(const sf::Angle& Rotation);
 		void SetSpriteFrame(int FrameWidth, int FrameHeight);
-		sf::Vector2u GetTextureSize() const { return ATexture->getSize(); }
 		sf::FloatRect GetSpriteBounds() const;
-		sf::Vector2f GetSpriteScale() const { return ASprite->getScale(); }
-		sf::Sprite& GetSprite() { return *ASprite;}
-		const sf::Sprite& GetSprite() const { return *ASprite;}
+		sf::Vector2f GetSpriteScale() const { return Sprite->getScale(); }
+		sf::Sprite& GetSprite() { return *Sprite;}
+		const sf::Sprite& GetSprite() const { return *Sprite;}
+		void UpdateSpriteTransform();
 		void CenterPivot();
 		
 	private:
@@ -71,13 +72,17 @@ namespace we
 		bool bHasBegunPlay;
 		bool bDrawDebug = false;
 
-		shared<sf::Texture> ATexture;
-		shared<sf::Sprite> ASprite;
+		shared<sf::Texture> Texture;
+		shared<sf::Sprite> Sprite;
 
-		sf::Vector2f LocalForward = { 1.f, 0.f };
+		sf::Vector2f DefaultForwardVector;
 		sf::Vector2f ActorLocation;
 		sf::Angle ActorRotation;
 		sf::Vector2f ActorScale;
+
+		sf::Vector2f SpriteLocationOffset;
+		sf::Angle SpriteRotationOffset;
+		sf::Vector2f SpriteScale;
 
 		b2Body* PhysicsBody;
 		bool bPhysicsEnabled;

@@ -13,7 +13,7 @@ namespace we
 	void EnemySpaceship::Tick(float DeltTime)
 	{
 		Spaceship::Tick(DeltTime);
-		if (IsOutOfBounds(GetSpriteBounds().size.x * 2.f))
+		if (IsActorOutOfBounds(GetSpriteBounds().size.x * 2.f))
 		{
 			Destroy();
 		}

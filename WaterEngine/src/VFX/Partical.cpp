@@ -31,6 +31,7 @@ namespace we
 	void Partical::RandomVelocity(float Min, float Max)
 	{
 		Velocity = RandomUnitVector() * RandomRange(Min, Max);
+		SetActorRotation(VectorToRotation(Velocity));
 	}
 
 	void Partical::RandomSize(float Min, float Max)

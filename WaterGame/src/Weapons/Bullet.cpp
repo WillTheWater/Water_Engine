@@ -9,7 +9,7 @@ namespace we
 		, Damage{Damage}
 	{
 		SetActorID(OwningActor->GetActorID());
-		FireDirection = OwningActor->GetActorFowardVector();
+		SetSpriteRotationOffset(sf::degrees(90));
 	}
 
 	void Bullet::BeginPlay()
@@ -22,7 +22,7 @@ namespace we
 	{
 		Actor::Tick(DeltaTime);
 		Move(DeltaTime);
-		if (IsOutOfBounds())
+		if (IsActorOutOfBounds())
 		{
 			Destroy();
 		}
@@ -41,6 +41,6 @@ namespace we
 
 	void Bullet::Move(float DeltaTime)
 	{
-		AddActorLocationOffset(FireDirection * Velocity * DeltaTime);
+		AddActorLocationOffset(GetActorForwardVector() * Velocity * DeltaTime);
 	}
 }

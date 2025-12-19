@@ -9,7 +9,7 @@ namespace we
 		: Spaceship{OwningWorld, TexturePath}
 		, MovementInput{}
 		, Speed{700.f}
-		, PlayerShooter{ new BulletShooter{this, 0.1f, {0.f, -35.f}} }
+		, PlayerShooter{ new BulletShooter{this, 0.1f, {0.f, 35.f}, sf::degrees(0)}}
 	{
 		SetActorID(EActorID::Player);
 	}
@@ -17,7 +17,8 @@ namespace we
 	void PlayerSpaceship::BeginPlay()
 	{
 		Spaceship::BeginPlay();
-		SetLocalForwardVector(sf::Vector2f{ 0,-1 });
+		SetActorRotation(sf::degrees(-90));
+		SetSpriteRotationOffset(sf::degrees(90));
 	}
 
 	void PlayerSpaceship::Tick(float DeltaTime)

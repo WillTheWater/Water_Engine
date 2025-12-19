@@ -11,7 +11,8 @@ namespace we
 		, PhaseOffset{}
 	{
 		SetVelocity(Velocity);
-		SetLocalForwardVector(sf::Vector2f{ 0, 1 });
+		SetActorRotation(sf::degrees(90.f));
+		SetSpriteRotationOffset(sf::degrees(-90));
 	}
 
 	void TwinFighter::Tick(float DeltaTime)
