@@ -12,8 +12,6 @@ namespace we
 	public:
 		LevelOne(Application* OwningApp);
 
-
-
 	private:
 		virtual void BeginPlay() override;
 		virtual void Tick(float DeltaTime) override;

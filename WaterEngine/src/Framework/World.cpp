@@ -84,6 +84,7 @@ namespace we
 		else
 		{
 			EndLevels();
+			LOG("Next Level Failed To Load")
 		}
 	}
 

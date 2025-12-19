@@ -6,6 +6,7 @@
 #include "Framework/TimerManager.h"
 #include "GameMode/Level.h"
 #include "Levels/FighterLevel.h"
+#include "Levels/TwinFighterLevel.h"
 
 namespace we
 {
@@ -27,6 +28,7 @@ namespace we
 
 	void LevelOne::InitLevels()
 	{
+		AddLevel(shared<TwinFighterLevel>{new TwinFighterLevel{ this }});
 		AddLevel(shared<FighterLevel>{new FighterLevel{ this }});
 	}
 }

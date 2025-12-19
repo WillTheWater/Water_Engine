@@ -42,6 +42,9 @@ add_executable(${WATER_GAME}
 
     ${CMAKE_CURRENT_SOURCE_DIR}/include/Levels/FighterLevel.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Levels/FighterLevel.cpp
+
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/Levels/TwinFighterLevel.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Levels/TwinFighterLevel.cpp
 )
 
 target_include_directories(${WATER_GAME} PUBLIC

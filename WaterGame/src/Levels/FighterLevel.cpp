@@ -7,7 +7,7 @@ namespace we
 	FighterLevel::FighterLevel(World* World)
 		: Level{World}
 		, SpawnInterval{3.5f}
-		, SwitchInterval{6.f}
+		, SwitchInterval{4.f}
 		, SpawnDistance{100.f}
 		, SpawnLocationOne{0.f, 0.f}
 		, SpawnLocationTwo{ 0.f, 0.f }
@@ -59,7 +59,7 @@ namespace we
 	{
 		if (RowsSpawned >= RowsToSpawn)
 		{
-			EndLevel();
+			LevelEnd();
 			return;
 		}
 

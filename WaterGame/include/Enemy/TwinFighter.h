@@ -8,12 +8,13 @@ namespace we
 	class TwinFighter : public EnemySpaceship
 	{
 	public:
-		TwinFighter(World* OwningWorld, const string TexturePath = "SpaceShooterRedux/PNG/Enemies/enemyBlack3.png", const sf::Vector2f& Velocity = { 0, 40 });
+		TwinFighter(World* OwningWorld, const string TexturePath = "SpaceShooterRedux/PNG/Enemies/enemyBlack3.png", const sf::Vector2f& Velocity = { 0, 20 });
 
 		virtual void Tick(float DeltaTime) override;
 
 		void OscillateX(float DeltaTime);
 
+		float PhaseOffset;
 	private:
 		virtual void Shoot() override;
 		unique<BulletShooter> ShooterL;

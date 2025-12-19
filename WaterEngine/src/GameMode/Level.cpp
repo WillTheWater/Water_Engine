@@ -11,23 +11,20 @@ namespace we
 
 	void Level::BeginLevel()
 	{
-		//LOG("Level Begin")
 	}
 
 	void Level::TickLevel(float DeltaTime)
 	{
-		//LOG("Level Tick")
 	}
 
 	void Level::LevelEnd()
 	{
-		OnLevelEnd.Broadcast();
 		bLevelFinished = true;
 		EndLevel();
+		OnLevelEnd.Broadcast();
 	}
 
 	void Level::EndLevel()
 	{
-		//LOG("Level Has Ended")
 	}
 }

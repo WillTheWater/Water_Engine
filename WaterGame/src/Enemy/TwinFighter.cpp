@@ -8,6 +8,7 @@ namespace we
 		, ShooterL{ new BulletShooter{this, 1.f, {-40, 40}, sf::degrees(0)} }
 		, ShooterR{ new BulletShooter{this, 1.f, {40, 40}, sf::degrees(0)} }
 		, OscTime{0.f}
+		, PhaseOffset{}
 	{
 		SetVelocity(Velocity);
 		SetLocalForwardVector(sf::Vector2f{ 0, 1 });
@@ -22,13 +23,13 @@ namespace we
 
 	void TwinFighter::OscillateX(float DeltaTime)
 	{
-		static constexpr float Amplitude = 240.f;
+		static constexpr float Amplitude = 540.f;
 		static constexpr float Frequency = 0.15f;
 
 		OscTime += DeltaTime;
 
 		const float XVelocity =
-			std::cos(OscTime * 2.f * 3.14159265f * Frequency)
+			std::cos(OscTime * 2.f * 3.14159265f * Frequency + PhaseOffset)
 			* Amplitude
 			* Frequency
 			* 2.f
