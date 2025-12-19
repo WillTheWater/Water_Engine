@@ -12,9 +12,9 @@ namespace we
 		, SpawnLocationOne{0.f, 0.f}
 		, SpawnLocationTwo{ 0.f, 0.f }
 		, SpawnLocation{ 0.f, 0.f }
-		, RowsToSpawn{4}
+		, RowsToSpawn{2}
 		, RowsSpawned{0}
-		, FightersPerRow{5}
+		, FightersPerRow{3}
 		, CurrentFighterCount{0}
 	{
 	}
@@ -23,7 +23,7 @@ namespace we
 	{
 		auto WindowSize = GetWorld()->GetWindowSize();
 
-		const float ySpawn = -100.f;
+		const float ySpawn = -40.f;
 		SpawnLocationOne = sf::Vector2f{ WindowSize.x * (1.f / 3.f), ySpawn };
 		SpawnLocationTwo = sf::Vector2f{ WindowSize.x * (2.f / 3.f), ySpawn };
 

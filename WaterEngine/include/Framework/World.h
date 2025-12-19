@@ -40,10 +40,11 @@ namespace we
 		List<shared<Actor>> Actors;
 		List<shared<Actor>> PendingActors;
 		List<shared<Level>> Levels;
-		int CurrentLevelIndex;
+		List<shared<Level>>::iterator CurrentLevel;
 		virtual void InitLevels();
 		virtual void EndLevels();
 		void LoadNextLevel();
+		void StartLevels();
 	};
 
 	template<typename ActorType, typename... Args>

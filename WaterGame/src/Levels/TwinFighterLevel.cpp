@@ -11,7 +11,7 @@ namespace we
 		, SpawnLocationL{World->GetWindowSize().x/2 - SpawnDistance, -60.f}
 		, SpawnLocationR{World->GetWindowSize().x/2 + SpawnDistance, -60.f }
 		, SpawnLocation{ SpawnLocationL }
-		, TwinFightersToSpawn{ 10 }
+		, TwinFightersToSpawn{ 3 }
 		, CurrentTwinFighterCount{ 0 }
 		,bSpawnL{true}
 	{

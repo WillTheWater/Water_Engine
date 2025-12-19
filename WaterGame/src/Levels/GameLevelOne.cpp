@@ -7,6 +7,7 @@
 #include "GameMode/Level.h"
 #include "Levels/FighterLevel.h"
 #include "Levels/TwinFighterLevel.h"
+#include "GameMode/LevelTransition.h"
 
 namespace we
 {
@@ -29,6 +30,7 @@ namespace we
 	void LevelOne::InitLevels()
 	{
 		AddLevel(shared<TwinFighterLevel>{new TwinFighterLevel{ this }});
+		AddLevel(shared<LevelTransition>{new LevelTransition{ this, 3.f }});
 		AddLevel(shared<FighterLevel>{new FighterLevel{ this }});
 	}
 }

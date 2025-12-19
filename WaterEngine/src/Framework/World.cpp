@@ -13,7 +13,7 @@ namespace we
 		, PendingActors{}
 		, bHasBegunPlay{ false }
 		, Levels{}
-		, CurrentLevelIndex{-1}
+		, CurrentLevel{Levels.end()}
 	{
 	}
 
@@ -28,7 +28,7 @@ namespace we
 			bHasBegunPlay = true;
 			BeginPlay();
 			InitLevels();
-			LoadNextLevel();
+			StartLevels();
 		}
 	}
 
@@ -48,9 +48,9 @@ namespace we
 			i++;
 		}
 
-		if (CurrentLevelIndex >= 0 && CurrentLevelIndex < Levels.size())
+		if (CurrentLevel != Levels.end())
 		{
-			Levels[CurrentLevelIndex]->TickLevel(DeltaTime);
+			CurrentLevel->get()->TickLevel(DeltaTime);
 		}
 
 		Tick(DeltaTime);
@@ -71,21 +71,28 @@ namespace we
 
 	void World::EndLevels()
 	{
+		LOG("All Levels Complete!")
 	}
 
 	void World::LoadNextLevel()
 	{
-		CurrentLevelIndex++;
-		if (CurrentLevelIndex >= 0 && CurrentLevelIndex < Levels.size())
+		CurrentLevel = Levels.erase(CurrentLevel);
+		if (CurrentLevel != Levels.end())
 		{
-			Levels[CurrentLevelIndex]->OnLevelEnd.Bind(GetObject(), &World::LoadNextLevel);
-			Levels[CurrentLevelIndex]->BeginLevel();
+			CurrentLevel->get()->BeginLevel();
+			CurrentLevel->get()->OnLevelEnd.Bind(GetObject(), &World::LoadNextLevel);
 		}
 		else
 		{
 			EndLevels();
-			LOG("Next Level Failed To Load")
 		}
+	}
+
+	void World::StartLevels()
+	{
+		CurrentLevel = Levels.begin();
+		CurrentLevel->get()->BeginLevel();
+		CurrentLevel->get()->OnLevelEnd.Bind(GetObject(), &World::LoadNextLevel);
 	}
 
 	void World::Render(Renderer& GameRenderer)
@@ -110,17 +117,7 @@ namespace we
 			}
 		}
 
-		for (auto i = Levels.begin(); i != Levels.end();)
-		{
-			if (i->get()->IsLevelFinished())
-			{
-				i = Levels.erase(i);
-			}
-			else
-			{
-				i++;
-			}
-		}
+		
 	}
 
 	void World::AddLevel(const shared<Level>& NewLevel)
