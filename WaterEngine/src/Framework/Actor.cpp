@@ -236,7 +236,8 @@ namespace we
 
 	sf::Vector2f Actor::GetActorRightVector() const
 	{
-		return RotationToVector(GetActorRotation() + sf::degrees(90.f));
+		const sf::Vector2f F = GetActorFowardVector();
+		return { F.y, -F.x };
 	}
 
 	sf::VertexArray Actor::ForwardVectorDebugShape(float Length, sf::Color Color) const

@@ -5,10 +5,12 @@
 
 namespace we
 {
-	BulletShooter::BulletShooter(Actor* OwningActor, float CooldownTime)
-		: Shooter{OwningActor}
+	BulletShooter::BulletShooter(Actor* OwningActor, float CooldownTime, const sf::Vector2f& ShooterPosOffset, const sf::Angle& ShooterRotOffset)
+		: Shooter{ OwningActor }
 		, CooldownClock{}
-		, Cooldown{CooldownTime}
+		, Cooldown{ CooldownTime }
+		, ShooterPostionOffset{ShooterPosOffset}
+		, ShooterRotationOffset{ShooterRotOffset}
 	{
 	}
 
@@ -23,12 +25,15 @@ namespace we
 
 	void BulletShooter::ShootImplimentation()
 	{
+		sf::Vector2f OwnerForward = GetOwner()->GetActorFowardVector();
+		sf::Vector2f OwnerRight = GetOwner()->GetActorRightVector();
+
 		CooldownClock.restart();
 		weak<Bullet> NewBullet = GetOwner()->GetWorld()->SpawnActor<Bullet>(GetOwner(), "SpaceShooterRedux/PNG/Lasers/laserBlue16.png");
 		auto BulletPtr = NewBullet.lock();
 		if (!BulletPtr) { return; }
 
-		BulletPtr->SetActorLocation(GetOwner()->GetActorLocation());
-		BulletPtr->SetActorRotation(GetOwner()->GetActorRotation());
+		BulletPtr->SetActorLocation(GetOwner()->GetActorLocation() + OwnerRight * ShooterPostionOffset.x + OwnerForward * ShooterPostionOffset.y);
+		BulletPtr->SetActorRotation(GetOwner()->GetActorRotation() + ShooterRotationOffset);
 	}
 }

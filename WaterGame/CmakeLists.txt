@@ -16,6 +16,9 @@ add_executable(${WATER_GAME}
     ${CMAKE_CURRENT_SOURCE_DIR}/include/Enemy/Fighter.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Enemy/Fighter.cpp
 
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/Enemy/TwinFighter.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Enemy/TwinFighter.cpp
+
     ${CMAKE_CURRENT_SOURCE_DIR}/include/Gameplay/HealthComponent.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Gameplay/HealthComponent.cpp
 

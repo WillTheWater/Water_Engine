@@ -5,17 +5,12 @@ namespace we
 {
 	Fighter::Fighter(World* OwningWorld, const string TexturePath, const sf::Vector2f& Velocity)
 		: EnemySpaceship{OwningWorld, TexturePath}
-		, Shooter{ new BulletShooter{this} }
+		, Shooter{ new BulletShooter{this, 0.5, {0.f, 50.f}} }
 		, OscTime{0.f}
 
 	{
 		SetVelocity(Velocity);
 		SetLocalForwardVector(sf::Vector2f{0, 1});
-	}
-
-	void Fighter::BeginPlay()
-	{
-		Spaceship::BeginPlay();
 	}
 
 	void Fighter::Tick(float DeltaTime)
