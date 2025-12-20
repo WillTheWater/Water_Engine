@@ -31,6 +31,7 @@ namespace we
 	void LevelOne::InitLevels()
 	{
 		AddLevel(shared<DestroyerLevel>{new DestroyerLevel{ this }});
+		AddLevel(shared<DestroyerLevel>{new DestroyerLevel{ this }});
 		AddLevel(shared<LevelTransition>{new LevelTransition{ this, 3.f }});
 		AddLevel(shared<TwinFighterLevel>{new TwinFighterLevel{ this }});
 		AddLevel(shared<LevelTransition>{new LevelTransition{ this, 3.f }});

@@ -40,6 +40,11 @@ namespace we
 
 	void PlayerSpaceship::SetWeapon(unique<Shooter>&& NewWeapon)
 	{
+		if (PlayerShooter && typeid(*PlayerShooter.get()) == typeid(*NewWeapon.get()))
+		{
+			PlayerShooter->AddWeaponLevel();
+			return;
+		}
 		PlayerShooter = std::move(NewWeapon);
 	}
 

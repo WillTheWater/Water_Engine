@@ -15,6 +15,7 @@ namespace we
 		, const string& BulletTexturePath = "SpaceShooterRedux/PNG/Lasers/laserBlue16.png");
 
 		virtual bool IsOnCooldown() const override;
+		virtual void AddWeaponLevel(int LevelToAdd) override;
 		void SetBulletTexturePath(const string& NewBulletTexturePath);
 
 	private:

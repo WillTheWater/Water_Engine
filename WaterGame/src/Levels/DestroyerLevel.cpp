@@ -6,11 +6,11 @@ namespace we
 {
 	DestroyerLevel::DestroyerLevel(World* World)
 		: Level{ World }
-		, SpawnInterval{ 15.f }
+		, SpawnInterval{ 5.f }
 		, SpawnLocationL{ World->GetWindowSize().x * (1.f / 3.f), -40.f }
 		, SpawnLocationR{ World->GetWindowSize().x * (2.f / 3.f), -40.f }
 		, SpawnLocation{ SpawnLocationL }
-		, DestroyerToSpawn{ 2 }
+		, DestroyerToSpawn{ 10 }
 		, CurrentDestroyerCount{ 0 }
 		, bSpawnL{ true }
 	{
