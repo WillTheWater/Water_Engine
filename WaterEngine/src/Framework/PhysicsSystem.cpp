@@ -58,8 +58,8 @@ namespace we
 		BodyDef.angle = Listener->GetActorRotation().asRadians();
 		b2Body* Body = PhysicsWorld.CreateBody(&BodyDef);
 		b2PolygonShape PhysicsShape;
-		auto Bounds = Listener->GetSpriteBounds();
-		PhysicsShape.SetAsBox(Bounds.size.x/2.f * GetPhysicsScale(), Bounds.size.y / 2.f * GetPhysicsScale());
+		auto Extents = Listener->GetActorExtents();
+		PhysicsShape.SetAsBox(Extents.x * GetPhysicsScale(), Extents.y * GetPhysicsScale());
 		b2FixtureDef FixtureDef;
 		FixtureDef.shape = &PhysicsShape;
 		FixtureDef.density = 1.f;

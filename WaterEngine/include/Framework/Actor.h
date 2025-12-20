@@ -32,9 +32,6 @@ namespace we
 		virtual void Damage(float Amount);
 
 		void SetPhysicsEnabled(bool Enabled);
-		void SetShouldDrawDebugShapes(bool ToDraw) { bDrawDebug = ToDraw; }
-		sf::VertexArray ForwardVectorDebugShape(float Length = 150.f, sf::Color Color = sf::Color::Red) const;
-
 		void SetActorID(EActorID NewID) { ActorID = NewID; }
 		EActorID GetActorID() const { return ActorID; }
 		static EActorID GetNeutralActorID() { return NeutralID; }
@@ -45,6 +42,9 @@ namespace we
 		void SetActorRotation(const sf::Angle& NewRotation);
 		void AddActorRotationOffset(const sf::Angle& RotOffset);
 		void SetActorScale(const sf::Vector2f NewScale);
+		void SetActorExtents(const sf::Vector2f& HalfSize);
+		void SetActorSizeSource(EActorSize Source);
+		sf::Vector2f GetActorExtents() const;
 		sf::Vector2f GetActorLocation() const { return ActorLocation; };
 		sf::Angle GetActorRotation() const { return ActorRotation; };
 
@@ -52,30 +52,33 @@ namespace we
 		sf::Vector2f GetActorRightVector() const;
 		bool IsActorOutOfBounds(float Allowance = 10.f) const;
 
-		void SetTexture(const std::string& TexturePath, float SpriteScale = 1.0f);
+		void SetTexture(const std::string& TexturePath);
 		void SetSpriteLocationOffset(const sf::Vector2f& Position);
 		void SetSpriteRotationOffset(const sf::Angle& Rotation);
+		void SetSpriteScale(const sf::Vector2f& Scale);
 		void SetSpriteFrame(int FrameWidth, int FrameHeight);
 		sf::FloatRect GetSpriteBounds() const;
-		sf::Vector2f GetSpriteScale() const { return Sprite->getScale(); }
+		sf::Vector2f GetSpriteScale() const { return SpriteScale; }
 		sf::Sprite& GetSprite() { return *Sprite;}
 		const sf::Sprite& GetSprite() const { return *Sprite;}
 		void UpdateSpriteTransform();
 		void CenterPivot();
+
+	protected:
+		sf::Vector2f ActorExtents{ 0.f, 0.f };
+		EActorSize SizeSource{ EActorSize::SpriteBounds };
 		
 	private:
-		void InitialziePhysics();
-		void UninitialziePhysics();
+		void InitializePhysics();
+		void UninitializePhysics();
 		void UpdatePhysicsBodyTransform();
 		
 		World* OwningWorld;
 		bool bHasBegunPlay;
-		bool bDrawDebug = false;
 
 		shared<sf::Texture> Texture;
 		shared<sf::Sprite> Sprite;
 
-		sf::Vector2f DefaultForwardVector;
 		sf::Vector2f ActorLocation;
 		sf::Angle ActorRotation;
 		sf::Vector2f ActorScale;
@@ -89,5 +92,10 @@ namespace we
 
 		EActorID ActorID;
 		const static EActorID NeutralID = EActorID::Neutral;
+
+		// Debug Shapes
+		sf::VertexArray ForwardVectorDebugShape(float Length = 150.f, sf::Color Color = sf::Color::Red) const;
+		sf::VertexArray CollisionShapeDebug(sf::Color Color = sf::Color(255, 0, 0, 100)) const;
+		bool bRenderDebugShapes;
 	};
 }

@@ -15,7 +15,6 @@ namespace we
 		, bHasBegunPlay{ false }
 		, Texture{}
 		, Sprite{ nullptr }
-		, DefaultForwardVector{1.f, 0.f}
 		, ActorLocation{}
 		, ActorRotation{}
 		, ActorScale{ 1.f, 1.f }
@@ -25,6 +24,7 @@ namespace we
 		, PhysicsBody{nullptr}
 		, bPhysicsEnabled{ false }
 		, ActorID{GetNeutralActorID()}
+		, bRenderDebugShapes{false}
 	{
 		SetTexture(TexturePath);
 	}
@@ -60,7 +60,7 @@ namespace we
 
 	void Actor::Destroy()
 	{
-		UninitialziePhysics();
+		UninitializePhysics();
 		Object::Destroy();
 	}
 
@@ -71,9 +71,10 @@ namespace we
 		UpdateSpriteTransform();
 		GameRenderer.DrawSprite(*Sprite);
 
-		if (bDrawDebug)
+		if (bRenderDebugShapes)
 		{
 			GameRenderer.DrawDebugShape(ForwardVectorDebugShape());
+			GameRenderer.DrawDebugShape(CollisionShapeDebug());
 		}
 	}
 
@@ -82,7 +83,7 @@ namespace we
 		return OwningWorld->GetWindowSize();
 	}
 
-	void Actor::SetTexture(const string& TexturePath, float SpriteScale)
+	void Actor::SetTexture(const string& TexturePath)
 	{
 		Texture = AssetManager::Get().LoadTexture(TexturePath);
 		if (!Texture) { return; }
@@ -100,6 +101,11 @@ namespace we
 	void Actor::SetSpriteRotationOffset(const sf::Angle& Rotation)
 	{
 		SpriteRotationOffset = Rotation;
+	}
+
+	void Actor::SetSpriteScale(const sf::Vector2f& Scale)
+	{
+		SpriteScale = Scale;
 	}
 
 	void Actor::SetSpriteFrame(int FrameWidth, int FrameHeight)
@@ -122,18 +128,15 @@ namespace we
 
 	bool Actor::IsActorOutOfBounds(float Allowance) const
 	{
-		float WindowWidth = GetWindowSize().x;
-		float WindowHeight = GetWindowSize().y;
+		const sf::Vector2u window = GetWindowSize();
+		const sf::Vector2f pos = GetActorLocation();
+		const sf::Vector2f ext = GetActorExtents();
 
-		float SpriteWidth = GetSpriteBounds().size.x;
-		float SpriteHeight = GetSpriteBounds().size.y;
-
-		sf::Vector2f SpriteLocation = GetActorLocation();
-		if (SpriteLocation.x < -SpriteWidth - Allowance || SpriteLocation.x > WindowWidth + SpriteWidth + Allowance || SpriteLocation.y < -SpriteHeight - Allowance || SpriteLocation.y > WindowHeight + SpriteHeight + Allowance)
-		{
-			return true;
-		}
-		return false;
+		return
+			pos.x < -ext.x - Allowance ||
+			pos.x > window.x + ext.x + Allowance ||
+			pos.y < -ext.y - Allowance ||
+			pos.y > window.y + ext.y + Allowance;
 	}
 
 	void Actor::SetPhysicsEnabled(bool Enabled)
@@ -141,15 +144,15 @@ namespace we
 		bPhysicsEnabled = Enabled;
 		if (bPhysicsEnabled)
 		{
-			InitialziePhysics();
+			InitializePhysics();
 		}
 		else
 		{
-			UninitialziePhysics();
+			UninitializePhysics();
 		}
 	}
 
-	void Actor::InitialziePhysics()
+	void Actor::InitializePhysics()
 	{
 		if (!PhysicsBody)
 		{
@@ -157,7 +160,7 @@ namespace we
 		}
 	}
 
-	void Actor::UninitialziePhysics()
+	void Actor::UninitializePhysics()
 	{
 		if (PhysicsBody)
 		{
@@ -219,6 +222,34 @@ namespace we
 		ActorScale = NewScale;
 	}
 
+	void Actor::SetActorExtents(const sf::Vector2f& HalfSize)
+	{
+		ActorExtents = HalfSize;
+		SizeSource = EActorSize::Manual;
+	}
+
+	void Actor::SetActorSizeSource(EActorSize Source)
+	{
+		SizeSource = Source;
+	}
+
+	sf::Vector2f Actor::GetActorExtents() const
+	{
+		switch (SizeSource)
+		{
+		case EActorSize::SpriteBounds:
+		{
+			if (!Sprite) { return ActorExtents; }
+			const auto bounds = GetSprite().getGlobalBounds();
+			return { bounds.size.x * 0.5f, bounds.size.y * 0.5f };
+		}
+
+		case EActorSize::Manual:
+		default:
+			return ActorExtents;
+		}
+	}
+
 	void Actor::AddActorLocationOffset(const sf::Vector2f& Offset)
 	{
 		SetActorLocation(GetActorLocation() + Offset);
@@ -238,6 +269,27 @@ namespace we
 	{
 		sf::Angle rightRot = ActorRotation + sf::degrees(90.f);
 		return RotationToVector(rightRot);
+	}
+
+	sf::FloatRect Actor::GetSpriteBounds() const
+	{
+		return Sprite->getGlobalBounds();
+	}
+
+	void Actor::UpdateSpriteTransform()
+	{
+		if (!Sprite) return;
+
+		Sprite->setPosition(ActorLocation + SpriteLocationOffset);
+		Sprite->setRotation(ActorRotation + SpriteRotationOffset);
+		Sprite->setScale({ ActorScale.x * SpriteScale.x, ActorScale.y * SpriteScale.y });
+	}
+
+	void Actor::CenterPivot()
+	{
+		if (!Sprite) { return; }
+		sf::FloatRect localBounds = Sprite->getLocalBounds();
+		Sprite->setOrigin({ localBounds.size.x / 2.f, localBounds.size.y / 2.f });
 	}
 
 	sf::VertexArray Actor::ForwardVectorDebugShape(float Length, sf::Color Color) const
@@ -267,24 +319,22 @@ namespace we
 		return arrow;
 	}
 
-	sf::FloatRect Actor::GetSpriteBounds() const
+	sf::VertexArray Actor::CollisionShapeDebug(sf::Color Color) const
 	{
-		return Sprite->getGlobalBounds();
+		sf::Vector2f ext = GetActorExtents();
+		sf::Vector2f center = GetActorLocation();
+
+		sf::VertexArray rect(sf::PrimitiveType::LineStrip, 5);
+		rect[0].position = { center.x - ext.x, center.y - ext.y };
+		rect[1].position = { center.x + ext.x, center.y - ext.y };
+		rect[2].position = { center.x + ext.x, center.y + ext.y };
+		rect[3].position = { center.x - ext.x, center.y + ext.y };
+		rect[4].position = rect[0].position;
+
+		for (int i = 0; i < 5; ++i)
+			rect[i].color = Color;
+
+		return rect;
 	}
 
-	void Actor::UpdateSpriteTransform()
-	{
-		if (!Sprite) return;
-
-		Sprite->setPosition(ActorLocation + SpriteLocationOffset);
-		Sprite->setRotation(ActorRotation + SpriteRotationOffset);
-		Sprite->setScale({ ActorScale.x * SpriteScale.x, ActorScale.y * SpriteScale.y });
-	}
-
-	void Actor::CenterPivot()
-	{
-		if (!Sprite) { return; }
-		sf::FloatRect localBounds = Sprite->getLocalBounds();
-		Sprite->setOrigin({ localBounds.size.x / 2.f, localBounds.size.y / 2.f });
-	}
 }

@@ -36,4 +36,11 @@ namespace we
         Trigger = 52,
     };
 
+    enum class EActorSize
+    {
+        SpriteBounds,  // derived from current sprite bounds
+        Manual,        // explicitly set individually
+        PhysicsShape   // Not Implimented
+    };
+
 }
