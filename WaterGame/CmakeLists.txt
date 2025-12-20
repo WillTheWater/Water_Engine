@@ -4,6 +4,9 @@ add_executable(${WATER_GAME}
     ${CMAKE_CURRENT_SOURCE_DIR}/include/GameFramework/Game.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/GameFramework/Game.cpp
 
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/GameFramework/PlayerManager.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/GameFramework/PlayerManager.cpp
+
     ${CMAKE_CURRENT_SOURCE_DIR}/include/Spaceship/Spaceship.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Spaceship/Spaceship.cpp
 

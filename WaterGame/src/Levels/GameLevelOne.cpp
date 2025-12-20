@@ -9,19 +9,20 @@
 #include "Levels/TwinFighterLevel.h"
 #include "Levels/DestroyerLevel.h"
 #include "GameMode/LevelTransition.h"
+#include "GameFramework/PlayerManager.h"
 
 namespace we
 {
 	LevelOne::LevelOne(Application* OwningApp)
 		: World{OwningApp}
 	{
-		TestPlayer = SpawnActor<PlayerSpaceship>();
-		TestPlayer.lock()->SetActorLocation(sf::Vector2f{ static_cast<float>(GetWindowSize().x / 2), static_cast<float>(GetWindowSize().y / 2) });
-
+		
 	}
 
 	void LevelOne::BeginPlay()
 	{
+		Player NewPlayer = PlayerManager::Get().CreatePlayer();
+		NewPlayer.SpawnSpaceship(this);
 	}
 
 	void LevelOne::Tick(float DeltaTime)

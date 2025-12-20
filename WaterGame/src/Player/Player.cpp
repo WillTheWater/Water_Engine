@@ -20,11 +20,13 @@ namespace we
 			OnLivesChanged.Broadcast(PlayerLives);
 			PlayersSpaceship = World->SpawnActor<PlayerSpaceship>();
 			PlayersSpaceship.lock()->SetActorLocation(sf::Vector2f{ static_cast<float>(World->GetWindowSize().x / 2), static_cast<float>(World->GetWindowSize().y - 100.f) });
+			return PlayersSpaceship;
 		}
 		else
 		{
 			OnPlayerDeath.Broadcast();
 		}
+		return weak<PlayerSpaceship>{};
 	}
 
 	void Player::AddLives(unsigned int Lives)
