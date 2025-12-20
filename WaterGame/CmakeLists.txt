@@ -34,6 +34,9 @@ add_executable(${WATER_GAME}
     ${CMAKE_CURRENT_SOURCE_DIR}/include/Weapons/TripleShot.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Weapons/TripleShot.cpp
 
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/Weapons/MegaShot.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Weapons/MegaShot.cpp
+
     ${CMAKE_CURRENT_SOURCE_DIR}/include/Weapons/Bullet.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Weapons/Bullet.cpp
 

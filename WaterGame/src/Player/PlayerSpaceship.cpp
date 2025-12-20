@@ -3,6 +3,7 @@
 #include "Framework/MathUtility.h"
 #include "Weapons/BulletShooter.h"
 #include "Weapons/TripleShot.h"
+#include "Weapons/MegaShot.h"
 
 namespace we
 {
@@ -10,7 +11,7 @@ namespace we
 		: Spaceship{OwningWorld, TexturePath}
 		, MovementInput{}
 		, Speed{700.f}
-		, PlayerShooter{ new TripleShot{this, 0.1f, {0.f, 35.f}, sf::degrees(0)}}
+		, PlayerShooter{ new MegaShot{this, 0.1f, {0.f, 35.f}, sf::degrees(0)}}
 	{
 		SetActorID(EActorID::Player);
 	}
