@@ -22,7 +22,8 @@ namespace we
 	void LevelOne::BeginPlay()
 	{
 		Player NewPlayer = PlayerManager::Get().CreatePlayer();
-		NewPlayer.SpawnSpaceship(this);
+		APlayer = NewPlayer.SpawnSpaceship(this);
+		APlayer.lock()->OnActorDestroyed.Bind(GetObject(), &LevelOne::PlayerDied);
 	}
 
 	void LevelOne::Tick(float DeltaTime)
@@ -37,5 +38,22 @@ namespace we
 		AddLevel(shared<TwinFighterLevel>{new TwinFighterLevel{ this }});
 		AddLevel(shared<LevelTransition>{new LevelTransition{ this, 3.f }});
 		AddLevel(shared<FighterLevel>{new FighterLevel{ this }});
+	}
+
+	void LevelOne::PlayerDied(Actor* Player)
+	{
+		APlayer = PlayerManager::Get().GetPlayer()->SpawnSpaceship(this);
+		if (!APlayer.expired())
+		{
+			APlayer.lock()->OnActorDestroyed.Bind(GetObject(), &LevelOne::PlayerDied);
+		}
+		else
+		{
+			GameOver();
+		}
+	}
+	void LevelOne::GameOver()
+	{
+		LOG("Game Over!")
 	}
 }

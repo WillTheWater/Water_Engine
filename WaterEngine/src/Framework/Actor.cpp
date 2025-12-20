@@ -61,6 +61,7 @@ namespace we
 	void Actor::Destroy()
 	{
 		UninitializePhysics();
+		OnActorDestroyed.Broadcast(this);
 		Object::Destroy();
 	}
 

@@ -2,6 +2,7 @@
 #include "Framework/Core.h"
 #include <SFML/Graphics.hpp>
 #include "Framework/Object.h"
+#include "Framework/Delegate.h"
 #include "EActorTypes.h"
 
 class b2Body;
@@ -30,6 +31,7 @@ namespace we
 		virtual void OnActorBeginOverlap(Actor* OtherActor);
 		virtual void OnActorEndOverlap(Actor* OtherActor);
 		virtual void Damage(float Amount);
+		Delegate<Actor*> OnActorDestroyed;
 
 		void SetPhysicsEnabled(bool Enabled);
 		void SetActorID(EActorID NewID) { ActorID = NewID; }
