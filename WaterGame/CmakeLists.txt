@@ -10,6 +10,9 @@ add_executable(${WATER_GAME}
     ${CMAKE_CURRENT_SOURCE_DIR}/include/Player/PlayerSpaceship.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Player/PlayerSpaceship.cpp
 
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/Player/Player.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Player/Player.cpp
+
     ${CMAKE_CURRENT_SOURCE_DIR}/include/Enemy/EnemySpaceship.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Enemy/EnemySpaceship.cpp
     
