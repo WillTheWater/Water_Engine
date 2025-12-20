@@ -1,5 +1,8 @@
 #include "Gameplay/Pickups.h"
 #include "Player/PlayerSpaceship.h"
+#include "Weapons/TripleShot.h"
+#include "Weapons/MegaShot.h"
+#include "Framework/World.h"
 
 namespace we
 {
@@ -34,5 +37,51 @@ namespace we
 	void Pickup::Move(float DeltaTime)
 	{
 		AddActorLocationOffset({ 0.f, Speed * DeltaTime });
+	}
+
+	void HealthPickup(PlayerSpaceship* Player)
+	{
+		static float HealFor = 20.f;
+		if (Player && !Player->IsPendingDestroy())
+		{
+			Player->GetHealthComponent().ChangeHealth(HealFor);
+		}
+	}
+
+	void TripleShotPickup(PlayerSpaceship* Player)
+	{
+		if (Player && !Player->IsPendingDestroy())
+		{
+			Player->SetWeapon(unique<Shooter>{new TripleShot{ Player, 0.1f, {0.f, 35.f} }});
+		}
+	}
+
+	void MegaShotPickup(PlayerSpaceship* Player)
+	{
+		if (Player && !Player->IsPendingDestroy())
+		{
+			Player->SetWeapon(unique<Shooter>{new MegaShot{ Player, 0.1f, {0.f, 35.f} }});
+		}
+	}
+
+	weak<Pickup> SpawnPickup(World* World, const string& TexturePath, PickupInteractFunction PickupFunction)
+	{
+		weak<Pickup> NewPickup = World->SpawnActor<Pickup>(TexturePath, PickupFunction);
+		return NewPickup;
+	}
+
+	weak<Pickup> SpawnHealthPickup(World* World)
+	{
+		return SpawnPickup(World, "SpaceShooterRedux/PNG/Power-ups/pill_red.png", HealthPickup);
+	}
+
+	weak<Pickup> SpawnTripleShotPickup(World* World)
+	{
+		return SpawnPickup(World, "SpaceShooterRedux/PNG/Power-ups/bold_silver.png", TripleShotPickup);
+	}
+
+	weak<Pickup> SpawnMegaShotPickup(World* World)
+	{
+		return SpawnPickup(World, "SpaceShooterRedux/PNG/Power-ups/bolt_gold.png", MegaShotPickup);
 	}
 }

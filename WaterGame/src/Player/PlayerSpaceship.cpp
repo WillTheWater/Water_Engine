@@ -11,7 +11,7 @@ namespace we
 		: Spaceship{OwningWorld, TexturePath}
 		, MovementInput{}
 		, Speed{700.f}
-		, PlayerShooter{ new MegaShot{this, 0.1f, {0.f, 35.f}, sf::degrees(0)}}
+		, PlayerShooter{ new BulletShooter{this, 0.1f, {0.f, 35.f}, sf::degrees(0)}}
 	{
 		SetActorID(EActorID::Player);
 	}
@@ -36,6 +36,11 @@ namespace we
 		{
 			PlayerShooter->Shoot();
 		}
+	}
+
+	void PlayerSpaceship::SetWeapon(unique<Shooter>&& NewWeapon)
+	{
+		PlayerShooter = std::move(NewWeapon);
 	}
 
 	void PlayerSpaceship::HandleInput()
