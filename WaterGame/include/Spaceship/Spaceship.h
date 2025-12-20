@@ -24,7 +24,8 @@ namespace we
 		void UpdateBlink(float DeltaTime);
 		virtual void OnHealthChaged(float Amount, float Health, float MaxHealth);
 		virtual void TakeDamage(float Amount, float Health, float MaxHealth);
-		virtual void Die();
+		void Die();
+		virtual void SpawnDrops();
 		HealthComponent HealthComp;
 		sf::Vector2f Velocity;
 

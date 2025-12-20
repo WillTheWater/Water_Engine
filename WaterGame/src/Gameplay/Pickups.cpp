@@ -16,6 +16,7 @@ namespace we
 	void Pickup::BeginPlay()
 	{
 		Actor::BeginPlay();
+		SetPhysicsEnabled(true);
 	}
 
 	void Pickup::Tick(float DeltaTime)
@@ -27,10 +28,13 @@ namespace we
 	void Pickup::OnActorBeginOverlap(Actor* OtherActor)
 	{
 		// TODO: Do better than casting
+			LOG("PICKUP CALLED")
 		PlayerSpaceship* Player = dynamic_cast<PlayerSpaceship*>(OtherActor);
 		if (Player != nullptr && !Player->IsPendingDestroy())
 		{
+			LOG("PICKUP")
 			PickupFunction(Player);
+			Destroy();
 		}
 	}
 

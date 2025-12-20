@@ -76,7 +76,12 @@ namespace we
 	{
 		Explosion* ExpVFX = new Explosion();
 		ExpVFX->SpawnExplosion(GetWorld(), GetActorLocation());
+		SpawnDrops();
 		Destroy();
 		delete ExpVFX;
+	}
+
+	void Spaceship::SpawnDrops()
+	{
 	}
 }
