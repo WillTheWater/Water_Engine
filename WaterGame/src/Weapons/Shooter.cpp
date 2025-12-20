@@ -14,7 +14,7 @@ namespace we
 
 		if (CanShoot() && !IsOnCooldown())
 		{
-			ShootImplimentation();
+			ShootImplementation();
 		}
 	}
 }

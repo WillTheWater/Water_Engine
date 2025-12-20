@@ -16,7 +16,7 @@ namespace we
 		Shooter(Actor* OwningActor);
 
 	private:
-		virtual void ShootImplimentation() = 0;
+		virtual void ShootImplementation() = 0;
 		Actor* OwningActor;
 	};
 }

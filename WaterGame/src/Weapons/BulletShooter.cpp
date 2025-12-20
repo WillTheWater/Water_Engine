@@ -5,12 +5,13 @@
 
 namespace we
 {
-	BulletShooter::BulletShooter(Actor* OwningActor, float CooldownTime, const sf::Vector2f& ShooterPosOffset, const sf::Angle& ShooterRotOffset)
+	BulletShooter::BulletShooter(Actor* OwningActor, float CooldownTime, const sf::Vector2f& ShooterPosOffset, const sf::Angle& ShooterRotOffset, const string& BulletTexturePath)
 		: Shooter{ OwningActor }
 		, CooldownClock{}
 		, Cooldown{ CooldownTime }
-		, ShooterPostionOffset{ShooterPosOffset}
-		, ShooterRotationOffset{ShooterRotOffset}
+		, ShooterPostionOffset{ ShooterPosOffset }
+		, ShooterRotationOffset{ ShooterRotOffset }
+		, BulletTexturePath{BulletTexturePath}
 	{
 	}
 
@@ -23,13 +24,18 @@ namespace we
 		return true;
 	}
 
-	void BulletShooter::ShootImplimentation()
+	void BulletShooter::SetBulletTexturePath(const string& NewBulletTexturePath)
+	{
+		BulletTexturePath = NewBulletTexturePath;
+	}
+
+	void BulletShooter::ShootImplementation()
 	{
 		sf::Vector2f OwnerForward = GetOwner()->GetActorForwardVector();
 		sf::Vector2f OwnerRight = GetOwner()->GetActorRightVector();
 
 		CooldownClock.restart();
-		weak<Bullet> NewBullet = GetOwner()->GetWorld()->SpawnActor<Bullet>(GetOwner(), "SpaceShooterRedux/PNG/Lasers/laserBlue16.png");
+		weak<Bullet> NewBullet = GetOwner()->GetWorld()->SpawnActor<Bullet>(GetOwner(), BulletTexturePath);
 		auto BulletPtr = NewBullet.lock();
 		if (!BulletPtr) { return; }
 

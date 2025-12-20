@@ -336,5 +336,4 @@ namespace we
 
 		return rect;
 	}
-
 }
