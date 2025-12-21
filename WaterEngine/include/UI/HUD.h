@@ -6,20 +6,20 @@ namespace we
 {
 	class Renderer;
 
-	class HUD : public Object
-	{
-	public:
+    class HUD : public Object
+    {
+    public:
+        virtual void Render(Renderer& GameRenderer) = 0;
+        virtual bool HandleEvent(const optional<sf::Event> Event);
 
-		virtual void Render(Renderer& GameRenderer) = 0;
-		virtual bool HandleEvent(const optional<sf::Event> Event);
-		void NativeInitialize(const sf::RenderWindow& Window);
-		bool IsInitialized() const { return bIsInitialized; }
+        void NativeInitialize(Renderer& GameRenderer);
+        bool IsInitialized() const { return bIsInitialized; }
 
-	protected:
-		HUD();
+    protected:
+        HUD();
 
-	private:
-		virtual void Initialize(const sf::RenderWindow& Window);
-		bool bIsInitialized;
-	};
+    private:
+        virtual void Initialize(Renderer& GameRenderer);
+        bool bIsInitialized;
+    };
 }

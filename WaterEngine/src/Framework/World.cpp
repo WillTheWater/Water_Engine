@@ -55,11 +55,6 @@ namespace we
 		}
 
 		Tick(DeltaTime);
-
-		if (GameHUD && !GameHUD->IsInitialized())
-		{
-			GameHUD->NativeInitialize(OwningApp->GetRenderWindow());
-		}
 	}
 
 	void World::BeginPlay()
@@ -69,6 +64,21 @@ namespace we
 	void World::Tick(float DeltaTime)
 	{
 
+	}
+
+	void World::Render(Renderer& GameRenderer)
+	{
+		if (GameHUD && !GameHUD->IsInitialized())
+		{
+			GameHUD->NativeInitialize(GameRenderer);
+		}
+
+		for (auto& Actor : Actors)
+		{
+			Actor->Render(GameRenderer);
+		}
+
+		RenderHUD(GameRenderer);
 	}
 
 	void World::RenderHUD(Renderer& GameRenderer)
@@ -109,14 +119,6 @@ namespace we
 		CurrentLevel->get()->OnLevelEnd.Bind(GetObject(), &World::LoadNextLevel);
 	}
 
-	void World::Render(Renderer& GameRenderer)
-	{
-		for (auto& Actor : Actors)
-		{
-			Actor->Render(GameRenderer);
-		}
-		RenderHUD(GameRenderer);
-	}
 
 	void World::GarbageCollectionCycle()
 	{
@@ -131,8 +133,6 @@ namespace we
 				i++;
 			}
 		}
-
-		
 	}
 
 	void World::AddLevel(const shared<Level>& NewLevel)

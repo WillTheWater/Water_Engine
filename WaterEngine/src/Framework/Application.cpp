@@ -39,7 +39,8 @@ namespace we
 				}
 				else
 				{
-					BroadcastEvent(Event);
+					// TODO
+					//BroadcastEvent(Event);
 				}
 			}
 			float FrameTick = TickClock.restart().asSeconds();
@@ -104,5 +105,10 @@ namespace we
 
 	void Application::Tick(float DeltaTime)
 	{
+	}
+
+	sf::Vector2u Application::GetWindowSize() const
+	{
+		return GameRenderer->GetViewportSize();
 	}
 }

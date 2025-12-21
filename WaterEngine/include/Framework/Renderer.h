@@ -16,6 +16,8 @@ namespace we
 		void DrawSprite(const sf::Sprite& SpriteToDraw);
 		void DrawDebugShape(const sf::VertexArray& Vertices);
 
+		sf::Vector2u GetViewportSize() const { return Window.getSize(); }
+
 	private:
 		sf::RenderWindow& Window;
 	};

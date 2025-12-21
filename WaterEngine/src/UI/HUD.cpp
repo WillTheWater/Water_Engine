@@ -7,18 +7,16 @@ namespace we
 	{
 	}
 
-	
-
-	void HUD::NativeInitialize(const sf::RenderWindow& Window)
+	void HUD::NativeInitialize(Renderer& GameRenderer)
 	{
 		if (!bIsInitialized)
 		{
 			bIsInitialized = true;
-			Initialize(Window);
+			Initialize(GameRenderer);
 		}
 	}
 	
-	void HUD::Initialize(const sf::RenderWindow& Window)
+	void HUD::Initialize(Renderer& GameRenderer)
 	{
 	}
 	

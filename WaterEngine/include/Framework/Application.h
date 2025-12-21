@@ -20,10 +20,7 @@ namespace we
 		template<typename WorldType>
 		weak<WorldType> LoadWorld();
 
-		sf::Vector2u GetWindowSize() const { return Window.getSize(); }
-		sf::RenderWindow& GetRenderWindow() { return Window; }
-		const sf::RenderWindow& GetRenderWindow() const { return Window; }
-
+		sf::Vector2u GetWindowSize() const;
 
 	private:
 		void TickGlobal(float DeltaTime);
