@@ -9,6 +9,7 @@ namespace we
 	class Actor;
 	class Renderer;
 	class Level;
+	class HUD;
 
 	class World : public Object
 	{
@@ -24,15 +25,20 @@ namespace we
 		void GarbageCollectionCycle();
 
 		void AddLevel(const shared<Level>& NewLevel);
+		bool DispatchEvent(const optional<sf::Event> Event);
 
 		template<typename ActorType, typename... Args>
 		weak<ActorType> SpawnActor(Args... args);
+
+		template<typename HUDType, typename... Args>
+		weak<HUD> CreateHUD(Args... args);
 
 		sf::Vector2u GetWindowSize() const;
 
 	private:
 		virtual void BeginPlay();
 		virtual void Tick(float DeltaTime);
+		void RenderHUD(Renderer& GameRenderer);
 
 		Application* OwningApp;
 		bool bHasBegunPlay;
@@ -41,6 +47,7 @@ namespace we
 		List<shared<Actor>> PendingActors;
 		List<shared<Level>> Levels;
 		List<shared<Level>>::iterator CurrentLevel;
+		shared<HUD> GameHUD;
 		virtual void InitLevels();
 		virtual void EndLevels();
 		void LoadNextLevel();
@@ -53,5 +60,13 @@ namespace we
 		shared<ActorType> NewActor{ new ActorType(this, args...) };
 		PendingActors.push_back(NewActor);
 		return NewActor;
+	}
+
+	template<typename HUDType, typename ...Args>
+	inline weak<HUD> World::CreateHUD(Args ...args)
+	{
+		shared<HUDType> NewHUD{new HUDType(args...)};
+		GameHUD = NewHUD;
+		return NewHUD;
 	}
 }

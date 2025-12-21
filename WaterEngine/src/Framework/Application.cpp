@@ -31,10 +31,16 @@ namespace we
 
 		while (Window.isOpen())
 		{
-			while (const std::optional event = Window.pollEvent())
+			while (const std::optional Event = Window.pollEvent())
 			{
-				if (event->is<sf::Event::Closed>())
+				if (Event->is<sf::Event::Closed>())
+				{
 					Window.close();
+				}
+				else
+				{
+					BroadcastEvent(Event);
+				}
 			}
 			float FrameTick = TickClock.restart().asSeconds();
 			AccumulatedTime += FrameTick;
@@ -77,6 +83,15 @@ namespace we
 		GameRenderer->Clear();
 		Render(*GameRenderer);
 		GameRenderer->Display();
+	}
+
+	bool Application::DispatchEvent(const optional<sf::Event> Event)
+	{
+		if (CurrentWorld)
+		{
+			return CurrentWorld->DispatchEvent(Event);
+		}
+		return false;
 	}
 
 	void Application::Render(Renderer& GameRenderer)

@@ -4,6 +4,7 @@
 #include "Framework/Application.h"
 #include "Framework/Renderer.h"
 #include "GameMode/Level.h"
+#include "UI/HUD.h"
 
 namespace we
 {
@@ -54,6 +55,11 @@ namespace we
 		}
 
 		Tick(DeltaTime);
+
+		if (GameHUD && !GameHUD->IsInitialized())
+		{
+			GameHUD->NativeInitialize(OwningApp->GetRenderWindow());
+		}
 	}
 
 	void World::BeginPlay()
@@ -63,6 +69,14 @@ namespace we
 	void World::Tick(float DeltaTime)
 	{
 
+	}
+
+	void World::RenderHUD(Renderer& GameRenderer)
+	{
+		if (GameHUD)
+		{
+			GameHUD->Render(GameRenderer);
+		}
 	}
 
 	void World::InitLevels()
@@ -101,6 +115,7 @@ namespace we
 		{
 			Actor->Render(GameRenderer);
 		}
+		RenderHUD(GameRenderer);
 	}
 
 	void World::GarbageCollectionCycle()
@@ -123,6 +138,15 @@ namespace we
 	void World::AddLevel(const shared<Level>& NewLevel)
 	{
 		Levels.push_back(NewLevel);
+	}
+
+	bool World::DispatchEvent(const optional<sf::Event> Event)
+	{
+		if (GameHUD)
+		{
+			return GameHUD->HandleEvent(Event);
+		}
+		return false;
 	}
 
 	sf::Vector2u World::GetWindowSize() const

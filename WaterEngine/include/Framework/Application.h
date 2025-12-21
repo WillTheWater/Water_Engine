@@ -21,11 +21,14 @@ namespace we
 		weak<WorldType> LoadWorld();
 
 		sf::Vector2u GetWindowSize() const { return Window.getSize(); }
+		sf::RenderWindow& GetRenderWindow() { return Window; }
+		const sf::RenderWindow& GetRenderWindow() const { return Window; }
 
 
 	private:
 		void TickGlobal(float DeltaTime);
 		void RendererCycle();
+		bool DispatchEvent(const optional<sf::Event> Event);
 
 		virtual void Render(Renderer& GameRenderer);
 		virtual void Tick(float DeltaTime);
