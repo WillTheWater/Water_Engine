@@ -24,6 +24,7 @@ namespace we
 		}
 		else
 		{
+			PlayersSpaceship = weak<PlayerSpaceship>{};
 			OnPlayerDeath.Broadcast();
 		}
 		return weak<PlayerSpaceship>{};
