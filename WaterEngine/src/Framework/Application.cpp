@@ -90,7 +90,7 @@ namespace we
 	{
 		if (CurrentWorld)
 		{
-			return CurrentWorld->DispatchEvent(Event);
+			return false;// CurrentWorld->DispatchEvent(Event);
 		}
 		return false;
 	}

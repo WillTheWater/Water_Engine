@@ -10,7 +10,7 @@ namespace we
 	{
 	public:
 		void NativeRender(Renderer& GameRenderer);
-		virtual bool HandleEvent(const optional<sf::Event> Event);
+		//virtual bool HandleEvent(const optional<sf::Event> Event);
 
 		void SetWidgetPosition(const sf::Vector2f& NewPosition);
 		void SetWidgetRotation(const sf::Angle& NewRotation);

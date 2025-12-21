@@ -54,6 +54,11 @@ namespace we
 			CurrentLevel->get()->TickLevel(DeltaTime);
 		}
 
+		if (GameHUD->IsInitialized())
+		{
+			GameHUD->Tick(DeltaTime);
+		}
+
 		Tick(DeltaTime);
 	}
 

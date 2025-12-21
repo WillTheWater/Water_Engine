@@ -10,6 +10,7 @@
 #include "Levels/DestroyerLevel.h"
 #include "GameMode/LevelTransition.h"
 #include "GameFramework/PlayerManager.h"
+#include "Widgets/GameHUD.h"
 
 namespace we
 {
@@ -24,6 +25,7 @@ namespace we
 		Player NewPlayer = PlayerManager::Get().CreatePlayer();
 		APlayer = NewPlayer.SpawnSpaceship(this);
 		APlayer.lock()->OnActorDestroyed.Bind(GetObject(), &LevelOne::PlayerDied);
+		GameplayHud = CreateHUD<GameplayHUD>();
 	}
 
 	void LevelOne::Tick(float DeltaTime)

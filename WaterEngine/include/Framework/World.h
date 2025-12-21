@@ -31,7 +31,7 @@ namespace we
 		weak<ActorType> SpawnActor(Args... args);
 
 		template<typename HUDType, typename... Args>
-		weak<HUD> CreateHUD(Args... args);
+		weak<HUDType> CreateHUD(Args... args);
 
 		sf::Vector2u GetWindowSize() const;
 
@@ -63,7 +63,7 @@ namespace we
 	}
 
 	template<typename HUDType, typename ...Args>
-	inline weak<HUD> World::CreateHUD(Args ...args)
+	inline weak<HUDType> World::CreateHUD(Args ...args)
 	{
 		shared<HUDType> NewHUD{new HUDType(args...)};
 		GameHUD = NewHUD;

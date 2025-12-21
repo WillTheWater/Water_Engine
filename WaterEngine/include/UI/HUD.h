@@ -10,6 +10,7 @@ namespace we
     {
     public:
         virtual void Render(Renderer& GameRenderer) = 0;
+        virtual void Tick(float DeltaTime);
         virtual bool HandleEvent(const optional<sf::Event> Event);
 
         void NativeInitialize(Renderer& GameRenderer);

@@ -20,6 +20,11 @@ namespace we
 	{
 	}
 	
+	void HUD::Tick(float DeltaTime)
+	{
+
+	}
+	
 	bool HUD::HandleEvent(const optional<sf::Event> Event)
 	{
 		return false;

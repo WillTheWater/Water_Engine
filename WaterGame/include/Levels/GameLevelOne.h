@@ -6,6 +6,7 @@
 namespace we
 {
 	class PlayerSpaceship;
+	class GameplayHUD;
 
 	class LevelOne : public World
 	{
@@ -18,6 +19,7 @@ namespace we
 		virtual void BeginPlay() override;
 		virtual void Tick(float DeltaTime) override;
 		weak<PlayerSpaceship> APlayer;
+		weak<GameplayHUD> GameplayHud;
 		virtual void InitLevels() override;
 	};
 }

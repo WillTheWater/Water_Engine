@@ -66,6 +66,9 @@ add_executable(${WATER_GAME}
 
     ${CMAKE_CURRENT_SOURCE_DIR}/include/Levels/DestroyerLevel.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Levels/DestroyerLevel.cpp
+
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/Widgets/GameHUD.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Widgets/GameHUD.cpp
 )
 
 target_include_directories(${WATER_GAME} PUBLIC
