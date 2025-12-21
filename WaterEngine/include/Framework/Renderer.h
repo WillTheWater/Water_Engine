@@ -13,12 +13,19 @@ namespace we
 		void Clear();
 		void Display();
 
-		void DrawSprite(const sf::Sprite& SpriteToDraw);
-		void DrawDebugShape(const sf::VertexArray& Vertices);
+		template<typename DrawableType>
+		void Draw(const DrawableType& Drawable);
 
 		sf::Vector2u GetViewportSize() const { return Window.getSize(); }
 
 	private:
 		sf::RenderWindow& Window;
 	};
+	template<typename DrawableType>
+	inline void Renderer::Draw(const DrawableType& Drawable)
+	{
+		static_assert(std::is_base_of_v<sf::Drawable, DrawableType>,
+			"Renderer::Draw only accepts SFML drawable types");
+		Window.draw(Drawable);
+	}
 }

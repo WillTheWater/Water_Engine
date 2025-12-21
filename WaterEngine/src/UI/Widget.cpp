@@ -22,19 +22,23 @@ namespace we
 
 	}
 
-	void Widget::SetWidgetLocation(const sf::Vector2f& NewLocation)
+	void Widget::SetWidgetPosition(const sf::Vector2f& NewPosition)
 	{
-		WidgetTransforms.setPosition(NewLocation);
-		UpdateTransforms();
+		WidgetTransforms.setPosition(NewPosition);
+		UpdatePosition(NewPosition);
 	}
 
 	void Widget::SetWidgetRotation(const sf::Angle& NewRotation)
 	{
 		WidgetTransforms.setRotation(NewRotation);
-		UpdateTransforms();
+		UpdateRotation(NewRotation);
 	}
 
-	void Widget::UpdateTransforms()
+	void Widget::UpdatePosition(const sf::Vector2f& NewPosition)
+	{
+	}
+
+	void Widget::UpdateRotation(const sf::Angle& NewRotation)
 	{
 	}
 }

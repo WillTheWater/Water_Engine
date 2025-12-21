@@ -16,13 +16,4 @@ namespace we
 	{
 		Window.display();
 	}
-
-	void Renderer::DrawSprite(const sf::Sprite& SpriteToDraw)
-	{
-		Window.draw(SpriteToDraw);
-	}
-	void Renderer::DrawDebugShape(const sf::VertexArray& Vertices)
-	{
-		Window.draw(Vertices);
-	}
 }

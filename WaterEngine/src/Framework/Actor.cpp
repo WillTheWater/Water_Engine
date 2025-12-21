@@ -70,12 +70,12 @@ namespace we
 		if (IsPendingDestroy() || !Sprite) { return; }
 
 		UpdateSpriteTransform();
-		GameRenderer.DrawSprite(*Sprite);
+		GameRenderer.Draw(*Sprite);
 
 		if (bRenderDebugShapes)
 		{
-			GameRenderer.DrawDebugShape(ForwardVectorDebugShape());
-			GameRenderer.DrawDebugShape(CollisionShapeDebug());
+			GameRenderer.Draw(ForwardVectorDebugShape());
+			GameRenderer.Draw(CollisionShapeDebug());
 		}
 	}
 
