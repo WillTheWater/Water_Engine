@@ -22,7 +22,7 @@ namespace we
 
 	void LevelOne::BeginPlay()
 	{
-		Player NewPlayer = PlayerManager::Get().CreatePlayer();
+		Player& NewPlayer = PlayerManager::Get().CreatePlayer();
 		APlayer = NewPlayer.SpawnSpaceship(this);
 		APlayer.lock()->OnActorDestroyed.Bind(GetObject(), &LevelOne::PlayerDied);
 		GameplayHud = CreateHUD<GameplayHUD>();

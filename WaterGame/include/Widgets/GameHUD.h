@@ -5,6 +5,8 @@
 
 namespace we
 {
+	class Actor;
+
 	class GameplayHUD : public HUD
 	{
 	public:
@@ -15,6 +17,9 @@ namespace we
 
 	private:
 		virtual void Initialize(Renderer& GameRenderer) override;
+		void UpdatePlayerHealth(float Amount, float Current, float Max);
+		void ResetHealthBar();
+		void PlayerRespawn(Actor* Player);
 		ProgressBar PlayerHealth;
 	};
 }

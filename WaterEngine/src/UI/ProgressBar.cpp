@@ -1,7 +1,6 @@
-#include "UI/ProgressBar.h"
 #include "Framework/AssetManager.h"
 #include "Framework/Renderer.h"
-#include <algorithm>
+#include "UI/ProgressBar.h"
 
 namespace we
 {
