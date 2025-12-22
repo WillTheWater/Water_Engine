@@ -9,12 +9,14 @@ namespace we
 {
 	GameplayHUD::GameplayHUD()
 		: PlayerHealth{}
+		, LifeIcon{ "SpaceShooterRedux/PNG/UI/playerLife1_orange.png" }
 	{
 	}
 
 	void GameplayHUD::Render(Renderer& GameRenderer)
 	{
 		PlayerHealth.NativeRender(GameRenderer);
+		LifeIcon.NativeRender(GameRenderer);
 	}
 
 	void GameplayHUD::Tick(float DeltaTime)
@@ -25,6 +27,9 @@ namespace we
 	{
 		auto WindowSize = GameRenderer.GetViewportSize();
 		PlayerHealth.SetWidgetPosition({ 140.f, WindowSize.y - PlayerHealth.GetBarSize().y});
+		auto HealthPos = PlayerHealth.GetWidgetPosition();
+		LifeIcon.SetWidgetPosition({ HealthPos.x + 110 , HealthPos.y - PlayerHealth.GetBarSize().y/2.f + 5});
+		LifeIcon.ScaleImage({ 1.5f, 1.5f });
 		ResetHealthBar();
 	}
 

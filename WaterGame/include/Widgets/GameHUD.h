@@ -2,6 +2,7 @@
 #include"UI/HUD.h"
 #include"UI/TextBlock.h"
 #include "UI/ProgressBar.h"
+#include "UI/Image.h"
 
 namespace we
 {
@@ -21,5 +22,6 @@ namespace we
 		void ResetHealthBar();
 		void PlayerRespawn(Actor* Player);
 		ProgressBar PlayerHealth;
+		Image LifeIcon;
 	};
 }
