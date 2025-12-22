@@ -11,6 +11,8 @@ namespace we
 
 		void SetTexture(const shared<sf::Texture> NewTexture);
 		void ScaleImage(const sf::Vector2f& NewScale);
+		void CenterOrigin();
+		sf::FloatRect GetLocalBounds();
 
 	protected:
 		virtual void Render(Renderer& GameRenderer) override;

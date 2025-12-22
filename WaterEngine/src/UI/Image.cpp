@@ -21,7 +21,17 @@ namespace we
 
 	void Image::ScaleImage(const sf::Vector2f& NewScale)
 	{
-		Sprite.scale(NewScale);
+		Sprite.setScale(NewScale);
+	}
+
+	void Image::CenterOrigin()
+	{
+		Sprite.setOrigin({ Texture->getSize().x / 2.f, Texture->getSize().y / 2.f });
+	}
+
+	sf::FloatRect Image::GetLocalBounds()
+	{
+		return Sprite.getGlobalBounds();
 	}
 
 	void Image::Render(Renderer& GameRenderer)

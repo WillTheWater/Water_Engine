@@ -11,6 +11,8 @@ namespace we
 
 		void SetText(const string& InputText);
 		void SetFontSize(unsigned int NewSize);
+		void CenterOrigin();
+		sf::FloatRect GetLocalBounds();
 
 	protected:
 		virtual void Render(Renderer& GameRenderer) override;

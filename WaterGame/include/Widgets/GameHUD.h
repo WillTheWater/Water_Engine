@@ -20,11 +20,16 @@ namespace we
 		virtual void Initialize(Renderer& GameRenderer) override;
 		void UpdatePlayerHealth(float Amount, float Current, float Max);
 		void ResetHealthBar();
-		void UpdatePlayerLifeCount();
+		void UpdatePlayerUIData();
 		void UpdateLives(int Amount);
 		void PlayerRespawn(Actor* Player);
+		void PositionScore();
+		void ScoreUpdate(int NewScore);
 		ProgressBar PlayerHealth;
 		Image LifeIcon;
 		TextBlock LifeText;
+		Image ScoreIcon;
+		TextBlock ScoreText;
+		float BaseScoreIconWidth = 0.f;
 	};
 }

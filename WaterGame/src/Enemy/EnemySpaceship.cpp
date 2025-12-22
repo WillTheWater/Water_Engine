@@ -1,6 +1,7 @@
 #include "Enemy/EnemySpaceship.h"
 #include "Framework/EActorTypes.h"
 #include "Framework/MathUtility.h"
+#include "GameFramework/PlayerManager.h"
 
 namespace we
 {
@@ -33,6 +34,11 @@ namespace we
 			{
 				Test->SetActorLocation(GetActorLocation());
 			}
+		}
+		Player* Player = PlayerManager::Get().GetPlayer();
+		if (Player)
+		{
+			Player->AddScore(5);
 		}
 	}
 

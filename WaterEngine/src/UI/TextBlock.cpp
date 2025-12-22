@@ -20,6 +20,11 @@ namespace we
 		DisplayText.setCharacterSize(NewSize);
 	}
 
+	void TextBlock::CenterOrigin()
+	{
+		DisplayText.setOrigin({ DisplayText.getLocalBounds().getCenter().x, DisplayText.getLocalBounds().getCenter().y });
+	}
+
 	void TextBlock::Render(Renderer& GameRenderer)
 	{
 		GameRenderer.Draw(DisplayText);
@@ -33,5 +38,10 @@ namespace we
 	void TextBlock::UpdateRotation(const sf::Angle& NewRotation)
 	{
 		DisplayText.setRotation(NewRotation);
+	}
+
+	sf::FloatRect TextBlock::GetLocalBounds()
+	{
+		return DisplayText.getGlobalBounds();
 	}
 }
