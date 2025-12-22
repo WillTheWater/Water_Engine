@@ -4,13 +4,100 @@
 namespace we
 {
 	Button::Button(const string& TexturePath)
-		: ButtonTexture{AssetManager::Get().LoadTexture(TexturePath)}
-		, ButtonSprite{*ButtonTexture}
-		, DefaultColor{sf::Color::White}
-		, HoverColor{sf::Color {150, 150, 150, 255}}
-		, PressedColor{sf::Color {55, 55, 55,255}}
-		, bIsButtonPressed{false}
+		: ButtonTexture{ AssetManager::Get().LoadTexture(TexturePath) }
+		, ButtonSprite{ *ButtonTexture }
+		, DefaultColor{ sf::Color {150, 150, 150, 255} }
+		, HoverColor{ sf::Color::White }
+		, PressedColor{ sf::Color {55, 55, 55, 255} }
+		, bIsButtonPressed{ false }
 	{
+		ButtonSprite.setColor(DefaultColor);
+	}
+
+	bool Button::HandleEvent(const std::optional<sf::Event> Event)
+	{
+		bool Handled = false;
+
+		// --- Mouse moved ---
+		if (const auto* e = Event->getIf<sf::Event::MouseMoved>())
+		{
+			sf::Vector2f mousePos{
+				static_cast<float>(e->position.x),
+				static_cast<float>(e->position.y)
+			};
+
+			bool isInside = ButtonSprite.getGlobalBounds().contains(mousePos);
+
+			// Hover ONLY if not pressed
+			if (!bIsButtonPressed)
+			{
+				if (isInside)
+					ButtonHover();
+				else
+					ButtonUp();
+			}
+
+			Handled = isInside;
+		}
+
+		// --- Mouse button pressed ---
+		else if (const auto* e = Event->getIf<sf::Event::MouseButtonPressed>())
+		{
+			if (e->button == sf::Mouse::Button::Left)
+			{
+				sf::Vector2f mousePos{
+					static_cast<float>(e->position.x),
+					static_cast<float>(e->position.y)
+				};
+
+				if (ButtonSprite.getGlobalBounds().contains(mousePos))
+				{
+					bIsButtonPressed = true;
+					ButtonDown();
+					Handled = true;
+				}
+			}
+		}
+
+		// --- Mouse button released ---
+		else if (const auto* e = Event->getIf<sf::Event::MouseButtonReleased>())
+		{
+			if (e->button == sf::Mouse::Button::Left && bIsButtonPressed)
+			{
+				sf::Vector2f mousePos{
+					static_cast<float>(e->position.x),
+					static_cast<float>(e->position.y)
+				};
+
+				if (ButtonSprite.getGlobalBounds().contains(mousePos))
+				{
+					OnButtonClicked.Broadcast();
+					Handled = true;
+				}
+
+				bIsButtonPressed = false;
+				ButtonUp();
+			}
+		}
+
+		return Handled || Widget::HandleEvent(Event);
+	}
+
+	void Button::ButtonUp()
+	{
+		bIsButtonPressed = false;
+		ButtonSprite.setColor(DefaultColor);
+	}
+
+	void Button::ButtonDown()
+	{
+		bIsButtonPressed = false;
+		ButtonSprite.setColor(PressedColor);
+	}
+
+	void Button::ButtonHover()
+	{
+		ButtonSprite.setColor(HoverColor);
 	}
 
 	void Button::Render(Renderer& GameRenderer)

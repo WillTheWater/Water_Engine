@@ -9,6 +9,12 @@ namespace we
 	public:
 		Button(const string& TexturePath = "SpaceShooterRedux/PNG/UI/buttonRed.png");
 
+		virtual bool HandleEvent(const optional<sf::Event> Event) override;
+		Delegate<> OnButtonClicked;
+		void ButtonUp();
+		void ButtonDown();
+		void ButtonHover();
+
 		void SetTexture(const shared<sf::Texture> NewTexture);
 		void ScaleImage(const sf::Vector2f& NewScale);
 		void CenterOrigin();

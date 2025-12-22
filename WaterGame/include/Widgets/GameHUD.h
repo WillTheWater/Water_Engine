@@ -16,6 +16,7 @@ namespace we
 
 		virtual void Render(Renderer& GameRenderer) override;
 		virtual void Tick(float DeltaTime) override;
+		virtual bool HandleEvent(const optional<sf::Event> Event) override;
 
 	private:
 		virtual void Initialize(Renderer& GameRenderer) override;
@@ -32,6 +33,7 @@ namespace we
 		Image ScoreIcon;
 		TextBlock ScoreText;
 		Button TestButton;
+		void TestClick();
 		float BaseScoreIconWidth = 0.f;
 	};
 }

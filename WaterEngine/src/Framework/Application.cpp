@@ -39,8 +39,7 @@ namespace we
 				}
 				else
 				{
-					// TODO
-					//BroadcastEvent(Event);
+					DispatchEvent(Event);
 				}
 			}
 			float FrameTick = TickClock.restart().asSeconds();
@@ -90,7 +89,7 @@ namespace we
 	{
 		if (CurrentWorld)
 		{
-			return false;// CurrentWorld->DispatchEvent(Event);
+			return CurrentWorld->DispatchEvent(Event);
 		}
 		return false;
 	}

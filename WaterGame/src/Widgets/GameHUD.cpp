@@ -31,6 +31,11 @@ namespace we
 	{
 	}
 
+	bool GameplayHUD::HandleEvent(const optional<sf::Event> Event)
+	{
+		return TestButton.HandleEvent(Event) || HUD::HandleEvent(Event);
+	}
+
 	void GameplayHUD::Initialize(Renderer& GameRenderer)
 	{
 		auto WindowSize = GameRenderer.GetViewportSize();
@@ -53,6 +58,7 @@ namespace we
 		PositionScore();
 		TestButton.CenterOrigin();
 		TestButton.SetWidgetPosition({ WindowSize.x / 2.f, WindowSize.y / 2.f });
+		TestButton.OnButtonClicked.Bind(GetObject(), &GameplayHUD::TestClick);
 	}
 
 	void GameplayHUD::UpdatePlayerHealth(float Amount, float Current, float Max)
@@ -109,7 +115,6 @@ namespace we
 
 		float xScaleMultiplier = desiredIconWidth / BaseScoreIconWidth;
 
-		// reset scale because ScaleImage multiplies
 		ScoreIcon.ScaleImage({ 1.f, 1.f });
 		ScoreIcon.ScaleImage({
 			BaseIconScale * xScaleMultiplier,
@@ -127,5 +132,10 @@ namespace we
 		ScoreText.SetText(std::to_string(NewScore));
 		ScoreText.CenterOrigin();
 		PositionScore();
+	}
+
+	void GameplayHUD::TestClick()
+	{
+		LOG("Click")
 	}
 }
