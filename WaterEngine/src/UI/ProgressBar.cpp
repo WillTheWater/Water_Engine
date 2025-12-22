@@ -30,7 +30,23 @@ namespace we
 
 		FillPercentage = std::clamp(CurrentValue / MaxValue, 0.f, 1.f);
 
-		ProgressBarText.setString(std::to_string((int)CurrentValue) + "/" + std::to_string((int)MaxValue));
+		if (FillPercentage < 0.25f)
+		{
+			FillBar.setFillColor(sf::Color::Red);
+		}
+		else if (FillPercentage < 0.60f)
+		{
+			FillBar.setFillColor(sf::Color::Yellow);
+		}
+		else
+		{
+			FillBar.setFillColor(sf::Color::Green);
+		}
+
+		ProgressBarText.setString(
+			std::to_string(static_cast<int>(CurrentValue)) + "/" +
+			std::to_string(static_cast<int>(MaxValue))
+		);
 		CenterText();
 
 		sf::Vector2f bgSize = Background.getSize();

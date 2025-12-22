@@ -16,7 +16,6 @@ namespace we
 		void SetBackgroundColor(const sf::Color& NewColor);
 		void SetFillBarColor(const sf::Color& NewColor);
 		void SetProgressBarDimensions(const sf::Vector2f& BackgroundSize);
-
 		sf::Vector2f GetBarSize() const { return Background.getSize(); }
 
 	protected:
