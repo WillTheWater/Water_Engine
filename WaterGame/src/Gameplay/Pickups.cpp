@@ -69,6 +69,12 @@ namespace we
 		}
 	}
 
+	void ExtraLifePickup(PlayerSpaceship* Player)
+	{
+		if (!PlayerManager::Get().GetPlayer()) { return; }
+		PlayerManager::Get().GetPlayer()->AddLives(1);
+	}
+
 	weak<Pickup> SpawnPickup(World* World, const string& TexturePath, PickupInteractFunction PickupFunction)
 	{
 		weak<Pickup> NewPickup = World->SpawnActor<Pickup>(TexturePath, PickupFunction);
@@ -82,11 +88,16 @@ namespace we
 
 	weak<Pickup> SpawnTripleShotPickup(World* World)
 	{
-		return SpawnPickup(World, "SpaceShooterRedux/PNG/Power-ups/bold_silver.png", TripleShotPickup);
+		return SpawnPickup(World, "SpaceShooterRedux/PNG/Power-ups/bolt_silver.png", TripleShotPickup);
 	}
 
 	weak<Pickup> SpawnMegaShotPickup(World* World)
 	{
-		return SpawnPickup(World, "SpaceShooterRedux/PNG/Power-ups/bolt_gold.png", MegaShotPickup);
+		return SpawnPickup(World, "SpaceShooterRedux/PNG/Power-ups/bolt_gold.png", TripleShotPickup);
+	}
+
+	weak<Pickup> SpawnExtraLifePickup(World* World)
+	{
+		return SpawnPickup(World, "SpaceShooterRedux/PNG/Power-ups/powerupRed_star.png", ExtraLifePickup);
 	}
 }

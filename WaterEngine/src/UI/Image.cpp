@@ -29,7 +29,7 @@ namespace we
 		Sprite.setOrigin({ Texture->getSize().x / 2.f, Texture->getSize().y / 2.f });
 	}
 
-	sf::FloatRect Image::GetLocalBounds()
+	sf::FloatRect Image::GetGlobalBounds()
 	{
 		return Sprite.getGlobalBounds();
 	}

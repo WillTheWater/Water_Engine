@@ -3,6 +3,7 @@
 #include"UI/TextBlock.h"
 #include "UI/ProgressBar.h"
 #include "UI/Image.h"
+#include "UI/Button.h"
 
 namespace we
 {
@@ -30,6 +31,7 @@ namespace we
 		TextBlock LifeText;
 		Image ScoreIcon;
 		TextBlock ScoreText;
+		Button TestButton;
 		float BaseScoreIconWidth = 0.f;
 	};
 }

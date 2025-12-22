@@ -1,13 +1,13 @@
 #pragma once
-#include "sfml/Graphics.hpp"
 #include "UI/Widget.h"
+#include "Framework/Delegate.h"
 
 namespace we
 {
-	class Image : public Widget
+	class Button : public Widget
 	{
 	public:
-		Image(const string& TexturePath);
+		Button(const string& TexturePath = "SpaceShooterRedux/PNG/UI/buttonRed.png");
 
 		void SetTexture(const shared<sf::Texture> NewTexture);
 		void ScaleImage(const sf::Vector2f& NewScale);
@@ -20,7 +20,11 @@ namespace we
 	private:
 		virtual void UpdatePosition(const sf::Vector2f& NewPosition) override;
 		virtual void UpdateRotation(const sf::Angle& NewRotation) override;
-		shared<sf::Texture> Texture;
-		sf::Sprite Sprite;
+		shared<sf::Texture> ButtonTexture;
+		sf::Sprite ButtonSprite;
+		sf::Color DefaultColor;
+		sf::Color HoverColor;
+		sf::Color PressedColor;
+		bool bIsButtonPressed;
 	};
 }

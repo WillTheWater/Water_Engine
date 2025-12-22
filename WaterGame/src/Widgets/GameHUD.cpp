@@ -13,6 +13,7 @@ namespace we
 		, LifeText{""}
 		, ScoreIcon{ "SpaceShooterRedux/PNG/Power-ups/powerupBlue.png" }
 		, ScoreText{""}
+		, TestButton{}
 	{
 	}
 
@@ -23,6 +24,7 @@ namespace we
 		LifeText.NativeRender(GameRenderer);
 		ScoreIcon.NativeRender(GameRenderer);
 		ScoreText.NativeRender(GameRenderer);
+		TestButton.NativeRender(GameRenderer);
 	}
 
 	void GameplayHUD::Tick(float DeltaTime)
@@ -40,15 +42,17 @@ namespace we
 		LifeText.SetWidgetPosition({ LifeIcon.GetWidgetPosition().x + 60.f, LifeIcon.GetWidgetPosition().y - 10.f });
 		ResetHealthBar();
 		UpdatePlayerUIData();
-		auto shift = ScoreIcon.GetLocalBounds().size.x;
-		ScoreIcon.SetWidgetPosition({shift /2, 30.f });
-		BaseScoreIconWidth = ScoreIcon.GetLocalBounds().size.x;
+		auto shift = ScoreIcon.GetGlobalBounds().size.x;
+		ScoreIcon.SetWidgetPosition({shift /2.f, 30.f });
+		BaseScoreIconWidth = ScoreIcon.GetGlobalBounds().size.x;
 		ScoreText.SetFontSize(28);
 		ScoreText.SetText("0");
 		ScoreText.CenterOrigin();
 		ScoreIcon.CenterOrigin();
 		ScoreText.SetWidgetPosition(ScoreIcon.GetWidgetPosition());
 		PositionScore();
+		TestButton.CenterOrigin();
+		TestButton.SetWidgetPosition({ WindowSize.x / 2.f, WindowSize.y / 2.f });
 	}
 
 	void GameplayHUD::UpdatePlayerHealth(float Amount, float Current, float Max)
@@ -112,7 +116,7 @@ namespace we
 			BaseIconScale
 			});
 
-		auto shift = ScoreIcon.GetLocalBounds().size.x;
+		auto shift = ScoreIcon.GetGlobalBounds().size.x;
 		sf::Vector2f pos{ shift/2 + 30, 50.f };
 		ScoreIcon.SetWidgetPosition(pos);
 		ScoreText.SetWidgetPosition(pos);

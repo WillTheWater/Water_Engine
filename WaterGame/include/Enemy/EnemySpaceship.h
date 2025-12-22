@@ -13,7 +13,8 @@ namespace we
 			, const List<PickupFactoryFunction> Pickups = {
 				SpawnHealthPickup,
 				SpawnTripleShotPickup,
-				SpawnMegaShotPickup
+				SpawnMegaShotPickup,
+				SpawnExtraLifePickup
 			}
 		);
 

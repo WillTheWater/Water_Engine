@@ -58,6 +58,9 @@ add_library(${WATER_ENGINE} STATIC
     ${CMAKE_CURRENT_SOURCE_DIR}/include/UI/Image.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/UI/Image.cpp
 
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/UI/Button.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/UI/Button.cpp
+
     ${CMAKE_CURRENT_SOURCE_DIR}/include/Framework/Core.h
 
     ${CMAKE_CURRENT_SOURCE_DIR}/include/Framework/EActorTypes.h

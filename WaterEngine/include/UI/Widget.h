@@ -1,6 +1,7 @@
 #pragma once
 #include "SFML/Graphics.hpp"
 #include "Framework/Object.h"
+#include "Framework/Renderer.h"
 
 namespace we
 {
