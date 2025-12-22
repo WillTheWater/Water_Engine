@@ -3,6 +3,7 @@
 #include "Weapons/TripleShot.h"
 #include "Weapons/MegaShot.h"
 #include "Framework/World.h"
+#include "GameFramework/PlayerManager.h"
 
 namespace we
 {
@@ -27,11 +28,13 @@ namespace we
 
 	void Pickup::OnActorBeginOverlap(Actor* OtherActor)
 	{
-		// TODO: Do better than casting
-		PlayerSpaceship* Player = dynamic_cast<PlayerSpaceship*>(OtherActor);
-		if (Player != nullptr && !Player->IsPendingDestroy())
+		if (!OtherActor || OtherActor->IsPendingDestroy()) { return; }
+		if (!PlayerManager::Get().GetPlayer()) { return; }
+		weak<PlayerSpaceship> Player = PlayerManager::Get().GetPlayer()->GetPlayerSpaceship();
+		if (Player.expired() || Player.lock()->IsPendingDestroy()) { return; }
+		if (Player.lock().get() == OtherActor)
 		{
-			PickupFunction(Player);
+			PickupFunction(Player.lock().get());
 			Destroy();
 		}
 	}
