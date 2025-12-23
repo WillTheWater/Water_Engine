@@ -12,6 +12,12 @@ namespace we
 		, MovementInput{}
 		, Speed{700.f}
 		, PlayerShooter{ new BulletShooter{this, 0.1f, {0.f, 35.f}, sf::degrees(0)}}
+		, InvulnerabilityTime{3.f}
+		, InvulnerabilityHandle{}
+		, bIsInvulnerable{true}
+		, InvulnerabilityBlinkInterval{0.2f}
+		, InvulnerabilityBlinkTimer{0.f}
+		, InvulnerabilityBlink{1.f}
 	{
 		SetActorID(EActorID::Player);
 	}
@@ -21,6 +27,8 @@ namespace we
 		Spaceship::BeginPlay();
 		SetActorRotation(sf::degrees(-90));
 		SetSpriteRotationOffset(sf::degrees(90));
+		SetPhysicsEnabled(false);
+		TimerManager::Get().SetTimer(GetObject(), &PlayerSpaceship::ResetInvulnerability, InvulnerabilityTime);
 	}
 
 	void PlayerSpaceship::Tick(float DeltaTime)
@@ -28,13 +36,22 @@ namespace we
 		Spaceship::Tick(DeltaTime);
 		HandleInput();
 		ConsumeInput(DeltaTime);
+		BlinkInvulnerability(DeltaTime);
 	}
 
 	void PlayerSpaceship::Shoot()
 	{
-		if (PlayerShooter)
+		if (PlayerShooter && !bIsInvulnerable)
 		{
 			PlayerShooter->Shoot();
+		}
+	}
+
+	void PlayerSpaceship::Damage(float Amount)
+	{
+		if (!bIsInvulnerable)
+		{
+			Spaceship::Damage(Amount);
 		}
 	}
 
@@ -99,5 +116,23 @@ namespace we
 		position.y = clamp(position.y, halfHeight, windowSize.y - halfHeight);
 
 		SetActorLocation(position);
+	}
+
+	void PlayerSpaceship::ResetInvulnerability()
+	{
+		GetSprite().setColor(sf::Color::White);
+		SetPhysicsEnabled(true);
+		bIsInvulnerable = false;
+	}
+
+	void PlayerSpaceship::BlinkInvulnerability(float DeltaTime)
+	{
+		if (!bIsInvulnerable) { return; }
+		InvulnerabilityBlinkTimer += DeltaTime * InvulnerabilityBlink;
+		if (InvulnerabilityBlinkTimer < 0 || InvulnerabilityBlinkTimer > InvulnerabilityBlinkInterval)
+		{
+			InvulnerabilityBlink *= -1;
+		}
+		GetSprite().setColor(LerpColor({ 255,255,255,40 }, { 255,255,255,180 }, InvulnerabilityBlinkTimer / InvulnerabilityBlinkInterval));
 	}
 }
