@@ -35,7 +35,7 @@ namespace we
 			{
 				if (Event->is<sf::Event::Closed>())
 				{
-					Window.close();
+					QuitApplication();
 				}
 				else
 				{
@@ -51,6 +51,11 @@ namespace we
 			}
 			RendererCycle();
 		}
+	}
+
+	void Application::QuitApplication()
+	{
+		Window.close();
 	}
 
 	void Application::TickGlobal(float DeltaTime)
@@ -73,6 +78,12 @@ namespace we
 			{
 				CurrentWorld->GarbageCollectionCycle();
 			}
+		}
+
+		if (PendingWorld && PendingWorld != CurrentWorld)
+		{
+			CurrentWorld = PendingWorld;
+			CurrentWorld->BeginPlayGlobal();
 		}
 	}
 

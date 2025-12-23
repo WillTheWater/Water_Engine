@@ -13,7 +13,6 @@ namespace we
 		, LifeText{""}
 		, ScoreIcon{ "SpaceShooterRedux/PNG/Power-ups/powerupBlue.png" }
 		, ScoreText{""}
-		, TestButton{}
 	{
 	}
 
@@ -24,7 +23,6 @@ namespace we
 		LifeText.NativeRender(GameRenderer);
 		ScoreIcon.NativeRender(GameRenderer);
 		ScoreText.NativeRender(GameRenderer);
-		TestButton.NativeRender(GameRenderer);
 	}
 
 	void GameplayHUD::Tick(float DeltaTime)
@@ -33,7 +31,7 @@ namespace we
 
 	bool GameplayHUD::HandleEvent(const optional<sf::Event> Event)
 	{
-		return TestButton.HandleEvent(Event) || HUD::HandleEvent(Event);
+		return HUD::HandleEvent(Event);
 	}
 
 	void GameplayHUD::Initialize(Renderer& GameRenderer)
@@ -56,11 +54,6 @@ namespace we
 		ScoreIcon.CenterOrigin();
 		ScoreText.SetWidgetPosition(ScoreIcon.GetWidgetPosition());
 		PositionScore();
-
-
-		TestButton.CenterOrigin();
-		TestButton.SetWidgetPosition({ WindowSize.x / 2.f, WindowSize.y / 2.f });
-		TestButton.OnButtonClicked.Bind(GetObject(), &GameplayHUD::TestClick);
 	}
 
 	void GameplayHUD::UpdatePlayerHealth(float Amount, float Current, float Max)
@@ -134,10 +127,5 @@ namespace we
 		ScoreText.SetText(std::to_string(NewScore));
 		ScoreText.CenterOrigin();
 		PositionScore();
-	}
-
-	void GameplayHUD::TestClick()
-	{
-		LOG("Click")
 	}
 }

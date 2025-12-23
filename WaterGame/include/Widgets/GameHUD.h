@@ -32,8 +32,6 @@ namespace we
 		TextBlock LifeText;
 		Image ScoreIcon;
 		TextBlock ScoreText;
-		Button TestButton;
-		void TestClick();
 		float BaseScoreIconWidth = 0.f;
 	};
 }

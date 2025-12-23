@@ -33,6 +33,8 @@ namespace we
 		template<typename HUDType, typename... Args>
 		weak<HUDType> CreateHUD(Args... args);
 
+		Application* GetApplication() { return OwningApp; }
+		const Application* GetApplication() const { return OwningApp; }
 		sf::Vector2u GetWindowSize() const;
 
 	private:

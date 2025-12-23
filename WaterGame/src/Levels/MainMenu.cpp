@@ -1,5 +1,7 @@
 #include "Levels/MainMenu.h"
 #include "Widgets/MainMenuHUD.h"
+#include "Framework/Application.h"
+#include "Levels/GameLevelOne.h"
 
 namespace we
 {
@@ -21,11 +23,11 @@ namespace we
 
 	void MainMenu::StartGame()
 	{
-		LOG("Start Game")
+		GetApplication()->LoadWorld<LevelOne>();
 	}
 
 	void MainMenu::QuitGame()
 	{
-		LOG("Quit Game")
+		GetApplication()->QuitApplication();
 	}
 }

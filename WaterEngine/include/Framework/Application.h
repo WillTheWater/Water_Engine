@@ -16,6 +16,7 @@ namespace we
 		~Application();
 
 		void Run();
+		void QuitApplication();
 
 		template<typename WorldType>
 		weak<WorldType> LoadWorld();
@@ -39,14 +40,14 @@ namespace we
 		float CollectionInterval;
 
 		shared<World> CurrentWorld;
+		shared<World> PendingWorld;
 	};
 
 	template<typename WorldType>
 	weak<WorldType> Application::LoadWorld()
 	{
 		shared< WorldType> NewWorld{ new WorldType{this} };
-		CurrentWorld = NewWorld;
-		CurrentWorld->BeginPlayGlobal();
+		PendingWorld = NewWorld;
 		return NewWorld;
 	}
 }
