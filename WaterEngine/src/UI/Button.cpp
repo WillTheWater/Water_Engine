@@ -16,71 +16,82 @@ namespace we
 
 	bool Button::HandleEvent(const std::optional<sf::Event> Event)
 	{
-		bool Handled = false;
+		bool handled = false;
 
-		// --- Mouse moved ---
-		if (const auto* e = Event->getIf<sf::Event::MouseMoved>())
+		// -----------------------------
+		// Mouse moved
+		// -----------------------------
+		if (const auto* event = Event->getIf<sf::Event::MouseMoved>())
 		{
 			sf::Vector2f mousePos{
-				static_cast<float>(e->position.x),
-				static_cast<float>(e->position.y)
+				static_cast<float>(event->position.x),
+				static_cast<float>(event->position.y)
 			};
 
 			bool isInside = ButtonSprite.getGlobalBounds().contains(mousePos);
 
-			// Hover ONLY if not pressed
 			if (!bIsButtonPressed)
 			{
 				if (isInside)
-					ButtonHover();
+					ButtonSprite.setColor(HoverColor);
 				else
-					ButtonUp();
+					ButtonSprite.setColor(DefaultColor);
 			}
 
-			Handled = isInside;
+			handled = isInside;
 		}
 
-		// --- Mouse button pressed ---
-		else if (const auto* e = Event->getIf<sf::Event::MouseButtonPressed>())
+		// -----------------------------
+		// Mouse button pressed
+		// -----------------------------
+		else if (const auto* event = Event->getIf<sf::Event::MouseButtonPressed>())
 		{
-			if (e->button == sf::Mouse::Button::Left)
+			if (event->button == sf::Mouse::Button::Left)
 			{
 				sf::Vector2f mousePos{
-					static_cast<float>(e->position.x),
-					static_cast<float>(e->position.y)
+					static_cast<float>(event->position.x),
+					static_cast<float>(event->position.y)
 				};
 
 				if (ButtonSprite.getGlobalBounds().contains(mousePos))
 				{
 					bIsButtonPressed = true;
-					ButtonDown();
-					Handled = true;
+					ButtonSprite.setColor(PressedColor);
+					handled = true;
 				}
 			}
 		}
 
-		// --- Mouse button released ---
-		else if (const auto* e = Event->getIf<sf::Event::MouseButtonReleased>())
+		// -----------------------------
+		// Mouse button released
+		// -----------------------------
+		else if (const auto* event = Event->getIf<sf::Event::MouseButtonReleased>())
 		{
-			if (e->button == sf::Mouse::Button::Left && bIsButtonPressed)
+			if (event->button == sf::Mouse::Button::Left && bIsButtonPressed)
 			{
 				sf::Vector2f mousePos{
-					static_cast<float>(e->position.x),
-					static_cast<float>(e->position.y)
+					static_cast<float>(event->position.x),
+					static_cast<float>(event->position.y)
 				};
 
-				if (ButtonSprite.getGlobalBounds().contains(mousePos))
+				bool isInside = ButtonSprite.getGlobalBounds().contains(mousePos);
+
+				if (isInside)
 				{
 					OnButtonClicked.Broadcast();
-					Handled = true;
+					ButtonSprite.setColor(HoverColor);
+				}
+				else
+				{
+					ButtonSprite.setColor(DefaultColor);
 				}
 
 				bIsButtonPressed = false;
-				ButtonUp();
+				handled = true;
 			}
 		}
 
-		return Handled || Widget::HandleEvent(Event);
+		return handled || Widget::HandleEvent(Event);
 	}
 
 	void Button::ButtonUp()

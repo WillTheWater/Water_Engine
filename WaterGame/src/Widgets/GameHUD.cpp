@@ -56,6 +56,8 @@ namespace we
 		ScoreIcon.CenterOrigin();
 		ScoreText.SetWidgetPosition(ScoreIcon.GetWidgetPosition());
 		PositionScore();
+
+
 		TestButton.CenterOrigin();
 		TestButton.SetWidgetPosition({ WindowSize.x / 2.f, WindowSize.y / 2.f });
 		TestButton.OnButtonClicked.Bind(GetObject(), &GameplayHUD::TestClick);
