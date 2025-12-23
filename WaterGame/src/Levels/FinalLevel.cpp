@@ -1,4 +1,9 @@
 #include "Levels/FinalLevel.h"
+#include "Enemy/Fighter.h"
+#include "Enemy/TwinFighter.h"
+#include "Enemy/Destroyer.h"
+#include "Framework/World.h"
+#include "Framework/MathUtility.h"
 
 namespace we
 {
@@ -27,23 +32,50 @@ namespace we
 
 	void FinalLevel::EndLevel()
 	{
+		TimerManager::Get().ClearTimer(SpawnHandle);
+		TimerManager::Get().ClearTimer(DifficultyHandle);
 	}
+
 	void FinalLevel::SpawnFighter()
 	{
+		weak<Fighter> NewFighter = GetWorld()->SpawnActor<Fighter>();
+		NewFighter.lock()->SetActorLocation(GetRandomSpawnLocation());
+		SpawnHandle = TimerManager::Get().SetTimer(GetObject(), &FinalLevel::SpawnTwinFighter, SpawnInterval);
 	}
+
 	void FinalLevel::SpawnTwinFighter()
 	{
+		weak<TwinFighter> NewTwinFighter = GetWorld()->SpawnActor<TwinFighter>();
+		NewTwinFighter.lock()->SetActorLocation(GetRandomSpawnLocation());
+		SpawnHandle = TimerManager::Get().SetTimer(GetObject(), &FinalLevel::SpawnDestroyer, SpawnInterval);
 	}
+
 	void FinalLevel::SpawnDestroyer()
 	{
+		weak<Destroyer> NewDestroyer = GetWorld()->SpawnActor<Destroyer>();
+		NewDestroyer.lock()->SetActorLocation(GetRandomSpawnLocation());
+		SpawnHandle = TimerManager::Get().SetTimer(GetObject(), &FinalLevel::SpawnFighter, SpawnInterval);
 	}
+
 	void FinalLevel::IncreaseDifficulty()
 	{
+		SpawnInterval -= SpawnIntervalDecrement;
+		if (SpawnInterval < MinSpawnInterval)
+		{
+			SpawnInterval = MinSpawnInterval;
+		}
 	}
+
 	void FinalLevel::LevelDurationDurationReached()
 	{
+		LevelEnd();
 	}
+
 	sf::Vector2f FinalLevel::GetRandomSpawnLocation() const
 	{
+		auto WindowSize = GetWorld()->GetWindowSize();
+		float SpawnX = RandomRange(100, WindowSize.x - 100.f);
+		float SpawnY = -80.f;
+		return { SpawnX, SpawnY };
 	}
 }

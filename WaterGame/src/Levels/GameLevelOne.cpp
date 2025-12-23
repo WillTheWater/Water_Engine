@@ -8,6 +8,7 @@
 #include "Levels/FighterLevel.h"
 #include "Levels/TwinFighterLevel.h"
 #include "Levels/DestroyerLevel.h"
+#include "Levels/FinalLevel.h"
 #include "GameMode/LevelTransition.h"
 #include "GameFramework/PlayerManager.h"
 #include "Widgets/GameHUD.h"
@@ -34,7 +35,7 @@ namespace we
 
 	void LevelOne::InitLevels()
 	{
-		AddLevel(shared<DestroyerLevel>{new DestroyerLevel{ this }});
+		AddLevel(shared<FinalLevel>{new FinalLevel{ this }});
 		AddLevel(shared<DestroyerLevel>{new DestroyerLevel{ this }});
 		AddLevel(shared<LevelTransition>{new LevelTransition{ this, 3.f }});
 		AddLevel(shared<TwinFighterLevel>{new TwinFighterLevel{ this }});
@@ -54,6 +55,7 @@ namespace we
 			GameOver();
 		}
 	}
+
 	void LevelOne::GameOver()
 	{
 		LOG("Game Over!")
