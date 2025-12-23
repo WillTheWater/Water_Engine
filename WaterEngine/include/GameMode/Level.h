@@ -1,5 +1,6 @@
 #pragma once
 #include "Framework/Object.h"
+#include "SFML/Graphics.hpp"
 #include "Framework/Delegate.h"
 
 namespace we

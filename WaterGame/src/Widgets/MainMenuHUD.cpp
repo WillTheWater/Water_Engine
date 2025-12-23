@@ -38,13 +38,11 @@ namespace we
 	void MainMenuHUD::StartButtonClicked()
 	{
 		OnStartButtonClicked.Broadcast();
-		LOG("Start Clicked")
 	}
 
 	void MainMenuHUD::QuitButtonClicked()
 	{
 		OnQuitButtonClicked.Broadcast();
-		LOG("Quit Clicked")
 	}
 
 	void MainMenuHUD::InitializeButtons(const sf::Vector2u& ViewportSize)

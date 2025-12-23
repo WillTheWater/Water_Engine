@@ -12,7 +12,6 @@ namespace we
 	void Level::BeginLevel()
 	{
 	}
-
 	void Level::TickLevel(float DeltaTime)
 	{
 	}
