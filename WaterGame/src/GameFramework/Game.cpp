@@ -1,6 +1,7 @@
 ﻿#include "GameFramework/Game.h"
 #include "Levels/GameLevelOne.h"
 #include "Framework/Assetmanager.h"
+#include "Levels/MainMenu.h"
 #include "config.h"
 
 we::Application* GetApplication()
@@ -14,6 +15,6 @@ namespace we
 		: Application{1920, 1080, "Game Window", sf::Style::Default}
 	{
 		AssetManager::Get().SetAssetRootDirctory(GetAssetDirectory());
-		weak<LevelOne> NewWorld = LoadWorld<LevelOne>();
+		weak<MainMenu> NewWorld = LoadWorld<MainMenu>();
 	}
 }

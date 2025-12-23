@@ -120,8 +120,11 @@ namespace we
 	void World::StartLevels()
 	{
 		CurrentLevel = Levels.begin();
-		CurrentLevel->get()->BeginLevel();
-		CurrentLevel->get()->OnLevelEnd.Bind(GetObject(), &World::LoadNextLevel);
+		if (CurrentLevel != Levels.end())
+		{
+			CurrentLevel->get()->BeginLevel();
+			CurrentLevel->get()->OnLevelEnd.Bind(GetObject(), &World::LoadNextLevel);
+		}
 	}
 
 

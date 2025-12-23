@@ -20,6 +20,11 @@ namespace we
 		DisplayText.setCharacterSize(NewSize);
 	}
 
+	void TextBlock::SetColor(const sf::Color& NewColor)
+	{
+		DisplayText.setFillColor(NewColor);
+	}
+
 	void TextBlock::CenterOrigin()
 	{
 		DisplayText.setOrigin({ DisplayText.getLocalBounds().getCenter().x, DisplayText.getLocalBounds().getCenter().y });

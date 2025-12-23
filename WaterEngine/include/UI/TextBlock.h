@@ -11,6 +11,7 @@ namespace we
 
 		void SetText(const string& InputText);
 		void SetFontSize(unsigned int NewSize);
+		void SetColor(const sf::Color& NewColor);
 		void CenterOrigin();
 		sf::FloatRect GetLocalBounds();
 
