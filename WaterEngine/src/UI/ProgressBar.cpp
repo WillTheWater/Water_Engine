@@ -54,6 +54,7 @@ namespace we
 		float fillHeight = bgSize.y - Padding * 2.f;
 
 		FillBar.setSize({ fillWidth, fillHeight });
+		FillBar.setOrigin({ 0.f, fillHeight * 0.5f });
 
 		UpdateFillBarPosition();
 	}
@@ -74,6 +75,10 @@ namespace we
 	{
 		Background.setSize(BackgroundSize);
 		Background.setOrigin(BackgroundSize * 0.5f);
+		float fillHeight = BackgroundSize.y - Padding * 2.f;
+		float fillWidth = (BackgroundSize.x - Padding * 2.f);
+		FillBar.setSize({ fillWidth, fillHeight });
+		FillBar.setOrigin({ 0.f, fillHeight * 0.5f });
 
 		UpdateFillBarPosition();
 	}

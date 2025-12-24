@@ -1,6 +1,7 @@
 #include "Levels/BossLevel.h"
 #include "Enemy/Boss.h"
 #include "Framework/World.h"
+#include "GameFramework/PlayerManager.h"
 
 namespace we
 {
@@ -14,6 +15,7 @@ namespace we
     {
         weak<Boss> NewBoss = GetWorld()->SpawnActor<Boss>();
         CurrentBoss = NewBoss;
+        PlayerManager::Get().SetBoss(NewBoss);
         NewBoss.lock()->SetActorLocation({ 300.f, -300.f });
         NewBoss.lock()->OnActorDestroyed.Bind(GetObject(), &BossLevel::BossDefeated);
     }
@@ -32,6 +34,8 @@ namespace we
         if (!Boss) return;
 
         sf::Vector2f Loc = Boss->GetActorLocation();
+        EntranceTimer += DeltaTime;
+
         if (Loc.y < 140.f)
         {
             float EntranceSpeed = 300.f;
@@ -41,6 +45,7 @@ namespace we
 
     void BossLevel::BossDefeated(Actor* BossActor)
     {
+        PlayerManager::Get().SetBoss(weak<Boss>{});
         LevelEnd();
     }
 }
