@@ -11,6 +11,20 @@ namespace we
 
 	}
 
+	void HealthComponent::SetInitialHealth(float Health, float NewMaxHealth)
+	{
+		CurrentHealth = Health;
+		MaxHealth = NewMaxHealth;
+	}
+
+	float HealthComponent::GetHealthPercentage()
+	{
+		if (MaxHealth != 0.f)
+		{
+			return (CurrentHealth / MaxHealth) * 100.f;
+		}
+	}
+
 	void HealthComponent::ChangeHealth(float Amount)
 	{
 		if (Amount == 0) return;

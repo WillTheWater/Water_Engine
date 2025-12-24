@@ -24,7 +24,7 @@ namespace we
 		, PhysicsBody{nullptr}
 		, bPhysicsEnabled{ false }
 		, ActorID{GetNeutralActorID()}
-		, bRenderDebugShapes{true}
+		, bRenderDebugShapes{false}
 	{
 		SetTexture(TexturePath);
 	}

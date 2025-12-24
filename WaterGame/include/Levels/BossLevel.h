@@ -5,16 +5,22 @@
 
 namespace we
 {
-	class Actor;
+    class Actor;
+    class Boss;
 
-	class BossLevel : public Level
-	{
-	public:
-		BossLevel(World* World);
+    class BossLevel : public Level
+    {
+    public:
+        BossLevel(World* World);
 
-		virtual void BeginLevel() override;
+        virtual void BeginLevel() override;
+        virtual void TickLevel(float DeltaTime) override;
 
-	private:
-		void BossDefeated(Actor* BossActor);
-	};
+    private:
+        void BossDefeated(Actor* BossActor);
+        void EntranceSequence(float DeltaTime);
+
+        float EntranceTimer;
+        weak<Boss> CurrentBoss;
+    };
 }

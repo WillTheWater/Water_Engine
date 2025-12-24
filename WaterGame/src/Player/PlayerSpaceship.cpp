@@ -11,8 +11,8 @@ namespace we
 		: Spaceship{OwningWorld, TexturePath}
 		, MovementInput{}
 		, Speed{700.f}
-		, PlayerShooter{ new BulletShooter{this, 0.1f, {0.f, 35.f}, sf::degrees(0)}}
-		, InvulnerabilityTime{3.f}
+		, PlayerShooter{ new BulletShooter{this, 0.3f, {0.f, 35.f}, sf::degrees(0)}}
+		, InvulnerabilityTime{1.5f}
 		, InvulnerabilityHandle{}
 		, bIsInvulnerable{true}
 		, InvulnerabilityBlinkInterval{0.2f}

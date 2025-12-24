@@ -11,7 +11,9 @@ namespace we
 
 		float GetCurrentHealth() const { return CurrentHealth; }
 		void SetCurrentHealth(float NewHealth) { CurrentHealth = NewHealth; }
+		void SetInitialHealth(float Health, float NewMaxHealth);
 		float GetMaxHealth() const { return MaxHealth; }
+		float GetHealthPercentage();
 		void ChangeHealth(float Amount);
 
 		Delegate<float, float, float> OnHealthChanged;
