@@ -1,56 +1,63 @@
 #include "Framework/World.h"
 #include "Levels/DestroyerLevel.h"
 #include "Enemy/Destroyer.h"
+#include "Framework/MathUtility.h"
 
 namespace we
 {
-	DestroyerLevel::DestroyerLevel(World* World)
-		: Level{ World }
-		, SpawnInterval{ 5.f }
-		, SpawnLocationL{ World->GetWindowSize().x * (1.f / 3.f), -40.f }
-		, SpawnLocationR{ World->GetWindowSize().x * (2.f / 3.f), -40.f }
-		, SpawnLocation{ SpawnLocationL }
-		, DestroyerToSpawn{ 10 }
-		, CurrentDestroyerCount{ 0 }
-		, bSpawnL{ true }
-	{
-	}
+    DestroyerLevel::DestroyerLevel(World* World)
+        : Level{ World }
+        , MinInterval{ 4.0f }
+        , MaxInterval{ 7.5f }
+        , SpawnLocationL{ World->GetWindowSize().x * (1.f / 5.f), -40.f }
+        , SpawnLocationR{ World->GetWindowSize().x * (4.f / 5.f), -40.f }
+        , DestroyerToSpawn{ 7 }
+        , CurrentDestroyerCount{ 0 }
+    {
+    }
 
-	void DestroyerLevel::BeginLevel()
-	{
-		SpawnDestroyer();
-		SpawnTimerHandle = TimerManager::Get().SetTimer(GetObject(), &DestroyerLevel::SpawnDestroyer, SpawnInterval, true);
-	}
+    void DestroyerLevel::BeginLevel()
+    {
+        SpawnDestroyer();
+    }
 
-	void DestroyerLevel::EndLevel()
-	{
-		TimerManager::Get().ClearTimer(SpawnTimerHandle);
-		LOG("Level Ended")
-	}
+    void DestroyerLevel::EndLevel()
+    {
+        TimerManager::Get().ClearTimer(SpawnTimerHandle);
+    }
 
-	void DestroyerLevel::SpawnDestroyer()
-	{
-		if (CurrentDestroyerCount >= DestroyerToSpawn)
-		{
-			LevelEnd();
-			return;
-		}
+    void DestroyerLevel::SpawnDestroyer()
+    {
+        if (CurrentDestroyerCount >= DestroyerToSpawn)
+        {
+            LevelEnd();
+            return;
+        }
 
-		weak<Destroyer> NewDestroyer = GetWorld()->SpawnActor<Destroyer>();
-		auto DestroyerSpawned = NewDestroyer.lock();
-		if (!DestroyerSpawned) return;
+        weak<Destroyer> NewDestroyer = GetWorld()->SpawnActor<Destroyer>();
+        auto DestroyerSpawned = NewDestroyer.lock();
+        if (!DestroyerSpawned) return;
 
-		const sf::Vector2f SpawnPos = bSpawnL ? SpawnLocationL : SpawnLocationR;
-		DestroyerSpawned->SetActorLocation(SpawnPos);
+        sf::Vector2u WindowSize = GetWorld()->GetWindowSize();
 
-		bSpawnL = !bSpawnL;
+        float RandomX = we::RandomRange(50.f, static_cast<float>(WindowSize.x) - 50.f);
 
-		CurrentDestroyerCount++;
+        float RandomY = we::RandomRange(-100.f, -50.f);
 
-		if (CurrentDestroyerCount >= DestroyerToSpawn)
-		{
-			LevelEnd();
-		}
-	}
+        DestroyerSpawned->SetActorLocation({ RandomX, RandomY });
 
+        DestroyerSpawned->GetHealthComponent().SetInitialHealth(300.f, 300.f);
+
+        CurrentDestroyerCount++;
+
+        if (CurrentDestroyerCount >= DestroyerToSpawn)
+        {
+            LevelEnd();
+            return;
+        }
+
+        TimerManager::Get().ClearTimer(SpawnTimerHandle);
+        float NextInterval = we::RandomRange(MinInterval, MaxInterval);
+        SpawnTimerHandle = TimerManager::Get().SetTimer(GetObject(), &DestroyerLevel::SpawnDestroyer, NextInterval, true);
+    }
 }

@@ -5,25 +5,24 @@
 
 namespace we
 {
-	class DestroyerLevel : public Level
-	{
-	public:
-		DestroyerLevel(World* World);
+    class DestroyerLevel : public Level
+    {
+    public:
+        DestroyerLevel(World* World);
 
-		virtual void BeginLevel() override;
+        virtual void BeginLevel() override;
 
-	private:
-		virtual void EndLevel() override;
-		void SpawnDestroyer();
-		void SwitchRow();
-		float SpawnInterval;
-		sf::Vector2f SpawnLocationL;
-		sf::Vector2f SpawnLocationR;
-		sf::Vector2f SpawnLocation;
-		int DestroyerToSpawn;
-		int CurrentDestroyerCount;
-		bool bSpawnL;
+    private:
+        virtual void EndLevel() override;
+        void SpawnDestroyer();
 
-		TimerHandle SpawnTimerHandle;
-	};
+        float MinInterval;
+        float MaxInterval;
+        sf::Vector2f SpawnLocationL;
+        sf::Vector2f SpawnLocationR;
+        int DestroyerToSpawn;
+        int CurrentDestroyerCount;
+
+        TimerHandle SpawnTimerHandle;
+    };
 }

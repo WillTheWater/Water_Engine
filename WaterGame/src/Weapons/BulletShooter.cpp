@@ -27,7 +27,7 @@ namespace we
 	void BulletShooter::AddWeaponLevel(int LevelToAdd)
 	{
 		Shooter::AddWeaponLevel(LevelToAdd);
-		Cooldown -= 0.05f;
+		Cooldown -= 0.1f;
 	}
 
 	void BulletShooter::SetBulletTexturePath(const string& NewBulletTexturePath)

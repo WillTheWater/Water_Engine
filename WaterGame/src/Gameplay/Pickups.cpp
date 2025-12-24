@@ -57,7 +57,7 @@ namespace we
 	{
 		if (Player && !Player->IsPendingDestroy())
 		{
-			Player->SetWeapon(unique<Shooter>{new TripleShot{ Player, 0.1f, {0.f, 35.f} }});
+			Player->SetWeapon(unique<Shooter>{new TripleShot{ Player, 0.6f, {0.f, 35.f} }});
 		}
 	}
 
@@ -65,7 +65,7 @@ namespace we
 	{
 		if (Player && !Player->IsPendingDestroy())
 		{
-			Player->SetWeapon(unique<Shooter>{new MegaShot{ Player, 0.1f, {0.f, 35.f} }});
+			Player->SetWeapon(unique<Shooter>{new MegaShot{ Player, 0.6f, {0.f, 35.f} }});
 		}
 	}
 
@@ -93,7 +93,7 @@ namespace we
 
 	weak<Pickup> SpawnMegaShotPickup(World* World)
 	{
-		return SpawnPickup(World, "SpaceShooterRedux/PNG/Power-ups/bolt_gold.png", TripleShotPickup);
+		return SpawnPickup(World, "SpaceShooterRedux/PNG/Power-ups/bolt_gold.png", MegaShotPickup);
 	}
 
 	weak<Pickup> SpawnExtraLifePickup(World* World)
