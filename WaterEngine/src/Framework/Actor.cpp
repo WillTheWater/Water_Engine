@@ -107,6 +107,13 @@ namespace we
 	void Actor::SetSpriteScale(const sf::Vector2f& Scale)
 	{
 		SpriteScale = Scale;
+
+		UpdateSpriteTransform();
+
+		if (bPhysicsEnabled)
+		{
+			PhysicsSystem::Get().UpdateBodyCollision(this);
+		}
 	}
 
 	void Actor::SetSpriteFrame(int FrameWidth, int FrameHeight)
@@ -221,6 +228,13 @@ namespace we
 	void Actor::SetActorScale(const sf::Vector2f NewScale)
 	{
 		ActorScale = NewScale;
+
+		UpdateSpriteTransform();
+
+		if (bPhysicsEnabled)
+		{
+			PhysicsSystem::Get().UpdateBodyCollision(this);
+		}
 	}
 
 	void Actor::SetActorExtents(const sf::Vector2f& HalfSize)

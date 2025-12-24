@@ -75,6 +75,36 @@ namespace we
 		PendingRemovalListeners.insert(LisenterBody);
 	}
 
+	void PhysicsSystem::UpdateBodyCollision(Actor* Listener)
+	{
+		if (!Listener || Listener->IsPendingDestroy()) { return; }
+
+		b2Body* Body = Listener->GetPhysicsBody();
+		if (!Body) { return; }
+
+		for (b2Fixture* f = Body->GetFixtureList(); f; )
+		{
+			b2Fixture* next = f->GetNext();
+			Body->DestroyFixture(f);
+			f = next;
+		}
+
+		b2PolygonShape PhysicsShape;
+		auto Extents = Listener->GetActorExtents();
+
+		if (Extents.x <= 0.f || Extents.y <= 0.f) return;
+
+		PhysicsShape.SetAsBox(Extents.x * GetPhysicsScale(), Extents.y * GetPhysicsScale());
+
+		b2FixtureDef FixtureDef;
+		FixtureDef.shape = &PhysicsShape;
+		FixtureDef.density = 1.f;
+		FixtureDef.friction = 0.3f;
+		FixtureDef.isSensor = true;
+
+		Body->CreateFixture(&FixtureDef);
+	}
+
 	void PhysicsSystem::Cleanup()
 	{
 		Instance = std::move(unique<PhysicsSystem>{new PhysicsSystem});

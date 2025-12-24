@@ -34,6 +34,7 @@ namespace we
 		Delegate<Actor*> OnActorDestroyed;
 
 		void SetPhysicsEnabled(bool Enabled);
+		b2Body* GetPhysicsBody() const { return PhysicsBody; }
 		void SetActorID(EActorID NewID) { ActorID = NewID; }
 		EActorID GetActorID() const { return ActorID; }
 		static EActorID GetNeutralActorID() { return NeutralID; }

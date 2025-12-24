@@ -12,7 +12,7 @@ namespace we
 	void BossLevel::BeginLevel()
 	{
 		weak<Boss> NewBoss = GetWorld()->SpawnActor<Boss>();
-		NewBoss.lock()->SetActorLocation({ 300.f,100.f });
+		NewBoss.lock()->SetActorLocation({ 300.f, 140.f });
 		NewBoss.lock()->OnActorDestroyed.Bind(GetObject(), &BossLevel::BossDefeated);
 	}
 

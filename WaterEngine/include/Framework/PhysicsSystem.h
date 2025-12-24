@@ -20,6 +20,7 @@ namespace we
 		void Step(float DeltaTime);
 		b2Body* AddListener(Actor* Listener);
 		void RemoveListener(b2Body* LisenterBody);
+		void UpdateBodyCollision(Actor* Listener);
 		float GetPhysicsScale() const { return PhysicsScale; }
 		static void Cleanup();
 

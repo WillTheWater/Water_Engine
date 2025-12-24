@@ -7,10 +7,9 @@ namespace we
 		, Speed{100.f}
 		, SwitchDirection{80.f}
 	{
-		SetVelocity({ 0.f, 0.f });
 		SetActorRotation(sf::degrees(90.f));
 		SetSpriteRotationOffset(sf::degrees(-90));
-		SetSpriteScale({ 3.f, 3.f });
+		SetSpriteScale({ 2.3f, 2.3f });
 	}
 
 	void Boss::Tick(float DeltaTime)
