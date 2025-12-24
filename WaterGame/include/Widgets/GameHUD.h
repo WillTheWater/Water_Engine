@@ -18,10 +18,16 @@ namespace we
         virtual void Render(Renderer& GameRenderer) override;
         virtual void Tick(float DeltaTime) override;
         virtual bool HandleEvent(const optional<sf::Event> Event) override;
+        void GameComplete(bool WinLose);
+
+        Delegate<> OnRestartButtonClicked;
+        Delegate<> OnQuitButtonClicked;
 
     private:
         virtual void Initialize(Renderer& GameRenderer) override;
-
+        void InitializeButtons(const sf::Vector2u& ViewportSize);
+        void RestartButtonClicked();
+        void QuitButtonClicked();
         void UpdatePlayerHealth(float Amount, float Current, float Max);
         void ResetHealthBar();
         void UpdatePlayerUIData();
@@ -43,5 +49,10 @@ namespace we
 
         ProgressBar BossHealthBar;
         bool bBossBound = false;
+        TextBlock WinLoseText;
+        Button RestartButton;
+        TextBlock RestartButtonText;
+        Button QuitButton;
+        TextBlock QuitButtonText;
     };
 }

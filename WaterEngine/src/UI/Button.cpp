@@ -16,11 +16,9 @@ namespace we
 
 	bool Button::HandleEvent(const std::optional<sf::Event> Event)
 	{
+		if (!GetVisibility()) { return false; }
 		bool handled = false;
 
-		// -----------------------------
-		// Mouse moved
-		// -----------------------------
 		if (const auto* event = Event->getIf<sf::Event::MouseMoved>())
 		{
 			sf::Vector2f mousePos{
@@ -41,9 +39,6 @@ namespace we
 			handled = isInside;
 		}
 
-		// -----------------------------
-		// Mouse button pressed
-		// -----------------------------
 		else if (const auto* event = Event->getIf<sf::Event::MouseButtonPressed>())
 		{
 			if (event->button == sf::Mouse::Button::Left)
@@ -62,9 +57,6 @@ namespace we
 			}
 		}
 
-		// -----------------------------
-		// Mouse button released
-		// -----------------------------
 		else if (const auto* event = Event->getIf<sf::Event::MouseButtonReleased>())
 		{
 			if (event->button == sf::Mouse::Button::Left && bIsButtonPressed)

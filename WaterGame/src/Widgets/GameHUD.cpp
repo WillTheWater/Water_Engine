@@ -4,7 +4,7 @@
 #include "Player/PlayerSpaceship.h"
 #include "Player/Player.h"
 #include "Framework/Actor.h"
-#include "Enemy/Boss.h" // Include Boss to access HealthComponent
+#include "Enemy/Boss.h"
 
 namespace we
 {
@@ -14,7 +14,17 @@ namespace we
         , LifeText{ "" }
         , ScoreIcon{ "SpaceShooterRedux/PNG/Power-ups/powerupBlue.png" }
         , ScoreText{ "" }
+        , WinLoseText{""}
+        , RestartButton{ "SpaceShooterRedux/PNG/UI/buttonBlue.png" }
+        , RestartButtonText{ "Restart" }
+        , QuitButton{ "SpaceShooterRedux/PNG/UI/buttonBlue.png" }
+        , QuitButtonText{ "Quit" }
     {
+        WinLoseText.SetVisibility(false);
+        RestartButton.SetVisibility(false);
+        RestartButtonText.SetVisibility(false);
+        QuitButton.SetVisibility(false);
+        QuitButtonText.SetVisibility(false);
     }
 
     void GameplayHUD::Render(Renderer& GameRenderer)
@@ -29,6 +39,14 @@ namespace we
         {
             BossHealthBar.NativeRender(GameRenderer);
         }
+        if (true)
+        {
+            WinLoseText.NativeRender(GameRenderer);
+            RestartButton.NativeRender(GameRenderer);
+            RestartButtonText.NativeRender(GameRenderer);
+            QuitButton.NativeRender(GameRenderer);
+            QuitButtonText.NativeRender(GameRenderer);
+        }
     }
 
     void GameplayHUD::Tick(float DeltaTime)
@@ -38,12 +56,14 @@ namespace we
 
     bool GameplayHUD::HandleEvent(const optional<sf::Event> Event)
     {
-        return HUD::HandleEvent(Event);
+        return RestartButton.HandleEvent(Event) || QuitButton.HandleEvent(Event) || HUD::HandleEvent(Event);
     }
 
     void GameplayHUD::Initialize(Renderer& GameRenderer)
     {
         auto WindowSize = GameRenderer.GetViewportSize();
+        RestartButton.OnButtonClicked.Bind(GetObject(), &GameplayHUD::RestartButtonClicked);
+        QuitButton.OnButtonClicked.Bind(GetObject(), &GameplayHUD::QuitButtonClicked);
 
         PlayerHealth.SetWidgetPosition({ 140.f, WindowSize.y - PlayerHealth.GetBarSize().y });
         auto HealthPos = PlayerHealth.GetWidgetPosition();
@@ -62,6 +82,7 @@ namespace we
         ScoreIcon.CenterOrigin();
         ScoreText.SetWidgetPosition(ScoreIcon.GetWidgetPosition());
         PositionScore();
+        InitializeButtons(WindowSize);
 
         const float BossBarWidth = 600.f;
         const float BossBarHeight = 20.f;
@@ -106,6 +127,24 @@ namespace we
     void GameplayHUD::OnBossDestroyed(Actor* BossActor)
     {
         bBossBound = false;
+    }
+
+    void GameplayHUD::GameComplete(bool WinLose)
+    {
+        WinLoseText.SetVisibility(true);
+        RestartButton.SetVisibility(true);
+        RestartButtonText.SetVisibility(true);
+        QuitButton.SetVisibility(true);
+        QuitButtonText.SetVisibility(true);
+
+        if (WinLose)
+        {
+            WinLoseText.SetText("You Win!");
+        }
+        else
+        {
+            WinLoseText.SetText("You Lose!");
+        }
     }
 
     void GameplayHUD::UpdatePlayerHealth(float Amount, float Current, float Max)
@@ -179,5 +218,32 @@ namespace we
         ScoreText.SetText(std::to_string(NewScore));
         ScoreText.CenterOrigin();
         PositionScore();
+    }
+
+    void GameplayHUD::InitializeButtons(const sf::Vector2u& ViewportSize)
+    {
+        RestartButton.CenterOrigin();
+        RestartButtonText.CenterOrigin();
+        RestartButtonText.SetColor(sf::Color::Black);
+        QuitButton.CenterOrigin();
+        QuitButtonText.CenterOrigin();
+        QuitButtonText.SetColor(sf::Color::Black);
+        RestartButton.SetWidgetPosition({ ViewportSize.x / 2.f, ViewportSize.y / 2.f });
+        RestartButtonText.SetWidgetPosition(RestartButton.GetWidgetPosition());
+        QuitButton.SetWidgetPosition({ ViewportSize.x / 2.f, ViewportSize.y / 2.f + 100 });
+        QuitButtonText.SetWidgetPosition(QuitButton.GetWidgetPosition());
+        WinLoseText.SetWidgetPosition({ ViewportSize.x / 2.f, 150 });
+        WinLoseText.CenterOrigin();
+        WinLoseText.SetFontSize(60);
+    }
+
+    void GameplayHUD::RestartButtonClicked()
+    {
+        OnRestartButtonClicked.Broadcast();
+    }
+
+    void GameplayHUD::QuitButtonClicked()
+    {
+        OnQuitButtonClicked.Broadcast();
     }
 }

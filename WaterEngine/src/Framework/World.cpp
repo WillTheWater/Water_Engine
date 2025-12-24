@@ -100,7 +100,6 @@ namespace we
 
 	void World::EndLevels()
 	{
-		LOG("All Levels Complete!")
 	}
 
 	void World::LoadNextLevel()

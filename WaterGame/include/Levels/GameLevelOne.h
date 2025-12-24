@@ -18,8 +18,11 @@ namespace we
 	private:
 		virtual void BeginPlay() override;
 		virtual void Tick(float DeltaTime) override;
+		virtual void EndLevels() override;
 		weak<PlayerSpaceship> APlayer;
 		weak<GameplayHUD> GameplayHud;
 		virtual void InitLevels() override;
+		void QuitGame();
+		void RestartGame();
 	};
 }

@@ -13,6 +13,8 @@
 #include "GameMode/LevelTransition.h"
 #include "GameFramework/PlayerManager.h"
 #include "Widgets/GameHUD.h"
+#include "Framework/Application.h"
+#include "Levels/MainMenu.h"
 
 namespace we
 {
@@ -28,10 +30,17 @@ namespace we
 		APlayer = NewPlayer.SpawnSpaceship(this);
 		APlayer.lock()->OnActorDestroyed.Bind(GetObject(), &LevelOne::PlayerDied);
 		GameplayHud = CreateHUD<GameplayHUD>();
+		GameplayHud.lock()->OnQuitButtonClicked.Bind(GetObject(), &LevelOne::QuitGame);
+		GameplayHud.lock()->OnRestartButtonClicked.Bind(GetObject(), &LevelOne::RestartGame);
 	}
 
 	void LevelOne::Tick(float DeltaTime)
 	{
+	}
+
+	void LevelOne::EndLevels()
+	{
+		GameplayHud.lock()->GameComplete(true);
 	}
 
 	void LevelOne::InitLevels()
@@ -42,7 +51,7 @@ namespace we
 		AddLevel(shared<FinalLevel>{new FinalLevel{ this }});
 		AddLevel(shared<FighterLevel>{new FighterLevel{ this }});
 		AddLevel(shared<FinalLevel>{new FinalLevel{ this }});
-		AddLevel(shared<LevelTransition>{new LevelTransition{ this, 5.f }});
+		AddLevel(shared<LevelTransition>{new LevelTransition{ this, 15.f }});
 		AddLevel(shared<BossLevel>{new BossLevel{ this }});
 	}
 
@@ -61,6 +70,17 @@ namespace we
 
 	void LevelOne::GameOver()
 	{
-		LOG("Game Over!")
+		GameplayHud.lock()->GameComplete(false);
+	}
+
+	void LevelOne::QuitGame()
+	{
+		GetApplication()->QuitApplication();
+	}
+
+	void LevelOne::RestartGame()
+	{
+		//GetApplication()->LoadWorld<LevelOne>();
+		LOG("Crashes Right Now!")
 	}
 }
