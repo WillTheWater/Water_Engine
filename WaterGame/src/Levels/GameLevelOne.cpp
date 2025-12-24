@@ -9,6 +9,7 @@
 #include "Levels/TwinFighterLevel.h"
 #include "Levels/DestroyerLevel.h"
 #include "Levels/FinalLevel.h"
+#include "Levels/BossLevel.h"
 #include "GameMode/LevelTransition.h"
 #include "GameFramework/PlayerManager.h"
 #include "Widgets/GameHUD.h"
@@ -35,6 +36,7 @@ namespace we
 
 	void LevelOne::InitLevels()
 	{
+		AddLevel(shared<BossLevel>{new BossLevel{ this }});
 		AddLevel(shared<FinalLevel>{new FinalLevel{ this }});
 		AddLevel(shared<DestroyerLevel>{new DestroyerLevel{ this }});
 		AddLevel(shared<LevelTransition>{new LevelTransition{ this, 3.f }});

@@ -28,6 +28,9 @@ add_executable(${WATER_GAME}
     ${CMAKE_CURRENT_SOURCE_DIR}/include/Enemy/Destroyer.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Enemy/Destroyer.cpp
 
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/Enemy/Boss.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Enemy/Boss.cpp
+
     ${CMAKE_CURRENT_SOURCE_DIR}/include/Gameplay/HealthComponent.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Gameplay/HealthComponent.cpp
 
@@ -69,6 +72,9 @@ add_executable(${WATER_GAME}
 
     ${CMAKE_CURRENT_SOURCE_DIR}/include/Levels/FinalLevel.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Levels/FinalLevel.cpp
+
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/Levels/BossLevel.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Levels/BossLevel.cpp
 
     ${CMAKE_CURRENT_SOURCE_DIR}/include/Levels/MainMenu.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Levels/MainMenu.cpp
