@@ -140,10 +140,12 @@ namespace we
         if (WinLose)
         {
             WinLoseText.SetText("You Win!");
+            WinLoseText.CenterOrigin();
         }
         else
         {
             WinLoseText.SetText("You Lose!");
+            WinLoseText.CenterOrigin();
         }
     }
 
@@ -223,6 +225,7 @@ namespace we
     void GameplayHUD::InitializeButtons(const sf::Vector2u& ViewportSize)
     {
         RestartButton.CenterOrigin();
+        RestartButtonText.SetFontSize(34);
         RestartButtonText.CenterOrigin();
         RestartButtonText.SetColor(sf::Color::Black);
         QuitButton.CenterOrigin();
@@ -232,9 +235,8 @@ namespace we
         RestartButtonText.SetWidgetPosition(RestartButton.GetWidgetPosition());
         QuitButton.SetWidgetPosition({ ViewportSize.x / 2.f, ViewportSize.y / 2.f + 100 });
         QuitButtonText.SetWidgetPosition(QuitButton.GetWidgetPosition());
-        WinLoseText.SetWidgetPosition({ ViewportSize.x / 2.f, 150 });
-        WinLoseText.CenterOrigin();
         WinLoseText.SetFontSize(60);
+        WinLoseText.SetWidgetPosition({ ViewportSize.x / 2.f, 300.f });
     }
 
     void GameplayHUD::RestartButtonClicked()
