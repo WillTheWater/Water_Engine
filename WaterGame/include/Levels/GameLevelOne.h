@@ -24,5 +24,6 @@ namespace we
 		virtual void InitLevels() override;
 		void QuitGame();
 		void RestartGame();
+		void SetBackground();
 	};
 }

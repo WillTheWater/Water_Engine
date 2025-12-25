@@ -14,7 +14,8 @@ namespace we
         void SetIsMoving(bool ShouldMove);
         void SetVelocity(const sf::Vector2f& NewVelocity);
 
-        virtual void SetTextureTiled(bool Tile) override;
+        // Override to setup Texture Rect logic
+        void SetTextureTiled(bool Tile) override;
 
     private:
         void Move(float DeltaTime);
@@ -22,5 +23,8 @@ namespace we
         bool bIsTiled;
         bool bIsMoving;
         sf::Vector2u TextureSize;
+
+        // This tracks how much we have scrolled in texture coordinates
+        sf::Vector2f TextureShift;
     };
 }

@@ -57,7 +57,8 @@ namespace we
 
 		void SetTexture(const std::string& TexturePath);
 		virtual void SetTextureTiled(bool Tile);
-		sf::Vector2u GetTextureSize();
+		sf::Vector2u GetTextureSize() const;
+		void SetTextureRect(const sf::IntRect& Rect);
 		void SetSpriteLocationOffset(const sf::Vector2f& Position);
 		void SetSpriteRotationOffset(const sf::Angle& Rotation);
 		void SetSpriteScale(const sf::Vector2f& Scale);

@@ -99,9 +99,19 @@ namespace we
 		Texture->setRepeated(Tile);
 	}
 
-	sf::Vector2u Actor::GetTextureSize()
+	sf::Vector2u Actor::GetTextureSize() const
 	{
-		return Texture->getSize();
+		if (Texture)
+		{
+			return Texture->getSize();
+		}
+
+		return { 0, 0 };
+	}
+
+	void Actor::SetTextureRect(const sf::IntRect& Rect)
+	{
+		Sprite->setTextureRect(Rect);
 	}
 
 	void Actor::SetSpriteLocationOffset(const sf::Vector2f& Position)

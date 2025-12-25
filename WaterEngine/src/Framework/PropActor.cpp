@@ -8,6 +8,7 @@ namespace we
         , bIsTiled{ false }
         , bIsMoving{ false }
         , TextureSize{ 0, 0 }
+        , TextureShift{ 0.f, 0.f }
     {
     }
 
@@ -31,12 +32,15 @@ namespace we
         if (Tile)
         {
             TextureSize = GetTextureSize();
-            
-            sf::Vector2u ScreenSize = GetWindowSize();
-            int FrameWidth = ScreenSize.x + TextureSize.x;
-            int FrameHeight = ScreenSize.y + TextureSize.y;
 
-            SetSpriteFrame(FrameWidth, FrameHeight);
+            if (TextureSize.x > 0 && TextureSize.y > 0)
+            {
+                sf::Vector2u ScreenSize = GetWindowSize();
+
+                SetSpriteFrame(ScreenSize.x, ScreenSize.y);
+
+                SetActorLocation({ 0.f, 0.f });
+            }
         }
     }
 
@@ -48,24 +52,27 @@ namespace we
             return;
         }
 
-        AddActorLocationOffset(Velocity * DeltaTime);
-        auto ActorLocation = GetActorLocation();
-        if (TextureSize.y > 0)
-        {
-            if (Velocity.y > 0 && ActorLocation.y > TextureSize.y)
-            {
-                ActorLocation.y -= TextureSize.y;
-            }
-            else if (Velocity.y < 0 && ActorLocation.y < -TextureSize.y)
-            {
-                ActorLocation.y += TextureSize.y;
-            }
-        }
+        TextureShift += Velocity * DeltaTime;
+
+        if (TextureSize.x > 0) TextureShift.x = std::fmod(TextureShift.x, (float)TextureSize.x);
+        if (TextureSize.y > 0) TextureShift.y = std::fmod(TextureShift.y, (float)TextureSize.y);
+
+        int NewLeft = static_cast<int>(TextureShift.x);
+        int NewTop = static_cast<int>(TextureShift.y);
+
+        sf::Vector2u ScreenSize = GetWindowSize();
+        sf::IntRect Rect;
+
+        Rect.position.x = NewLeft;
+        Rect.position.y = NewTop;
+        Rect.size.x = static_cast<int>(ScreenSize.x);
+        Rect.size.y = static_cast<int>(ScreenSize.y);
+        SetTextureRect(Rect);
     }
 
     void Prop::SetVelocity(const sf::Vector2f& NewVelocity)
     {
-        Velocity = NewVelocity;
+        Velocity = -NewVelocity;
     }
 
     void Prop::SetIsMoving(bool ShouldMove)

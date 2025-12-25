@@ -39,7 +39,6 @@ namespace we
 		auto Stars = SpawnActor<Prop>("SpaceShooterRedux/Backgrounds/stars.png");
 		BG.lock()->CenterPivot();
 		BG.lock()->SetActorLocation({ GetWindowSize().x / 2.f, GetWindowSize().y / 2.f });
-		Stars.lock()->CenterPivot();
 		Stars.lock()->SetTextureTiled(true);
 		Stars.lock()->SetIsMoving(true);
 		Stars.lock()->SetVelocity(sf::Vector2f{ 0.f, 30.f });

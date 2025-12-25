@@ -1,5 +1,6 @@
 #include "Levels/GameLevelOne.h"
 #include "Framework/Actor.h"
+#include "Framework/PropActor.h"
 #include "Framework/Assetmanager.h"
 #include "Player/PlayerSpaceship.h"
 #include "Enemy/Fighter.h"
@@ -26,6 +27,7 @@ namespace we
 
 	void LevelOne::BeginPlay()
 	{
+		SetBackground();
 		Player& NewPlayer = PlayerManager::Get().CreatePlayer();
 		APlayer = NewPlayer.SpawnSpaceship(this);
 		APlayer.lock()->OnActorDestroyed.Bind(GetObject(), &LevelOne::PlayerDied);
@@ -45,7 +47,6 @@ namespace we
 
 	void LevelOne::InitLevels()
 	{
-		AddLevel(shared<BossLevel>{new BossLevel{ this }});
 		AddLevel(shared<TwinFighterLevel>{new TwinFighterLevel{ this }});
 		AddLevel(shared<LevelTransition>{new LevelTransition{ this, 10.f }});
 		AddLevel(shared<DestroyerLevel>{new DestroyerLevel{ this }});
@@ -83,5 +84,17 @@ namespace we
 	{
 		PlayerManager::Get().Reset();
 		GetApplication()->LoadWorld<LevelOne>();
+	}
+
+	void LevelOne::SetBackground()
+	{
+		auto BG = SpawnActor<Prop>("SpaceShooterRedux/Backgrounds/background.png");
+		auto Stars = SpawnActor<Prop>("SpaceShooterRedux/Backgrounds/stars.png");
+		BG.lock()->CenterPivot();
+		BG.lock()->SetActorLocation({ GetWindowSize().x / 2.f, GetWindowSize().y / 2.f });
+		Stars.lock()->SetTextureTiled(true);
+		Stars.lock()->SetIsMoving(true);
+		Stars.lock()->SetVelocity(sf::Vector2f{ 0.f, 30.f });
+		Stars.lock()->SetActorLocation({ GetWindowSize().x / 2.f, GetWindowSize().y / 2.f });
 	}
 }
