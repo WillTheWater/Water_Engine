@@ -16,5 +16,6 @@ namespace we
 		weak<MainMenuHUD> MenuHUD;
 		void StartGame();
 		void QuitGame();
+		void SetBackground();
 	};
 }

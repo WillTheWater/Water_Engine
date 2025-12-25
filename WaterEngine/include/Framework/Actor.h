@@ -56,6 +56,8 @@ namespace we
 		bool IsActorOutOfBounds(float Allowance = 10.f) const;
 
 		void SetTexture(const std::string& TexturePath);
+		virtual void SetTextureTiled(bool Tile);
+		sf::Vector2u GetTextureSize();
 		void SetSpriteLocationOffset(const sf::Vector2f& Position);
 		void SetSpriteRotationOffset(const sf::Angle& Rotation);
 		void SetSpriteScale(const sf::Vector2f& Scale);

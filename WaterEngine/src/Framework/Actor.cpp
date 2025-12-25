@@ -94,6 +94,16 @@ namespace we
 		CenterPivot();
 	}
 
+	void Actor::SetTextureTiled(bool Tile)
+	{
+		Texture->setRepeated(Tile);
+	}
+
+	sf::Vector2u Actor::GetTextureSize()
+	{
+		return Texture->getSize();
+	}
+
 	void Actor::SetSpriteLocationOffset(const sf::Vector2f& Position)
 	{
 		SpriteLocationOffset = Position;

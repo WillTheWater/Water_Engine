@@ -23,6 +23,7 @@ namespace we
 		{
 			return (CurrentHealth / MaxHealth) * 100.f;
 		}
+		return 0.f;
 	}
 
 	void HealthComponent::ChangeHealth(float Amount)
