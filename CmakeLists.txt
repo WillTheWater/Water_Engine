@@ -10,7 +10,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS        OFF)
 
 set(WATER_ENGINE WaterEngine)
-set(WATER_GAME WaterGame)
+set(TEMPLATE_GAME TemplateGame)
 
 add_subdirectory(WaterEngine)
-add_subdirectory(WaterGame)
+add_subdirectory(TemplateGame)
