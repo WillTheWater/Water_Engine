@@ -84,6 +84,8 @@ add_executable(${WATER_GAME}
 
     ${CMAKE_CURRENT_SOURCE_DIR}/include/Widgets/MainMenuHUD.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Widgets/MainMenuHUD.cpp
+
+    ${CMAKE_CURRENT_SOURCE_DIR}/icon.rc
 )
 
 target_include_directories(${WATER_GAME} PUBLIC
@@ -92,7 +94,6 @@ target_include_directories(${WATER_GAME} PUBLIC
 
 target_link_libraries(${WATER_GAME} PUBLIC ${WATER_ENGINE})
 
-# Copy engine build output directory into the game output directory (kept from original)
 function(CopyToDirectory LIB_NAME TARGET_NAME)
     add_custom_command(TARGET ${TARGET_NAME}
     POST_BUILD
