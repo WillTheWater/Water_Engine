@@ -50,4 +50,10 @@ namespace we
     {
         return CurrentBoss;
     }
+
+    void PlayerManager::Reset()
+    {
+        Players.clear();
+        CurrentBoss.reset();
+    }
 }

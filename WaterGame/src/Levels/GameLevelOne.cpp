@@ -45,6 +45,7 @@ namespace we
 
 	void LevelOne::InitLevels()
 	{
+		AddLevel(shared<BossLevel>{new BossLevel{ this }});
 		AddLevel(shared<TwinFighterLevel>{new TwinFighterLevel{ this }});
 		AddLevel(shared<LevelTransition>{new LevelTransition{ this, 10.f }});
 		AddLevel(shared<DestroyerLevel>{new DestroyerLevel{ this }});
@@ -80,7 +81,7 @@ namespace we
 
 	void LevelOne::RestartGame()
 	{
-		//GetApplication()->LoadWorld<LevelOne>();
-		LOG("Crashes Right Now!")
+		PlayerManager::Get().Reset();
+		GetApplication()->LoadWorld<LevelOne>();
 	}
 }

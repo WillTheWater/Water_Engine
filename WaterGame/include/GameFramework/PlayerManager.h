@@ -14,6 +14,8 @@ namespace we
         Player* GetPlayer(int PlayerIndex = 0);
         const Player* GetPlayer(int PlayerIndex = 0) const;
 
+        void Reset();
+
         void SetBoss(weak<Boss> NewBoss);
         weak<Boss> GetBoss() const;
 

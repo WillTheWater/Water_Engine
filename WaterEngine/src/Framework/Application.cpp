@@ -83,6 +83,7 @@ namespace we
 		if (PendingWorld && PendingWorld != CurrentWorld)
 		{
 			CurrentWorld = PendingWorld;
+			PhysicsSystem::Get().Cleanup();
 			CurrentWorld->BeginPlayGlobal();
 		}
 	}
