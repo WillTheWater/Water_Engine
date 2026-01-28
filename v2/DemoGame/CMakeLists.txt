@@ -1,0 +1,85 @@
+# =============================================================================
+# Water Engine v2.0.0
+# Copyright (C) 2026 Will The Water
+# License: MIT (see LICENSE file for full text)
+# =============================================================================
+
+# =============================================================================
+# DemoGame/CMakeLists.txt
+# =============================================================================
+
+# ========================== DEFINE PATHS ==========================
+
+set(CONTENT_FOLDER_NAME "Content")
+set(CONTENT_SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/${CONTENT_FOLDER_NAME}")
+set(ASSETS_SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/${CONTENT_FOLDER_NAME}/Assets")
+set(ICON_DIR "${ASSETS_SRC_DIR}/Icon")
+set(PAK_OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/Contents.pak")
+
+# ========================== COLLECT ALL ==========================
+
+file(GLOB_RECURSE GAME_SOURCES CONFIGURE_DEPENDS
+    ${CMAKE_CURRENT_SOURCE_DIR}/Source/*.cpp
+)
+file(GLOB_RECURSE GAME_HEADERS CONFIGURE_DEPENDS
+    ${CMAKE_CURRENT_SOURCE_DIR}/Include/*.h
+)
+
+# =============================================================================
+# Executable icon (Windows only)
+# =============================================================================
+
+if (WIN32)
+    configure_file("${ICON_DIR}/icon.rc" "${CMAKE_CURRENT_BINARY_DIR}/icon.rc" COPYONLY)
+    configure_file("${ICON_DIR}/icon.ico" "${CMAKE_CURRENT_BINARY_DIR}/icon.ico" COPYONLY)
+    set(GAME_PLATFORM_SOURCES "${CMAKE_CURRENT_BINARY_DIR}/icon.rc")
+endif()
+
+# =============================================================================
+# Game executable
+# =============================================================================
+
+add_executable(
+    ${DEMO_GAME}
+    ${GAME_SOURCES}
+    ${GAME_HEADERS}
+    ${GAME_PLATFORM_SOURCES}
+)
+
+if (WIN32)
+    set_target_properties(${DEMO_GAME}
+        PROPERTIES WIN32_EXECUTABLE TRUE
+    )
+endif()
+
+target_include_directories(${DEMO_GAME} PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}/Include
+)
+
+target_link_libraries(${DEMO_GAME} PUBLIC
+    ${WATER_ENGINE}
+    physfs
+)
+
+# =============================================================================
+# Asset packing
+# =============================================================================
+
+# ========================== COPY CONTENT ==========================
+
+add_custom_command(TARGET ${DEMO_GAME} PRE_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+            ${CONTENT_SRC_DIR}
+            $<TARGET_FILE_DIR:${DEMO_GAME}>/Content
+    COMMENT "Copying Content folder to output directory"
+)
+
+add_custom_command(
+    OUTPUT ${PAK_OUTPUT}
+    COMMAND ${CMAKE_COMMAND} -E tar "cfv" Contents.pak --format=zip "${CONTENT_SRC_DIR}"
+    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+    COMMENT "Packing assets into Contents.pak"
+)
+
+add_custom_target(PackContents ALL DEPENDS ${PAK_OUTPUT})
+add_dependencies(${DEMO_GAME} PackContents)

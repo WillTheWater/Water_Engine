@@ -1,0 +1,75 @@
+// =============================================================================
+// Water Engine v2.0.0
+// Copyright(C) 2026 Will The Water
+// =============================================================================
+
+#pragma once
+#include <memory>
+#include <optional>
+#include <functional>
+#include <map>
+#include <vector>
+#include <unordered_map>
+#include <unordered_set>
+#include <string>
+#include <fstream>
+#include <SFML/System/Vector2.hpp>
+#include <nlohmann/json.hpp>
+
+namespace we
+{
+	using string = std::string;
+	using filestream = std::fstream;
+	using uint8 = unsigned char;
+
+	using json = nlohmann::json;
+	
+	template<typename T>
+	using vec2 = sf::Vector2<T>;
+
+	using vec2f = sf::Vector2f;
+	using vec2i = sf::Vector2i;
+	using vec2u = sf::Vector2u;
+
+	template<typename T>
+	using unique = std::unique_ptr<T>;
+
+	template<typename T, typename... Args>
+	std::unique_ptr<T> make_unique(Args&&... args)
+	{
+		return std::make_unique<T>(std::forward<Args>(args)...);
+	}
+
+	template<typename T>
+	using shared = std::shared_ptr<T>;
+
+	template<typename T, typename... Args>
+	std::shared_ptr<T> make_shared(Args&&... args)
+	{
+		return std::make_shared<T>(std::forward<Args>(args)...);
+	}
+
+	template<typename T>
+	using weak = std::weak_ptr<T>;
+
+	template<typename T>
+	std::weak_ptr<T> make_weak(const std::shared_ptr<T>& shared)
+	{
+		return std::weak_ptr<T>(shared);
+	}
+
+	template<typename T>
+	using optional = std::optional<T>;
+
+	template<typename T>
+	using list = std::vector<T>;
+
+	template<typename T>
+	using set = std::unordered_set<T>;
+
+	template<typename Key, typename Type, typename P = std::less<Key>>
+	using map = std::map<Key, Type, P>;
+
+	template<typename Key, typename Type, typename Hasher = std::hash<Key>>
+	using dictionary = std::unordered_map<Key, Type, Hasher>;
+}
