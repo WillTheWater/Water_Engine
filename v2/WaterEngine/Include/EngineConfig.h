@@ -7,6 +7,8 @@
 
 #include "Utility/CoreMinimal.h"
 
+#include <SFML/System/Time.hpp>
+
 // =============================================================================
 // Used to set global engine configurations
 // =============================================================================
@@ -18,7 +20,13 @@ namespace we
 		EngineConfig();
 
 		vec2f WindowSize;
+		vec2f AspectRatio;
+		vec2f WindowMinimumSize;
+		bool FullscreenMode;
+		bool SetRenderSmooth;
 		string WindowName;
+		bool DisableSFMLLogs;
+		sf::Time MaxDeltaTime;
 	};
 
 	// Global Accessor

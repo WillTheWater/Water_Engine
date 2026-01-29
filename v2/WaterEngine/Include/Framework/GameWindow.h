@@ -9,6 +9,7 @@
 
 #include <sfml/Graphics.hpp>
 
+#include "Framework/GameWindowEventHandler.h"
 
 namespace we
 {
@@ -17,12 +18,35 @@ namespace we
 	public:
 		GameWindow();
 
-		// Switch between windowed and borderless fullscreen
-		void ToggleBorderlessFullscreen();
+	public:
+		void HandleEvents();
+		std::function<void(vec2u)> OnResize;
 
 	private:
-		// Keep track of previous windowed size & position
+		image WindowIcon;
 		vec2i WindowedPosition;
-		bool bIsFullscreen = false;
+		bool bIsFullscreen;
+
+	private:
+		friend GameWindowEventHandler;
+
+		void EventWindowClose();
+		void EventWindowResized();
+		void EventToggleBorderlessFullscreen();
+		void EventWindowFocusLost();
+		void EventWindowFocusGained();
+		
+		void EventJoypadConnected();
+		void EventJoypadDisconnected();
+		void EventJoypadButtonPressed();
+		void EventJoypadButtonReleased();
+		
+		void EventKeyPressed();
+		void EventKeyReleased();
+		
+		void EventMouseButtonPressed();
+		void EventMouseButtonReleased();
+
+		void SetIcon();
 	};
 }

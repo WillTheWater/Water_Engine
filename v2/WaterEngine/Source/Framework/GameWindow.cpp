@@ -5,38 +5,99 @@
 
 #include "Framework/GameWindow.h"
 #include "EngineConfig.h"
+#include "Utility/Log.h"
 
 namespace we
 {
-	GameWindow::GameWindow()
-	{
-		// Store default windowed size and position
-        WindowedPosition = { vec2i(sf::VideoMode::getDesktopMode().size.x / 2, sf::VideoMode::getDesktopMode().size.y / 2) };
-		create(sf::VideoMode(vec2u(EC.WindowSize)), EC.WindowName);
-		setIcon(sf::Image("Content/Assets/Icon/icon.png"));
-	}
+    GameWindow::GameWindow()
+        : WindowIcon{"Content/Assets/Icon/icon.png"}
+        , WindowedPosition{ vec2i(sf::VideoMode::getDesktopMode().size.x / 2, sf::VideoMode::getDesktopMode().size.y / 2) }
+        , bIsFullscreen{EC.FullscreenMode }
+    {
+        create(sf::VideoMode(vec2u(EC.WindowSize)), EC.WindowName);
+        SetIcon();
+    }
 
-	void GameWindow::ToggleBorderlessFullscreen()
-	{
+    void GameWindow::SetIcon()
+    {
+        setIcon(WindowIcon);
+    }
+
+    void GameWindow::HandleEvents()
+    {
+        while (const auto Event = pollEvent())
+        {
+            Event->visit(GameWindowEventHandler{*this});
+        }
+    }
+
+    void GameWindow::EventToggleBorderlessFullscreen()
+    {
         bIsFullscreen = !bIsFullscreen;
-        // Save current windowed size & position before switching
+
         if (!bIsFullscreen)
         {
-            // going back to windowed
             create(sf::VideoMode(vec2u(EC.WindowSize)), EC.WindowName, sf::Style::Default);
             setPosition(WindowedPosition);
         }
         else
         {
-            // going to borderless fullscreen
             WindowedPosition = getPosition();
-
             auto desktop = sf::VideoMode::getDesktopMode();
             create(desktop, EC.WindowName, sf::Style::None, sf::State::Fullscreen);
-            setPosition({ 0, 0 });
         }
 
-        // Optional: restore icon after recreate
-        setIcon(sf::Image("Content/Assets/Icon/icon.png"));
-	}
+        SetIcon();
+        EventWindowResized();
+    }
+
+    void GameWindow::EventWindowClose()
+    {
+        close();
+    }
+
+    void GameWindow::EventWindowResized()
+    {
+        OnResize(getSize());
+    }
+
+    void GameWindow::EventWindowFocusLost()
+    {
+    }
+
+    void GameWindow::EventWindowFocusGained()
+    {
+    }
+
+    void GameWindow::EventJoypadConnected()
+    {
+    }
+
+    void GameWindow::EventJoypadDisconnected()
+    {
+    }
+
+    void GameWindow::EventJoypadButtonPressed()
+    {
+    }
+
+    void GameWindow::EventJoypadButtonReleased()
+    {
+    }
+
+    void GameWindow::EventKeyPressed()
+    {
+    }
+
+    void GameWindow::EventKeyReleased()
+    {
+    }
+
+    void GameWindow::EventMouseButtonPressed()
+    {
+    }
+
+    void GameWindow::EventMouseButtonReleased()
+    {
+    }
 }

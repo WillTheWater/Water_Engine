@@ -7,12 +7,12 @@
 
 #include "Utility/CoreMinimal.h"
 
-#include <Framework/Application.h>
+#include <Framework/WaterEngine.h>
 
 namespace we
 {
 
-	class Game : public Application
+	class Game : public WaterEngine
 	{
 	public:
 		Game();

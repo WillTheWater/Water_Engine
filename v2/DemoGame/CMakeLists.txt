@@ -16,13 +16,14 @@ set(ASSETS_SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/${CONTENT_FOLDER_NAME}/Assets")
 set(ICON_DIR "${ASSETS_SRC_DIR}/Icon")
 set(PAK_OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/Contents.pak")
 
-# ========================== COLLECT ALL ==========================
+# ========================== GAME SOURCES ==========================
 
-file(GLOB_RECURSE GAME_SOURCES CONFIGURE_DEPENDS
-    ${CMAKE_CURRENT_SOURCE_DIR}/Source/*.cpp
+set(GAME_SOURCES
+    Source/Game.cpp
 )
-file(GLOB_RECURSE GAME_HEADERS CONFIGURE_DEPENDS
-    ${CMAKE_CURRENT_SOURCE_DIR}/Include/*.h
+
+set(GAME_HEADERS
+    Include/Game.h
 )
 
 # =============================================================================
@@ -47,9 +48,7 @@ add_executable(
 )
 
 if (WIN32)
-    set_target_properties(${DEMO_GAME}
-        PROPERTIES WIN32_EXECUTABLE TRUE
-    )
+    set_target_properties(${DEMO_GAME} PROPERTIES WIN32_EXECUTABLE $<CONFIG:Release>)
 endif()
 
 target_include_directories(${DEMO_GAME} PUBLIC
@@ -58,7 +57,6 @@ target_include_directories(${DEMO_GAME} PUBLIC
 
 target_link_libraries(${DEMO_GAME} PUBLIC
     ${WATER_ENGINE}
-    physfs
 )
 
 # =============================================================================

@@ -22,7 +22,13 @@ namespace we
 			json Config = json::parse(File);
 
 			WindowSize = { Config["WindowSize"][0], Config["WindowSize"][1] };
+			AspectRatio = { Config["AspectRatio"][0], Config["AspectRatio"][1] };
+			WindowMinimumSize = { Config["WindowMinimumSize"][0], Config["WindowMinimumSize"][1] };
+			FullscreenMode = Config["FullscreenMode"];
+			SetRenderSmooth = Config["SetRenderSmooth"];
 			WindowName = Config["WindowName"];
+			DisableSFMLLogs = Config["DisableSFMLLogs"];
+			MaxDeltaTime = sf::seconds(Config["MaxDeltaTime"]);
 		}
 	}
 }

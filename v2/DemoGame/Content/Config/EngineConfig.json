@@ -1,4 +1,10 @@
 {
   "WindowSize": [ 1920, 1080 ],
-  "WindowName": "Water Engine Demo"
+  "AspectRatio": [ 16, 9 ],
+  "WindowMinimumSize": [ 960, 540 ],
+  "FullscreenMode": false,
+  "SetRenderSmooth": true,
+  "WindowName": "Water Engine Demo",
+  "DisableSFMLLogs": true,
+  "MaxDeltaTime": 0.025
 }

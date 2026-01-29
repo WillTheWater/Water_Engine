@@ -7,14 +7,13 @@
 
 namespace we
 {
-	unique<Application> GetApplication()
+	unique<WaterEngine> GetEngine()
 	{
 		return make_unique<Game>();
 	}
 
-
 	Game::Game()
-		: Application{}
+		: WaterEngine{}
 	{
 	}
 }

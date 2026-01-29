@@ -7,19 +7,25 @@
 
 #include "Utility/CoreMinimal.h"
 
-#include "Framework/GameWindow.h"
+#include <sfml/System/Clock.hpp>
+#include <sfml/System/Time.hpp>
 
 namespace we
 {
-	class Application
+	class TimerSubsystem
 	{
 	public:
-		Application();
-		~Application(){}
-
-		void Run();
+		float GetDeltaTime() const;
+		float GetElapsedTime() const;
 
 	private:
-		unique<GameWindow> mGameWindow;
+		sf::Clock GlobalTick;
+		sf::Time DeltaTime;
+		sf::Time PreviousTick;
+
+	private:
+		friend class WaterEngine;
+
+		void Tick();
 	};
 }

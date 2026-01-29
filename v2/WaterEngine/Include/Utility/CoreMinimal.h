@@ -4,25 +4,30 @@
 // =============================================================================
 
 #pragma once
+
 #include <memory>
 #include <optional>
 #include <functional>
+#include <numbers>
 #include <map>
 #include <vector>
 #include <unordered_map>
 #include <unordered_set>
 #include <string>
 #include <fstream>
+#include <sfml/Graphics.hpp>
 #include <SFML/System/Vector2.hpp>
+#include <SFML/System/Angle.hpp>
 #include <nlohmann/json.hpp>
 
 namespace we
 {
 	using string = std::string;
 	using filestream = std::fstream;
+	using json = nlohmann::json;
+
 	using uint8 = unsigned char;
 
-	using json = nlohmann::json;
 	
 	template<typename T>
 	using vec2 = sf::Vector2<T>;
@@ -30,6 +35,18 @@ namespace we
 	using vec2f = sf::Vector2f;
 	using vec2i = sf::Vector2i;
 	using vec2u = sf::Vector2u;
+
+	using angle = sf::Angle;
+
+	using sprite = sf::Sprite;
+	using texture = sf::Texture;
+	using image = sf::Image;
+	using renderTexture = sf::RenderTexture;
+	using rectangle = sf::RectangleShape;
+	using drawable = sf::Drawable;
+	using view = sf::View;
+	using rectf = sf::FloatRect;
+	using color = sf::Color;
 
 	template<typename T>
 	using unique = std::unique_ptr<T>;

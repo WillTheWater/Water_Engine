@@ -5,10 +5,14 @@
 
 #pragma once
 
-#include "Utility/CoreMinimal.h"
+#include "Subsystem/TimerSubsystem.h"
+#include "Subsystem/RenderSubsystem.h"
 
 namespace we
 {
-	class WaterEngine;
-	extern unique<WaterEngine> GetEngine();
+	struct EngineSubsystem
+	{
+		TimerSubsystem Time;
+		RenderSubsystem Render;
+	};
 }
