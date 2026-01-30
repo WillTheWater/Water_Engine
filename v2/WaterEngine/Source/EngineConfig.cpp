@@ -29,6 +29,8 @@ namespace we
 			WindowName = Config["WindowName"];
 			DisableSFMLLogs = Config["DisableSFMLLogs"];
 			MaxDeltaTime = sf::seconds(Config["MaxDeltaTime"]);
+			WindowIcon = Config["WindowIcon"];
+			DefaultBackground = Config["DefaultBackground"];
 		}
 	}
 }

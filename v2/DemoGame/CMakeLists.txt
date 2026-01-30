@@ -77,7 +77,7 @@ add_custom_command(TARGET ${DEMO_GAME} PRE_BUILD
 add_custom_command(
     OUTPUT ${PAK_OUTPUT}
     # Changes the working directory to the Content folder itself
-    # so that 'Assets' is at the root of the ZIP, not 'Content/Assets'
+    # so that 'Content' is at the root of the ZIP.
     COMMAND ${CMAKE_COMMAND} -E tar "cf" "${PAK_OUTPUT}" --format=zip "."
     WORKING_DIRECTORY "${CONTENT_SRC_DIR}"
     DEPENDS "${CONTENT_SRC_DIR}"

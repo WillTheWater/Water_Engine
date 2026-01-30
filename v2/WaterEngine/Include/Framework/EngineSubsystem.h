@@ -5,6 +5,7 @@
 
 #pragma once
 
+#include "Utility/CoreMinimal.h"
 #include "Subsystem/TimerSubsystem.h"
 #include "Subsystem/RenderSubsystem.h"
 #include "Subsystem/SaveLoadSubsystem.h"
@@ -13,8 +14,8 @@ namespace we
 {
 	struct EngineSubsystem
 	{
-		TimerSubsystem Time;
-		RenderSubsystem Render;
-		SaveLoadSubsystem SaveLoad;
+		unique<TimerSubsystem> Time;
+		unique<RenderSubsystem> Render;
+		unique<SaveLoadSubsystem> SaveLoad;
 	};
 }

@@ -22,7 +22,7 @@ namespace we
 	private:
 		renderTexture RenderTarget;
 
-		texture DefaultBackground;
+		shared<texture> DefaultBackground;
 		rectangle Background;
 
 	private:

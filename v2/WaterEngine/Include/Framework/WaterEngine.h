@@ -29,6 +29,9 @@ namespace we
 		unique<GameWindow> Window;
 
 	private:
+		void Configure();
+		void Construct();
+		void WindowInit();
 		void ConstrainRender();
 	};
 }

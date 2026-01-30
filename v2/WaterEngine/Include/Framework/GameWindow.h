@@ -23,7 +23,6 @@ namespace we
 		std::function<void(vec2u)> OnResize;
 
 	private:
-		image WindowIcon;
 		vec2i WindowedPosition;
 		bool bIsFullscreen;
 

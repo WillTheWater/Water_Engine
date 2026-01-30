@@ -18,6 +18,7 @@
 #include <sfml/Graphics.hpp>
 #include <SFML/System/Vector2.hpp>
 #include <SFML/System/Angle.hpp>
+#include <SFML/Audio.hpp>
 #include <nlohmann/json.hpp>
 
 namespace we
@@ -43,6 +44,8 @@ namespace we
 	using sprite = sf::Sprite;
 	using texture = sf::Texture;
 	using image = sf::Image;
+	using font = sf::Font;
+	using soundBuffer = sf::SoundBuffer;
 	using renderTexture = sf::RenderTexture;
 	using rectangle = sf::RectangleShape;
 	using drawable = sf::Drawable;

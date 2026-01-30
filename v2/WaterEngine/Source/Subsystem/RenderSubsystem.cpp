@@ -4,6 +4,7 @@
 // =============================================================================
 
 #include "Subsystem/RenderSubsystem.h"
+#include "Subsystem/ResourceSubsystem.h"
 #include "EngineConfig.h"
 #include "Utility/Log.h"
 
@@ -11,11 +12,14 @@ namespace we
 {
 	RenderSubsystem::RenderSubsystem()
 		: RenderTarget{vec2u(EC.WindowSize)}
-		, DefaultBackground{"Content/Assets/Textures/Default/defaultBackground.png"}
 		, Background{EC.WindowSize}
 	{
 		RenderTarget.setSmooth(EC.SetRenderSmooth);
-		Background.setTexture(&DefaultBackground);
+		DefaultBackground = Asset().LoadTexture(EC.DefaultBackground);
+		if (DefaultBackground)
+		{
+			Background.setTexture(DefaultBackground.get());
+		}
 	}
 
 	void RenderSubsystem::Draw(const drawable& RenderObject)

@@ -6,5 +6,7 @@
   "SetRenderSmooth": true,
   "WindowName": "Water Engine Demo",
   "DisableSFMLLogs": true,
-  "MaxDeltaTime": 0.025
+  "MaxDeltaTime": 0.025,
+  "WindowIcon": "Assets/Icon/icon.png",
+  "DefaultBackground": "Assets/Textures/Default/defaultBackground.png"
 }

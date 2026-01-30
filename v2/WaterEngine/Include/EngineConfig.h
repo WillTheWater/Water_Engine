@@ -27,6 +27,8 @@ namespace we
 		string WindowName;
 		bool DisableSFMLLogs;
 		sf::Time MaxDeltaTime;
+		string WindowIcon;
+		string DefaultBackground;
 	};
 
 	// Global Accessor
