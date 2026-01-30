@@ -7,6 +7,8 @@
 #include "EngineConfig.h"
 #include "Utility/Log.h"
 
+#include "AssetDirectory/PakDirectory.h"
+
 namespace we
 {
     GameWindow::GameWindow()
@@ -16,6 +18,15 @@ namespace we
     {
         create(sf::VideoMode(vec2u(EC.WindowSize)), EC.WindowName);
         SetIcon();
+
+        // --- DEBUG: PakDirectory test ---
+        PakDirectory Pak("Contents.pak");
+
+        LOG("Exists Config? {}", Pak.Exists("Config"));
+        LOG("Exists Config/EngineConfig.json? {}", Pak.Exists("Config/EngineConfig.json"));
+        LOG("Exists Save? {}", Pak.Exists("Save"));
+        LOG("Exists Assets/Textures/Defualt? {}", Pak.Exists("Assets/Textures/Default"));
+        LOG("Exists Content/Assets/Icon/icon.png? {}", Pak.Exists("Content/Assets/Icon/icon.png"));
     }
 
     void GameWindow::SetIcon()

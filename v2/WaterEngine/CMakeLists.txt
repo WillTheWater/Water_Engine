@@ -39,6 +39,8 @@ FetchContent_Declare(tgui URL https://github.com/texus/TGUI/archive/refs/tags/v1
 FetchContent_Declare(enum URL https://github.com/Neargye/magic_enum/archive/refs/tags/v0.9.7.tar.gz)
 
 # PhysicsFS
+set(PHYSFS_BUILD_SHARED OFF CACHE BOOL "" FORCE)
+set(PHYSFS_BUILD_TEST OFF CACHE BOOL "" FORCE)
 FetchContent_Declare(physicsfs URL https://github.com/icculus/physfs/archive/refs/tags/release-3.2.0.tar.gz)
 
 # Populate dependencies
@@ -59,11 +61,13 @@ set(WATER_ENGINE_SOURCES
 
     Source/Subsystem/TimerSubsystem.cpp
     Source/Subsystem/RenderSubsystem.cpp
-     Source/Subsystem/SaveLoadSubsystem.cpp
+    Source/Subsystem/SaveLoadSubsystem.cpp
+
+    Source/AssetDirectory/PakDirectory.cpp
 
     Source/Utility/RandomGenerator.cpp 
-
 )
+
 
 set(WATER_ENGINE_HEADERS
     Include/Entry.h
@@ -78,9 +82,13 @@ set(WATER_ENGINE_HEADERS
     Include/Subsystem/RenderSubsystem.h
     Include/Subsystem/SaveLoadSubsystem.h
 
+    Include/Interface/IAssetDirector.h
+    Include/AssetDirectory/PakDirectory.h
+    
     Include/Utility/CoreMinimal.h
     Include/Utility/Log.h
     Include/Utility/RandomGenerator.h
+
 
 
 
@@ -93,9 +101,13 @@ add_library(${WATER_ENGINE} STATIC
 
 target_include_directories(${WATER_ENGINE} PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/Include
+    ${physicsfs_SOURCE_DIR}/src
 )
 
-target_compile_definitions(${WATER_ENGINE} PUBLIC SFML_STATIC)
+target_compile_definitions(${WATER_ENGINE} PUBLIC 
+    SFML_STATIC
+    PHYSFS_STATIC
+)
 
 target_link_libraries(${WATER_ENGINE} PUBLIC
     SFML::Graphics
@@ -106,5 +118,5 @@ target_link_libraries(${WATER_ENGINE} PUBLIC
     spdlog::spdlog
     TGUI::TGUI
     magic_enum::magic_enum
-    physfs
+    physfs-static
 )

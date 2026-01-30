@@ -72,10 +72,15 @@ add_custom_command(TARGET ${DEMO_GAME} PRE_BUILD
     COMMENT "Copying Content folder to output directory"
 )
 
+# ========================== ASSET PACKING ==========================
+
 add_custom_command(
     OUTPUT ${PAK_OUTPUT}
-    COMMAND ${CMAKE_COMMAND} -E tar "cfv" Contents.pak --format=zip "${CONTENT_SRC_DIR}"
-    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+    # Changes the working directory to the Content folder itself
+    # so that 'Assets' is at the root of the ZIP, not 'Content/Assets'
+    COMMAND ${CMAKE_COMMAND} -E tar "cf" "${PAK_OUTPUT}" --format=zip "."
+    WORKING_DIRECTORY "${CONTENT_SRC_DIR}"
+    DEPENDS "${CONTENT_SRC_DIR}"
     COMMENT "Packing assets into Contents.pak"
 )
 
