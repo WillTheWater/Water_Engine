@@ -7,6 +7,7 @@
 
 #include "Subsystem/TimerSubsystem.h"
 #include "Subsystem/RenderSubsystem.h"
+#include "Subsystem/SaveLoadSubsystem.h"
 
 namespace we
 {
@@ -14,5 +15,6 @@ namespace we
 	{
 		TimerSubsystem Time;
 		RenderSubsystem Render;
+		SaveLoadSubsystem SaveLoad;
 	};
 }

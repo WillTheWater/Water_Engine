@@ -23,7 +23,9 @@
 namespace we
 {
 	using string = std::string;
+	using stringView = std::string_view;
 	using filestream = std::fstream;
+	using outstream = std::ofstream;
 	using json = nlohmann::json;
 
 	using uint8 = unsigned char;
