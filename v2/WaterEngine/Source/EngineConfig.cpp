@@ -16,7 +16,7 @@ namespace we
 {
 	EngineConfig::EngineConfig()
 	{
-		filestream File("Content/Config/EngineConfig.json");
+		filestream File("Config/EngineConfig.json");
 		if (File.is_open())
 		{
 			json Config = json::parse(File);
