@@ -51,25 +51,6 @@ FetchContent_MakeAvailable(sfml box2d json logs tgui enum physicsfs)
 # WaterEngine Library
 # =============================================================================
 
-set(WATER_ENGINE_SOURCES
-    Source/Entry.cpp
-    Source/EngineConfig.cpp
-	
-    Source/Framework/WaterEngine.cpp
-    Source/Framework/GameWindow.cpp
-    Source/Framework/GameWindowEventHandler.cpp
-
-    Source/Subsystem/TimerSubsystem.cpp
-    Source/Subsystem/RenderSubsystem.cpp
-    Source/Subsystem/SaveLoadSubsystem.cpp
-    Source/Subsystem/ResourceSubsystem.cpp
-
-    Source/AssetDirectory/PakDirectory.cpp
-
-    Source/Utility/RandomGenerator.cpp 
-)
-
-
 set(WATER_ENGINE_HEADERS
     Include/Entry.h
     Include/EngineConfig.h
@@ -92,17 +73,63 @@ set(WATER_ENGINE_HEADERS
     Include/Utility/RandomGenerator.h
 )
 
+set(WATER_ENGINE_SOURCES
+    Source/Entry.cpp
+    Source/EngineConfig.cpp
+	
+    Source/Framework/WaterEngine.cpp
+    Source/Framework/GameWindow.cpp
+    Source/Framework/GameWindowEventHandler.cpp
 
+    Source/Subsystem/TimerSubsystem.cpp
+    Source/Subsystem/RenderSubsystem.cpp
+    Source/Subsystem/SaveLoadSubsystem.cpp
+    Source/Subsystem/ResourceSubsystem.cpp
 
+    Source/AssetDirectory/PakDirectory.cpp
 
+    Source/Utility/RandomGenerator.cpp 
+)
 
 add_library(${WATER_ENGINE} STATIC
     ${WATER_ENGINE_SOURCES}
     ${WATER_ENGINE_HEADERS}
 )
 
+# =============================================================================
+# Generate Embedded Config Header
+# =============================================================================
+set(CONFIG_JSON_PATH "${CMAKE_CURRENT_SOURCE_DIR}/Config/EngineConfig.json")
+set(GENERATED_DIR "${CMAKE_CURRENT_BINARY_DIR}/Generated")
+set(CONFIG_HEADER_PATH "${GENERATED_DIR}/EngineConfigData.h")
+
+# Read JSON and escape it for C++ string literal at configure time
+file(READ "${CONFIG_JSON_PATH}" CONFIG_JSON_RAW)
+string(REPLACE "\\" "\\\\" CONFIG_JSON_ESCAPED "${CONFIG_JSON_RAW}")
+string(REPLACE "\"" "\\\"" CONFIG_JSON_ESCAPED "${CONFIG_JSON_ESCAPED}")
+string(REPLACE "\n" "\\n\"\n\"" CONFIG_JSON_ESCAPED "${CONFIG_JSON_ESCAPED}")
+
+# Generated directory
+file(MAKE_DIRECTORY "${GENERATED_DIR}")
+
+# Create header file
+file(WRITE "${CONFIG_HEADER_PATH}" 
+"// =============================================================================
+// Water Engine v2.0.0
+// Copyright(C) 2026 Will The Water
+// =============================================================================
+
+#pragma once
+
+namespace we 
+{
+    constexpr char EMBEDDED_ENGINE_CONFIG[] = \"${CONFIG_JSON_ESCAPED}\\n\";
+}
+")
+
 target_include_directories(${WATER_ENGINE} PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/Include
+    ${GENERATED_DIR}
     ${physicsfs_SOURCE_DIR}/src
 )
 

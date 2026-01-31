@@ -12,20 +12,18 @@
 
 set(CONTENT_FOLDER_NAME "Content")
 set(CONTENT_SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/${CONTENT_FOLDER_NAME}")
-set(CONFIG_FOLDER_NAME "Config")
-set(CONFIG_SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/${CONFIG_FOLDER_NAME}")
 set(ASSETS_SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/${CONTENT_FOLDER_NAME}/Assets")
 set(ICON_DIR "${ASSETS_SRC_DIR}/Icon")
 set(PAK_OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/Contents.pak")
 
 # ========================== GAME SOURCES ==========================
 
-set(GAME_SOURCES
-    Source/Game.cpp
-)
-
 set(GAME_HEADERS
     Include/Game.h
+)
+
+set(GAME_SOURCES
+    Source/Game.cpp
 )
 
 # =============================================================================
@@ -64,15 +62,6 @@ target_link_libraries(${DEMO_GAME} PUBLIC
 # =============================================================================
 # Asset packing
 # =============================================================================
-
-# ========================== COPY CONFIG ==========================
-
-add_custom_command(TARGET ${DEMO_GAME} PRE_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_directory
-            ${CONFIG_SRC_DIR}
-            $<TARGET_FILE_DIR:${DEMO_GAME}>/Config
-    COMMENT "Copying Config folder to output directory"
-)
 
 # ========================== ASSET PACKING ==========================
 
