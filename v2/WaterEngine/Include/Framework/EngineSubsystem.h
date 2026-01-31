@@ -10,6 +10,7 @@
 #include "Subsystem/RenderSubsystem.h"
 #include "Subsystem/SaveLoadSubsystem.h"
 #include "Subsystem/AudioSubsystem.h"
+#include "Subsystem/InputSubsystem.h"
 
 namespace we
 {
@@ -19,5 +20,6 @@ namespace we
 		unique<RenderSubsystem> Render;
 		unique<SaveLoadSubsystem> SaveLoad;
 		unique<AudioSubsystem> Audio;
+		unique<InputSubsystem> Input;
 	};
 }

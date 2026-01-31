@@ -34,16 +34,17 @@ namespace we
     void GameWindow::ApplyWindowSettings()
     {
         SetWindowIcon();
+        setKeyRepeatEnabled(EC.EnableKeyRepeat);
 
         // Handle mutual exclusion: VSync takes priority over FPS limit
         if (EC.VsyncEnabled)
         {
-            setVerticalSyncEnabled(true);
+            setVerticalSyncEnabled(EC.VsyncEnabled);
             setFramerateLimit(0); // Disable FPS limit when VSync is on
         }
         else
         {
-            setVerticalSyncEnabled(false);
+            setVerticalSyncEnabled(EC.VsyncEnabled);
             setFramerateLimit(static_cast<unsigned int>(EC.TargetFPS));
         }
     }
@@ -53,14 +54,6 @@ namespace we
         auto IconTexture = Asset().LoadTexture(EC.WindowIcon);
         const auto& image = IconTexture->copyToImage();
         setIcon(image);
-    }
-
-    void GameWindow::HandleEvents()
-    {
-        while (const auto Event = pollEvent())
-        {
-            Event->visit(GameWindowEventHandler{*this});
-        }
     }
 
     void GameWindow::EventToggleBorderlessFullscreen()

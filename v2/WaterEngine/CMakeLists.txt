@@ -65,6 +65,10 @@ set(WATER_ENGINE_HEADERS
     Include/Subsystem/SaveLoadSubsystem.h
     Include/Subsystem/ResourceSubsystem.h
     Include/Subsystem/AudioSubsystem.h
+    Include/Subsystem/InputSubsystem.h
+
+    Include/Input/InputBinding.h
+    Include/Input/InputEventHandler.h
 
     Include/Interface/IAssetDirector.h
     Include/AssetDirectory/PakDirectory.h
@@ -87,6 +91,10 @@ set(WATER_ENGINE_SOURCES
     Source/Subsystem/SaveLoadSubsystem.cpp
     Source/Subsystem/ResourceSubsystem.cpp
     Source/Subsystem/AudioSubsystem.cpp
+    Source/Subsystem/InputSubsystem.cpp
+
+    Source/Input/InputBinding.cpp    
+    Source/Input/InputEventHandler.cpp
 
     Source/AssetDirectory/PakDirectory.cpp
 

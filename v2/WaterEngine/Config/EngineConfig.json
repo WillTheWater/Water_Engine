@@ -11,5 +11,6 @@
   "MaxDeltaTime": 0.025,
   "WindowIcon": "Assets/Icon/icon.png",
   "DefaultBackground": "Assets/Textures/Default/defaultBackground.png",
-  "StartupGlobalVolume": 50
+  "StartupGlobalVolume": 50,
+  "EnableKeyRepeat": false
 }

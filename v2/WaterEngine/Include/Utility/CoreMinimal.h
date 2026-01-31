@@ -7,10 +7,13 @@
 
 #include <memory>
 #include <optional>
+#include <variant>
 #include <functional>
+#include <algorithm>
 #include <numbers>
 #include <map>
 #include <vector>
+#include <array>
 #include <unordered_map>
 #include <unordered_set>
 #include <string>
@@ -85,6 +88,9 @@ namespace we
 	template<typename T>
 	using optional = std::optional<T>;
 
+	template<typename T, std::size_t N>
+	using arr = std::array<T, N>;
+
 	template<typename T>
 	using list = std::vector<T>;
 
@@ -96,4 +102,7 @@ namespace we
 
 	template<typename Key, typename Type, typename Hasher = std::hash<Key>>
 	using dictionary = std::unordered_map<Key, Type, Hasher>;
+
+	template<typename Key, typename Type, typename Hasher = std::hash<Key>>
+	using library = std::unordered_multimap<Key, Type, Hasher>;
 }

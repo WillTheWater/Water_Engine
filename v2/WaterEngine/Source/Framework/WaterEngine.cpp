@@ -16,8 +16,6 @@ namespace we
 		Configure();
 		Construct();
 		WindowInit();
-		LOG("Vsync Enabled: {}", EC.VsyncEnabled)
-		LOG("Target FPS: {}", EC.TargetFPS)
 	}
 
 	void WaterEngine::Configure()
@@ -25,15 +23,15 @@ namespace we
 		auto PD = make_shared<PakDirectory>("Contents.pak");
 		Asset().SetAssetDirectory(PD);
 		if (EC.DisableSFMLLogs) { sf::err().rdbuf(nullptr); }
-		
 	}
 
 	void WaterEngine::Construct()
 	{
-		Subsystem.Time = std::make_unique<TimerSubsystem>();
-		Subsystem.Render = std::make_unique<RenderSubsystem>();
-		Subsystem.SaveLoad = std::make_unique<SaveLoadSubsystem>();
-		Subsystem.Audio = std::make_unique<AudioSubsystem>();
+		Subsystem.Time = make_unique<TimerSubsystem>();
+		Subsystem.Render = make_unique<RenderSubsystem>();
+		Subsystem.SaveLoad = make_unique<SaveLoadSubsystem>();
+		Subsystem.Audio = make_unique<AudioSubsystem>();
+		Subsystem.Input = make_unique<InputSubsystem>();
 	}
 
 	void WaterEngine::WindowInit()
@@ -48,12 +46,22 @@ namespace we
 
 	void WaterEngine::ProcessEvents()
 	{
-		Window->HandleEvents();
+		while (const auto event = Window->pollEvent())
+		{
+			event->visit(GameWindowEventHandler{ *Window });
+			Subsystem.Input->HandleEvent(*event);
+		}
+	}
+
+	void WaterEngine::PostUpdate()
+	{
+		Subsystem.Input->PostUpdate();
 	}
 
 	void WaterEngine::GlobalTick()
 	{
 		Subsystem.Time->Tick();
+		Subsystem.Input->ProcessHeld();
 	}
 
 	void WaterEngine::Render()

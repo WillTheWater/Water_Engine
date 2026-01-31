@@ -19,7 +19,6 @@ namespace we
 		GameWindow();
 
 	public:
-		void HandleEvents();
 		std::function<void(vec2u)> OnResize;
 
 	private:

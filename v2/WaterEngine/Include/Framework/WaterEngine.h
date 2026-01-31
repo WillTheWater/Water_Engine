@@ -9,6 +9,7 @@
 
 #include "Framework/GameWindow.h"
 #include "Framework/EngineSubsystem.h"
+#include "Input/InputEventHandler.h"
 
 namespace we
 {
@@ -19,6 +20,7 @@ namespace we
 
 		void ProcessEvents();
 		void GlobalTick();
+		void PostUpdate();
 		void Render();
 
 		bool IsRunning() const;
@@ -29,6 +31,8 @@ namespace we
 		unique<GameWindow> Window;
 
 	private:
+		friend InputEventHandler;
+
 		void Configure();
 		void Construct();
 		void WindowInit();

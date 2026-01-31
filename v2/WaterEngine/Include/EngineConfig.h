@@ -32,6 +32,7 @@ namespace we
 		string WindowIcon;
 		string DefaultBackground;
 		float StartupGlobalVolume;
+		bool EnableKeyRepeat;
 	};
 
 	// Global Accessor

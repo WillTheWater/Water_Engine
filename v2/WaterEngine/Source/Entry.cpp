@@ -24,5 +24,6 @@ int main()
         }
         WE->GlobalTick();
         WE->Render();
+        WE->PostUpdate();
     }
 }

@@ -27,5 +27,6 @@ namespace we
         WindowIcon = Config["WindowIcon"];
         DefaultBackground = Config["DefaultBackground"];
         StartupGlobalVolume = Config["StartupGlobalVolume"];
+        EnableKeyRepeat = Config["EnableKeyRepeat"];
     }
 }
