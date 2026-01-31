@@ -2,11 +2,14 @@
   "WindowSize": [ 1920, 1080 ],
   "AspectRatio": [ 16, 9 ],
   "WindowMinimumSize": [ 960, 540 ],
+  "TargetFPS": 60,
+  "VsyncEnabled": true,
   "FullscreenMode": false,
   "SetRenderSmooth": true,
   "WindowName": "Water Engine Demo",
   "DisableSFMLLogs": true,
   "MaxDeltaTime": 0.025,
   "WindowIcon": "Assets/Icon/icon.png",
-  "DefaultBackground": "Assets/Textures/Default/defaultBackground.png"
+  "DefaultBackground": "Assets/Textures/Default/defaultBackground.png",
+  "StartupGlobalVolume": 50
 }

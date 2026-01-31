@@ -29,6 +29,10 @@ namespace we
 	private:
 		friend GameWindowEventHandler;
 
+		void ApplyWindowSettings();
+		void CreateGameWindow(const sf::VideoMode& Mode, uint Style, sf::State State = sf::State::Windowed);
+		void SetWindowIcon();
+
 		void EventWindowClose();
 		void EventWindowResized();
 		void EventToggleBorderlessFullscreen();
@@ -46,6 +50,5 @@ namespace we
 		void EventMouseButtonPressed();
 		void EventMouseButtonReleased();
 
-		void SetIcon();
 	};
 }

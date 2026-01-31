@@ -17,6 +17,8 @@ namespace we
         WindowSize = { Config["WindowSize"][0], Config["WindowSize"][1] };
         AspectRatio = { Config["AspectRatio"][0], Config["AspectRatio"][1] };
         WindowMinimumSize = { Config["WindowMinimumSize"][0], Config["WindowMinimumSize"][1] };
+        TargetFPS = Config["TargetFPS"];
+        VsyncEnabled = Config["VsyncEnabled"];
         FullscreenMode = Config["FullscreenMode"];
         SetRenderSmooth = Config["SetRenderSmooth"];
         WindowName = Config["WindowName"];
@@ -24,5 +26,6 @@ namespace we
         MaxDeltaTime = sf::seconds(Config["MaxDeltaTime"]);
         WindowIcon = Config["WindowIcon"];
         DefaultBackground = Config["DefaultBackground"];
+        StartupGlobalVolume = Config["StartupGlobalVolume"];
     }
 }

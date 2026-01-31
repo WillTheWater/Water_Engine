@@ -16,6 +16,8 @@ namespace we
 		Configure();
 		Construct();
 		WindowInit();
+		LOG("Vsync Enabled: {}", EC.VsyncEnabled)
+		LOG("Target FPS: {}", EC.TargetFPS)
 	}
 
 	void WaterEngine::Configure()
@@ -31,6 +33,7 @@ namespace we
 		Subsystem.Time = std::make_unique<TimerSubsystem>();
 		Subsystem.Render = std::make_unique<RenderSubsystem>();
 		Subsystem.SaveLoad = std::make_unique<SaveLoadSubsystem>();
+		Subsystem.Audio = std::make_unique<AudioSubsystem>();
 	}
 
 	void WaterEngine::WindowInit()

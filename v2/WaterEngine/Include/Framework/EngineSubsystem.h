@@ -9,6 +9,7 @@
 #include "Subsystem/TimerSubsystem.h"
 #include "Subsystem/RenderSubsystem.h"
 #include "Subsystem/SaveLoadSubsystem.h"
+#include "Subsystem/AudioSubsystem.h"
 
 namespace we
 {
@@ -17,5 +18,6 @@ namespace we
 		unique<TimerSubsystem> Time;
 		unique<RenderSubsystem> Render;
 		unique<SaveLoadSubsystem> SaveLoad;
+		unique<AudioSubsystem> Audio;
 	};
 }

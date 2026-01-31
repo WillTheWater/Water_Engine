@@ -17,6 +17,7 @@
 #include <fstream>
 #include <sfml/Graphics.hpp>
 #include <SFML/System/Vector2.hpp>
+#include <SFML/System/Vector3.hpp>
 #include <SFML/System/Angle.hpp>
 #include <SFML/Audio.hpp>
 #include <nlohmann/json.hpp>
@@ -30,7 +31,7 @@ namespace we
 	using json = nlohmann::json;
 
 	using uint8 = unsigned char;
-
+	using uint = std::uint32_t;
 	
 	template<typename T>
 	using vec2 = sf::Vector2<T>;
@@ -38,6 +39,7 @@ namespace we
 	using vec2f = sf::Vector2f;
 	using vec2i = sf::Vector2i;
 	using vec2u = sf::Vector2u;
+	using vec3f = sf::Vector3f;
 
 	using angle = sf::Angle;
 

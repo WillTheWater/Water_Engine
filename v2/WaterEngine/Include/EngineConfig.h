@@ -22,6 +22,8 @@ namespace we
 		vec2f WindowSize;
 		vec2f AspectRatio;
 		vec2f WindowMinimumSize;
+		float TargetFPS;
+		bool VsyncEnabled;
 		bool FullscreenMode;
 		bool SetRenderSmooth;
 		string WindowName;
@@ -29,6 +31,7 @@ namespace we
 		sf::Time MaxDeltaTime;
 		string WindowIcon;
 		string DefaultBackground;
+		float StartupGlobalVolume;
 	};
 
 	// Global Accessor
