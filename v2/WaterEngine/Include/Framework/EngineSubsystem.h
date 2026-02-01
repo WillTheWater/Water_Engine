@@ -11,6 +11,7 @@
 #include "Subsystem/SaveLoadSubsystem.h"
 #include "Subsystem/AudioSubsystem.h"
 #include "Subsystem/InputSubsystem.h"
+#include "Subsystem/WorldSubsystem.h"
 
 namespace we
 {
@@ -21,5 +22,6 @@ namespace we
 		unique<SaveLoadSubsystem> SaveLoad;
 		unique<AudioSubsystem> Audio;
 		unique<InputSubsystem> Input;
+		unique<World> World;
 	};
 }

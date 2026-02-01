@@ -35,5 +35,10 @@ namespace we
 		void Construct();
 		void WindowInit();
 		void ConstrainRender();
+
+	private:
+		void LoadWorld();
+		void LoadLevel(const string& LevelName);
+		void RestartLevel();
 	};
 }

@@ -32,7 +32,7 @@ namespace we
 		Subsystem.SaveLoad = make_unique<SaveLoadSubsystem>();
 		Subsystem.Audio = make_unique<AudioSubsystem>();
 		Subsystem.Input = make_unique<InputSubsystem>();
-
+		Subsystem.World = make_unique<World>();
 	}
 
 	void WaterEngine::WindowInit()
@@ -48,6 +48,8 @@ namespace we
 
 	void WaterEngine::ProcessEvents()
 	{
+		LoadWorld();
+
 		while (const auto event = Window->pollEvent())
 		{
 			event->visit(GameWindowEventHandler{ *Window });
@@ -92,5 +94,23 @@ namespace we
 	void WaterEngine::ConstrainRender()
 	{
 		Subsystem.Render->ConstrainView(Window->getSize());
+	}
+
+	void WaterEngine::LoadWorld()
+	{
+		if (const auto NextLevel = Subsystem.World->GetNextLevel())
+		{
+			LoadLevel(*NextLevel);
+		}
+	}
+
+	void WaterEngine::LoadLevel(const string& LevelName)
+	{
+		// TODO
+	}
+
+	void WaterEngine::RestartLevel()
+	{
+		Subsystem.World->RestartLevel();
 	}
 }
