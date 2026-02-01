@@ -52,6 +52,8 @@ namespace we
 	using font = sf::Font;
 	using soundBuffer = sf::SoundBuffer;
 	using renderTexture = sf::RenderTexture;
+	using circle = sf::CircleShape;
+	using shape = sf::Shape;
 	using rectangle = sf::RectangleShape;
 	using drawable = sf::Drawable;
 	using view = sf::View;

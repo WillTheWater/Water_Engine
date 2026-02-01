@@ -17,5 +17,7 @@
   "EnableKeyRepeat": false,
   "DefaultCursorSize": [ 64, 64 ],
   "DefaultCursorSpeed": 1000,
-  "JoystickDeadzone": 0.1
+  "JoystickDeadzone": 0.1,
+  "DefaultTitleFont": "Assets/Font/Default/defaultTitleFont.ttf",
+  "DefaultFont": "Assets/Font/Default/defaultFont.ttf"
 }

@@ -33,5 +33,7 @@ namespace we
         DefaultCursorSize = { Config["DefaultCursorSize"][0], Config["DefaultCursorSize"][1] };
         DefaultCursorSpeed = Config["DefaultCursorSpeed"];
         JoystickDeadzone = Config["JoystickDeadzone"];
+        DefaultTitleFont = Config["DefaultTitleFont"];
+        DefaultFont = Config["DefaultFont"];
     }
 }

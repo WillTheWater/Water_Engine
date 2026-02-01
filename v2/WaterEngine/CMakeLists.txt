@@ -60,6 +60,7 @@ set(WATER_ENGINE_HEADERS
     Include/Framework/GameWindow.h
     Include/Framework/GameWindowEventHandler.h
 
+    Include/Framework/Level/LevelFactory.h
     Include/Framework/Level/Level.h
 
     Include/Subsystem/TimerSubsystem.h
@@ -72,6 +73,7 @@ set(WATER_ENGINE_HEADERS
 
     Include/UI/Cursor/Cursor.h
     Include/UI/Clipboard/Clipboard.h
+    Include/UI/Widget/WidgetUtility.h
 
     Include/Input/InputBinding.h
     Include/Input/InputEventHandler.h
@@ -92,6 +94,7 @@ set(WATER_ENGINE_SOURCES
     Source/Framework/GameWindow.cpp
     Source/Framework/GameWindowEventHandler.cpp
 
+    Source/Framework/Level/LevelFactory.cpp
     Source/Framework/Level/Level.cpp
 
     Source/Subsystem/TimerSubsystem.cpp

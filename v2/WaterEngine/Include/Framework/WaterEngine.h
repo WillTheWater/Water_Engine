@@ -8,6 +8,7 @@
 #include "Utility/CoreMinimal.h"
 #include "Framework/EngineSubsystem.h"
 #include "Framework/GameWindow.h"
+#include "Framework/Level/LevelFactory.h"
 #include "UI/Cursor/Cursor.h"
 
 namespace we
@@ -27,6 +28,9 @@ namespace we
 
 	private:
 		EngineSubsystem Subsystem;
+		LF::Levels Levels;
+		Level* CurrentLevel;
+
 		unique<GameWindow> Window;
 		unique<Cursor> mCursor;
 

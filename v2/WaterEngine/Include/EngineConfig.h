@@ -38,6 +38,8 @@ namespace we
 		vec2f DefaultCursorSize;
 		float DefaultCursorSpeed;
 		float JoystickDeadzone;
+		string DefaultTitleFont;
+		string DefaultFont;
 	};
 
 	// Global Accessor

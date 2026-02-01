@@ -7,6 +7,7 @@
 
 #include "Utility/CoreMinimal.h"
 #include "Framework/EngineSubsystem.h"
+#include "UI/Widget/WidgetUtility.h"
 
 namespace we
 {

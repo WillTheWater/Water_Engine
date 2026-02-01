@@ -12,6 +12,8 @@
 namespace we
 {
 	WaterEngine::WaterEngine()
+		: Levels{LF::CreateLevels(Subsystem)}
+		, CurrentLevel{nullptr}
 	{
 		Configure();
 		Construct();
@@ -50,10 +52,11 @@ namespace we
 	{
 		LoadWorld();
 
-		while (const auto event = Window->pollEvent())
+		while (const auto Event = Window->pollEvent())
 		{
-			event->visit(GameWindowEventHandler{ *Window });
-			Subsystem.Input->HandleEvent(*event);
+			Event->visit(GameWindowEventHandler{ *Window });
+			Subsystem.Input->HandleEvent(*Event);
+			//CurrentLevel->HandleEvent(*Event);
 		}
 	}
 
@@ -67,6 +70,7 @@ namespace we
 		Subsystem.Time->Tick();
 		Subsystem.Input->ProcessHeld();
 		mCursor->Update(Subsystem.Time->GetDeltaTime());
+		//CurrentLevel->Tick(Subsystem.Time->GetDeltaTime());
 	}
 
 	void WaterEngine::Render()
@@ -74,6 +78,7 @@ namespace we
 		Window->clear();
 
 		Subsystem.Render->StartRender();
+		//CurrentLevel->Render();
 		Window->draw(sprite(Subsystem.Render->FinishRender()));
 
 		mCursor->Render();
@@ -106,7 +111,12 @@ namespace we
 
 	void WaterEngine::LoadLevel(const string& LevelName)
 	{
-		// TODO
+		assert(Levels.contains(LevelName));
+		Level* NextLevel = Levels.at(LevelName).get();
+
+		if (CurrentLevel) { CurrentLevel->Cleanup(); }
+		CurrentLevel = NextLevel;
+		CurrentLevel->BeginPlay();
 	}
 
 	void WaterEngine::RestartLevel()
