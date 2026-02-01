@@ -28,6 +28,7 @@ namespace we
 	private:
 		friend class WaterEngine;
 
+		void Initialize();
 		const view ConstrainView(vec2u WindowSize);
 		void StartRender();
 		const texture& FinishRender();

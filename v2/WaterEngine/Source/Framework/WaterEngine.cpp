@@ -20,7 +20,7 @@ namespace we
 
 	void WaterEngine::Configure()
 	{
-		auto PD = make_shared<PakDirectory>("Contents.pak");
+		auto PD = make_shared<PakDirectory>(EC.AssetDirectory);
 		Asset().SetAssetDirectory(PD);
 		if (EC.DisableSFMLLogs) { sf::err().rdbuf(nullptr); }
 	}
@@ -32,6 +32,7 @@ namespace we
 		Subsystem.SaveLoad = make_unique<SaveLoadSubsystem>();
 		Subsystem.Audio = make_unique<AudioSubsystem>();
 		Subsystem.Input = make_unique<InputSubsystem>();
+
 	}
 
 	void WaterEngine::WindowInit()
@@ -42,6 +43,7 @@ namespace we
 				const auto CorrectedView = Subsystem.Render->ConstrainView(Window->getSize());
 				Window->setView(CorrectedView);
 			};
+		mCursor = make_unique<Cursor>(*Window);
 	}
 
 	void WaterEngine::ProcessEvents()
@@ -62,6 +64,7 @@ namespace we
 	{
 		Subsystem.Time->Tick();
 		Subsystem.Input->ProcessHeld();
+		mCursor->Update(Subsystem.Time->GetDeltaTime());
 	}
 
 	void WaterEngine::Render()
@@ -70,6 +73,8 @@ namespace we
 
 		Subsystem.Render->StartRender();
 		Window->draw(sprite(Subsystem.Render->FinishRender()));
+
+		mCursor->Render();
 
 		Window->display();
 	}

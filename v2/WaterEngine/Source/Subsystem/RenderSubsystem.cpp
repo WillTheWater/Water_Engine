@@ -14,12 +14,14 @@ namespace we
 		: RenderTarget{vec2u(EC.WindowSize)}
 		, Background{EC.WindowSize}
 	{
+		Initialize();
+	}
+
+	void RenderSubsystem::Initialize()
+	{
 		RenderTarget.setSmooth(EC.SetRenderSmooth);
 		DefaultBackground = Asset().LoadTexture(EC.DefaultBackground);
-		if (DefaultBackground)
-		{
-			Background.setTexture(DefaultBackground.get());
-		}
+		Background.setTexture(DefaultBackground.get());
 	}
 
 	void RenderSubsystem::Draw(const drawable& RenderObject)

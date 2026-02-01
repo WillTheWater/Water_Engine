@@ -67,6 +67,8 @@ set(WATER_ENGINE_HEADERS
     Include/Subsystem/AudioSubsystem.h
     Include/Subsystem/InputSubsystem.h
 
+    Include/UI/Cursor/Cursor.h
+
     Include/Input/InputBinding.h
     Include/Input/InputEventHandler.h
 
@@ -92,6 +94,8 @@ set(WATER_ENGINE_SOURCES
     Source/Subsystem/ResourceSubsystem.cpp
     Source/Subsystem/AudioSubsystem.cpp
     Source/Subsystem/InputSubsystem.cpp
+
+    Source/Input/Cursor/Cursor.cpp
 
     Source/Input/InputBinding.cpp    
     Source/Input/InputEventHandler.cpp

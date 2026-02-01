@@ -88,6 +88,11 @@ namespace we
 		}
 	}
 
+	float InputSubsystem::GetAxisValue(int JoystickID, sf::Joystick::Axis Axis) const
+	{
+		return sf::Joystick::getAxisPosition(JoystickID, Axis) / 100.0f;
+	}
+
 	bool InputSubsystem::IsJustPressed(int InputAction) const
 	{
 		auto it = PressedOnFrame.find(InputAction);

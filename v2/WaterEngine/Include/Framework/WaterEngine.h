@@ -6,10 +6,9 @@
 #pragma once
 
 #include "Utility/CoreMinimal.h"
-
-#include "Framework/GameWindow.h"
 #include "Framework/EngineSubsystem.h"
-#include "Input/InputEventHandler.h"
+#include "Framework/GameWindow.h"
+#include "UI/Cursor/Cursor.h"
 
 namespace we
 {
@@ -29,10 +28,9 @@ namespace we
 	private:
 		EngineSubsystem Subsystem;
 		unique<GameWindow> Window;
+		unique<Cursor> mCursor;
 
 	private:
-		friend InputEventHandler;
-
 		void Configure();
 		void Construct();
 		void WindowInit();

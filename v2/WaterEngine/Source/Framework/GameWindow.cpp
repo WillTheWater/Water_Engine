@@ -12,29 +12,58 @@ namespace we
 {
     GameWindow::GameWindow()
         : WindowedPosition{ vec2i(sf::VideoMode::getDesktopMode().size.x / 4, sf::VideoMode::getDesktopMode().size.y / 4) }
-        , bIsFullscreen{EC.FullscreenMode }
+        , bIsFullscreen{ EC.FullscreenMode }
+        , MinimumSize{ EC.WindowMinimumSize }
+        , AspectRatio{ EC.AspectRatio }
     {
-        // Initial creation
         const sf::VideoMode mode(static_cast<sf::Vector2u>(EC.WindowSize));
         const auto style = EC.FullscreenMode ? sf::Style::None : sf::Style::Default;
         const auto state = EC.FullscreenMode ? sf::State::Fullscreen : sf::State::Windowed;
-
         CreateGameWindow(mode, style, state);
+    }
+
+    void GameWindow::onResize()
+    {
+        vec2u CurrentSize = getSize();
+
+        // Enforce minimum Size
+        if (CurrentSize.x < MinimumSize.x || CurrentSize.y < MinimumSize.y)
+        {
+            CurrentSize = vec2u(MinimumSize);
+            setSize(CurrentSize);
+        }
+
+        // Enforce aspect ratio
+        float targetRatio = AspectRatio.x / AspectRatio.y;
+        float currentRatio = static_cast<float>(CurrentSize.x) / static_cast<float>(CurrentSize.y);
+
+        if (std::abs(currentRatio - targetRatio) > 0.01f)
+        {
+            if (currentRatio > targetRatio) 
+            {
+                CurrentSize.x = static_cast<uint32_t>(CurrentSize.y * targetRatio);
+            }
+            else 
+            {
+                CurrentSize.y = static_cast<uint32_t>(CurrentSize.x / targetRatio);
+            }
+            setSize(CurrentSize);
+        }
+
+        
     }
 
     void GameWindow::CreateGameWindow(const sf::VideoMode& Mode, uint Style, sf::State State)
     {
         create(Mode, EC.WindowName, Style, State);
         ApplyWindowSettings();
-
-        if (OnResize)
-            OnResize(getSize());
     }
 
     void GameWindow::ApplyWindowSettings()
     {
         SetWindowIcon();
         setKeyRepeatEnabled(EC.EnableKeyRepeat);
+        setMouseCursorVisible(false);
 
         // Handle mutual exclusion: VSync takes priority over FPS limit
         if (EC.VsyncEnabled)
@@ -52,8 +81,8 @@ namespace we
     void GameWindow::SetWindowIcon()
     {
         auto IconTexture = Asset().LoadTexture(EC.WindowIcon);
-        const auto& image = IconTexture->copyToImage();
-        setIcon(image);
+        const auto& Image = IconTexture->copyToImage();
+        setIcon(Image);
     }
 
     void GameWindow::EventToggleBorderlessFullscreen()
@@ -62,22 +91,17 @@ namespace we
 
         if (bIsFullscreen)
         {
-            // Store windowed position before switching
             WindowedPosition = getPosition();
-
-            // Create fullscreen borderless
-            const auto desktop = sf::VideoMode::getDesktopMode();
-            CreateGameWindow(desktop, sf::Style::None, sf::State::Fullscreen);
+            const auto Desktop = sf::VideoMode::getDesktopMode();
+            CreateGameWindow(Desktop, sf::Style::None, sf::State::Fullscreen);
         }
         else
         {
-            // Return to windowed
-            const sf::VideoMode mode(static_cast<sf::Vector2u>(EC.WindowSize));
-            CreateGameWindow(mode, sf::Style::Default, sf::State::Windowed);
-
-            // Restore position
+            const sf::VideoMode Mode(static_cast<sf::Vector2u>(EC.WindowSize));
+            CreateGameWindow(Mode, sf::Style::Default, sf::State::Windowed);
             setPosition(WindowedPosition);
         }
+        OnResize(getSize());
     }
 
     void GameWindow::EventWindowClose()

@@ -5,10 +5,9 @@
 
 #pragma once
 
-#include "Utility/CoreMinimal.h"
-
 #include <sfml/Graphics.hpp>
 
+#include "Utility/CoreMinimal.h"
 #include "Framework/GameWindowEventHandler.h"
 
 namespace we
@@ -21,9 +20,14 @@ namespace we
 	public:
 		std::function<void(vec2u)> OnResize;
 
+	protected:
+		void onResize() override;
+
 	private:
 		vec2i WindowedPosition;
 		bool bIsFullscreen;
+		vec2f MinimumSize;
+		vec2f AspectRatio;
 
 	private:
 		friend GameWindowEventHandler;

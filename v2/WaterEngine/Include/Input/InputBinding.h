@@ -5,8 +5,10 @@
 
 #pragma once
 
-#include "Utility/CoreMinimal.h"
 #include <SFML/Window.hpp>
+
+#include "Utility/CoreMinimal.h"
+#include "EngineConfig.h"
 
 namespace we
 {
@@ -45,7 +47,7 @@ namespace we
 		struct JoystickAxis
 		{
 			sf::Joystick::Axis Axis;
-			float AxisThreshold = 0.2f;
+			float AxisThreshold = EC.JoystickDeadzone;
 			int JoystickID = 0;
 			bool operator==(const JoystickAxis& OtherKey) const
 			{

@@ -1,4 +1,5 @@
 {
+  "AssetDirectory": "Contents.pak",
   "WindowSize": [ 1920, 1080 ],
   "AspectRatio": [ 16, 9 ],
   "WindowMinimumSize": [ 960, 540 ],
@@ -11,6 +12,10 @@
   "MaxDeltaTime": 0.025,
   "WindowIcon": "Assets/Icon/icon.png",
   "DefaultBackground": "Assets/Textures/Default/defaultBackground.png",
+  "DefaultCursor": "Assets/Textures/Default/defaultCursor.png",
   "StartupGlobalVolume": 50,
-  "EnableKeyRepeat": false
+  "EnableKeyRepeat": false,
+  "DefaultCursorSize": [ 64, 64 ],
+  "DefaultCursorSpeed": 1000,
+  "JoystickDeadzone": 0.1
 }

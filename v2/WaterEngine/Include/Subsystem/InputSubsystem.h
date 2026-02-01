@@ -119,6 +119,8 @@ namespace we
 		void ProcessReleased(const Input::Binding& Binding);
 		void ProcessHeld();
 
+		float GetAxisValue(int JoystickID, sf::Joystick::Axis Axis) const;
+
 	private:
 		library<int, Input::Binding> InputBindings;
 

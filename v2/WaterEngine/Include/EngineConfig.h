@@ -19,6 +19,7 @@ namespace we
 	{
 		EngineConfig();
 
+		string AssetDirectory;
 		vec2f WindowSize;
 		vec2f AspectRatio;
 		vec2f WindowMinimumSize;
@@ -31,8 +32,12 @@ namespace we
 		sf::Time MaxDeltaTime;
 		string WindowIcon;
 		string DefaultBackground;
+		string DefaultCursor;
 		float StartupGlobalVolume;
 		bool EnableKeyRepeat;
+		vec2f DefaultCursorSize;
+		float DefaultCursorSpeed;
+		float JoystickDeadzone;
 	};
 
 	// Global Accessor
