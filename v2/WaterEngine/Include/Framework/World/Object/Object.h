@@ -9,19 +9,21 @@
 
 namespace we
 {
-	class World
+	class Object : public std::enable_shared_from_this<Object>
 	{
 	public:
-		void ChangeLevel(stringView LevelName);
-		void RestartLevel();
+		Object();
+		virtual ~Object();
+
+		virtual void Destroy();
+		bool IsPendingDestroy() const;
+
+		weak<Object> GetObject();
+		weak<const Object> GetObject() const;
+
+		//Delegate<Object*> OnDestroy;
 
 	private:
-		string CurrentLevel;
-		optional<string> NextLevel;
-
-	private:
-		friend class WaterEngine;
-
-		optional<string> GetNextLevel();
+		bool bIsPendingDestroy;
 	};
 }

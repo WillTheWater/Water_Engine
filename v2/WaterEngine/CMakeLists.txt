@@ -60,8 +60,11 @@ set(WATER_ENGINE_HEADERS
     Include/Framework/GameWindow.h
     Include/Framework/GameWindowEventHandler.h
 
-    Include/Framework/Level/LevelFactory.h
-    Include/Framework/Level/Level.h
+    Include/Framework/World/World.h
+    Include/Framework/World/LevelFactory.h
+    Include/Framework/World/Level.h
+    Include/Framework/World/Object/Object.h
+    Include/Framework/World/Actor/Actor.h
 
     Include/Subsystem/TimerSubsystem.h
     Include/Subsystem/RenderSubsystem.h
@@ -69,7 +72,6 @@ set(WATER_ENGINE_HEADERS
     Include/Subsystem/ResourceSubsystem.h
     Include/Subsystem/AudioSubsystem.h
     Include/Subsystem/InputSubsystem.h
-    Include/Subsystem/WorldSubsystem.h
 
     Include/UI/Cursor/Cursor.h
     Include/UI/Clipboard/Clipboard.h
@@ -84,6 +86,7 @@ set(WATER_ENGINE_HEADERS
     Include/Utility/CoreMinimal.h
     Include/Utility/Log.h
     Include/Utility/RandomGenerator.h
+    Include/Utility/Assert.h
 )
 
 set(WATER_ENGINE_SOURCES
@@ -94,16 +97,17 @@ set(WATER_ENGINE_SOURCES
     Source/Framework/GameWindow.cpp
     Source/Framework/GameWindowEventHandler.cpp
 
-    Source/Framework/Level/LevelFactory.cpp
-    Source/Framework/Level/Level.cpp
+    Source/Framework/World/World.cpp
+    Source/Framework/World/LevelFactory.cpp
+    Source/Framework/World/Object/Object.cpp
+    Source/Framework/World/Actor/Actor.cpp
 
     Source/Subsystem/TimerSubsystem.cpp
     Source/Subsystem/RenderSubsystem.cpp
     Source/Subsystem/SaveLoadSubsystem.cpp
     Source/Subsystem/ResourceSubsystem.cpp
     Source/Subsystem/AudioSubsystem.cpp
-    Source/Subsystem/InputSubsystem.cpp
-    Source/Subsystem/WorldSubsystem.cpp
+    Source/Subsystem/InputSubsystem.cpp    
 
     Source/UI/Cursor/Cursor.cpp
     Source/UI/Clipboard/Clipboard.cpp

@@ -26,5 +26,6 @@ namespace we
 
 	protected:
 		EngineSubsystem& Subsystem;
+		bool bHasBegunPlay;
 	};
 }

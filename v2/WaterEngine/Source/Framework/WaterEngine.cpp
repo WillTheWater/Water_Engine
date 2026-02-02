@@ -12,8 +12,6 @@
 namespace we
 {
 	WaterEngine::WaterEngine()
-		: Levels{LF::CreateLevels(Subsystem)}
-		, CurrentLevel{nullptr}
 	{
 		Configure();
 		Construct();
@@ -34,7 +32,6 @@ namespace we
 		Subsystem.SaveLoad = make_unique<SaveLoadSubsystem>();
 		Subsystem.Audio = make_unique<AudioSubsystem>();
 		Subsystem.Input = make_unique<InputSubsystem>();
-		Subsystem.World = make_unique<World>();
 	}
 
 	void WaterEngine::WindowInit()
@@ -45,7 +42,7 @@ namespace we
 				const auto CorrectedView = Subsystem.Render->ConstrainView(Window->getSize());
 				Window->setView(CorrectedView);
 			};
-		mCursor = make_unique<Cursor>(*Window);
+		WindowCursor = make_unique<Cursor>(*Window);
 	}
 
 	void WaterEngine::ProcessEvents()
@@ -56,7 +53,6 @@ namespace we
 		{
 			Event->visit(GameWindowEventHandler{ *Window });
 			Subsystem.Input->HandleEvent(*Event);
-			//CurrentLevel->HandleEvent(*Event);
 		}
 	}
 
@@ -69,8 +65,7 @@ namespace we
 	{
 		Subsystem.Time->Tick();
 		Subsystem.Input->ProcessHeld();
-		mCursor->Update(Subsystem.Time->GetDeltaTime());
-		//CurrentLevel->Tick(Subsystem.Time->GetDeltaTime());
+		WindowCursor->Update(Subsystem.Time->GetDeltaTime());
 	}
 
 	void WaterEngine::Render()
@@ -78,10 +73,9 @@ namespace we
 		Window->clear();
 
 		Subsystem.Render->StartRender();
-		//CurrentLevel->Render();
 		Window->draw(sprite(Subsystem.Render->FinishRender()));
 
-		mCursor->Render();
+		WindowCursor->Render();
 
 		Window->display();
 	}
@@ -103,24 +97,24 @@ namespace we
 
 	void WaterEngine::LoadWorld()
 	{
-		if (const auto NextLevel = Subsystem.World->GetNextLevel())
+		/*if (const auto NextLevel = Subsystem.World->GetNextLevel())
 		{
 			LoadLevel(*NextLevel);
-		}
+		}*/
 	}
 
 	void WaterEngine::LoadLevel(const string& LevelName)
 	{
-		assert(Levels.contains(LevelName));
+		/*assert(Levels.contains(LevelName));
 		Level* NextLevel = Levels.at(LevelName).get();
 
 		if (CurrentLevel) { CurrentLevel->Cleanup(); }
 		CurrentLevel = NextLevel;
-		CurrentLevel->BeginPlay();
+		CurrentLevel->BeginPlay();*/
 	}
 
 	void WaterEngine::RestartLevel()
 	{
-		Subsystem.World->RestartLevel();
+		//Subsystem.World->RestartLevel();
 	}
 }
