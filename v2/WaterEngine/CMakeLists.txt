@@ -85,6 +85,7 @@ set(WATER_ENGINE_HEADERS
     Include/Utility/Log.h
     Include/Utility/RandomGenerator.h
     Include/Utility/Assert.h
+    Include/Utility/Delegate.h
 )
 
 set(WATER_ENGINE_SOURCES

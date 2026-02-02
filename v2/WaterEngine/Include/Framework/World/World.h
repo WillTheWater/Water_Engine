@@ -6,13 +6,14 @@
 #pragma once
 
 #include "Utility/CoreMinimal.h"
+#include "Framework/World/Object/Object.h"
 
 namespace we
 {
 	class Actor;
 	struct EngineSubsystem;
 
-	class World
+	class World : public Object
 	{
 	public:
 		explicit World(EngineSubsystem& Subsystem);

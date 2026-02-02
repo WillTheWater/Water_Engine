@@ -30,6 +30,11 @@ namespace we
 	{
 	}
 
+	void Actor::Destroy()
+	{
+		OnActorDestroyed.Broadcast(this);
+	}
+
 	void Actor::SetTexture()
 	{
 		if (!Texture) { return; }

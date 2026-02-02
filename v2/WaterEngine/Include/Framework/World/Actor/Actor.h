@@ -20,6 +20,7 @@ namespace we
 
 		virtual void BeginPlay();
 		virtual void Tick(float DeltaTime);
+		virtual void Destroy() override;
 
 	public:
 		World* GetWorld() const { return OwnerWorld; }
@@ -27,6 +28,7 @@ namespace we
 
 		void SetTexture();
 		void SetPosition(vec2f Pos);
+		Delegate<Actor*> OnActorDestroyed;
 
 	private:
 		World* OwnerWorld;

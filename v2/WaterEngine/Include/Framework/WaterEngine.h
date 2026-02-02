@@ -43,8 +43,6 @@ namespace we
 		void ConstrainRender();
 
 	private:
-		void LoadWorld();
-		void LoadLevel(const string& LevelName);
-		void RestartLevel();
+		void DelegateTest();
 	};
 }

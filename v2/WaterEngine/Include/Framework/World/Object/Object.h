@@ -6,6 +6,7 @@
 #pragma once
 
 #include "Utility/CoreMinimal.h"
+#include "Utility/Delegate.h"
 
 namespace we
 {
@@ -21,7 +22,7 @@ namespace we
 		weak<Object> GetObject();
 		weak<const Object> GetObject() const;
 
-		//Delegate<Object*> OnDestroy;
+		Delegate<Object*> OnDestroy;
 
 	private:
 		bool bIsPendingDestroy;

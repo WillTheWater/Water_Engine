@@ -12,6 +12,7 @@
 //============ TEST ==================
 #include "Framework/World/World.h"
 #include "Framework/World/Actor/Actor.h"
+#include "Utility/Delegate.h"
 //====================================
 
 namespace we
@@ -57,13 +58,18 @@ namespace we
 		if (auto TestActor = WorldTest->SpawnActor<Actor>(WorldTest.get(), "Assets/Textures/test.png").lock())
 		{
 			TestActor->SetPosition({ EC.WindowSize.x / 2,EC.WindowSize.y / 2 });
+			TestActor->OnActorDestroyed.Bind([this](Actor* DestroyedActor) -> bool
+				{
+				    // We are inside the WaterEngine class, so we can call private methods
+				    this->DelegateTest();
+				    return true; // Must return bool for the Delegate to work correctly
+				});
+			TestActor->Destroy();
 		}
 	}
 
 	void WaterEngine::ProcessEvents()
 	{
-		LoadWorld();
-
 		while (const auto Event = Window->pollEvent())
 		{
 			Event->visit(GameWindowEventHandler{ *Window });
@@ -120,26 +126,8 @@ namespace we
 		Subsystem.Render->ConstrainView(Window->getSize());
 	}
 
-	void WaterEngine::LoadWorld()
+	void WaterEngine::DelegateTest()
 	{
-		/*if (const auto NextLevel = Subsystem.World->GetNextLevel())
-		{
-			LoadLevel(*NextLevel);
-		}*/
-	}
-
-	void WaterEngine::LoadLevel(const string& LevelName)
-	{
-		/*assert(Levels.contains(LevelName));
-		Level* NextLevel = Levels.at(LevelName).get();
-
-		if (CurrentLevel) { CurrentLevel->Cleanup(); }
-		CurrentLevel = NextLevel;
-		CurrentLevel->BeginPlay();*/
-	}
-
-	void WaterEngine::RestartLevel()
-	{
-		//Subsystem.World->RestartLevel();
+		LOG("Delegate Called")
 	}
 }

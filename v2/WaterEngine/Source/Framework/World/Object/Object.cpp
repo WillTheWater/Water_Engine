@@ -20,7 +20,7 @@ namespace we
 
 	void Object::Destroy()
 	{
-		//OnDestroy.Broadcast(this);
+		OnDestroy.Broadcast(this);
 		bIsPendingDestroy = true;
 	}
 
