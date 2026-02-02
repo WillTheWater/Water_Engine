@@ -36,7 +36,6 @@ namespace we
 				bool success = Tex.loadFromMemory(Data.data(), Data.size());
 				if (!success)
 				{
-					// If this triggers, the bytes were found, but SFML couldn't parse them
 					ERROR("SFML could not parse texture data for: {}", Path);
 					ERROR("Data size: {} bytes", Data.size());
 				}
@@ -50,12 +49,8 @@ namespace we
 		return LoadAsset<font>(Path, LoadedFonts,
 			[this, &Path](font& Fnt, const list<uint8>& Data)
 			{
-				// SFML 3 fonts REQUIRE a buffer to stay alive.
-				// Stored in a persistent buffer cache.
-				// Note: 'Data' is a reference to FileData in the template.
 
 				auto& PersistentBuffer = FontBuffers[Path];
-				PersistentBuffer = Data; // Copy the data to cache
 
 				return Fnt.openFromMemory(PersistentBuffer.data(), PersistentBuffer.size());
 			}

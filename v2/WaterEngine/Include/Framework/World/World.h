@@ -36,7 +36,7 @@ namespace we
 	template<typename ActorType, typename ...Args>
 	inline weak<ActorType> World::SpawnActor(Args ...args)
 	{
-		shared<ActorType> NewActor{ new ActorType(this, args...) };
+		shared<ActorType> NewActor{ new ActorType(args...) };
 		PendingActors.push_back(NewActor);
 		return NewActor;
 	}

@@ -21,13 +21,18 @@ namespace we
 		virtual void BeginPlay();
 		virtual void Tick(float DeltaTime);
 
+	public:
 		World* GetWorld() const { return OwnerWorld; }
 		const sprite& GetSprite() const { return Sprite; }
 
+		void SetTexture();
+		void SetPosition(vec2f Pos);
+
 	private:
 		World* OwnerWorld;
-		texture Texture;
+		shared<texture> Texture;
 		sprite Sprite;
 		bool bHasBegunPlay;
+		vec2f Position;
 	};
 }

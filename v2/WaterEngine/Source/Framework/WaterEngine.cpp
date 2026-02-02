@@ -9,6 +9,11 @@
 #include "Subsystem/ResourceSubsystem.h"
 #include "Utility/Log.h"
 
+//============ TEST ==================
+#include "Framework/World/World.h"
+#include "Framework/World/Actor/Actor.h"
+//====================================
+
 namespace we
 {
 	WaterEngine::WaterEngine()
@@ -17,6 +22,8 @@ namespace we
 		Construct();
 		WindowInit();
 	}
+
+	WaterEngine::~WaterEngine() = default;
 
 	void WaterEngine::Configure()
 	{
@@ -32,6 +39,9 @@ namespace we
 		Subsystem.SaveLoad = make_unique<SaveLoadSubsystem>();
 		Subsystem.Audio = make_unique<AudioSubsystem>();
 		Subsystem.Input = make_unique<InputSubsystem>();
+
+		//============ TEST ==================
+		WorldTest = make_unique<World>(Subsystem);
 	}
 
 	void WaterEngine::WindowInit()
@@ -43,6 +53,11 @@ namespace we
 				Window->setView(CorrectedView);
 			};
 		WindowCursor = make_unique<Cursor>(*Window);
+
+		if (auto TestActor = WorldTest->SpawnActor<Actor>(WorldTest.get(), "Assets/Textures/test.png").lock())
+		{
+			TestActor->SetPosition({ EC.WindowSize.x / 2,EC.WindowSize.y / 2 });
+		}
 	}
 
 	void WaterEngine::ProcessEvents()
@@ -65,6 +80,10 @@ namespace we
 	{
 		Subsystem.Time->Tick();
 		Subsystem.Input->ProcessHeld();
+		if (WorldTest)
+		{
+			WorldTest->Tick(Subsystem.Time->GetDeltaTime());
+		}
 		WindowCursor->Update(Subsystem.Time->GetDeltaTime());
 	}
 
@@ -73,6 +92,12 @@ namespace we
 		Window->clear();
 
 		Subsystem.Render->StartRender();
+
+		if (WorldTest)
+		{
+			WorldTest->Render();
+		}
+
 		Window->draw(sprite(Subsystem.Render->FinishRender()));
 
 		WindowCursor->Render();

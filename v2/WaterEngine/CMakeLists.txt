@@ -60,9 +60,7 @@ set(WATER_ENGINE_HEADERS
     Include/Framework/GameWindow.h
     Include/Framework/GameWindowEventHandler.h
 
-    Include/Framework/World/World.h
-    Include/Framework/World/LevelFactory.h
-    Include/Framework/World/Level.h
+    Include/Framework/World/World.h    
     Include/Framework/World/Object/Object.h
     Include/Framework/World/Actor/Actor.h
 
@@ -98,7 +96,7 @@ set(WATER_ENGINE_SOURCES
     Source/Framework/GameWindowEventHandler.cpp
 
     Source/Framework/World/World.cpp
-    Source/Framework/World/LevelFactory.cpp
+    
     Source/Framework/World/Object/Object.cpp
     Source/Framework/World/Actor/Actor.cpp
 

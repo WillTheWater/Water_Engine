@@ -34,6 +34,7 @@ namespace we
 			i->get()->Tick(DeltaTime);
 			i++;
 		}
+		FlushActors();
 	}
 
 	void World::Render()

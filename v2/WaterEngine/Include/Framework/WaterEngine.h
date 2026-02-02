@@ -8,15 +8,17 @@
 #include "Utility/CoreMinimal.h"
 #include "Framework/EngineSubsystem.h"
 #include "Framework/GameWindow.h"
-#include "Framework/World/LevelFactory.h"
 #include "UI/Cursor/Cursor.h"
 
 namespace we
 {
+	class World;
+
 	class WaterEngine
 	{
 	public:
 		WaterEngine();
+		~WaterEngine();
 
 		void ProcessEvents();
 		void GlobalTick();
@@ -30,6 +32,9 @@ namespace we
 		EngineSubsystem Subsystem;
 		unique<GameWindow> Window;
 		unique<Cursor> WindowCursor;
+
+		//============ TEST ==================
+		unique<World> WorldTest;
 
 	private:
 		void Configure();

@@ -4,16 +4,18 @@
 // =============================================================================
 
 #include "Framework/World/Actor/Actor.h"
+#include "Subsystem/ResourceSubsystem.h"
 
 namespace we
 {
 	Actor::Actor(World* OwningWorld, const string& TexturePath)
 		: OwnerWorld{OwningWorld}
-		, Texture{}
-		, Sprite{Texture}
+		, Texture{ Asset().LoadTexture(TexturePath) }
+		, Sprite{*Texture}
 		, bHasBegunPlay{false}
+		, Position{}
 	{
-		//SetTexture(TexturePath);
+		SetTexture();
 	}
 
 	void Actor::BeginPlay()
@@ -26,5 +28,21 @@ namespace we
 
 	void Actor::Tick(float DeltaTime)
 	{
+	}
+
+	void Actor::SetTexture()
+	{
+		if (!Texture) { return; }
+		Sprite.setTexture(*Texture);
+
+		int textureWidth = Texture->getSize().x;
+		int textureHeight = Texture->getSize().y;
+		Sprite.setTextureRect(sf::IntRect{ sf::Vector2i{}, sf::Vector2i{textureWidth, textureHeight} });
+	}
+
+	void Actor::SetPosition(vec2f Pos)
+	{
+		Position = Pos;
+		Sprite.setPosition(Position);
 	}
 }
