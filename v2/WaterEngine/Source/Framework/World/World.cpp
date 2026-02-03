@@ -11,6 +11,7 @@ namespace we
 {
 	World::World(EngineSubsystem& Subsystem)
 		: Subsystem{Subsystem}
+		, bHasBegunPlay{false}
 	{
 
 	}
@@ -18,6 +19,14 @@ namespace we
 	World::~World()
 	{
 		Actors.clear();
+	}
+
+	void World::BeginPlay()
+	{
+		if (!bHasBegunPlay)
+		{
+			bHasBegunPlay = true;
+		}
 	}
 
 	void World::Tick(float DeltaTime)
@@ -29,7 +38,7 @@ namespace we
 		}
 		PendingActors.clear();
 		
-		for (auto i = Actors.begin(); i < Actors.end();)
+		for (auto i = Actors.begin(); i != Actors.end();)
 		{
 			i->get()->Tick(DeltaTime);
 			i++;
@@ -47,7 +56,7 @@ namespace we
 
 	void World::FlushActors()
 	{
-		for (auto i = Actors.begin(); i < Actors.end();)
+		for (auto i = Actors.begin(); i != Actors.end();)
 		{
 			if (i->get()->IsPendingDestroy())
 			{

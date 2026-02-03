@@ -12,6 +12,55 @@ namespace we
 	ResourceSubsystem::ResourceSubsystem()
 		: AssetDirectory{}
 	{
+		// Start background cleanup thread
+		CleanupThread = std::thread(&ResourceSubsystem::CleanupLoop, this);
+	}
+
+	ResourceSubsystem::~ResourceSubsystem()
+	{
+	}
+
+	void ResourceSubsystem::Shutdown()
+	{
+		bRunning = false;
+		DeletionCV.notify_all(); // Wake up thread to exit
+
+		if (CleanupThread.joinable())
+		{
+			LOG("Thread Wakened")
+			CleanupThread.join();
+		}
+
+		// Process deletions on shutdown (synchronous)
+		ProcessDeferredFlush(std::numeric_limits<size_t>::max());
+		LOG("Shutdown Clean")
+	}
+
+	void ResourceSubsystem::CleanupLoop()
+	{
+		while (bRunning)
+		{
+			std::unique_lock<std::mutex> Lock(CVMutex);
+
+			// Shutdown signal
+			DeletionCV.wait(Lock, [this]() {
+				return !DeferredFlush.empty() || !bRunning;
+				});
+
+			// Process deletions
+			size_t Count = 0;
+			while (!DeferredFlush.empty() && bRunning)
+			{
+				DeferredFlush.front()();
+				DeferredFlush.pop();
+				Count++;
+			}
+
+			if (Count > 0)
+			{
+				LOG("Background thread unloaded {} resources", Count);
+			}
+		}
 	}
 	
 	ResourceSubsystem& ResourceSubsystem::Get()
@@ -67,4 +116,17 @@ namespace we
 		);
 	}
 
+	void ResourceSubsystem::ProcessDeferredFlush(size_t MaxPerFrame)
+	{
+		std::lock_guard<std::mutex> Lock(FlushMutex);
+
+		size_t Processed = 0;
+		while (!DeferredFlush.empty() && Processed < MaxPerFrame)
+		{
+			DeferredFlush.front()();
+			DeferredFlush.pop();
+			++Processed;
+			LOG("Processed: {}", Processed)
+		}
+	}
 }

@@ -13,22 +13,26 @@ namespace we
 	class Actor;
 	struct EngineSubsystem;
 
-	class World : public Object
+	class World
 	{
 	public:
 		explicit World(EngineSubsystem& Subsystem);
-		~World();
+		virtual ~World();
 
 		template<typename ActorType, typename... Args>
 		weak<ActorType> SpawnActor(Args... args);
 
+		void BeginPlay();
 		void Tick(float DeltaTime);
 		void Render();
+
+		list<shared<Actor>> GetActors() const { return Actors; }
 
 	private:
 		EngineSubsystem& Subsystem;
 		list<shared<Actor>> Actors;
 		list<shared<Actor>> PendingActors;
+		bool bHasBegunPlay;
 
 	private:
 		void FlushActors();

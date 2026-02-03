@@ -33,6 +33,7 @@ namespace we
 	void Actor::Destroy()
 	{
 		OnActorDestroyed.Broadcast(this);
+		Object::Destroy();
 	}
 
 	void Actor::SetTexture()

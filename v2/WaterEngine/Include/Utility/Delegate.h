@@ -18,11 +18,11 @@ namespace we
 		using CallbackFunction = std::function<bool(Args...)>;
 
 		template<typename ClassType>
-		void Bind(weak<Object> Obj, void(ClassType::* Method)(Args...))
+		void Bind(weak<Object> Target, void(ClassType::* Method)(Args...))
 		{
-			Callbacks.push_back([Obj, Method](Args... args) -> bool
+			Callbacks.push_back([Target, Method](Args... args) -> bool
 				{
-					if (auto Shared = Obj.lock())
+					if (auto Shared = Target.lock())
 					{
 						(static_cast<ClassType*>(Shared.get())->*Method)(args...);
 						return true;
@@ -42,7 +42,7 @@ namespace we
 			{
 				if ((*it)(args...))
 				{
-					it++;
+					++it;
 				}
 				else
 				{

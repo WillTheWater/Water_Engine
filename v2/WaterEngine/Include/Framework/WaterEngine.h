@@ -33,16 +33,10 @@ namespace we
 		unique<GameWindow> Window;
 		unique<Cursor> WindowCursor;
 
-		//============ TEST ==================
-		unique<World> WorldTest;
-
 	private:
 		void Configure();
 		void Construct();
 		void WindowInit();
 		void ConstrainRender();
-
-	private:
-		void DelegateTest();
 	};
 }
