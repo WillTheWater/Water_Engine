@@ -11,7 +11,7 @@
 namespace we
 {
 	World::World(EngineSubsystem& Subsystem)
-		: Subsystem{Subsystem}
+		: Subsystem{ Subsystem }
 		, Actors{}
 		, PendingActors{}
 		, bHasBegunPlay{false}
@@ -53,6 +53,7 @@ namespace we
 			if (i->get()->IsPendingDestroy())
 			{
 				i = Actors.erase(i);
+				LOG("Actor Erased")
 			}
 			else
 			{
@@ -73,9 +74,9 @@ namespace we
 
 	void World::Render()
 	{
-		for (const auto& Actor : Actors)
+		for (auto& A : Actors)
 		{
-			Subsystem.Render->Draw(Actor->GetSprite());
+			Subsystem.Render->Draw(A.get()->GetSprite());
 		}
 	}
 }

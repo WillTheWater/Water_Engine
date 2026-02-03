@@ -10,15 +10,24 @@
 
 namespace we
 {
-	class Actor;
+    class Actor;
 
-	class Game : public WaterEngine
-	{
-	public:
-		Game();
+    enum class GameAction
+    {
+        MainMenu = 1,
+        Level1 = 2
+    };
 
-		virtual void Tick(float DeltaTime) override;
-	private:
-		weak<Actor> TestActor;
-	};
+    class Game : public WaterEngine
+    {
+    public:
+        Game();
+        virtual void Tick(float DeltaTime) override;
+
+    private:
+        void BindInputs();
+        void OnStateEnterHandler();
+
+        weak<Actor> TestActor;
+    };
 }

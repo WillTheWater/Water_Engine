@@ -13,7 +13,6 @@
 namespace we
 {
     WaterEngine::WaterEngine()
-        : CurrentWorld{nullptr}
     {
         Configure();
         Construct();
@@ -39,6 +38,8 @@ namespace we
         Subsystem.SaveLoad = make_unique<SaveLoadSubsystem>();
         Subsystem.Audio = make_unique<AudioSubsystem>();
         Subsystem.Input = make_unique<InputSubsystem>();
+        Subsystem.World = make_unique<WorldSubsystem>(Subsystem);
+        Subsystem.GameState = make_unique<GameStateSubsystem>();
     }
 
     void WaterEngine::WindowInit()
@@ -70,12 +71,13 @@ namespace we
     {
         Subsystem.Time->Tick();
         Tick(Subsystem.Time->GetDeltaTime());
+        if (Subsystem.GameState->IsTransitionPending()) { Subsystem.GameState->ApplyPendingState(); }
         Subsystem.Input->ProcessHeld();
         WindowCursor->Update(Subsystem.Time->GetDeltaTime());
-        if (CurrentWorld)
+        if (auto World = Subsystem.World->GetCurrentWorld())
         {
-            CurrentWorld->BeginPlayGlobal();
-            CurrentWorld->TickGlobal(Subsystem.Time->GetDeltaTime());
+            World->BeginPlayGlobal();
+            World->TickGlobal(Subsystem.Time->GetDeltaTime());
         }
     }
 
@@ -89,6 +91,11 @@ namespace we
         Window->clear();
 
         Subsystem.Render->StartRender();
+
+        if (auto World = Subsystem.World->GetCurrentWorld())
+        {
+            World->Render();
+        }
 
         Window->draw(sprite(Subsystem.Render->FinishRender()));
 

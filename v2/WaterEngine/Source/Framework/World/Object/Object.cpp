@@ -28,14 +28,4 @@ namespace we
 	{
 		return bIsPendingDestroy;
 	}
-
-	weak<Object> Object::GetObject()
-	{
-		return weak_from_this();
-	}
-
-	weak<const Object> Object::GetObject() const
-	{
-		return weak_from_this();
-	}
 }

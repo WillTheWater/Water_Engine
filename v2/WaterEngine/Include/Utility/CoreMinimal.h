@@ -34,6 +34,7 @@ namespace we
 	using json = nlohmann::json;
 
 	using uint8 = unsigned char;
+	using uint32 = uint32_t;
 	using uint = std::uint32_t;
 	
 	template<typename T>

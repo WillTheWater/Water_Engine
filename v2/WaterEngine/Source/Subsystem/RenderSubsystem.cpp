@@ -12,7 +12,6 @@ namespace we
 {
 	RenderSubsystem::RenderSubsystem()
 		: RenderTarget{vec2u(EC.WindowSize)}
-		, Background{EC.WindowSize}
 	{
 		Initialize();
 	}
@@ -20,8 +19,6 @@ namespace we
 	void RenderSubsystem::Initialize()
 	{
 		RenderTarget.setSmooth(EC.SetRenderSmooth);
-		DefaultBackground = Asset().LoadTexture(EC.DefaultBackground);
-		Background.setTexture(DefaultBackground.get());
 	}
 
 	void RenderSubsystem::Draw(const drawable& RenderObject)
@@ -67,8 +64,6 @@ namespace we
 	void RenderSubsystem::StartRender()
 	{
 		RenderTarget.clear(color::Black);
-
-		Draw(Background);
 	}
 
 	const texture& RenderSubsystem::FinishRender()

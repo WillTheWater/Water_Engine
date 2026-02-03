@@ -19,24 +19,40 @@ namespace we
 		virtual ~Actor();
 
 		void BeginPlayGlobal();
-
-		virtual void BeginPlay();
-		virtual void Tick(float DeltaTime);
+		virtual void BeginPlay(){}
+		virtual void Tick(float DeltaTime){}
 		virtual void Destroy() override;
+
+	public:
+		// ================= TRANSFORMS =================
+		void SetPosition(const vec2f& Position);
+		vec2f GetPosition() const;
+
+		void SetRotation(angle Angle);
+		angle GetRotation() const;
+
+		void SetScale(const vec2f& Scale);
+		vec2f GetScale() const;
+
+		rectf GetBounds() const;
+
+		void SetOrigin(const vec2f& Origin);
+		void CenterOrigin();
+
+		void SetColor(const color& Color);
 
 	public:
 		World* GetWorld() const { return OwnerWorld; }
 		const sprite& GetSprite() const { return Sprite; }
 
-		void SetTexture();
-		void SetPosition(vec2f Pos);
 		Delegate<Actor*> OnActorDestroyed;
 
-	private:
+	protected:
 		World* OwnerWorld;
+
+	private:
 		shared<texture> Texture;
 		sprite Sprite;
 		bool bHasBegunPlay;
-		vec2f Position;
 	};
 }

@@ -21,10 +21,6 @@ namespace we
 	
 	private:
 		renderTexture RenderTarget;
-
-		shared<texture> DefaultBackground;
-		rectangle Background;
-
 	private:
 		friend class WaterEngine;
 

@@ -16,7 +16,7 @@ namespace we
 	class World
 	{
 	public:
-		explicit World(EngineSubsystem& Subsystem);
+		World(EngineSubsystem& Subsystem);
 		virtual ~World();
 
 		void BeginPlayGlobal();
@@ -29,8 +29,6 @@ namespace we
 		weak<ActorType> SpawnActor();
 
 		list<shared<Actor>> GetActors() const { return Actors; }
-
-		EngineSubsystem& GetSubsystem() const { return Subsystem; }
 
 	private:
 		EngineSubsystem& Subsystem;

@@ -14,9 +14,7 @@ namespace we
 		, Texture{ Asset().LoadTexture(TexturePath) }
 		, Sprite{*Texture}
 		, bHasBegunPlay{false}
-		, Position{}
 	{
-		SetTexture();
 	}
 
 	Actor::~Actor()
@@ -33,34 +31,59 @@ namespace we
 		}
 	}
 
-	void Actor::BeginPlay()
-	{
-		LOG("ACTOR BEGIN PLAY")
-	}
-
-	void Actor::Tick(float DeltaTime)
-	{
-	}
-
 	void Actor::Destroy()
 	{
 		OnActorDestroyed.Broadcast(this);
 		Object::Destroy();
 	}
 
-	void Actor::SetTexture()
+	void Actor::SetPosition(const vec2f& Position)
 	{
-		if (!Texture) { return; }
-		Sprite.setTexture(*Texture);
-
-		int textureWidth = Texture->getSize().x;
-		int textureHeight = Texture->getSize().y;
-		Sprite.setTextureRect(sf::IntRect{ sf::Vector2i{}, sf::Vector2i{textureWidth, textureHeight} });
+		Sprite.setPosition(Position);
 	}
 
-	void Actor::SetPosition(vec2f Pos)
+	vec2f Actor::GetPosition() const
 	{
-		Position = Pos;
-		Sprite.setPosition(Position);
+		return Sprite.getPosition();
+	}
+
+	void Actor::SetRotation(angle Angle)
+	{
+		Sprite.setRotation(Angle);
+	}
+
+	angle Actor::GetRotation() const
+	{
+		return Sprite.getRotation();
+	}
+
+	void Actor::SetScale(const vec2f& Scale)
+	{
+		Sprite.setScale(Scale);
+	}
+
+	vec2f Actor::GetScale() const
+	{
+		return Sprite.getScale();
+	}
+
+	rectf Actor::GetBounds() const
+	{
+		return Sprite.getGlobalBounds();
+	}
+
+	void Actor::SetOrigin(const vec2f& Origin)
+	{
+		Sprite.setOrigin(Origin);
+	}
+
+	void Actor::CenterOrigin()
+	{
+		SetOrigin({ Sprite.getGlobalBounds().size.x / 2, Sprite.getGlobalBounds().size.y / 2 });
+	}
+
+	void Actor::SetColor(const color& Color)
+	{
+		Sprite.setColor(Color);
 	}
 }

@@ -9,8 +9,6 @@
 
 namespace we
 {
-	class Object;
-
 	template<typename... Args>
 	class Delegate
 	{
@@ -18,22 +16,41 @@ namespace we
 		using CallbackFunction = std::function<bool(Args...)>;
 
 		template<typename ClassType>
-		void Bind(weak<Object> Target, void(ClassType::* Method)(Args...))
+		void Bind(ClassType* Target, void(ClassType::* Method)(Args...))
 		{
 			Callbacks.push_back([Target, Method](Args... args) -> bool
 				{
-					if (auto Shared = Target.lock())
+					if (Target)
 					{
-						(static_cast<ClassType*>(Shared.get())->*Method)(args...);
+						(Target->*Method)(args...);
 						return true;
 					}
 					return false;
 				});
 		}
 
-		void Bind(CallbackFunction Function)
+		template<typename ClassType>
+		void Bind(std::weak_ptr<ClassType> Target, void(ClassType::* Method)(Args...))
 		{
-			Callbacks.push_back(std::move(Function));
+			Callbacks.push_back([Target, Method](Args... args) -> bool
+				{
+					if (auto Shared = Target.lock())
+					{
+						(Shared.get()->*Method)(args...);
+						return true;
+					}
+					return false;
+				});
+		}
+
+		template<typename Callable>
+		void Bind(Callable Func)
+		{
+			Callbacks.push_back([Func](Args... args) -> bool
+				{
+					Func(args...);
+					return true;
+				});
 		}
 
 		void Broadcast(Args... args)
@@ -52,6 +69,7 @@ namespace we
 		}
 
 		void Clear() { Callbacks.clear(); }
+		bool IsEmpty() const { return Callbacks.empty(); }
 
 	private:
 		list<CallbackFunction> Callbacks;
