@@ -7,6 +7,7 @@
 
 #include "Utility/CoreMinimal.h"
 #include "Framework/World/Object/Object.h"
+#include "EngineConfig.h"
 
 namespace we
 {
@@ -21,7 +22,7 @@ namespace we
 
 		void BeginPlayGlobal();
 		void TickGlobal(float DeltaTime);
-		void Render();
+		virtual void Render();
 
 
 	public:
@@ -30,8 +31,12 @@ namespace we
 
 		list<shared<Actor>> GetActors() const { return Actors; }
 
-	private:
+	protected:
 		EngineSubsystem& Subsystem;
+
+		void RenderActors();
+
+	private:
 		list<shared<Actor>> Actors;
 		list<shared<Actor>> PendingActors;
 		bool bHasBegunPlay;

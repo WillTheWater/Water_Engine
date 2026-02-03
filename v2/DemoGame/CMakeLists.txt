@@ -20,10 +20,16 @@ set(PAK_OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/Contents.pak")
 
 set(GAME_HEADERS
     Include/Game.h
+
+ "Include/Levels/MainMenu.h" 
+ "Include/Levels/LevelOne.h"
 )
 
 set(GAME_SOURCES
     Source/Game.cpp
+
+ "Source/Levels/MainMenu.cpp" 
+ "Source/Levels/LevelOne.cpp"
 )
 
 # =============================================================================

@@ -63,9 +63,19 @@ namespace we
 		}
 	}
 
+	void World::RenderActors()
+	{
+		for (auto& A : Actors)
+		{
+			if (A->HasSprite())
+			{
+				Subsystem.Render->Draw(A->GetSprite());
+			}
+		}
+	}
+
 	void World::BeginPlay()
 	{
-		LOG("WORLD BEGIN PLAY")
 	}
 
 	void World::Tick(float DeltaTime)
@@ -74,9 +84,6 @@ namespace we
 
 	void World::Render()
 	{
-		for (auto& A : Actors)
-		{
-			Subsystem.Render->Draw(A.get()->GetSprite());
-		}
+		RenderActors();
 	}
 }

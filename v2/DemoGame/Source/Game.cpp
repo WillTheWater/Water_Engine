@@ -8,6 +8,10 @@
 #include "Framework/World/Actor/Actor.h"
 #include "Utility/Log.h"
 
+// ========================= LEVELS =========================
+#include "Levels/MainMenu.h"
+#include "Levels/LevelOne.h"
+
 namespace we
 {
 	unique<WaterEngine> GetEngine()
@@ -56,12 +60,12 @@ namespace we
         {
         case GameState::MainMenu:
             LOG("Main Menu");
-            Subsystem.World->LoadWorld<World>();
+            Subsystem.World->LoadWorld<MainMenu>();
             break;
         case GameState::Level1:
             LOG("Level 1");
             {
-                auto NewWorld = Subsystem.World->LoadWorld<World>();
+                auto NewWorld = Subsystem.World->LoadWorld<LevelOne>();
                 TestActor = NewWorld.lock()->SpawnActor<Actor>();
                 TestActor.lock()->CenterOrigin();
                 TestActor.lock()->SetPosition({ EC.WindowSize.x / 2, EC.WindowSize.y / 2 });

@@ -9,12 +9,22 @@
 
 namespace we
 {
+	Actor::Actor(World* OwningWorld)
+		: OwnerWorld{ OwningWorld }
+		, bHasBegunPlay{ false }
+	{
+	}
+
 	Actor::Actor(World* OwningWorld, const string& TexturePath)
 		: OwnerWorld{OwningWorld}
 		, Texture{ Asset().LoadTexture(TexturePath) }
 		, Sprite{*Texture}
 		, bHasBegunPlay{false}
 	{
+		if (Texture)
+		{
+			Sprite.emplace(*Texture);
+		}
 	}
 
 	Actor::~Actor()
@@ -39,51 +49,53 @@ namespace we
 
 	void Actor::SetPosition(const vec2f& Position)
 	{
-		Sprite.setPosition(Position);
+		if (Sprite) Sprite->setPosition(Position);
 	}
 
 	vec2f Actor::GetPosition() const
 	{
-		return Sprite.getPosition();
+		return Sprite ? Sprite->getPosition() : vec2f{};
 	}
 
 	void Actor::SetRotation(angle Angle)
 	{
-		Sprite.setRotation(Angle);
+		if (Sprite) Sprite->setRotation(Angle);
 	}
 
 	angle Actor::GetRotation() const
 	{
-		return Sprite.getRotation();
+		return Sprite ? Sprite->getRotation() : angle{};
 	}
 
 	void Actor::SetScale(const vec2f& Scale)
 	{
-		Sprite.setScale(Scale);
+		if (Sprite) Sprite->setScale(Scale);
 	}
 
 	vec2f Actor::GetScale() const
 	{
-		return Sprite.getScale();
+		return Sprite ? Sprite->getScale() : vec2f{ 1, 1 };
 	}
 
 	rectf Actor::GetBounds() const
 	{
-		return Sprite.getGlobalBounds();
+		return Sprite ? Sprite->getGlobalBounds() : rectf{};
 	}
 
 	void Actor::SetOrigin(const vec2f& Origin)
 	{
-		Sprite.setOrigin(Origin);
+		if (Sprite) Sprite->setOrigin(Origin);
 	}
 
 	void Actor::CenterOrigin()
 	{
-		SetOrigin({ Sprite.getGlobalBounds().size.x / 2, Sprite.getGlobalBounds().size.y / 2 });
+		if (!Sprite) return;
+		auto LocalBounds = Sprite->getLocalBounds();
+		Sprite->setOrigin({ LocalBounds.size.x / 2, LocalBounds.size.y / 2 });
 	}
 
 	void Actor::SetColor(const color& Color)
 	{
-		Sprite.setColor(Color);
+		if (Sprite) Sprite->setColor(Color);
 	}
 }

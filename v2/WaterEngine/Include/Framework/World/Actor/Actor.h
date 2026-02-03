@@ -15,6 +15,7 @@ namespace we
 	class Actor : public Object
 	{
 	public:
+		explicit Actor(World* OwningWorld);
 		explicit Actor(World* OwningWorld, const string& TexturePath);
 		virtual ~Actor();
 
@@ -43,7 +44,8 @@ namespace we
 
 	public:
 		World* GetWorld() const { return OwnerWorld; }
-		const sprite& GetSprite() const { return Sprite; }
+		bool HasSprite() const { return Sprite.has_value(); }
+		const sprite& GetSprite() const { return *Sprite; }
 
 		Delegate<Actor*> OnActorDestroyed;
 
@@ -52,7 +54,7 @@ namespace we
 
 	private:
 		shared<texture> Texture;
-		sprite Sprite;
+		optional<sprite> Sprite;
 		bool bHasBegunPlay;
 	};
 }
