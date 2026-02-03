@@ -5,6 +5,7 @@
 
 #include "Framework/World/Actor/Actor.h"
 #include "Subsystem/ResourceSubsystem.h"
+#include "Utility/Log.h"
 
 namespace we
 {
@@ -18,12 +19,23 @@ namespace we
 		SetTexture();
 	}
 
-	void Actor::BeginPlay()
+	Actor::~Actor()
+	{
+		LOG("Actor Destroyed")
+	}
+
+	void Actor::BeginPlayGlobal()
 	{
 		if (!bHasBegunPlay)
 		{
 			bHasBegunPlay = true;
+			BeginPlay();
 		}
+	}
+
+	void Actor::BeginPlay()
+	{
+		LOG("ACTOR BEGIN PLAY")
 	}
 
 	void Actor::Tick(float DeltaTime)

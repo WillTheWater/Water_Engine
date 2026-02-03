@@ -3,7 +3,7 @@
   "WindowSize": [ 1920, 1080 ],
   "AspectRatio": [ 16, 9 ],
   "WindowMinimumSize": [ 960, 540 ],
-  "TargetFPS": 60,
+  "TargetFPS": 120,
   "VsyncEnabled": true,
   "FullscreenMode": false,
   "SetRenderSmooth": true,

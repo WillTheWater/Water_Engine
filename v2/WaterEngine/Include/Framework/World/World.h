@@ -19,14 +19,18 @@ namespace we
 		explicit World(EngineSubsystem& Subsystem);
 		virtual ~World();
 
-		template<typename ActorType, typename... Args>
-		weak<ActorType> SpawnActor(Args... args);
-
-		void BeginPlay();
-		void Tick(float DeltaTime);
+		void BeginPlayGlobal();
+		void TickGlobal(float DeltaTime);
 		void Render();
 
+
+	public:
+		template<typename ActorType>
+		weak<ActorType> SpawnActor();
+
 		list<shared<Actor>> GetActors() const { return Actors; }
+
+		EngineSubsystem& GetSubsystem() const { return Subsystem; }
 
 	private:
 		EngineSubsystem& Subsystem;
@@ -35,13 +39,15 @@ namespace we
 		bool bHasBegunPlay;
 
 	private:
-		void FlushActors();
+		void BeginPlay();
+		void Tick(float DeltaTime);
+		void ManageActors(float DeltaTime);
 	};
 
-	template<typename ActorType, typename ...Args>
-	inline weak<ActorType> World::SpawnActor(Args ...args)
+	template<typename ActorType>
+	inline weak<ActorType> World::SpawnActor()
 	{
-		shared<ActorType> NewActor{ new ActorType(args...) };
+		shared<ActorType> NewActor{ new ActorType{this, "Assets/Icon/icon.png"}};
 		PendingActors.push_back(NewActor);
 		return NewActor;
 	}

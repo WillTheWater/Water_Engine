@@ -4,6 +4,9 @@
 // =============================================================================
 
 #include "Game.h"
+#include "Framework/World/World.h"
+#include "Framework/World/Actor/Actor.h"
+#include "Utility/Log.h"
 
 namespace we
 {
@@ -15,5 +18,21 @@ namespace we
 	Game::Game()
 		: WaterEngine{}
 	{
+		auto NewWorld = LoadWorld<World>();
+		auto TestWorld = NewWorld.lock();
+		TestActor = TestWorld->SpawnActor<Actor>();
+	}
+
+	void Game::Tick(float DeltaTime)
+	{
+		static float Time = 3.f;
+		if (Subsystem.Time->GetElapsedTime() > Time)
+		{
+			if (!TestActor.expired())
+			{
+				LOG("Calling Actor Destruction!");
+				TestActor.lock()->Destroy();
+			}
+		}
 	}
 }

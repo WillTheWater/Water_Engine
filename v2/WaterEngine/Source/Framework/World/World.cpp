@@ -6,11 +6,14 @@
 #include "Framework/World/World.h"
 #include "Framework/World/Actor/Actor.h"
 #include "Framework/EngineSubsystem.h"
+#include "Utility/Log.h"
 
 namespace we
 {
 	World::World(EngineSubsystem& Subsystem)
 		: Subsystem{Subsystem}
+		, Actors{}
+		, PendingActors{}
 		, bHasBegunPlay{false}
 	{
 
@@ -21,41 +24,30 @@ namespace we
 		Actors.clear();
 	}
 
-	void World::BeginPlay()
+	void World::BeginPlayGlobal()
 	{
 		if (!bHasBegunPlay)
 		{
 			bHasBegunPlay = true;
+			BeginPlay();
 		}
 	}
 
-	void World::Tick(float DeltaTime)
+	void World::TickGlobal(float DeltaTime)
+	{
+		ManageActors(DeltaTime);
+		Tick(DeltaTime);
+	}
+
+	void World::ManageActors(float DeltaTime)
 	{
 		for (auto& Actor : PendingActors)
 		{
 			Actors.push_back(Actor);
-			Actor->BeginPlay();
+			Actor->BeginPlayGlobal();
 		}
 		PendingActors.clear();
-		
-		for (auto i = Actors.begin(); i != Actors.end();)
-		{
-			i->get()->Tick(DeltaTime);
-			i++;
-		}
-		FlushActors();
-	}
 
-	void World::Render()
-	{
-		for (const auto& Actor : Actors)
-		{
-			Subsystem.Render->Draw(Actor->GetSprite());
-		}
-	}
-
-	void World::FlushActors()
-	{
 		for (auto i = Actors.begin(); i != Actors.end();)
 		{
 			if (i->get()->IsPendingDestroy())
@@ -64,8 +56,26 @@ namespace we
 			}
 			else
 			{
-				i++;
+				i->get()->Tick(DeltaTime);
+				++i;
 			}
+		}
+	}
+
+	void World::BeginPlay()
+	{
+		LOG("WORLD BEGIN PLAY")
+	}
+
+	void World::Tick(float DeltaTime)
+	{
+	}
+
+	void World::Render()
+	{
+		for (const auto& Actor : Actors)
+		{
+			Subsystem.Render->Draw(Actor->GetSprite());
 		}
 	}
 }

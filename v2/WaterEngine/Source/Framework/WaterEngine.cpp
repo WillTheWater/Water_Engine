@@ -7,11 +7,13 @@
 #include "Framework/WaterEngine.h"
 #include "AssetDirectory/PakDirectory.h"
 #include "Subsystem/ResourceSubsystem.h"
+#include "Framework/World/World.h"
 #include "Utility/Log.h"
 
 namespace we
 {
     WaterEngine::WaterEngine()
+        : CurrentWorld{nullptr}
     {
         Configure();
         Construct();
@@ -67,8 +69,19 @@ namespace we
     void WaterEngine::GlobalTick()
     {
         Subsystem.Time->Tick();
+        Tick(Subsystem.Time->GetDeltaTime());
         Subsystem.Input->ProcessHeld();
         WindowCursor->Update(Subsystem.Time->GetDeltaTime());
+        if (CurrentWorld)
+        {
+            CurrentWorld->BeginPlayGlobal();
+            CurrentWorld->TickGlobal(Subsystem.Time->GetDeltaTime());
+        }
+    }
+
+    void WaterEngine::Tick(float DeltaTime)
+    {
+
     }
 
     void WaterEngine::Render()

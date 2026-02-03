@@ -6,15 +6,19 @@
 #pragma once
 
 #include "Utility/CoreMinimal.h"
-
 #include <Framework/WaterEngine.h>
 
 namespace we
 {
+	class Actor;
 
 	class Game : public WaterEngine
 	{
 	public:
 		Game();
+
+		virtual void Tick(float DeltaTime) override;
+	private:
+		weak<Actor> TestActor;
 	};
 }

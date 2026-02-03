@@ -49,8 +49,6 @@ namespace we
             }
             setSize(CurrentSize);
         }
-
-        
     }
 
     void GameWindow::CreateGameWindow(const sf::VideoMode& Mode, uint Style, sf::State State)
@@ -65,15 +63,13 @@ namespace we
         setKeyRepeatEnabled(EC.EnableKeyRepeat);
         setMouseCursorVisible(false);
 
-        // Handle mutual exclusion: VSync takes priority over FPS limit
+        // HVSync takes priority over FPS
         if (EC.VsyncEnabled)
         {
             setVerticalSyncEnabled(EC.VsyncEnabled);
-            setFramerateLimit(0); // Disable FPS limit when VSync is on
         }
         else
         {
-            setVerticalSyncEnabled(EC.VsyncEnabled);
             setFramerateLimit(static_cast<unsigned int>(EC.TargetFPS));
         }
     }

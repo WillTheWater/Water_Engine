@@ -28,10 +28,18 @@ namespace we
 		bool IsRunning() const;
 		bool HasFocus() const;
 
-	private:
+	public:
+		template<typename WorldType>
+		weak<World> LoadWorld();
+		virtual void Tick(float DeltaTime);
+
+	protected:
 		EngineSubsystem Subsystem;
+
+	private:
 		unique<GameWindow> Window;
 		unique<Cursor> WindowCursor;
+		shared<World> CurrentWorld;
 
 	private:
 		void Configure();
@@ -39,4 +47,12 @@ namespace we
 		void WindowInit();
 		void ConstrainRender();
 	};
+
+	template<typename WorldType>
+	inline weak<World> WaterEngine::LoadWorld()
+	{
+		shared<WorldType> NewWorld = make_shared<WorldType>(Subsystem);
+		CurrentWorld = NewWorld;
+		return NewWorld;
+	}
 }

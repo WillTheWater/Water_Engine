@@ -16,7 +16,9 @@ namespace we
 	{
 	public:
 		explicit Actor(World* OwningWorld, const string& TexturePath);
-		virtual ~Actor() = default;
+		virtual ~Actor();
+
+		void BeginPlayGlobal();
 
 		virtual void BeginPlay();
 		virtual void Tick(float DeltaTime);
