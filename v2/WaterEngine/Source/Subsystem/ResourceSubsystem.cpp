@@ -4,128 +4,106 @@
 // =============================================================================
 
 #include "Subsystem/ResourceSubsystem.h"
+#include "Utility/Log.h"
 
 namespace we
 {
-	unique<ResourceSubsystem> ResourceSubsystem::AssetManager{ nullptr };
+    ResourceSubsystem& ResourceSubsystem::Get()
+    {
+        static ResourceSubsystem Instance;
+        return Instance;
+    }
 
-	ResourceSubsystem::ResourceSubsystem()
-		: AssetDirectory{}
-	{
-		// Start background cleanup thread
-		CleanupThread = std::thread(&ResourceSubsystem::CleanupLoop, this);
-	}
+    void ResourceSubsystem::Shutdown()
+    {
+        Textures.clear();
+        Fonts.clear();
+        Sounds.clear();
+        FontData.clear();
+        AssetDirectory = nullptr;
+    }
 
-	ResourceSubsystem::~ResourceSubsystem()
-	{
-	}
+    void ResourceSubsystem::SetAssetDirectory(shared<IAssetDirector> Directory)
+    {
+        AssetDirectory = Directory;
+    }
 
-	void ResourceSubsystem::Shutdown()
-	{
-		bRunning = false;
-		DeletionCV.notify_all(); // Wake up thread to exit
+    template<typename Asset, typename Cache>
+    shared<Asset> ResourceSubsystem::Load(const string& Path, Cache& AssetCache, auto&& LoadFunc)
+    {
+        // Check cache
+        if (auto it = AssetCache.find(Path); it != AssetCache.end())
+            if (auto Existing = it->second.lock())
+                return Existing;
 
-		if (CleanupThread.joinable())
-		{
-			LOG("Thread Wakened")
-			CleanupThread.join();
-		}
+        if (!AssetDirectory)
+        {
+            ERROR("No AssetDirectory for: {}", Path);
+            return nullptr;
+        }
 
-		// Process deletions on shutdown (synchronous)
-		ProcessDeferredFlush(std::numeric_limits<size_t>::max());
-		LOG("Shutdown Clean")
-	}
+        list<uint8> FileData;
+        if (!AssetDirectory->ReadFile(Path, FileData))
+        {
+            ERROR("Failed to read: {}", Path);
+            return nullptr;
+        }
 
-	void ResourceSubsystem::CleanupLoop()
-	{
-		while (bRunning)
-		{
-			std::unique_lock<std::mutex> Lock(CVMutex);
+        auto NewAsset = make_shared<Asset>();
+        if (!LoadFunc(*NewAsset, FileData))
+        {
+            ERROR("Failed to load: {}", Path);
+            return nullptr;
+        }
 
-			// Shutdown signal
-			DeletionCV.wait(Lock, [this]() {
-				return !DeferredFlush.empty() || !bRunning;
-				});
+        AssetCache[Path] = NewAsset;
+        return NewAsset;
+    }
 
-			// Process deletions
-			size_t Count = 0;
-			while (!DeferredFlush.empty() && bRunning)
-			{
-				DeferredFlush.front()();
-				DeferredFlush.pop();
-				Count++;
-			}
+    shared<texture> ResourceSubsystem::LoadTexture(const string& Path)
+    {
+        return Load<texture>(Path, Textures,
+            [](texture& Tex, const list<uint8>& Data) {
+                return Tex.loadFromMemory(Data.data(), Data.size());
+            });
+    }
 
-			if (Count > 0)
-			{
-				LOG("Background thread unloaded {} resources", Count);
-			}
-		}
-	}
-	
-	ResourceSubsystem& ResourceSubsystem::Get()
-	{
-		if (!AssetManager)
-		{
-			AssetManager = std::move(unique<ResourceSubsystem>{new ResourceSubsystem});
-		}
-		return *AssetManager;
-	}
+    shared<font> ResourceSubsystem::LoadFont(const string& Path)
+    {
+        // Check font cache first
+        if (auto it = Fonts.find(Path); it != Fonts.end())
+            if (auto Existing = it->second.lock())
+                return Existing;
 
-	void ResourceSubsystem::SetAssetDirectory(shared<IAssetDirector> Directory)
-	{
-		AssetDirectory = Directory;
-	}
+        // Load/ensure data buffer
+        auto DataIt = FontData.find(Path);
+        if (DataIt == FontData.end())
+        {
+            if (!AssetDirectory) return nullptr;
 
-	shared<texture> ResourceSubsystem::LoadTexture(const string& Path)
-	{
-		return LoadAsset<texture>(Path, LoadedTextures,
-			[&Path](texture& Tex, const list<uint8>& Data)
-			{
-				bool success = Tex.loadFromMemory(Data.data(), Data.size());
-				if (!success)
-				{
-					ERROR("SFML could not parse texture data for: {}", Path);
-					ERROR("Data size: {} bytes", Data.size());
-				}
-				return success;
-			}
-		);
-	}
+            list<uint8> FileData;
+            if (!AssetDirectory->ReadFile(Path, FileData)) return nullptr;
 
-	shared<font> ResourceSubsystem::LoadFont(const string& Path)
-	{
-		return LoadAsset<font>(Path, LoadedFonts,
-			[this, &Path](font& Fnt, const list<uint8>& Data)
-			{
-				auto& PersistentBuffer = FontBuffers[Path];
-				PersistentBuffer = Data;
-				return Fnt.openFromMemory(PersistentBuffer.data(), PersistentBuffer.size());
-			}
-		);
-	}
+            list<uint8> Buffer(FileData.begin(), FileData.end());
+            DataIt = FontData.emplace(Path, std::move(Buffer)).first;
+        }
 
-	shared<soundBuffer> ResourceSubsystem::LoadSound(const string& Path)
-	{
-		return LoadAsset<soundBuffer>(Path, LoadedSounds,
-			[](soundBuffer& Snd, const list<uint8>& Data)
-			{
-				return Snd.loadFromMemory(Data.data(), Data.size());
-			}
-		);
-	}
+        auto NewFont = make_shared<font>();
+        if (!NewFont->openFromMemory(DataIt->second.data(), DataIt->second.size()))
+        {
+            ERROR("Failed to load font: {}", Path);
+            return nullptr;
+        }
 
-	void ResourceSubsystem::ProcessDeferredFlush(size_t MaxPerFrame)
-	{
-		std::lock_guard<std::mutex> Lock(FlushMutex);
+        Fonts[Path] = NewFont;
+        return NewFont;
+    }
 
-		size_t Processed = 0;
-		while (!DeferredFlush.empty() && Processed < MaxPerFrame)
-		{
-			DeferredFlush.front()();
-			DeferredFlush.pop();
-			++Processed;
-			LOG("Processed: {}", Processed)
-		}
-	}
+    shared<soundBuffer> ResourceSubsystem::LoadSound(const string& Path)
+    {
+        return Load<soundBuffer>(Path, Sounds,
+            [](soundBuffer& Snd, const list<uint8>& Data) {
+                return Snd.loadFromMemory(Data.data(), Data.size());
+            });
+    }
 }

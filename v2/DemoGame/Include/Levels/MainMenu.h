@@ -28,6 +28,5 @@ namespace we
         void CreateUI();
         void HandlePlay();
         void HandleQuit();
-
     };
 }

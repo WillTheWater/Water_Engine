@@ -25,7 +25,6 @@ namespace we
 		void Render();
 
 	private:
-		void HandleEvent(const sf::Event::Resized&);
 		void HandleEvent(const sf::Event::JoystickButtonPressed&);
 		void HandleEvent(const sf::Event::JoystickButtonReleased&);
 		void HandleEvent(const auto&) {}

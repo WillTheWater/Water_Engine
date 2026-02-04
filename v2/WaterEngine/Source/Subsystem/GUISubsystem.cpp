@@ -32,10 +32,6 @@ namespace we
 	{
 	}
 
-	void GUISubsystem::HandleEvent(const sf::Event::Resized& Resize)
-	{
-	}
-
 	void GUISubsystem::HandleEvent(const sf::Event::JoystickButtonPressed& Gamepad)
 	{
 		if (Input::HardwareToLogic(Gamepad.button, Gamepad.joystickId) == GamepadButton::South)

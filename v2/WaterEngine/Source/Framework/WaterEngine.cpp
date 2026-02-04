@@ -21,8 +21,7 @@ namespace we
 
     WaterEngine::~WaterEngine()
     {
-        Subsystem.GUI.reset();
-        Subsystem.World.reset();
+        Subsystem.World->UnloadWorld();
         Subsystem.Render.reset();
         Asset().Shutdown();
     }
@@ -63,7 +62,6 @@ namespace we
         {
             if (Subsystem.GUI->HandleEvents(*Event)) { continue; } // Blocked by GUI
 
-            // Otherwise game input
             Event->visit(GameWindowEventHandler{ *Window });
             Subsystem.Input->HandleEvent(*Event);
         }
@@ -77,20 +75,14 @@ namespace we
     void WaterEngine::GlobalTick()
     {
         Subsystem.Time->Tick();
-        Tick(Subsystem.Time->GetDeltaTime());
         if (Subsystem.GameState->IsTransitionPending()) { Subsystem.GameState->ApplyPendingState(); }
         Subsystem.Input->ProcessHeld();
-        WindowCursor->Update(Subsystem.Time->GetDeltaTime());
-        if (auto World = Subsystem.World->GetCurrentWorld())
-        {
-            World->BeginPlayGlobal();
-            World->TickGlobal(Subsystem.Time->GetDeltaTime());
-        }
+        Tick(Subsystem.Time->GetDeltaTime());
     }
 
     void WaterEngine::Tick(float DeltaTime)
     {
-
+        TickWorld(DeltaTime);
     }
 
     void WaterEngine::Render()
@@ -116,6 +108,16 @@ namespace we
     bool WaterEngine::IsRunning() const
     {
         return Window->isOpen() && !bExitRequested;
+    }
+
+    void WaterEngine::TickWorld(float Deltatime)
+    {
+        WindowCursor->Update(Deltatime);
+        if (auto World = Subsystem.World->GetCurrentWorld())
+        {
+            World->BeginPlayGlobal();
+            World->TickGlobal(Deltatime);
+        }
     }
 
     bool we::WaterEngine::HasFocus() const

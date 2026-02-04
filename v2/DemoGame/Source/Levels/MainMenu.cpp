@@ -7,6 +7,7 @@
 #include "Framework/EngineSubsystem.h"
 #include "Subsystem/ResourceSubsystem.h"
 #include "Levels/LevelOne.h"
+#include "Utility/Log.h"
 
 namespace we
 {
