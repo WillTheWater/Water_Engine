@@ -23,6 +23,8 @@ set(GAME_HEADERS
 
     Include/Levels/MainMenu.h
     Include/Levels/LevelOne.h
+    
+    Include/UI/MainMenuUI.h
 )
 
 set(GAME_SOURCES
@@ -30,6 +32,8 @@ set(GAME_SOURCES
 
     Source/Levels/MainMenu.cpp 
     Source/Levels/LevelOne.cpp
+    
+    Source/UI/MainMenuUI.cpp
 )
 
 # =============================================================================

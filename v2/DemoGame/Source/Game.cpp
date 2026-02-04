@@ -59,11 +59,7 @@ namespace we
         {
         case GameState::MainMenu:
             LOG("Main Menu");
-            if (auto Menu = Subsystem.World->LoadWorld<MainMenu>().lock())
-            {
-                Menu->OnPlayPressed.Bind(this, &Game::HandleStartGame);
-                Menu->OnQuitPressed.Bind(this, &Game::HandleExitGame);
-            }
+            Subsystem.World->LoadWorld<MainMenu>();
             break;
         case GameState::Level1:
             LOG("Level 1");

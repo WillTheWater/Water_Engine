@@ -5,6 +5,9 @@
 
 #pragma once
 
+// =============================================================================
+// Standard Library
+// =============================================================================
 #include <memory>
 #include <optional>
 #include <variant>
@@ -18,15 +21,23 @@
 #include <unordered_set>
 #include <string>
 #include <fstream>
+
+// =============================================================================
+// Third Party
+// =============================================================================
+#include <nlohmann/json.hpp>
 #include <sfml/Graphics.hpp>
 #include <SFML/System/Vector2.hpp>
 #include <SFML/System/Vector3.hpp>
 #include <SFML/System/Angle.hpp>
 #include <SFML/Audio.hpp>
-#include <nlohmann/json.hpp>
 
+// =============================================================================
+// Core Types
+// =============================================================================
 namespace we
 {
+	// ----- Basic Types -----
 	using string = std::string;
 	using stringView = std::string_view;
 	using filestream = std::fstream;
@@ -36,7 +47,8 @@ namespace we
 	using uint8 = unsigned char;
 	using uint32 = uint32_t;
 	using uint = std::uint32_t;
-	
+
+	// ----- Math Types -----
 	template<typename T>
 	using vec2 = sf::Vector2<T>;
 
@@ -44,9 +56,9 @@ namespace we
 	using vec2i = sf::Vector2i;
 	using vec2u = sf::Vector2u;
 	using vec3f = sf::Vector3f;
-
 	using angle = sf::Angle;
 
+	// ----- SFML Graphics Types -----
 	using sprite = sf::Sprite;
 	using texture = sf::Texture;
 	using image = sf::Image;
@@ -61,11 +73,14 @@ namespace we
 	using rectf = sf::FloatRect;
 	using color = sf::Color;
 
+	// =============================================================================
+	// Memory
+	// =============================================================================
 	template<typename T>
 	using unique = std::unique_ptr<T>;
 
 	template<typename T, typename... Args>
-	std::unique_ptr<T> make_unique(Args&&... args)
+	unique<T> make_unique(Args&&... args)
 	{
 		return std::make_unique<T>(std::forward<Args>(args)...);
 	}
@@ -74,7 +89,7 @@ namespace we
 	using shared = std::shared_ptr<T>;
 
 	template<typename T, typename... Args>
-	std::shared_ptr<T> make_shared(Args&&... args)
+	shared<T> make_shared(Args&&... args)
 	{
 		return std::make_shared<T>(std::forward<Args>(args)...);
 	}
@@ -83,11 +98,14 @@ namespace we
 	using weak = std::weak_ptr<T>;
 
 	template<typename T>
-	std::weak_ptr<T> make_weak(const std::shared_ptr<T>& shared)
+	weak<T> make_weak(const shared<T>& shared)
 	{
-		return std::weak_ptr<T>(shared);
+		return weak<T>(shared);
 	}
 
+	// =============================================================================
+	// Containers
+	// =============================================================================
 	template<typename T>
 	using optional = std::optional<T>;
 

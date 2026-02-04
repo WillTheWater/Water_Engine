@@ -6,43 +6,34 @@
 #include "Levels/MainMenu.h"
 #include "Framework/EngineSubsystem.h"
 #include "Subsystem/ResourceSubsystem.h"
-#include "Levels/LevelOne.h"
+#include "UI/MainMenuUI.h"
 #include "Utility/Log.h"
 
 namespace we
 {
-    MainMenu::MainMenu(EngineSubsystem& Subsystem)
-        : World(Subsystem)
-    {
-        BgTexture = Asset().LoadTexture(EC.DefaultBackground);
-        Background.emplace(*BgTexture);
-        CreateUI();
-    }
+	MainMenu::MainMenu(EngineSubsystem& Subsystem)
+		: World(Subsystem)
+	{
+		BgTexture = Asset().LoadTexture(EC.DefaultBackground);
+		if (BgTexture)
+		{
+			Background.emplace(*BgTexture);
+		}
 
-    MainMenu::~MainMenu()
-    {
-    }
+		UI = make_unique<MainMenuUI>(Subsystem);
+	}
 
-    void MainMenu::Render()
-    {
-        if (Background) { Subsystem.Render->Draw(*Background); }
+	MainMenu::~MainMenu()
+	{
+	}
 
-        RenderActors();
-    }
+	void MainMenu::Render()
+	{
+		if (Background)
+		{
+			Subsystem.Render->Draw(*Background);
+		}
 
-    void MainMenu::CreateUI()
-    {
-    }
-
-    void MainMenu::HandlePlay()
-    {
-        LOG("Play clicked!");
-        OnPlayPressed.Broadcast();
-    }
-
-    void MainMenu::HandleQuit()
-    {
-        LOG("Quit clicked!");
-        OnQuitPressed.Broadcast();
-    }
+		RenderActors();
+	}
 }

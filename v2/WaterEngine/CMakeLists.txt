@@ -71,7 +71,10 @@ set(WATER_ENGINE_HEADERS
 
     Include/UI/Cursor/Cursor.h
     Include/UI/Clipboard/Clipboard.h
-    Include/UI/Widget/WidgetUtility.h
+
+    Include/UI/Widget/Panel.h
+    Include/UI/Widget/Widget.h
+    Include/UI/Widget/Button.h
 
     Include/Input/InputBinding.h
     Include/Input/InputEventHandler.h
@@ -79,6 +82,7 @@ set(WATER_ENGINE_HEADERS
     Include/Interface/IAssetDirector.h
     Include/AssetDirectory/PakDirectory.h
     
+    Include/Utility/WindowUtility.h
     Include/Utility/CoreMinimal.h
     Include/Utility/Log.h
     Include/Utility/RandomGenerator.h
@@ -111,6 +115,10 @@ set(WATER_ENGINE_SOURCES
 
     Source/UI/Cursor/Cursor.cpp
     Source/UI/Clipboard/Clipboard.cpp
+
+    Source/UI/Widget/Panel.cpp
+    Source/UI/Widget/Widget.cpp
+    Source/UI/Widget/Button.cpp
 
     Source/Input/InputBinding.cpp    
     Source/Input/InputEventHandler.cpp

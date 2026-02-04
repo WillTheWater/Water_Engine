@@ -4,29 +4,23 @@
 // =============================================================================
 
 #pragma once
-
 #include "Utility/CoreMinimal.h"
 #include "Framework/World/World.h"
-#include "Utility/Delegate.h"
 
 namespace we
 {
-    class MainMenu : public World
-    {
-    public:
-        explicit MainMenu(EngineSubsystem& Subsystem);
-        ~MainMenu();
-        virtual void Render() override;
+	class MainMenuUI;
 
-        Delegate<> OnPlayPressed;
-        Delegate<> OnQuitPressed;
-    private:
-        shared<texture> BgTexture;
-        optional<sprite> Background;
+	class MainMenu : public World
+	{
+	public:
+		explicit MainMenu(EngineSubsystem& Subsystem);
+		~MainMenu();
+		virtual void Render() override;
 
-    private:
-        void CreateUI();
-        void HandlePlay();
-        void HandleQuit();
-    };
+	private:
+		shared<texture> BgTexture;
+		optional<sprite> Background;
+		unique<MainMenuUI> UI;
+	};
 }

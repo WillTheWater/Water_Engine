@@ -43,6 +43,5 @@ namespace we
 		void Construct();
 		void WindowInit();
 		void ConstrainRender();
-		void TickWorld(float DeltaTime);
 	};
 }

@@ -19,5 +19,7 @@
   "DefaultCursorSpeed": 1000,
   "JoystickDeadzone": 0.1,
   "DefaultTitleFont": "Assets/Font/Default/defaultTitleFont.ttf",
-  "DefaultFont": "Assets/Font/Default/defaultFont.ttf"
+  "DefaultFont": "Assets/Font/Default/defaultFont.ttf",
+  "DefaultPanel": "Assets/Textures/Default/defaultPanel.png",
+  "DefaultButton": "Assets/Textures/Default/defaultButton.png"
 }

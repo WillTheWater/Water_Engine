@@ -35,5 +35,7 @@ namespace we
         JoystickDeadzone = Config["JoystickDeadzone"];
         DefaultTitleFont = Config["DefaultTitleFont"];
         DefaultFont = Config["DefaultFont"];
+        DefaultPanel = Config["DefaultPanel"];
+        DefaultButton = Config["DefaultButton"];
     }
 }
