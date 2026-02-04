@@ -21,6 +21,9 @@ namespace we
 
     WaterEngine::~WaterEngine()
     {
+        Subsystem.GUI.reset();
+        Subsystem.World.reset();
+        Subsystem.Render.reset();
         Asset().Shutdown();
     }
 

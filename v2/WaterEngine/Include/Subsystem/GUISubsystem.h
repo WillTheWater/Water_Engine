@@ -6,8 +6,6 @@
 #pragma once
 
 #include "Utility/CoreMinimal.h"
-#include <TGUI/Backend/SFML-Graphics.hpp>
-#include <tgui/TGUI.hpp>
 
 namespace we
 {
@@ -18,12 +16,8 @@ namespace we
 	public:
 		GUISubsystem(GameWindow& Window);
 
-		void AddWidget(const tgui::Widget::Ptr& Widget);
-		void RemoveWidget(const tgui::Widget::Ptr& Widget);
-
 	private:
 		GameWindow& Window;
-		tgui::Gui GUI;
 
 	private:
 		friend class WaterEngine;

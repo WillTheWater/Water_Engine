@@ -14,9 +14,7 @@ include(FetchContent)
 # Disable Network Module
 set(SFML_BUILD_NETWORK OFF) 
 # Use std::format for spdlog
-set(SPDLOG_USE_STD_FORMAT ON) 
-# TGUI Backend
-set(TGUI_BACKEND SFML_GRAPHICS) 
+set(SPDLOG_USE_STD_FORMAT ON)
 
 # SFML 3.0.2
 set(SFML_BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
@@ -32,9 +30,6 @@ FetchContent_Declare(json URL https://github.com/nlohmann/json/releases/download
 # spdlog
 FetchContent_Declare(logs URL https://github.com/gabime/spdlog/archive/refs/tags/v1.17.0.tar.gz)
 
-# TGUI
-FetchContent_Declare(tgui URL https://github.com/texus/TGUI/archive/refs/tags/v1.11.0.tar.gz)
-
 # magic_enum
 FetchContent_Declare(enum URL https://github.com/Neargye/magic_enum/archive/refs/tags/v0.9.7.tar.gz)
 
@@ -44,7 +39,7 @@ set(PHYSFS_BUILD_TEST OFF CACHE BOOL "" FORCE)
 FetchContent_Declare(physicsfs URL https://github.com/icculus/physfs/archive/refs/tags/release-3.2.0.tar.gz)
 
 # Populate dependencies
-FetchContent_MakeAvailable(sfml box2d json logs tgui enum physicsfs)
+FetchContent_MakeAvailable(sfml box2d json logs enum physicsfs)
 # =============================================================================
 
 # =============================================================================
@@ -179,7 +174,6 @@ target_link_libraries(${WATER_ENGINE} PUBLIC
     box2d
     nlohmann_json::nlohmann_json
     spdlog::spdlog
-    TGUI::TGUI
     magic_enum::magic_enum
     physfs-static
 )
