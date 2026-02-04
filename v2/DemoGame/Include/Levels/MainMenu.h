@@ -7,6 +7,7 @@
 
 #include "Utility/CoreMinimal.h"
 #include "Framework/World/World.h"
+#include "Utility/Delegate.h"
 
 namespace we
 {
@@ -14,10 +15,24 @@ namespace we
     {
     public:
         explicit MainMenu(EngineSubsystem& Subsystem);
+        ~MainMenu();
         virtual void Render() override;
 
+        Delegate<> OnPlayPressed;
+        Delegate<> OnQuitPressed;
     private:
         shared<texture> BgTexture;
         optional<sprite> Background;
+
+    private:
+        void CreateUI();
+        void HandlePlay();
+        void HandleQuit();
+
+        // TGUI widgets Test
+        tgui::Group::Ptr UIGroup;
+        tgui::Button::Ptr PlayButton;
+        tgui::Button::Ptr QuitButton;
+
     };
 }

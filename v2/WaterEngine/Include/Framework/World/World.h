@@ -8,6 +8,7 @@
 #include "Utility/CoreMinimal.h"
 #include "Framework/World/Object/Object.h"
 #include "EngineConfig.h"
+#include <tgui/TGUI.hpp>
 
 namespace we
 {

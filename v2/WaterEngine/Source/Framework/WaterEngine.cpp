@@ -50,6 +50,7 @@ namespace we
                 const auto CorrectedView = Subsystem.Render->ConstrainView(Window->getSize());
                 Window->setView(CorrectedView);
             };
+        Subsystem.GUI = make_unique<GUISubsystem>(*Window);
         WindowCursor = make_unique<Cursor>(*Window);
     }
 
@@ -57,6 +58,9 @@ namespace we
     {
         while (const auto Event = Window->pollEvent())
         {
+            if (Subsystem.GUI->HandleEvents(*Event)) { continue; } // Blocked by GUI
+
+            // Otherwise game input
             Event->visit(GameWindowEventHandler{ *Window });
             Subsystem.Input->HandleEvent(*Event);
         }
@@ -99,6 +103,8 @@ namespace we
 
         Window->draw(sprite(Subsystem.Render->FinishRender()));
 
+        Subsystem.GUI->Render();
+
         WindowCursor->Render();
 
         Window->display();
@@ -106,7 +112,7 @@ namespace we
 
     bool WaterEngine::IsRunning() const
     {
-        return Window->isOpen();
+        return Window->isOpen() && !bExitRequested;
     }
 
     bool we::WaterEngine::HasFocus() const
@@ -117,5 +123,11 @@ namespace we
     void WaterEngine::ConstrainRender()
     {
         Subsystem.Render->ConstrainView(Window->getSize());
+    }
+
+    void WaterEngine::Quit()
+    {
+        LOG("Engine: Exit requested. Finishing current frame...");
+        bExitRequested = true;
     }
 }

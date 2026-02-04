@@ -25,6 +25,7 @@ namespace we
 
 		bool IsRunning() const;
 		bool HasFocus() const;
+		void Quit();
 
 	public:
 		virtual void Tick(float DeltaTime);
@@ -35,6 +36,7 @@ namespace we
 	private:
 		unique<GameWindow> Window;
 		unique<Cursor> WindowCursor;
+		bool bExitRequested = false;
 
 	private:
 		void Configure();

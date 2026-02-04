@@ -17,7 +17,7 @@ namespace we
     public:
         explicit WorldSubsystem(EngineSubsystem& Subsystem);
         template<typename WorldType>
-        weak<World> LoadWorld();
+        weak<WorldType> LoadWorld();
 
         void UnloadWorld();
         shared<World> GetCurrentWorld() const { return CurrentWorld; }
@@ -29,9 +29,10 @@ namespace we
     };
 
     template<typename WorldType>
-    inline weak<World> WorldSubsystem::LoadWorld()
+    inline weak<WorldType> WorldSubsystem::LoadWorld()
     {
-        CurrentWorld = make_shared<WorldType>(Subsystem);
-        return CurrentWorld;
+        shared<WorldType> NewWorld = make_shared<WorldType>(Subsystem);
+        CurrentWorld = NewWorld;
+        return NewWorld;
     }
 }

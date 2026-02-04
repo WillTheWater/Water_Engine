@@ -40,6 +40,7 @@ namespace we
 		float JoystickDeadzone;
 		string DefaultTitleFont;
 		string DefaultFont;
+		string DefaultTGUITheme;
 	};
 
 	// Global Accessor

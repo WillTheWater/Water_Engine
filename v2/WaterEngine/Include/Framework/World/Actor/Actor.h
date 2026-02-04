@@ -25,7 +25,6 @@ namespace we
 		virtual void Destroy() override;
 
 	public:
-		// ================= TRANSFORMS =================
 		void SetPosition(const vec2f& Position);
 		vec2f GetPosition() const;
 

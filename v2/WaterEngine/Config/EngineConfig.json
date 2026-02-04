@@ -19,5 +19,6 @@
   "DefaultCursorSpeed": 1000,
   "JoystickDeadzone": 0.1,
   "DefaultTitleFont": "Assets/Font/Default/defaultTitleFont.ttf",
-  "DefaultFont": "Assets/Font/Default/defaultFont.ttf"
+  "DefaultFont": "Assets/Font/Default/defaultFont.ttf",
+  "DefaultTGUITheme": "Assets/TGUI/defaultTheme.txt"
 }

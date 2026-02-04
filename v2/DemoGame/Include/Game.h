@@ -24,6 +24,9 @@ namespace we
         Game();
         virtual void Tick(float DeltaTime) override;
 
+        void HandleStartGame();
+        void HandleExitGame();
+
     private:
         void BindInputs();
         void OnStateEnterHandler();

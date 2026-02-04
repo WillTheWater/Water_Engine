@@ -13,6 +13,7 @@
 #include "Subsystem/InputSubsystem.h"
 #include "Subsystem/WorldSubsystem.h"
 #include "Subsystem/GameStateSubsystem.h"
+#include "Subsystem/GUISubsystem.h"
 
 namespace we
 {
@@ -25,5 +26,6 @@ namespace we
 		unique<InputSubsystem> Input;
 		unique<WorldSubsystem> World;
 		unique<GameStateSubsystem> GameState;
+		unique<GUISubsystem> GUI;
 	};
 }

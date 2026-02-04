@@ -38,7 +38,6 @@ namespace we
 
     void Game::Tick(float DeltaTime)
     {
-        // Request state changes
         if (Subsystem.Input->IsJustPressed(static_cast<int>(GameAction::MainMenu)))
         {
             Subsystem.GameState->RequestStateChange(GameState::MainMenu);
@@ -60,7 +59,11 @@ namespace we
         {
         case GameState::MainMenu:
             LOG("Main Menu");
-            Subsystem.World->LoadWorld<MainMenu>();
+            if (auto Menu = Subsystem.World->LoadWorld<MainMenu>().lock())
+            {
+                Menu->OnPlayPressed.Bind(this, &Game::HandleStartGame);
+                Menu->OnQuitPressed.Bind(this, &Game::HandleExitGame);
+            }
             break;
         case GameState::Level1:
             LOG("Level 1");
@@ -74,5 +77,15 @@ namespace we
         default:
             break;
         }
+    }
+
+    void Game::HandleStartGame()
+    {
+        Subsystem.GameState->RequestStateChange(GameState::Level1);
+    }
+
+    void Game::HandleExitGame()
+    {
+        Quit();
     }
 }

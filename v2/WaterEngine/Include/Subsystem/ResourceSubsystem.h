@@ -8,6 +8,7 @@
 #include "Utility/CoreMinimal.h"
 #include "Interface/IAssetDirector.h"
 #include "Utility/Log.h"
+#include <tgui/TGUI.hpp>
 #include <queue>
 #include <mutex>
 #include <functional>
@@ -27,6 +28,7 @@ namespace we
 
         shared<texture> LoadTexture(const string& Path);
         shared<font> LoadFont(const string& Path);
+        shared<tgui::Font> LoadTGUIFont(const string& Path);
         shared<soundBuffer> LoadSound(const string& Path);
 
         void ProcessDeferredFlush(size_t MaxPerFrame);
@@ -40,6 +42,7 @@ namespace we
 
         dictionary<string, weak<texture>> LoadedTextures;
         dictionary<string, weak<font>> LoadedFonts;
+        dictionary<string, tgui::Font> LoadedTGUIFonts;
         dictionary<string, weak<soundBuffer>> LoadedSounds;
         dictionary<string, list<uint8>> FontBuffers;
 
