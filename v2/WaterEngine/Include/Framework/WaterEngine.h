@@ -8,7 +8,6 @@
 #include "Utility/CoreMinimal.h"
 #include "Framework/EngineSubsystem.h"
 #include "Framework/GameWindow.h"
-#include "UI/Cursor/Cursor.h"
 
 namespace we
 {
@@ -41,6 +40,6 @@ namespace we
 		void Configure();
 		void Construct();
 		void WindowInit();
-		void ConstrainRender();
+		void ConstrainRender(vec2u NewSize);
 	};
 }

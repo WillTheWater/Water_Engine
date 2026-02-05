@@ -6,17 +6,14 @@
 #include "Framework/GameWindow.h"
 #include "EngineConfig.h"
 #include "Subsystem/ResourceSubsystem.h"
-#include "Utility/Log.h"
 
 namespace we
 {
     GameWindow::GameWindow()
         : WindowedPosition{ vec2i(sf::VideoMode::getDesktopMode().size.x / 4, sf::VideoMode::getDesktopMode().size.y / 4) }
         , bIsFullscreen{ EC.FullscreenMode }
-        , MinimumSize{ EC.WindowMinimumSize }
-        , AspectRatio{ EC.AspectRatio }
     {
-        const sf::VideoMode mode(static_cast<sf::Vector2u>(EC.WindowSize));
+        const sf::VideoMode mode(static_cast<vec2u>(EC.WindowSize));
         const auto style = EC.FullscreenMode ? sf::Style::None : sf::Style::Default;
         const auto state = EC.FullscreenMode ? sf::State::Fullscreen : sf::State::Windowed;
         CreateGameWindow(mode, style, state);
@@ -24,30 +21,26 @@ namespace we
 
     void GameWindow::onResize()
     {
-        vec2u CurrentSize = getSize();
+        const vec2f TargetRes = vec2f(EC.AspectRatio);
+        const float TargetRatio = TargetRes.x / TargetRes.y;
 
-        // Enforce minimum Size
-        if (CurrentSize.x < MinimumSize.x || CurrentSize.y < MinimumSize.y)
+        vec2u NewSize = getSize();
+        NewSize.x = std::max(NewSize.x, static_cast<uint>(EC.WindowMinimumSize.x));
+        NewSize.y = std::max(NewSize.y, static_cast<uint>(EC.WindowMinimumSize.y));
+
+        float currentRatio = static_cast<float>(NewSize.x) / NewSize.y;
+
+        if (std::abs(currentRatio - TargetRatio) > 0.001f)
         {
-            CurrentSize = vec2u(MinimumSize);
-            setSize(CurrentSize);
+            if (currentRatio > TargetRatio)
+                NewSize.x = static_cast<uint>(NewSize.y * TargetRatio);
+            else
+                NewSize.y = static_cast<uint>(NewSize.x / TargetRatio);
         }
 
-        // Enforce aspect ratio
-        float targetRatio = AspectRatio.x / AspectRatio.y;
-        float currentRatio = static_cast<float>(CurrentSize.x) / static_cast<float>(CurrentSize.y);
-
-        if (std::abs(currentRatio - targetRatio) > 0.01f)
+        if (NewSize != getSize())
         {
-            if (currentRatio > targetRatio) 
-            {
-                CurrentSize.x = static_cast<uint32_t>(CurrentSize.y * targetRatio);
-            }
-            else 
-            {
-                CurrentSize.y = static_cast<uint32_t>(CurrentSize.x / targetRatio);
-            }
-            setSize(CurrentSize);
+            setSize(NewSize);
         }
     }
 
@@ -70,7 +63,7 @@ namespace we
         }
         else
         {
-            setFramerateLimit(static_cast<unsigned int>(EC.TargetFPS));
+            setFramerateLimit(static_cast<uint>(EC.TargetFPS));
         }
     }
 
@@ -97,7 +90,7 @@ namespace we
             CreateGameWindow(Mode, sf::Style::Default, sf::State::Windowed);
             setPosition(WindowedPosition);
         }
-        OnResize(getSize());
+        EventWindowResized();
     }
 
     void GameWindow::EventWindowClose()
@@ -107,7 +100,7 @@ namespace we
 
     void GameWindow::EventWindowResized()
     {
-        OnResize(getSize());
+        OnResize.Broadcast(getSize());
     }
 
     void GameWindow::EventWindowFocusLost()

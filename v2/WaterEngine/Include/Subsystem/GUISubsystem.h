@@ -10,30 +10,22 @@ namespace we
 {
 	class Widget;
 	class GameWindow;
-	class Cursor;
 
 	class GUISubsystem
 	{
 	public:
-		explicit GUISubsystem(GameWindow& InWindow);
+		explicit GUISubsystem(GameWindow& Window);
 		~GUISubsystem();
 
 		void Update(float DeltaTime);
 		void Render();
 
-		void HandleMousePress();
-		void HandleMouseRelease();
-
 		void AddWidget(shared<Widget> InWidget);
 		void RemoveWidget(Widget* InWidget);
 		void Clear();
 
-		vec2f GetMousePosition() const;
-
 	private:
 		GameWindow& Window;
 		list<shared<Widget>> Widgets;
-		Widget* HoveredWidget = nullptr;
-		Widget* PressedWidget = nullptr;
 	};
 }

@@ -11,10 +11,10 @@ namespace we
 {
     class GameWindow;
 
-    class Cursor
+    class CursorSubsystem
     {
     public:
-        Cursor(GameWindow& Window);
+        CursorSubsystem(GameWindow& Window);
 
         void Update(float DeltaTime);
         void Render() const;

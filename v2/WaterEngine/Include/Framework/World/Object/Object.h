@@ -17,7 +17,7 @@ namespace we
 		virtual ~Object();
 
 		bool IsPendingDestroy() const;
-		uint32 GetID() const { return ObjectID; }
+		uint GetID() const { return ObjectID; }
 
 		Delegate<Object*> OnDestroy;
 
@@ -26,7 +26,7 @@ namespace we
 
 	private:
 		bool bIsPendingDestroy;
-		uint32 ObjectID;
-		static uint32 NextID;
+		uint ObjectID;
+		static uint NextID;
 	};
 }

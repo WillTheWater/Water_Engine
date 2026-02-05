@@ -9,6 +9,7 @@
 
 #include "Utility/CoreMinimal.h"
 #include "Framework/GameWindowEventHandler.h"
+#include "Utility/Delegate.h"
 
 namespace we
 {
@@ -18,7 +19,7 @@ namespace we
 		GameWindow();
 
 	public:
-		std::function<void(vec2u)> OnResize;
+		Delegate<vec2u> OnResize;
 
 	protected:
 		void onResize() override;
@@ -26,8 +27,6 @@ namespace we
 	private:
 		vec2i WindowedPosition;
 		bool bIsFullscreen;
-		vec2f MinimumSize;
-		vec2f AspectRatio;
 
 	private:
 		friend GameWindowEventHandler;
@@ -52,6 +51,5 @@ namespace we
 		
 		void EventMouseButtonPressed();
 		void EventMouseButtonReleased();
-
 	};
 }

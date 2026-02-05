@@ -47,13 +47,9 @@ namespace we
     void WaterEngine::WindowInit()
     {
         Window = make_unique<GameWindow>();
-        Window->OnResize = [this](vec2u newSize)
-            {
-                const auto CorrectedView = Subsystem.Render->ConstrainView(Window->getSize());
-                Window->setView(CorrectedView);
-            };
+        Window->OnResize.Bind(this, &WaterEngine::ConstrainRender);
         Subsystem.GUI = make_unique<GUISubsystem>(*Window);
-        Subsystem.GameCursor = make_unique<Cursor>(*Window);
+        Subsystem.Cursor = make_unique<CursorSubsystem>(*Window);
     }
 
     void WaterEngine::ProcessEvents()
@@ -76,7 +72,8 @@ namespace we
         Tick(Subsystem.Time->GetDeltaTime());
         if (Subsystem.GameState->IsTransitionPending()) { Subsystem.GameState->ApplyPendingState(); }
         Subsystem.Input->ProcessHeld();
-        Subsystem.GameCursor->Update(Subsystem.Time->GetDeltaTime());
+        Subsystem.Cursor->Update(Subsystem.Time->GetDeltaTime());
+        Subsystem.GUI->Update(Subsystem.Time->GetDeltaTime());
         if (auto World = Subsystem.World->GetCurrentWorld())
         {
             World->BeginPlayGlobal();
@@ -103,7 +100,7 @@ namespace we
 
         Subsystem.GUI->Render();
 
-        Subsystem.GameCursor->Render();
+        Subsystem.Cursor->Render();
 
         Window->display();
     }
@@ -118,9 +115,9 @@ namespace we
         return Window->hasFocus();
     }
 
-    void WaterEngine::ConstrainRender()
+    void WaterEngine::ConstrainRender(vec2u NewSize)
     {
-        Subsystem.Render->ConstrainView(Window->getSize());
+        Window->setView(Subsystem.Render->ConstrainView(NewSize));
     }
 
     void WaterEngine::Quit()

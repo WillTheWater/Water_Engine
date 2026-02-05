@@ -3,15 +3,14 @@
 // Copyright(C) 2026 Will The Water
 // =============================================================================
 
-#include "UI/Cursor/Cursor.h"
+#include "UI/Cursor/CursorSubsystem.h"
 #include "Framework/GameWindow.h"
 #include "Subsystem/ResourceSubsystem.h"
 #include "EngineConfig.h"
 
 namespace we
 {
-    // CHANGED: Constructor takes InputSubsystem
-    Cursor::Cursor(GameWindow& Window)
+    CursorSubsystem::CursorSubsystem(GameWindow& Window)
         : Window(Window)
         , CursorShape(EC.DefaultCursorSize)
         , CursorSpeed(EC.DefaultCursorSpeed)
@@ -20,7 +19,7 @@ namespace we
         InitializeCursor();
     }
 
-    void Cursor::InitializeCursor()
+    void CursorSubsystem::InitializeCursor()
     {
         CursorShape.setFillColor(sf::Color::White);
         CursorTexture = Asset().LoadTexture(EC.DefaultCursor);
@@ -28,7 +27,7 @@ namespace we
         CursorShape.setPosition(EC.WindowSize / 2.f);
     }
 
-    void Cursor::Update(float DeltaTime)
+    void CursorSubsystem::Update(float DeltaTime)
     {
         const sf::Vector2f JoystickDirection(
             sf::Joystick::getAxisPosition(0, sf::Joystick::Axis::X) / 100,
@@ -52,44 +51,44 @@ namespace we
         }
     }
 
-    void Cursor::Render() const
+    void CursorSubsystem::Render() const
     {
         if (!bIsVisible) return;
         
         Window.draw(CursorShape);
     }
 
-    void Cursor::SetSpeed(float Speed)
+    void CursorSubsystem::SetSpeed(float Speed)
     {
         CursorSpeed = Speed;
     }
 
-    float Cursor::GetSpeed() const
+    float CursorSubsystem::GetSpeed() const
     {
         return CursorSpeed;
     }
 
-    void Cursor::SetVisibility(bool Visible)
+    void CursorSubsystem::SetVisibility(bool Visible)
     {
         bIsVisible = Visible;
     }
 
-    bool Cursor::IsVisible() const
+    bool CursorSubsystem::IsVisible() const
     {
         return bIsVisible;
     }
 
-    void Cursor::SetPosition(vec2f Position)
+    void CursorSubsystem::SetPosition(vec2f Position)
     {
         sf::Mouse::setPosition(Window.mapCoordsToPixel(Position, Window.getDefaultView()), Window);
     }
 
-    vec2f Cursor::GetPosition() const
+    vec2f CursorSubsystem::GetPosition() const
     {
         return GetPosition(Window.getDefaultView());
     }
 
-    vec2f Cursor::GetPosition(const view& View) const
+    vec2f CursorSubsystem::GetPosition(const view& View) const
     {
         return Window.mapPixelToCoords(sf::Mouse::getPosition(Window), View);
     }
