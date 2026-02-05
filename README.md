@@ -44,8 +44,7 @@ Water Engine v2 represents a complete architectural redesign and expansion, focu
 - Event-driven and state-based **input management** supporting keyboard, mouse, and controllers  
 
 ### Rendering & UI
-- **2D Rendering** via SFML 3  
-- Integrated **TGUI** for flexible user interfaces  
+- **2D Rendering** via SFML 3   
 - Window system supporting **borderless fullscreen, windowed, and dynamic resizing**  
 - Full support for **render scaling and aspect ratio management**
 
