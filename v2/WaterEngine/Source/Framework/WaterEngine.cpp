@@ -42,6 +42,7 @@ namespace we
         Subsystem.Input = make_unique<InputSubsystem>();
         Subsystem.World = make_unique<WorldSubsystem>(Subsystem);
         Subsystem.GameState = make_unique<GameStateSubsystem>();
+        Subsystem.GameState->OnQuitRequested.Bind(this, &WaterEngine::Quit);
     }
 
     void WaterEngine::WindowInit()
@@ -58,6 +59,7 @@ namespace we
         {
             Event->visit(GameWindowEventHandler{ *Window });
             Subsystem.Input->HandleEvent(*Event);
+            Subsystem.GUI->ProcessEvent(*Event);
         }
     }
 

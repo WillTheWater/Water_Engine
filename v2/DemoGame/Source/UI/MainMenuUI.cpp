@@ -28,18 +28,15 @@ namespace we
 
 	void MainMenuUI::CreateUI()
 	{
-		// Create panel - size from texture, origin centered
-		MenuPanel = make_shared<Panel>(EC.DefaultPanel);
-		MenuPanel->SetPosition({ EC.WindowSize.x / 2.f, EC.WindowSize.y * 0.83f });
+		MenuPanel = make_shared<Panel>(Subsystem, EC.DefaultPanel);
+		MenuPanel->SetLocalOffset({ EC.WindowSize.x * 0.5f, EC.WindowSize.y * 0.83f });
 
-		// Play button - size from texture, origin centered
-		PlayButton = make_shared<Button>("Play", EC.DefaultButton);
-		PlayButton->SetPosition({ 0, -80 });
+		PlayButton = make_shared<Button>(Subsystem, "Play", EC.DefaultButton);
+		PlayButton->SetLocalOffset({ 0, -40 });
 		PlayButton->OnClicked.Bind(this, &MainMenuUI::OnPlayClicked);
 
-		// Quit button
-		QuitButton = make_shared<Button>("Quit", EC.DefaultButton);
-		QuitButton->SetPosition({ 0, 80 });
+		QuitButton = make_shared<Button>(Subsystem, "Quit", EC.DefaultButton);
+		QuitButton->SetLocalOffset({ 0, 60 });
 		QuitButton->OnClicked.Bind(this, &MainMenuUI::OnQuitClicked);
 
 		MenuPanel->AddChild(PlayButton);
@@ -54,6 +51,6 @@ namespace we
 
 	void MainMenuUI::OnQuitClicked()
 	{
-		// TODO: Quit request to engine
+		Subsystem.GameState->OnQuitRequested.Broadcast();
 	}
 }

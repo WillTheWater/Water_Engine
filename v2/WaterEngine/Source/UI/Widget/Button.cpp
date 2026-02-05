@@ -1,24 +1,48 @@
+// =============================================================================
+// Water Engine v2.0.0
+// Copyright(C) 2026 Will The Water
+// =============================================================================
+
 #include "UI/Widget/Button.h"
-#include "Subsystem/RenderSubsystem.h"
-#include "Subsystem/ResourceSubsystem.h"
+#include "Framework/EngineSubsystem.h"
 #include "Framework/GameWindow.h"
+#include "Subsystem/ResourceSubsystem.h"
+#include "UI/Cursor/CursorSubsystem.h"
 
 namespace we
 {
-	Button::Button(const string& InLabel, const string& TexturePath)
-		: Label{ InLabel }
+	Button::Button(EngineSubsystem& Subsystem, const string& Label, const string& TexturePath)
+		: Widget{ Subsystem }
+		, Label{ Label }
 	{
 		BgTexture = Asset().LoadTexture(TexturePath);
 		if (BgTexture)
 		{
 			BgSprite.emplace(*BgTexture);
 			Size = vec2f(BgTexture->getSize());
-			UpdateSprite();
+			BgSprite->setOrigin(Size.componentWiseMul({ 0.5f, 0.5f }));
+		}
+		TextFont = Asset().LoadFont(EC.DefaultTitleFont);
+		if (TextFont)
+		{
+			LabelText.emplace(*TextFont, Label, 24);
+			LabelText->setFillColor(color::Black);
 		}
 	}
 
 	void Button::Update(float DeltaTime)
 	{
+		bool bWasHovered = bHovered;
+		bool bWasPressed = bPressed;
+
+		bHovered = Contains(Subsystem.Cursor->GetPosition());
+		bPressed = bHovered && Subsystem.GUI->IsMousePressed();
+
+		if (bWasPressed && !bPressed && bHovered)
+		{
+			OnClicked.Broadcast();
+		}
+
 		UpdateVisualState();
 	}
 
@@ -26,42 +50,19 @@ namespace we
 	{
 		if (!bVisible || !BgSprite) return;
 
-		BgSprite->setPosition(Position);
+		BgSprite->setPosition(GetWorldPosition());
+		BgSprite->setRotation(GetWorldRotation());
+		BgSprite->setScale(GetWorldScale());
 		Window.draw(*BgSprite);
 
-		// TODO: Render text label
-	}
-
-	bool Button::HandleClick(const vec2f& MousePos)
-	{
-		if (!bVisible) return false;
-		OnPress();
-		return true;
-	}
-
-	void Button::OnHover()
-	{
-		bHovered = true;
-	}
-
-	void Button::OnUnhover()
-	{
-		bHovered = false;
-		bPressed = false;
-	}
-
-	void Button::OnPress()
-	{
-		bPressed = true;
-	}
-
-	void Button::OnRelease()
-	{
-		if (bPressed && bHovered)
+		if (LabelText)
 		{
-			OnClicked.Broadcast();
+			sf::FloatRect TextBounds = LabelText->getLocalBounds();
+			LabelText->setOrigin({ TextBounds.position.x + TextBounds.size.x / 2.f,
+								   TextBounds.position.y + TextBounds.size.y / 2.f });
+			LabelText->setPosition(GetWorldPosition());
+			Window.draw(*LabelText);
 		}
-		bPressed = false;
 	}
 
 	void Button::UpdateVisualState()
@@ -69,16 +70,10 @@ namespace we
 		if (!BgSprite) return;
 
 		color TargetColor = NormalColor;
-		if (bPressed) TargetColor = PressedColor;
+		if (bPressed && bHovered) TargetColor = PressedColor;
 		else if (bHovered) TargetColor = HoverColor;
 
 		CurrentColor = TargetColor;
 		BgSprite->setColor(CurrentColor);
-	}
-
-	void Button::UpdateSprite()
-	{
-		if (!BgSprite) return;
-		BgSprite->setOrigin(vec2f(BgTexture->getSize()).componentWiseMul({ 0.5f, 0.5f }));
 	}
 }

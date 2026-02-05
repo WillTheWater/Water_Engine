@@ -68,8 +68,8 @@ set(WATER_ENGINE_HEADERS
     Include/Subsystem/WorldSubsystem.h
     Include/Subsystem/GameStateSubsystem.h
     Include/Subsystem/GUISubsystem.h
+    Include/UI/Cursor/CursorSubsystem.h
 
-    "Include/UI/Cursor/CursorSubsystem.h"
     Include/UI/Clipboard/Clipboard.h
 
     Include/UI/Widget/Panel.h
@@ -112,8 +112,8 @@ set(WATER_ENGINE_SOURCES
     Source/Subsystem/WorldSubsystem.cpp
     Source/Subsystem/GameStateSubsystem.cpp
     Source/Subsystem/GUISubsystem.cpp
+    Source/UI/Cursor/CursorSubsystem.cpp
 
-    "Source/UI/Cursor/CursorSubsystem.cpp"
     Source/UI/Clipboard/Clipboard.cpp
 
     Source/UI/Widget/Panel.cpp

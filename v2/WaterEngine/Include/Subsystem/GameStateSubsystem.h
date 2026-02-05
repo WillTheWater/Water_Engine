@@ -28,6 +28,7 @@ namespace we
 
         Delegate<> OnStateEnter;
         Delegate<> OnStateExit;
+        Delegate<> OnQuitRequested;
 
     private:
         GameState CurrentState = GameState::None;

@@ -4,7 +4,7 @@
 // =============================================================================
 
 #include "Subsystem/InputSubsystem.h"
-#include "Input/InputEventHandler.h"  // NEW: Include event handler
+#include "Input/InputEventHandler.h"
 
 namespace we
 {

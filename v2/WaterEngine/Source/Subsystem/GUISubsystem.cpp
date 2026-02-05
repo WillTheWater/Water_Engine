@@ -6,6 +6,8 @@
 #include "Subsystem/GUISubsystem.h"
 #include "Framework/GameWindow.h"
 #include "UI/Widget/Widget.h"
+#include "Input/InputBinding.h"
+#include "Utility/Log.h"
 
 namespace we
 {
@@ -17,6 +19,14 @@ namespace we
 	GUISubsystem::~GUISubsystem()
 	{
 		Clear();
+	}
+
+	void GUISubsystem::ProcessEvent(const sf::Event& Event)
+	{
+		Event.visit([this](const auto& Type)
+			{
+				this->HandleEvent(Type);
+			});
 	}
 
 	void GUISubsystem::Update(float DeltaTime)
@@ -63,5 +73,31 @@ namespace we
 	void GUISubsystem::Clear()
 	{
 		Widgets.clear();
+	}
+
+	void GUISubsystem::HandleEvent(const sf::Event::MouseButtonPressed&)
+	{
+		bMousePressed = true;
+	}
+
+	void GUISubsystem::HandleEvent(const sf::Event::MouseButtonReleased&)
+	{
+		bMousePressed = false;
+	}
+
+	void GUISubsystem::HandleEvent(const sf::Event::JoystickButtonPressed& Gamepad)
+	{
+		if (Input::HardwareToLogic(Gamepad.button, Gamepad.joystickId) == GamepadButton::South)
+		{
+			bMousePressed = true;
+		}
+	}
+
+	void GUISubsystem::HandleEvent(const sf::Event::JoystickButtonReleased& Gamepad)
+	{
+		if (Input::HardwareToLogic(Gamepad.button, Gamepad.joystickId) == GamepadButton::South)
+		{
+			bMousePressed = false;
+		}
 	}
 }

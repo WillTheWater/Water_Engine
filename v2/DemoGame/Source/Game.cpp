@@ -5,7 +5,6 @@
 
 #include "Game.h"
 #include "Framework/World/World.h"
-#include "Framework/World/Actor/Actor.h"
 #include "Utility/Log.h"
 
 // ========================= LEVELS =========================
@@ -19,69 +18,31 @@ namespace we
 		return make_unique<Game>();
 	}
 
-    Game::Game()
-        : WaterEngine{}
-    {
-        BindInputs();
+	Game::Game()
+		: WaterEngine{}
+	{
+		Subsystem.GameState->OnStateEnter.Bind(this, &Game::OnStateEnter);
+		Subsystem.GameState->RequestStateChange(GameState::MainMenu);
+	}
 
-        Subsystem.GameState->OnStateEnter.Bind(this, &Game::OnStateEnterHandler);
-        Subsystem.GameState->RequestStateChange(GameState::MainMenu);
-    }
+	void Game::OnStateEnter()
+	{
+		Subsystem.World->UnloadWorld();
 
-    void Game::BindInputs()
-    {
-        Subsystem.Input->Bind(static_cast<int>(GameAction::MainMenu),
-            Input::Keyboard{ sf::Keyboard::Scan::Num1 });
-        Subsystem.Input->Bind(static_cast<int>(GameAction::Level1),
-            Input::Keyboard{ sf::Keyboard::Scan::Num2 });
-    }
+		switch (Subsystem.GameState->GetCurrentState())
+		{
+		case GameState::MainMenu:
+			LOG("Main Menu");
+			Subsystem.World->LoadWorld<MainMenu>();
+			break;
 
-    void Game::Tick(float DeltaTime)
-    {
-        if (Subsystem.Input->IsJustPressed(static_cast<int>(GameAction::MainMenu)))
-        {
-            Subsystem.GameState->RequestStateChange(GameState::MainMenu);
-        }
-        else if (Subsystem.Input->IsJustPressed(static_cast<int>(GameAction::Level1)))
-        {
-            Subsystem.GameState->RequestStateChange(GameState::Level1);
-        }
-    }
+		case GameState::Level1:
+			LOG("Level 1");
+			Subsystem.World->LoadWorld<LevelOne>();
+			break;
 
-    void Game::OnStateEnterHandler()
-    {
-        auto State = Subsystem.GameState->GetCurrentState();
-
-        Subsystem.World->UnloadWorld();
-        TestActor.reset();
-
-        switch (State)
-        {
-        case GameState::MainMenu:
-            LOG("Main Menu");
-            Subsystem.World->LoadWorld<MainMenu>();
-            break;
-        case GameState::Level1:
-            LOG("Level 1");
-            {
-                auto NewWorld = Subsystem.World->LoadWorld<LevelOne>();
-                TestActor = NewWorld.lock()->SpawnActor<Actor>();
-                TestActor.lock()->CenterOrigin();
-                TestActor.lock()->SetPosition({ EC.WindowSize.x / 2, EC.WindowSize.y / 2 });
-            }
-            break;
-        default:
-            break;
-        }
-    }
-
-    void Game::HandleStartGame()
-    {
-        Subsystem.GameState->RequestStateChange(GameState::Level1);
-    }
-
-    void Game::HandleExitGame()
-    {
-        Quit();
-    }
+		default:
+			break;
+		}
+	}
 }

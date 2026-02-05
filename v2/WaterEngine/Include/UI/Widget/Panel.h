@@ -4,6 +4,7 @@
 // =============================================================================
 
 #pragma once
+
 #include "Utility/CoreMinimal.h"
 #include "UI/Widget/Widget.h"
 
@@ -12,7 +13,7 @@ namespace we
 	class Panel : public Widget
 	{
 	public:
-		Panel(const string& BackgroundTexturePath = "");
+		explicit Panel(EngineSubsystem& Subsystem, const string& BackgroundTexturePath = "");
 
 		void AddChild(shared<Widget> Child);
 		void RemoveChild(Widget* Child);
@@ -20,10 +21,6 @@ namespace we
 
 		virtual void Update(float DeltaTime) override;
 		virtual void Render(GameWindow& Window) override;
-		virtual bool HandleClick(const vec2f& MousePos) override;
-
-		virtual void OnHover() override;
-		virtual void OnUnhover() override;
 
 	private:
 		list<shared<Widget>> Children;

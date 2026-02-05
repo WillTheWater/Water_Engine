@@ -21,15 +21,6 @@ namespace we
 		return Font;
 	}
 
-	inline bool Contains(vec2f Point, vec2f Center, vec2f Size)
-	{
-		vec2f HalfSize = Size.componentWiseDiv({ 2, 2 });
-		return Point.x >= Center.x - HalfSize.x &&
-			Point.x <= Center.x + HalfSize.x &&
-			Point.y >= Center.y - HalfSize.y &&
-			Point.y <= Center.y + HalfSize.y;
-	}
-
 	inline bool IsOutsideWindowLeft(const shape& Bounds)
 	{
 		return Bounds.getPosition().x < Bounds.getGlobalBounds().size.x / 2.f;
@@ -57,7 +48,6 @@ namespace we
 			Point.y >= EC.WindowSize.y;
 	}
 
-	// Geometry helpers
 	inline optional<sf::FloatRect> Intersects(const shape& ObjectA, const shape& ObjectB)
 	{
 		return ObjectA.getGlobalBounds().findIntersection(ObjectB.getGlobalBounds());
@@ -81,6 +71,15 @@ namespace we
 	inline bool Contains(const circle& Circle, vec2f Point)
 	{
 		return DistanceSquared(Circle.getPosition(), Point) <= std::pow(Circle.getRadius(), 2);
+	}
+
+	inline bool Contains(vec2f Point, vec2f Center, vec2f Size)
+	{
+		vec2f HalfSize = Size.componentWiseDiv({ 2, 2 });
+		return Point.x >= Center.x - HalfSize.x &&
+			Point.x <= Center.x + HalfSize.x &&
+			Point.y >= Center.y - HalfSize.y &&
+			Point.y <= Center.y + HalfSize.y;
 	}
 
 	inline vec2f Lerp(vec2f Start, vec2f End, float Time)

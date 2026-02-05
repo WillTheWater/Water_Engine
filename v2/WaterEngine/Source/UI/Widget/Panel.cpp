@@ -4,15 +4,15 @@
 // =============================================================================
 
 #include "UI/Widget/Panel.h"
-#include "Subsystem/RenderSubsystem.h"
 #include "Subsystem/ResourceSubsystem.h"
 #include "Subsystem/GUISubsystem.h"
 #include "Framework/GameWindow.h"
-#include "Utility/WindowUtility.h"
+#include "Framework/EngineSubsystem.h"
 
 namespace we
 {
-	Panel::Panel(const string& BackgroundTexturePath)
+	Panel::Panel(EngineSubsystem& Subsystem, const string& BackgroundTexturePath)
+		: Widget{ Subsystem }
 	{
 		if (!BackgroundTexturePath.empty())
 		{
@@ -21,7 +21,7 @@ namespace we
 			{
 				BgSprite.emplace(*BgTexture);
 				Size = vec2f(BgTexture->getSize());
-				BgSprite->setOrigin(vec2f(BgTexture->getSize()).componentWiseMul({ 0.5f, 0.5f }));
+				BgSprite->setOrigin(Size.componentWiseMul({ 0.5f, 0.5f }));
 			}
 		}
 	}
@@ -30,6 +30,7 @@ namespace we
 	{
 		if (Child)
 		{
+			Child->SetParent(this);
 			Children.push_back(std::move(Child));
 		}
 	}
@@ -40,6 +41,7 @@ namespace we
 		{
 			if (it->get() == Child)
 			{
+				(*it)->SetParent(nullptr);
 				it = Children.erase(it);
 			}
 			else
@@ -51,6 +53,10 @@ namespace we
 
 	void Panel::ClearChildren()
 	{
+		for (auto& Child : Children)
+		{
+			Child->SetParent(nullptr);
+		}
 		Children.clear();
 	}
 
@@ -71,7 +77,9 @@ namespace we
 
 		if (BgSprite)
 		{
-			BgSprite->setPosition(Position);
+			BgSprite->setPosition(GetWorldPosition());
+			BgSprite->setRotation(GetWorldRotation());
+			BgSprite->setScale(GetWorldScale());
 			Window.draw(*BgSprite);
 		}
 
@@ -79,44 +87,8 @@ namespace we
 		{
 			if (Child->IsVisible())
 			{
-				vec2f OriginalPos = Child->GetPosition();
-				Child->SetPosition(Position + OriginalPos);
 				Child->Render(Window);
-				Child->SetPosition(OriginalPos);
 			}
-		}
-	}
-
-	bool Panel::HandleClick(const vec2f& MousePos)
-	{
-		if (!bVisible) return false;
-
-		for (auto it = Children.rbegin(); it != Children.rend(); ++it)
-		{
-			if ((*it)->HandleClick(MousePos))
-			{
-				return true;
-			}
-		}
-		return Contains(MousePos);
-	}
-
-	void Panel::OnHover()
-	{
-		//for (auto& Child : Children)
-		//{
-		//	if (Child->IsVisible() && Child->Contains(MousePos)) // Need mouse pos
-		//	{
-		//		Child->OnHover();
-		//	}
-		//}
-	}
-
-	void Panel::OnUnhover()
-	{
-		for (auto& Child : Children)
-		{
-			Child->OnUnhover();
 		}
 	}
 }
