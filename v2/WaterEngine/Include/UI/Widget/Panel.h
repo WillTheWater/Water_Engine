@@ -22,6 +22,9 @@ namespace we
 		virtual void Render(GameWindow& Window) override;
 		virtual bool HandleClick(const vec2f& MousePos) override;
 
+		virtual void OnHover() override;
+		virtual void OnUnhover() override;
+
 	private:
 		list<shared<Widget>> Children;
 		shared<texture> BgTexture;

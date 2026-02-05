@@ -35,7 +35,6 @@ namespace we
 
 	private:
 		unique<GameWindow> Window;
-		unique<Cursor> WindowCursor;
 		bool bExitRequested = false;
 
 	private:

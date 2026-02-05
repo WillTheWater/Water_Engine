@@ -5,23 +5,21 @@
 
 namespace we
 {
-	Button::Button(const string& Label, const string& TexturePath)
-		: Label{ Label }
+	Button::Button(const string& InLabel, const string& TexturePath)
+		: Label{ InLabel }
 	{
 		BgTexture = Asset().LoadTexture(TexturePath);
 		if (BgTexture)
 		{
 			BgSprite.emplace(*BgTexture);
+			Size = vec2f(BgTexture->getSize());
 			UpdateSprite();
 		}
 	}
 
 	void Button::Update(float DeltaTime)
 	{
-		if (BgSprite)
-		{
-			BgSprite->setColor(CurrentColor);
-		}
+		UpdateVisualState();
 	}
 
 	void Button::Render(GameWindow& Window)
@@ -36,17 +34,51 @@ namespace we
 
 	bool Button::HandleClick(const vec2f& MousePos)
 	{
-		if (!bVisible || !Contains(MousePos)) return false;
-
-		OnClicked.Broadcast();
+		if (!bVisible) return false;
+		OnPress();
 		return true;
+	}
+
+	void Button::OnHover()
+	{
+		bHovered = true;
+	}
+
+	void Button::OnUnhover()
+	{
+		bHovered = false;
+		bPressed = false;
+	}
+
+	void Button::OnPress()
+	{
+		bPressed = true;
+	}
+
+	void Button::OnRelease()
+	{
+		if (bPressed && bHovered)
+		{
+			OnClicked.Broadcast();
+		}
+		bPressed = false;
+	}
+
+	void Button::UpdateVisualState()
+	{
+		if (!BgSprite) return;
+
+		color TargetColor = NormalColor;
+		if (bPressed) TargetColor = PressedColor;
+		else if (bHovered) TargetColor = HoverColor;
+
+		CurrentColor = TargetColor;
+		BgSprite->setColor(CurrentColor);
 	}
 
 	void Button::UpdateSprite()
 	{
 		if (!BgSprite) return;
-
-		BgSprite->setOrigin(vec2f(BgTexture->getSize()).componentWiseMul({0.5f,0.5f}));
-		BgSprite->setPosition(Position);
+		BgSprite->setOrigin(vec2f(BgTexture->getSize()).componentWiseMul({ 0.5f, 0.5f }));
 	}
 }

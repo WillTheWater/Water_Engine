@@ -5,6 +5,7 @@
 
 #pragma once
 #include "Utility/CoreMinimal.h"
+#include "Utility/WindowUtility.h"
 
 namespace we
 {
@@ -28,7 +29,15 @@ namespace we
 		virtual void Render(GameWindow& Window) {}
 		virtual bool HandleClick(const vec2f& MousePos) { return false; }
 
-		bool Contains(const vec2f& Point) const;
+		virtual void OnHover() {}
+		virtual void OnUnhover() {}
+		virtual void OnPress() {}
+		virtual void OnRelease() {}
+
+		bool Contains(const vec2f& Point) const
+		{
+			return we::Contains(Point, Position, Size);
+		}
 
 	protected:
 		vec2f Position{ 0, 0 };

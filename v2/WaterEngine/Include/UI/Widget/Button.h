@@ -21,7 +21,13 @@ namespace we
 		virtual void Render(GameWindow& Window) override;
 		virtual bool HandleClick(const vec2f& MousePos) override;
 
+		virtual void OnHover() override;
+		virtual void OnUnhover() override;
+		virtual void OnPress() override;
+		virtual void OnRelease() override;
+
 	private:
+		void UpdateVisualState();
 		void UpdateSprite();
 
 		string Label;
@@ -33,6 +39,7 @@ namespace we
 		color PressedColor{ 150, 150, 150 };
 		color CurrentColor{ 200, 200, 200 };
 
+		bool bHovered = false;
 		bool bPressed = false;
 	};
 }

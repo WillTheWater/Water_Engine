@@ -9,12 +9,13 @@
 #include "Subsystem/ResourceSubsystem.h"
 #include "EngineConfig.h"
 #include "UI/Widget/Widget.h"
+#include "UI/Cursor/Cursor.h"
 #include "Subsystem/RenderSubsystem.h"
 
 namespace we
 {
-	GUISubsystem::GUISubsystem(GameWindow& Window)
-		: Window{ Window }
+	GUISubsystem::GUISubsystem(GameWindow& InWindow)
+		: Window{ InWindow }
 	{
 	}
 
@@ -23,8 +24,34 @@ namespace we
 		Clear();
 	}
 
+	vec2f GUISubsystem::GetMousePosition() const
+	{
+		return vec2f{0,0};
+	}
+
 	void GUISubsystem::Update(float DeltaTime)
 	{
+		vec2f MousePos = GetMousePosition();
+
+		// Update hover states
+		Widget* NewHovered = nullptr;
+		for (auto& Widget : Widgets)
+		{
+			if (Widget->IsVisible() && Widget->Contains(MousePos))
+			{
+				NewHovered = Widget.get();
+				break; // Topmost only
+			}
+		}
+
+		if (NewHovered != HoveredWidget)
+		{
+			if (HoveredWidget) HoveredWidget->OnUnhover();
+			if (NewHovered) NewHovered->OnHover();
+			HoveredWidget = NewHovered;
+		}
+
+		// Update all widgets
 		for (auto& Widget : Widgets)
 		{
 			if (Widget->IsVisible())
@@ -45,22 +72,29 @@ namespace we
 		}
 	}
 
-	bool GUISubsystem::HandleMousePress(const vec2f& MousePos)
+	void GUISubsystem::HandleMousePress()
 	{
+		vec2f MousePos = GetMousePosition();
+
 		for (auto& Widget : Widgets)
 		{
 			if (Widget->IsVisible() && Widget->Contains(MousePos))
 			{
 				PressedWidget = Widget.get();
-				return Widget->HandleClick(MousePos);
+				PressedWidget->OnPress();
+				Widget->HandleClick(MousePos);
+				return;
 			}
 		}
-		return false;
 	}
 
 	void GUISubsystem::HandleMouseRelease()
 	{
-		PressedWidget = nullptr;
+		if (PressedWidget)
+		{
+			PressedWidget->OnRelease();
+			PressedWidget = nullptr;
+		}
 	}
 
 	void GUISubsystem::AddWidget(shared<Widget> InWidget)
@@ -71,22 +105,21 @@ namespace we
 	void GUISubsystem::RemoveWidget(Widget* InWidget)
 	{
 		auto it = std::remove_if(Widgets.begin(), Widgets.end(),
-			[InWidget](const shared<Widget>& W) 
+			[InWidget](const shared<Widget>& W)
 			{
 				return W.get() == InWidget;
 			});
 
 		Widgets.erase(it, Widgets.end());
 
-		if (PressedWidget == InWidget)
-		{
-			PressedWidget = nullptr;
-		}
+		if (HoveredWidget == InWidget) HoveredWidget = nullptr;
+		if (PressedWidget == InWidget) PressedWidget = nullptr;
 	}
 
 	void GUISubsystem::Clear()
 	{
 		Widgets.clear();
+		HoveredWidget = nullptr;
 		PressedWidget = nullptr;
 	}
 }

@@ -53,7 +53,7 @@ namespace we
                 Window->setView(CorrectedView);
             };
         Subsystem.GUI = make_unique<GUISubsystem>(*Window);
-        WindowCursor = make_unique<Cursor>(*Window);
+        Subsystem.GameCursor = make_unique<Cursor>(*Window);
     }
 
     void WaterEngine::ProcessEvents()
@@ -76,7 +76,7 @@ namespace we
         Tick(Subsystem.Time->GetDeltaTime());
         if (Subsystem.GameState->IsTransitionPending()) { Subsystem.GameState->ApplyPendingState(); }
         Subsystem.Input->ProcessHeld();
-        WindowCursor->Update(Subsystem.Time->GetDeltaTime());
+        Subsystem.GameCursor->Update(Subsystem.Time->GetDeltaTime());
         if (auto World = Subsystem.World->GetCurrentWorld())
         {
             World->BeginPlayGlobal();
@@ -103,7 +103,7 @@ namespace we
 
         Subsystem.GUI->Render();
 
-        WindowCursor->Render();
+        Subsystem.GameCursor->Render();
 
         Window->display();
     }

@@ -6,7 +6,9 @@
 #include "UI/Widget/Panel.h"
 #include "Subsystem/RenderSubsystem.h"
 #include "Subsystem/ResourceSubsystem.h"
+#include "Subsystem/GUISubsystem.h"
 #include "Framework/GameWindow.h"
+#include "Utility/WindowUtility.h"
 
 namespace we
 {
@@ -15,9 +17,10 @@ namespace we
 		if (!BackgroundTexturePath.empty())
 		{
 			BgTexture = Asset().LoadTexture(BackgroundTexturePath);
-			if (BgTexture) 
-			{ 
-				BgSprite.emplace(*BgTexture); 
+			if (BgTexture)
+			{
+				BgSprite.emplace(*BgTexture);
+				Size = vec2f(BgTexture->getSize());
 				BgSprite->setOrigin(vec2f(BgTexture->getSize()).componentWiseMul({ 0.5f, 0.5f }));
 			}
 		}
@@ -76,13 +79,9 @@ namespace we
 		{
 			if (Child->IsVisible())
 			{
-				// Store original position
 				vec2f OriginalPos = Child->GetPosition();
-				// Calculate world position: panel center + child offset
-				vec2f WorldPos = Position + OriginalPos;
-				Child->SetPosition(WorldPos);
+				Child->SetPosition(Position + OriginalPos);
 				Child->Render(Window);
-				// Restore local position
 				Child->SetPosition(OriginalPos);
 			}
 		}
@@ -100,5 +99,24 @@ namespace we
 			}
 		}
 		return Contains(MousePos);
+	}
+
+	void Panel::OnHover()
+	{
+		//for (auto& Child : Children)
+		//{
+		//	if (Child->IsVisible() && Child->Contains(MousePos)) // Need mouse pos
+		//	{
+		//		Child->OnHover();
+		//	}
+		//}
+	}
+
+	void Panel::OnUnhover()
+	{
+		for (auto& Child : Children)
+		{
+			Child->OnUnhover();
+		}
 	}
 }

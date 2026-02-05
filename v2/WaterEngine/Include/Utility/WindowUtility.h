@@ -4,7 +4,6 @@
 // =============================================================================
 
 #pragma once
-
 #include "Utility/CoreMinimal.h"
 #include "EngineConfig.h"
 
@@ -20,6 +19,15 @@ namespace we
 	{
 		static const font Font(EC.DefaultFont);
 		return Font;
+	}
+
+	inline bool Contains(vec2f Point, vec2f Center, vec2f Size)
+	{
+		vec2f HalfSize = Size.componentWiseDiv({ 2, 2 });
+		return Point.x >= Center.x - HalfSize.x &&
+			Point.x <= Center.x + HalfSize.x &&
+			Point.y >= Center.y - HalfSize.y &&
+			Point.y <= Center.y + HalfSize.y;
 	}
 
 	inline bool IsOutsideWindowLeft(const shape& Bounds)
@@ -49,6 +57,7 @@ namespace we
 			Point.y >= EC.WindowSize.y;
 	}
 
+	// Geometry helpers
 	inline optional<sf::FloatRect> Intersects(const shape& ObjectA, const shape& ObjectB)
 	{
 		return ObjectA.getGlobalBounds().findIntersection(ObjectB.getGlobalBounds());

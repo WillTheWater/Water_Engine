@@ -14,6 +14,7 @@
 #include "Subsystem/WorldSubsystem.h"
 #include "Subsystem/GameStateSubsystem.h"
 #include "Subsystem/GUISubsystem.h"
+#include "UI/Cursor/Cursor.h"
 
 namespace we
 {
@@ -27,5 +28,6 @@ namespace we
 		unique<WorldSubsystem> World;
 		unique<GameStateSubsystem> GameState;
 		unique<GUISubsystem> GUI;
+		unique<Cursor> GameCursor;
 	};
 }
