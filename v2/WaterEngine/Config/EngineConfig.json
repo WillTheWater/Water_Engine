@@ -13,7 +13,7 @@
   "WindowIcon": "Assets/Icon/icon.png",
   "DefaultBackground": "Assets/Textures/Default/defaultBackground.png",
   "DefaultCursor": "Assets/Textures/Default/defaultCursor.png",
-  "StartupGlobalVolume": 50,
+  "StartupGlobalVolume": 60,
   "EnableKeyRepeat": false,
   "DefaultCursorSize": [ 64, 64 ],
   "DefaultCursorSpeed": 1000,
@@ -21,5 +21,10 @@
   "DefaultTitleFont": "Assets/Font/Default/defaultTitleFont.ttf",
   "DefaultFont": "Assets/Font/Default/defaultFont.ttf",
   "DefaultPanel": "Assets/Textures/Default/defaultPanel.png",
-  "DefaultButton": "Assets/Textures/Default/defaultButton.png"
+  "DefaultButton": "Assets/Textures/Default/defaultButton.png",
+  "DefaultMusic": "Assets/Audio/Default/defaultMusic.wav",
+  "DefaultAmbient": "/Assets/Audio/Default/defaultAmbient.wav",
+  "DefaultButtonHoverSound": "Assets/Audio/Default/defaultHover.wav",
+  "DefaultButtonClickSound": "Assets/Audio/Default/defaultClick.wav",
+  "MaxSFXStack": 16
 }

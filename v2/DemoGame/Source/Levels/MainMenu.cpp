@@ -21,6 +21,8 @@ namespace we
 		}
 
 		UI = make_unique<MainMenuUI>(Subsystem);
+		Subsystem.Audio->PlayMusic(EC.DefaultMusic);
+		Subsystem.Audio->PlayAmbient(EC.DefaultAmbient);
 	}
 
 	MainMenu::~MainMenu()

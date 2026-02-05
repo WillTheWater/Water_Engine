@@ -37,5 +37,10 @@ namespace we
         DefaultFont = Config["DefaultFont"];
         DefaultPanel = Config["DefaultPanel"];
         DefaultButton = Config["DefaultButton"];
+        DefaultMusic = Config["DefaultMusic"];
+        DefaultAmbient = Config["DefaultAmbient"];
+        DefaultButtonHoverSound = Config["DefaultButtonHoverSound"];
+        DefaultButtonClickSound = Config["DefaultButtonClickSound"];
+        MaxSFXStack = Config["MaxSFXStack"];
     }
 }

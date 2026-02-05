@@ -42,6 +42,11 @@ namespace we
 		string DefaultFont;
 		string DefaultPanel;
 		string DefaultButton;
+		string DefaultMusic;
+		string DefaultAmbient;
+		string DefaultButtonHoverSound;
+		string DefaultButtonClickSound;
+		size_t MaxSFXStack;
 	};
 
 	// Global Accessor

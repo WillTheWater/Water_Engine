@@ -8,12 +8,17 @@
 #include "Framework/GameWindow.h"
 #include "Subsystem/ResourceSubsystem.h"
 #include "UI/Cursor/CursorSubsystem.h"
+#include "Utility/Log.h"
 
 namespace we
 {
 	Button::Button(EngineSubsystem& Subsystem, const string& Label, const string& TexturePath)
 		: Widget{ Subsystem }
 		, Label{ Label }
+		, HoverSoundPath{EC.DefaultButtonHoverSound}
+		, UnhoverSoundPath{""}
+		, PressedSoundPath{""}
+		, ClickSoundPath{EC.DefaultButtonClickSound}
 	{
 		BgTexture = Asset().LoadTexture(TexturePath);
 		if (BgTexture)
@@ -38,8 +43,27 @@ namespace we
 		bHovered = Contains(Subsystem.Cursor->GetPosition());
 		bPressed = bHovered && Subsystem.GUI->IsMousePressed();
 
+		// Hover start
+		if (!bWasHovered && bHovered)
+		{
+			PlayHoverSound();
+		}
+		// Hover end
+		else if (bWasHovered && !bHovered)
+		{
+			PlayUnhoverSound();
+		}
+
+		// Press start
+		if (!bWasPressed && bPressed)
+		{
+			PlayPressedSound();
+		}
+
+		// Click (released while hovered)
 		if (bWasPressed && !bPressed && bHovered)
 		{
+			PlayClickSound();
 			OnClicked.Broadcast();
 		}
 
@@ -75,5 +99,37 @@ namespace we
 
 		CurrentColor = TargetColor;
 		BgSprite->setColor(CurrentColor);
+	}
+
+	void Button::PlayHoverSound()
+	{
+		if (!HoverSoundPath.empty())
+		{
+			Subsystem.Audio->PlaySFX(HoverSoundPath);
+		}
+	}
+
+	void Button::PlayUnhoverSound()
+	{
+		if (!UnhoverSoundPath.empty())
+		{
+			Subsystem.Audio->PlaySFX(UnhoverSoundPath);
+		}
+	}
+
+	void Button::PlayPressedSound()
+	{
+		if (!PressedSoundPath.empty())
+		{
+			Subsystem.Audio->PlaySFX(PressedSoundPath);
+		}
+	}
+
+	void Button::PlayClickSound()
+	{
+		if (!ClickSoundPath.empty())
+		{
+			Subsystem.Audio->PlaySFX(ClickSoundPath);
+		}
 	}
 }

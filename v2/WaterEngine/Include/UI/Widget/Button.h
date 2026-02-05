@@ -21,8 +21,20 @@ namespace we
 		virtual void Update(float DeltaTime) override;
 		virtual void Render(GameWindow& Window) override;
 
+	public:
+		string HoverSoundPath;
+		string UnhoverSoundPath;
+		string PressedSoundPath;
+		string ClickSoundPath;
+
 	private:
 		void UpdateVisualState();
+		void PlayHoverSound();
+		void PlayUnhoverSound();
+		void PlayPressedSound();
+		void PlayClickSound();
+
+	private:
 
 		string Label;
 		shared<texture> BgTexture;

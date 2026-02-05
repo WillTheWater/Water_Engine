@@ -21,6 +21,7 @@ namespace we
         shared<texture> LoadTexture(const string& Path);
         shared<font> LoadFont(const string& Path);
         shared<soundBuffer> LoadSound(const string& Path);
+        shared<sf::Music> LoadMusic(const string& Path);
 
     private:
         ResourceSubsystem() = default;
@@ -29,14 +30,17 @@ namespace we
     private:
         shared<IAssetDirector> AssetDirectory;
 
-        dictionary<string, weak<texture>> Textures;
-        dictionary<string, weak<font>> Fonts;
-        dictionary<string, weak<soundBuffer>> Sounds;
+        dictionary<string, shared<texture>> Textures;
+        dictionary<string, shared<font>> Fonts;
+        dictionary<string, shared<soundBuffer>> Sounds;
         dictionary<string, list<uint8>> FontData;
+        dictionary<string, string> Music;
 
     private:
         template<typename Asset, typename Cache>
         shared<Asset> Load(const string& Path, Cache& AssetCache, auto&& LoadFunc);
+
+        string StreamMusic(const string& Path, const list<uint8>& Data);
     };
 
     inline ResourceSubsystem& Asset() { return ResourceSubsystem::Get(); }
