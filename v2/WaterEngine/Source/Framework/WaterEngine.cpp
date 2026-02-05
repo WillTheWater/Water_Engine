@@ -68,7 +68,7 @@ namespace we
         Subsystem.Input->PostUpdate();
     }
 
-    void WaterEngine::GlobalTick()
+   /* void WaterEngine::GlobalTick()
     {
         Subsystem.Time->Tick();
         Tick(Subsystem.Time->GetDeltaTime());
@@ -81,7 +81,7 @@ namespace we
             World->BeginPlayGlobal();
             World->TickGlobal(Subsystem.Time->GetDeltaTime());
         }
-    }
+    }*/
 
     void WaterEngine::Tick(float DeltaTime)
     {
@@ -126,5 +126,74 @@ namespace we
     {
         LOG("Engine: Exit requested. Finishing current frame...");
         bExitRequested = true;
+    }
+
+    // ================= PAUSE TEST =====================
+
+    void WaterEngine::Run()
+    {
+        while (IsRunning())
+        {
+            ProcessEvents();
+
+            if (!bPaused)
+            {
+                GlobalTick();  // Only tick game when not paused
+            }
+            else
+            {
+                // Still update timer to keep delta time accumulating
+                // but don't use it for game logic
+                Subsystem.Time->Tick();
+
+                // Keep these running while paused
+                Subsystem.Input->ProcessHeld();
+                Subsystem.Cursor->Update(Subsystem.Time->GetDeltaTime());
+                Subsystem.GUI->Update(Subsystem.Time->GetDeltaTime());
+
+                PostUpdate();
+            }
+
+            Render();
+        }
+    }
+
+    void WaterEngine::SetPaused(bool bInPaused)
+    {
+        if (bPaused == bInPaused) return;
+
+        bPaused = bInPaused;
+        LOG("Game {}", bPaused ? "PAUSED" : "RESUMED");
+
+    }
+
+    void WaterEngine::TogglePause()
+    {
+        SetPaused(!bPaused);
+    }
+
+    void WaterEngine::GlobalTick()
+    {
+        Subsystem.Time->Tick();
+        float DeltaTime = Subsystem.Time->GetDeltaTime();
+
+        Tick(DeltaTime);
+
+        if (Subsystem.GameState->IsTransitionPending())
+        {
+            Subsystem.GameState->ApplyPendingState();
+        }
+
+        Subsystem.Input->ProcessHeld();
+        Subsystem.Cursor->Update(DeltaTime);
+        Subsystem.GUI->Update(DeltaTime);
+
+        if (auto World = Subsystem.World->GetCurrentWorld())
+        {
+            World->BeginPlayGlobal();
+            World->TickGlobal(DeltaTime);
+        }
+
+        PostUpdate();
     }
 }

@@ -53,10 +53,14 @@ namespace we
 
 	void GUISubsystem::AddWidget(shared<Widget> InWidget)
 	{
-		if (InWidget)
-		{
-			Widgets.push_back(std::move(InWidget));
-		}
+		if (!InWidget) return;
+		auto it = std::find_if(Widgets.begin(), Widgets.end(),
+			[&](const shared<Widget>& W)
+			{
+				return W->GetZOrder() > InWidget->GetZOrder();
+			});
+
+		Widgets.insert(it, std::move(InWidget));
 	}
 
 	void GUISubsystem::RemoveWidget(Widget* InWidget)

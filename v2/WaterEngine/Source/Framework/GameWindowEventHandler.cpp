@@ -5,6 +5,7 @@
 
 #include "Framework/GameWindowEventHandler.h"
 #include "Framework/GameWindow.h"
+#include "Utility/Log.h"
 
 namespace we
 {

@@ -88,7 +88,7 @@ set(WATER_ENGINE_HEADERS
     Include/Utility/RandomGenerator.h
     Include/Utility/Assert.h
     Include/Utility/Delegate.h
-)
+ "Include/UI/UILayerOrder.h")
 
 set(WATER_ENGINE_SOURCES
     Source/Entry.cpp

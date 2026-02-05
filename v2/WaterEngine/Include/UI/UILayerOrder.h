@@ -4,23 +4,12 @@
 // =============================================================================
 
 #pragma once
-
 #include "Utility/CoreMinimal.h"
-#include <Framework/WaterEngine.h>
-#include "UI/PauseUI.h"
 
 namespace we
 {
-	class Game : public WaterEngine
-	{
-	public:
-		Game();
-
-		virtual void Tick(float DeltaTime) override;
-		void TogglePause();
-	private:
-		void OnStateEnter();
-		void BindInput();
-		unique<PauseUI> PauseMenu;
-	};
+	constexpr uint LAYER_BACKGROUND = 0;
+	constexpr uint LAYER_GAME_UI = 10;
+	constexpr uint LAYER_PAUSE_MENU = 100;
+	constexpr uint LAYER_CURSOR = 1000;
 }

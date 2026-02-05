@@ -25,6 +25,9 @@ set(GAME_HEADERS
     Include/Levels/LevelOne.h
     
     Include/UI/MainMenuUI.h
+    Include/UI/PauseUI.h
+    
+    Include/Input/InputActions.h
 )
 
 set(GAME_SOURCES
@@ -34,6 +37,7 @@ set(GAME_SOURCES
     Source/Levels/LevelOne.cpp
     
     Source/UI/MainMenuUI.cpp
+    Source/UI/PauseUI.cpp
 )
 
 # =============================================================================

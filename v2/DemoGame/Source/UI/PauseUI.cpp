@@ -1,0 +1,80 @@
+// =============================================================================
+// Water Engine v2.0.0
+// Copyright(C) 2026 Will The Water
+// =============================================================================
+
+#include "UI/PauseUI.h"
+#include "UI/Widget/Panel.h"
+#include "UI/Widget/Button.h"
+#include "Framework/EngineSubsystem.h"
+#include "Subsystem/ResourceSubsystem.h"
+#include "EngineConfig.h"
+#include "UI/UILayerOrder.h"
+
+namespace we
+{
+    PauseUI::PauseUI(EngineSubsystem& Subsystem)
+        : Subsystem{ Subsystem }
+    {
+        CreateUI();
+        Hide(); // Start hidden
+    }
+
+    PauseUI::~PauseUI()
+    {
+        if (MenuPanel)
+        {
+            Subsystem.GUI->RemoveWidget(MenuPanel.get());
+        }
+    }
+
+    void PauseUI::CreateUI()
+    {
+        MenuPanel = make_shared<Panel>(Subsystem, EC.DefaultPanel);
+        MenuPanel->SetLocalOffset({ EC.WindowSize.x * 0.5f, EC.WindowSize.y * 0.5f }); // Center of screen
+        MenuPanel->SetLocalScale({ 1.5f, 1.5f });
+        MenuPanel->SetZOrder(LAYER_PAUSE_MENU);
+
+        ResumeButton = make_shared<Button>(Subsystem, "Resume", EC.DefaultButton);
+        ResumeButton->SetLocalOffset({ 0, -40 });
+        ResumeButton->OnClicked.Bind(this, &PauseUI::OnResumeClicked);
+
+        QuitButton = make_shared<Button>(Subsystem, "Quit", EC.DefaultButton);
+        QuitButton->SetLocalOffset({ 0, 60 });
+        QuitButton->OnClicked.Bind(this, &PauseUI::OnQuitClicked);
+
+        MenuPanel->AddChild(ResumeButton);
+        MenuPanel->AddChild(QuitButton);
+        Subsystem.GUI->AddWidget(MenuPanel);
+    }
+
+    void PauseUI::Show()
+    {
+        if (MenuPanel)
+        {
+            MenuPanel->SetVisible(true);
+            bVisible = true;
+        }
+    }
+
+    void PauseUI::Hide()
+    {
+        if (MenuPanel)
+        {
+            MenuPanel->SetVisible(false);
+            bVisible = false;
+        }
+    }
+
+    void PauseUI::OnResumeClicked()
+    {
+        // This will trigger through Game::TogglePause()
+        // We'll call it from Game
+        OnResume.Broadcast();
+    }
+
+    void PauseUI::OnQuitClicked()
+    {
+        Subsystem.GameState->OnQuitRequested.Broadcast();
+    }
+}

@@ -9,6 +9,7 @@
 #include "Framework/EngineSubsystem.h"
 #include "Subsystem/ResourceSubsystem.h"
 #include "EngineConfig.h"
+#include "UI/UILayerOrder.h"
 
 namespace we
 {
@@ -30,6 +31,7 @@ namespace we
 	{
 		MenuPanel = make_shared<Panel>(Subsystem, EC.DefaultPanel);
 		MenuPanel->SetLocalOffset({ EC.WindowSize.x * 0.5f, EC.WindowSize.y * 0.83f });
+		MenuPanel->SetZOrder(LAYER_GAME_UI);
 
 		PlayButton = make_shared<Button>(Subsystem, "Play", EC.DefaultButton);
 		PlayButton->SetLocalOffset({ 0, -40 });

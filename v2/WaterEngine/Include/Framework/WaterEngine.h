@@ -41,5 +41,14 @@ namespace we
 		void Construct();
 		void WindowInit();
 		void ConstrainRender(vec2u NewSize);
+
+		// =============== PAUSE TEST ==================
+		
+	public:
+		void Run();
+		void SetPaused(bool bPaused);
+		bool IsPaused() const { return bPaused; }
+		void TogglePause();
+		bool bPaused = false;
 	};
 }

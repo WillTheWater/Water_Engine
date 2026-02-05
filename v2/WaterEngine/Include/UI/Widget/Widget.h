@@ -46,6 +46,11 @@ namespace we
 
 		bool Contains(const vec2f& WorldPoint) const;
 
+		uint GetZOrder() const { return ZOrder; }
+		void SetZOrder(uint InZOrder) { ZOrder = InZOrder; }
+
+	private:
+
 	protected:
 		EngineSubsystem& Subsystem;
 
@@ -61,6 +66,7 @@ namespace we
 		mutable vec2f CachedWorldPosition;
 		mutable angle CachedWorldRotation;
 		mutable vec2f CachedWorldScale;
+		uint ZOrder = 0;
 
 	private:
 		void MarkDirty() { bDirty = true; }
