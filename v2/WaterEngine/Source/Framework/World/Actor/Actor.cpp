@@ -6,6 +6,7 @@
 #include "Framework/World/Actor/Actor.h"
 #include "Subsystem/ResourceSubsystem.h"
 #include "Interface/Component/IActorComponent.h"
+#include "Framework/World/World.h"
 #include "Utility/Log.h"
 
 namespace we

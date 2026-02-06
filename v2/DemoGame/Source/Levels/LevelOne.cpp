@@ -30,6 +30,10 @@ namespace we
         Subsystem.Cursor->SetVisibility(false);
     }
 
+    void LevelOne::Tick(float DeltaTime)
+    {
+    }
+
     void LevelOne::Render()
     {
         if (Background) { Subsystem.Render->Draw(*Background); }

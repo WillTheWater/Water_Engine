@@ -16,6 +16,7 @@ namespace we
         explicit LevelOne(EngineSubsystem& Subsystem);
 
         virtual void BeginPlay() override;
+        virtual void Tick(float DeltaTime) override;
         virtual void Render() override;
 
     private:

@@ -46,10 +46,18 @@ namespace we
 		if (IsPaused())
 		{
 			PauseMenu->Show();
+			if (Subsystem.GameState->GetCurrentState() == GameState::Level1)
+			{
+				Subsystem.Cursor->SetVisibility(IsPaused());
+			}
 		}
 		else
 		{
 			PauseMenu->Hide();
+			if (Subsystem.GameState->GetCurrentState() == GameState::Level1)
+			{
+				Subsystem.Cursor->SetVisibility(IsPaused());
+			}
 		}
 	}
 
