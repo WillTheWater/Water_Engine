@@ -26,5 +26,7 @@
   "DefaultAmbient": "/Assets/Audio/Default/defaultAmbient.wav",
   "DefaultButtonHoverSound": "Assets/Audio/Default/defaultHover.wav",
   "DefaultButtonClickSound": "Assets/Audio/Default/defaultClick.wav",
-  "MaxSFXStack": 16
+  "MaxSFXStack": 16,
+  "LevelOneBackground": "Assets/Textures/Default/level1.png",
+  "CharacterSheet": "Assets/Textures/Default/characterTest.png"
 }

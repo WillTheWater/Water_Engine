@@ -47,6 +47,8 @@ namespace we
 		string DefaultButtonHoverSound;
 		string DefaultButtonClickSound;
 		size_t MaxSFXStack;
+		string LevelOneBackground;
+		string CharacterSheet;
 	};
 
 	// Global Accessor

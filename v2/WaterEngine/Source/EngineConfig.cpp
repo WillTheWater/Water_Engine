@@ -42,5 +42,7 @@ namespace we
         DefaultButtonHoverSound = Config["DefaultButtonHoverSound"];
         DefaultButtonClickSound = Config["DefaultButtonClickSound"];
         MaxSFXStack = Config["MaxSFXStack"];
+        LevelOneBackground = Config["LevelOneBackground"];
+        CharacterSheet = Config["CharacterSheet"];
     }
 }

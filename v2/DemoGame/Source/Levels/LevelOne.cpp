@@ -12,7 +12,7 @@ namespace we
     LevelOne::LevelOne(EngineSubsystem& Subsystem)
         : World(Subsystem)
     {
-        BgTexture = Asset().LoadTexture(EC.DefaultBackground);
+        BgTexture = Asset().LoadTexture(EC.LevelOneBackground);
         Background.emplace(*BgTexture);
     }
 

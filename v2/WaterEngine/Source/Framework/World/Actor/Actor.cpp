@@ -5,6 +5,7 @@
 
 #include "Framework/World/Actor/Actor.h"
 #include "Subsystem/ResourceSubsystem.h"
+#include "Interface/Component/IActorComponent.h"
 #include "Utility/Log.h"
 
 namespace we
@@ -41,8 +42,29 @@ namespace we
 		}
 	}
 
+	void Actor::BeginPlay()
+	{
+		for (auto& Comp : Components)
+		{
+			Comp->BeginPlay();
+		}
+	}
+
+	void Actor::Tick(float DeltaTime)
+	{
+		for (auto& Comp : Components)
+		{
+			Comp->Tick(DeltaTime);
+		}
+	}
+
 	void Actor::Destroy()
 	{
+		for (auto& Comp : Components)
+		{
+			Comp->EndPlay();
+		}
+		Components.clear();
 		OnActorDestroyed.Broadcast(this);
 		Object::Destroy();
 	}
@@ -97,5 +119,10 @@ namespace we
 	void Actor::SetColor(const color& Color)
 	{
 		if (Sprite) Sprite->setColor(Color);
+	}
+
+	void Actor::AddComponent(shared<IActorComponent> Component)
+	{
+		Components.push_back(std::move(Component));
 	}
 }

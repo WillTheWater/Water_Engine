@@ -75,12 +75,14 @@ set(WATER_ENGINE_HEADERS
     Include/UI/Widget/Panel.h
     Include/UI/Widget/Widget.h
     Include/UI/Widget/Button.h
+    Include/UI/UILayerOrder.h
 
     Include/Input/InputBinding.h
     Include/Input/InputEventHandler.h
 
-    Include/Interface/IAssetDirector.h
     Include/AssetDirectory/PakDirectory.h
+    Include/Interface/IAssetDirector.h
+    Include/Interface/Component/IActorComponent.h
     
     Include/Utility/WindowUtility.h
     Include/Utility/CoreMinimal.h
@@ -88,7 +90,7 @@ set(WATER_ENGINE_HEADERS
     Include/Utility/RandomGenerator.h
     Include/Utility/Assert.h
     Include/Utility/Delegate.h
- "Include/UI/UILayerOrder.h")
+)
 
 set(WATER_ENGINE_SOURCES
     Source/Entry.cpp

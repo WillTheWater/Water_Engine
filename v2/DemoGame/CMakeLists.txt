@@ -28,6 +28,9 @@ set(GAME_HEADERS
     Include/UI/PauseUI.h
     
     Include/Input/InputActions.h
+
+    Include/Character/PlayerCharacter.h
+    Include/Character/MovementComponent.h
 )
 
 set(GAME_SOURCES
@@ -38,6 +41,9 @@ set(GAME_SOURCES
     
     Source/UI/MainMenuUI.cpp
     Source/UI/PauseUI.cpp
+    
+    Source/Character/PlayerCharacter.cpp
+    Source/Character/MovementComponent.cpp
 )
 
 # =============================================================================

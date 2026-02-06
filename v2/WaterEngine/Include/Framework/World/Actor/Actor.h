@@ -11,6 +11,7 @@
 namespace we
 {
 	class World;
+	class IActorComponent;
 
 	class Actor : public Object
 	{
@@ -20,8 +21,8 @@ namespace we
 		virtual ~Actor();
 
 		void BeginPlayGlobal();
-		virtual void BeginPlay(){}
-		virtual void Tick(float DeltaTime){}
+		virtual void BeginPlay();
+		virtual void Tick(float DeltaTime);
 		virtual void Destroy() override;
 
 	public:
@@ -48,12 +49,27 @@ namespace we
 
 		Delegate<Actor*> OnActorDestroyed;
 
+		void AddComponent(shared<IActorComponent> Component);
+
+		template<typename T, typename... Args>
+		shared<T> CreateComponent(Args&&... args);
+
 	protected:
 		World* OwnerWorld;
 
 	private:
+		list<shared<IActorComponent>> Components;
 		shared<texture> Texture;
 		optional<sprite> Sprite;
 		bool bHasBegunPlay;
 	};
+
+	template<typename T, typename... Args>
+	shared<T> Actor::CreateComponent(Args&&... args)
+	{
+		static_assert(std::is_base_of_v<IActorComponent, T>);
+		auto Comp = make_shared<T>(std::forward<Args>(args)...);
+		AddComponent(Comp);
+		return Comp;
+	}
 }
