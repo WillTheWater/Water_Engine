@@ -6,6 +6,7 @@
 #include "Levels/LevelOne.h"
 #include "Framework/EngineSubsystem.h"
 #include "Subsystem/ResourceSubsystem.h"
+#include "Character/PlayerCharacter.h"
 
 namespace we
 {
@@ -14,6 +15,18 @@ namespace we
     {
         BgTexture = Asset().LoadTexture(EC.LevelOneBackground);
         Background.emplace(*BgTexture);
+    }
+
+    void LevelOne::BeginPlay()
+    {
+        auto PlayerRef = SpawnActor<Player>(EC.CharacterSheet);
+        if (auto P = PlayerRef.lock())
+        {
+            P->SetPosition(EC.WindowSize / 2.f);
+            P->SetScale({ 4,4 });
+        }
+
+        World::BeginPlay();
     }
 
     void LevelOne::Render()

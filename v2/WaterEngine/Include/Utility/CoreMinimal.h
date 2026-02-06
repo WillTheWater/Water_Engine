@@ -70,6 +70,7 @@ namespace we
 	using drawable = sf::Drawable;
 	using view = sf::View;
 	using rectf = sf::FloatRect;
+	using recti = sf::IntRect;
 	using color = sf::Color;
 
 	// =============================================================================

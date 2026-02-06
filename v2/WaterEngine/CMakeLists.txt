@@ -81,8 +81,10 @@ set(WATER_ENGINE_HEADERS
     Include/Input/InputEventHandler.h
 
     Include/AssetDirectory/PakDirectory.h
+
     Include/Interface/IAssetDirector.h
     Include/Interface/Component/IActorComponent.h
+    Include/Interface/Component/IAnimationComponent.h
     
     Include/Utility/WindowUtility.h
     Include/Utility/CoreMinimal.h
@@ -124,8 +126,10 @@ set(WATER_ENGINE_SOURCES
 
     Source/Input/InputBinding.cpp    
     Source/Input/InputEventHandler.cpp
-
+    
     Source/AssetDirectory/PakDirectory.cpp
+
+    Source/Interface/Component/IAnimationComponent.cpp
 
     Source/Utility/RandomGenerator.cpp 
 )

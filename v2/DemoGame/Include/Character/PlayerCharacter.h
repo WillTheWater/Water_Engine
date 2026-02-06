@@ -11,6 +11,16 @@
 
 namespace we
 {
+	class MovementComponent;
+	class AnimationComponent;
+
+	enum class AnimState : uint8
+	{
+		None = 0,
+		Idle,
+		Run
+	};
+
 	class Player : public Actor
 	{
 	public:
@@ -21,5 +31,7 @@ namespace we
 		virtual void Destroy() override;
 
 	private:
+		shared<MovementComponent> MoveComp;
+		shared<AnimationComponent> AnimComp;
 	};
 }

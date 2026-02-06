@@ -14,6 +14,8 @@ namespace we
     {
     public:
         explicit LevelOne(EngineSubsystem& Subsystem);
+
+        virtual void BeginPlay() override;
         virtual void Render() override;
 
     private:

@@ -22,12 +22,15 @@ namespace we
 
 		void BeginPlayGlobal();
 		void TickGlobal(float DeltaTime);
+		
+		virtual void BeginPlay();
+		virtual void Tick(float DeltaTime);
 		virtual void Render();
 
 
 	public:
-		template<typename ActorType>
-		weak<ActorType> SpawnActor();
+		template<typename ActorType, typename... Args>
+		weak<ActorType> SpawnActor(Args&&... args);
 
 		list<shared<Actor>> GetActors() const { return Actors; }
 
@@ -42,15 +45,13 @@ namespace we
 		bool bHasBegunPlay;
 
 	private:
-		void BeginPlay();
-		void Tick(float DeltaTime);
 		void ManageActors(float DeltaTime);
 	};
 
-	template<typename ActorType>
-	inline weak<ActorType> World::SpawnActor()
+	template<typename ActorType, typename... Args>
+	inline weak<ActorType> World::SpawnActor(Args&&... args)
 	{
-		shared<ActorType> NewActor{ new ActorType{this, "Assets/Icon/icon.png"}};
+		shared<ActorType> NewActor = make_shared<ActorType>(this, std::forward<Args>(args)...);
 		PendingActors.push_back(NewActor);
 		return NewActor;
 	}
