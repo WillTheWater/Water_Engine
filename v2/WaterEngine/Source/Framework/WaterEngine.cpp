@@ -13,10 +13,10 @@
 namespace we
 {
     WaterEngine::WaterEngine()
+        : bExitRequested{false}
     {
         Configure();
         Construct();
-        WindowInit();
     }
 
     WaterEngine::~WaterEngine()
@@ -43,6 +43,8 @@ namespace we
         Subsystem.World = make_unique<WorldSubsystem>(Subsystem);
         Subsystem.GameState = make_unique<GameStateSubsystem>();
         Subsystem.GameState->OnQuitRequested.Bind(this, &WaterEngine::Quit);
+
+        WindowInit();
     }
 
     void WaterEngine::WindowInit()
@@ -53,104 +55,24 @@ namespace we
         Subsystem.Cursor = make_unique<CursorSubsystem>(*Window);
     }
 
-    void WaterEngine::ProcessEvents()
-    {
-        while (const auto Event = Window->pollEvent())
-        {
-            Event->visit(GameWindowEventHandler{ *Window });
-            Subsystem.Input->HandleEvent(*Event);
-            Subsystem.GUI->ProcessEvent(*Event);
-        }
-    }
-
-    void WaterEngine::PostUpdate()
-    {
-        Subsystem.Input->PostUpdate();
-    }
-
-   /* void WaterEngine::GlobalTick()
-    {
-        Subsystem.Time->Tick();
-        Tick(Subsystem.Time->GetDeltaTime());
-        if (Subsystem.GameState->IsTransitionPending()) { Subsystem.GameState->ApplyPendingState(); }
-        Subsystem.Input->ProcessHeld();
-        Subsystem.Cursor->Update(Subsystem.Time->GetDeltaTime());
-        Subsystem.GUI->Update(Subsystem.Time->GetDeltaTime());
-        if (auto World = Subsystem.World->GetCurrentWorld())
-        {
-            World->BeginPlayGlobal();
-            World->TickGlobal(Subsystem.Time->GetDeltaTime());
-        }
-    }*/
-
-    void WaterEngine::Tick(float DeltaTime)
-    {
-    }
-
-    void WaterEngine::Render()
-    {
-        Window->clear();
-
-        Subsystem.Render->StartRender();
-
-        if (auto World = Subsystem.World->GetCurrentWorld())
-        {
-            World->Render();
-        }
-
-        Window->draw(sprite(Subsystem.Render->FinishRender()));
-
-        Subsystem.GUI->Render();
-
-        Subsystem.Cursor->Render();
-
-        Window->display();
-    }
-
-    bool WaterEngine::IsRunning() const
-    {
-        return Window->isOpen() && !bExitRequested;
-    }
-
-    bool we::WaterEngine::HasFocus() const
-    {
-        return Window->hasFocus();
-    }
-
-    void WaterEngine::ConstrainRender(vec2u NewSize)
-    {
-        Window->setView(Subsystem.Render->ConstrainView(NewSize));
-    }
-
-    void WaterEngine::Quit()
-    {
-        LOG("Engine: Exit requested. Finishing current frame...");
-        bExitRequested = true;
-    }
-
-    // ================= PAUSE TEST =====================
-
     void WaterEngine::Run()
     {
         while (IsRunning())
         {
             ProcessEvents();
 
-            if (!bPaused)
+            Subsystem.Time->Tick(); // Always tick time
+
+            if (!Subsystem.Time->IsPaused())
             {
-                GlobalTick();  // Only tick game when not paused
+                TickGame(); // World ticks only when not paused
             }
             else
             {
-                // Still update timer to keep delta time accumulating
-                // but don't use it for game logic
-                Subsystem.Time->Tick();
-
-                // Keep these running while paused
+                // UI only update when paused
                 Subsystem.Input->ProcessHeld();
-                Subsystem.Cursor->Update(Subsystem.Time->GetDeltaTime());
-                Subsystem.GUI->Update(Subsystem.Time->GetDeltaTime());
-
+                Subsystem.Cursor->Update(Subsystem.Time->GetUnscaledDeltaTime());
+                Subsystem.GUI->Update(Subsystem.Time->GetUnscaledDeltaTime());
                 PostUpdate();
             }
 
@@ -158,23 +80,8 @@ namespace we
         }
     }
 
-    void WaterEngine::SetPaused(bool bInPaused)
+    void WaterEngine::TickGame()
     {
-        if (bPaused == bInPaused) return;
-
-        bPaused = bInPaused;
-        LOG("Game {}", bPaused ? "PAUSED" : "RESUMED");
-
-    }
-
-    void WaterEngine::TogglePause()
-    {
-        SetPaused(!bPaused);
-    }
-
-    void WaterEngine::GlobalTick()
-    {
-        Subsystem.Time->Tick();
         float DeltaTime = Subsystem.Time->GetDeltaTime();
 
         Tick(DeltaTime);
@@ -195,5 +102,64 @@ namespace we
         }
 
         PostUpdate();
+    }
+   
+    void WaterEngine::ProcessEvents()
+    {
+        while (const auto Event = Window->pollEvent())
+        {
+            Event->visit(GameWindowEventHandler{ *Window });
+            Subsystem.Input->HandleEvent(*Event);
+            Subsystem.GUI->ProcessEvent(*Event);
+        }
+    }
+
+    void WaterEngine::Render()
+    {
+        Window->clear(color::Black);
+
+        Subsystem.Render->StartRender();
+
+        if (auto World = Subsystem.World->GetCurrentWorld())
+        {
+            World->Render();
+        }
+
+        Window->draw(sprite(Subsystem.Render->FinishRender()));
+
+        Subsystem.GUI->Render();
+
+        Subsystem.Cursor->Render();
+
+        Window->display();
+    }
+
+    void WaterEngine::PostUpdate()
+    {
+        Subsystem.Input->PostUpdate();
+    }
+
+    bool WaterEngine::IsRunning() const
+    {
+        return Window->isOpen() && !bExitRequested;
+    }
+
+    void WaterEngine::Tick(float DeltaTime)
+    {
+    }
+
+    bool WaterEngine::HasFocus() const
+    {
+        return Window->hasFocus();
+    }
+
+    void WaterEngine::ConstrainRender(vec2u NewSize)
+    {
+        Window->setView(Subsystem.Render->ConstrainView(NewSize));
+    }
+
+    void WaterEngine::Quit()
+    {
+        bExitRequested = true;
     }
 }

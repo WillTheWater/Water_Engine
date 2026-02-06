@@ -17,10 +17,10 @@ namespace we
 		WaterEngine();
 		~WaterEngine();
 
+		void Run();
 		void ProcessEvents();
-		void GlobalTick();
-		void PostUpdate();
 		void Render();
+		void PostUpdate();
 
 		bool IsRunning() const;
 		bool HasFocus() const;
@@ -34,21 +34,13 @@ namespace we
 
 	private:
 		unique<GameWindow> Window;
-		bool bExitRequested = false;
+		bool bExitRequested;
 
 	private:
+		void TickGame();
 		void Configure();
 		void Construct();
 		void WindowInit();
 		void ConstrainRender(vec2u NewSize);
-
-		// =============== PAUSE TEST ==================
-		
-	public:
-		void Run();
-		void SetPaused(bool bPaused);
-		bool IsPaused() const { return bPaused; }
-		void TogglePause();
-		bool bPaused = false;
 	};
 }

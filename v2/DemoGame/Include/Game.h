@@ -22,5 +22,6 @@ namespace we
 		void OnStateEnter();
 		void BindInput();
 		unique<PauseUI> PauseMenu;
+		bool bPaused;
 	};
 }

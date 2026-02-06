@@ -17,7 +17,7 @@ namespace we
         : Subsystem{ Subsystem }
     {
         CreateUI();
-        Hide(); // Start hidden
+        Hide();
     }
 
     PauseUI::~PauseUI()
@@ -31,7 +31,7 @@ namespace we
     void PauseUI::CreateUI()
     {
         MenuPanel = make_shared<Panel>(Subsystem, EC.DefaultPanel);
-        MenuPanel->SetLocalOffset({ EC.WindowSize.x * 0.5f, EC.WindowSize.y * 0.5f }); // Center of screen
+        MenuPanel->SetLocalOffset({ EC.WindowSize.x * 0.5f, EC.WindowSize.y * 0.5f });
         MenuPanel->SetLocalScale({ 1.5f, 1.5f });
         MenuPanel->SetZOrder(LAYER_PAUSE_MENU);
 
@@ -68,8 +68,6 @@ namespace we
 
     void PauseUI::OnResumeClicked()
     {
-        // This will trigger through Game::TogglePause()
-        // We'll call it from Game
         OnResume.Broadcast();
     }
 

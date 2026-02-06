@@ -22,7 +22,7 @@ int main()
             sf::sleep(sf::microseconds(10));
             continue;
         }
-        WE->GlobalTick();
+        WE->Run();
         WE->Render();
         WE->PostUpdate();
     }

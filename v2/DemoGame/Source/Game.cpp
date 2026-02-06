@@ -21,34 +21,30 @@ namespace we
 
 	Game::Game()
 		: WaterEngine{}
+		, bPaused{false}
 	{
 		Subsystem.GameState->OnStateEnter.Bind(this, &Game::OnStateEnter);
 		Subsystem.GameState->RequestStateChange(GameState::MainMenu);
 		BindInput();
 
-		// Create pause menu (starts hidden)
 		PauseMenu = make_unique<PauseUI>(Subsystem);
 		PauseMenu->OnResume.Bind(this, &Game::TogglePause);
 	}
 
 	void Game::Tick(float DeltaTime)
 	{
-		if (Subsystem.Input->IsJustPressed(ACTION_TOGGLE_PAUSE))
-		{
-			TogglePause();
-		}
 	}
 
 	void Game::TogglePause()
 	{
-		SetPaused(!IsPaused());
-
-		if (IsPaused())
+		bPaused = !Subsystem.Time->IsPaused();
+		Subsystem.Time->SetPaused(bPaused);
+		if (bPaused)
 		{
 			PauseMenu->Show();
 			if (Subsystem.GameState->GetCurrentState() == GameState::Level1)
 			{
-				Subsystem.Cursor->SetVisibility(IsPaused());
+				Subsystem.Cursor->SetVisibility(bPaused);
 			}
 		}
 		else
@@ -56,7 +52,7 @@ namespace we
 			PauseMenu->Hide();
 			if (Subsystem.GameState->GetCurrentState() == GameState::Level1)
 			{
-				Subsystem.Cursor->SetVisibility(IsPaused());
+				Subsystem.Cursor->SetVisibility(bPaused);
 			}
 		}
 	}
@@ -86,5 +82,7 @@ namespace we
 	{
 		Subsystem.Input->Bind(ACTION_TOGGLE_PAUSE, Input::Keyboard{ sf::Keyboard::Scan::Escape });
 		Subsystem.Input->Bind(ACTION_TOGGLE_PAUSE, Input::Gamepad{GamepadButton::Start});
+
+		Subsystem.Input->OnPressed(ACTION_TOGGLE_PAUSE, [this](){ TogglePause(); });
 	}
 }

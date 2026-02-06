@@ -52,46 +52,109 @@ namespace we
  *   - Use Queries (IsJustPressed) for gameplay mechanics requiring state validation
  *     (jumping, firing, reloading where CanInteract() checks are required)
  *
- * -----------------------------------------------------------------------------
- * Usage Example:
- * -----------------------------------------------------------------------------
+ * =============================================================================
+ * INPUT USAGE GUIDE
+ * =============================================================================
  *
- *   // Setup (GameMode/PlayerController initialization)
- *   Input.Bind(ACTION_JUMP, Input::Keyboard{sf::Keyboard::Scan::Space});
- *   Input.Bind(ACTION_JUMP, Input::Gamepad{GamepadButton::South, 0});
+ * STEP 1: Define Input Actions
+ * ----------------------------
+ * Create an enum for your game actions:
  *
- *   // Pattern A: Callback for immediate stateless response (audio/visual)
- *   Input.OnPressed(ACTION_JUMP, [&](){
- *       audio.Play("jump_start.wav");  // Always play sound, even if jump fails
- *   });
+ *     enum InputAction
+ *     {
+ *         ACTION_NONE = 0,
+ *         ACTION_JUMP,
+ *         ACTION_FIRE,
+ *         ACTION_MOVE_LEFT,
+ *         ACTION_PAUSE
+ *     };
  *
- *   // Pattern B: Held callback for continuous actions (fire rate, charging)
- *   Input.OnHeld(ACTION_FIRE, [&](){
- *       weapon.Fire();  // Called every frame (60-144Hz) while trigger held
- *   });
  *
- *   // Game Loop
- *   while (running) {
- *       // Poll window events (triggers OnPressed/OnReleased callbacks immediately)
- *       engine.ProcessEvents();  // Calls Input.HandleEvent() internally
+ * STEP 2: Bind Hardware to Actions (Setup Phase)
+ * ----------------------------------------------
+ * In Game::BindInput() or Player::BeginPlay():
  *
- *       // Per-frame polling for analog/continuous movement (smooth interpolation)
- *       if (Input.IsPressed(ACTION_MOVE_LEFT))
- *           player.velocity.x = -speed;
+ *     // Multiple bindings per action (OR logic)
+ *     Input->Bind(ACTION_JUMP, Input::Keyboard{sf::Keyboard::Scan::Space});
+ *     Input->Bind(ACTION_JUMP, Input::Gamepad{GamepadButton::South, 0});  // 0 = Player 1
+ *     Input->Bind(ACTION_FIRE, Input::Mouse{sf::Mouse::Button::Left});
  *
- *       // Pattern C: Query with game-state validation (conditional execution)
- *       if (Input.IsJustPressed(ACTION_JUMP) && player.CanJump() && !player.IsStunned())
- *       {
- *           player.Jump();  // Only jumps if game logic allows
- *       }
  *
- *       engine.PostUpdate();  // Advances frame counter, clearing IsJust states
- *   }
+ * STEP 3: Choose Response Pattern
+ * -------------------------------
  *
- * Thread Safety:
- *   - All public methods must be called from the main thread only
- *   - SFML window events are inherently single-threaded
- */
+ * +-----------------+------------------+-----------------+--------------------+
+ * | Pattern         | When It Fires    | Fires Paused?   | Best For           |
+ * +-----------------+------------------+-----------------+--------------------+
+ * | OnPressed       | Once per press   | YES             | Toggle, UI, pause  |
+ * | OnHeld          | Every tick       | NO              | Auto-fire, charge  |
+ * | IsPressed       | Every tick       | NO              | Movement           |
+ * | IsJustPressed   | One frame only   | NO              | Abilities, jump    |
+ * +-----------------+------------------+-----------------+--------------------+
+ *
+ *
+ * PATTERN A: OnPressed Callback - Toggle/Immediate Response
+ * ---------------------------------------------------------
+ * Use for: Pause, UI clicks, actions that must work when game is paused
+ *
+ *     Input->OnPressed(ACTION_PAUSE, [this]()
+ *     {
+ *         // Fires ONCE per key press, holding does NOT repeat
+ *         // Fires during ProcessEvents() - runs even when paused!
+ *         TogglePause();
+ *     });
+ *
+ *
+ * PATTERN B: OnHeld Callback - Continuous Action
+ * ----------------------------------------------
+ * Use for: Automatic weapons, charging, sustained effects
+ *
+ *     Input->OnHeld(ACTION_FIRE, [this]()
+ *     {
+ *         // Called every tick while button held (60-144 Hz)
+ *         // ONLY runs when game is NOT paused
+ *         Weapon->Fire();
+ *     });
+ *
+ *
+ * PATTERN C: Query - Validated Gameplay Action
+ * --------------------------------------------
+ * Use for: Movement, abilities that need state checks
+ *
+ *     void Player::Tick(float DeltaTime)
+ *     {
+ *         // Smooth movement (polled every frame)
+ *         // ONLY runs when game is NOT paused
+ *         if (Input->IsPressed(ACTION_MOVE_LEFT))
+ *             Velocity.x = -Speed;
+ *
+ *         // One-shot with validation (true for ONE frame only)
+ *         if (Input->IsJustPressed(ACTION_JUMP))
+ *         {
+ *             if (CanJump() && !IsStunned())  // State checks OK here
+ *                 Jump();
+ *         }
+ *     }
+ *
+ * FRAME TIMELINE
+ * --------------
+ *     ProcessEvents()  -> OnPressed/OnReleased fire (ALWAYS runs)
+ *           |
+ *     [Pause Check]
+ *           |
+ *     Tick()           -> IsPressed/IsJustPressed/OnHeld (skipped if paused)
+ *           |
+ *     PostUpdate()     -> IsJustPressed resets for next frame
+ *
+ *
+ * RULE OF THUMB
+ * -------------
+ *     - Use OnPressed for actions that must work while paused (UI, pause menu)
+ *     - Use OnHeld/IsPressed/IsJustPressed for gameplay (skipped when paused)
+ *     - OnPressed fires ONCE per press, does NOT auto-repeat when held
+ *     - Never mix callback + query for same action (double response)
+ *
+ * ============================================================================= */
 
 	class InputSubsystem
 	{
