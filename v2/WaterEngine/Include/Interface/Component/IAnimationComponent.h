@@ -48,6 +48,7 @@ namespace we
 		bool IsFacingLeft() const { return bFaceLeft; }
 
 		uint8 GetCurrentState() const { return CurrentState; }
+		vec2u GetCurrentFrame() const { return CurrentFrame; }
 		bool IsPlaying(uint8 StateID) const;
 
 	private:

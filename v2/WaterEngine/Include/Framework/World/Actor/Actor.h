@@ -41,6 +41,7 @@ namespace we
 		void CenterOrigin();
 
 		void SetColor(const color& Color);
+		void SetTextureSmooth() { Texture.get()->setSmooth(true); }
 
 	public:
 		World* GetWorld() const { return OwnerWorld; }

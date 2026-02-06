@@ -49,6 +49,10 @@ namespace we
 		size_t MaxSFXStack;
 		string LevelOneBackground;
 		string CharacterSheet;
+		string Footstep1;
+		string Footstep2;
+		string Footstep3;
+		string Footstep4;
 	};
 
 	// Global Accessor

@@ -77,5 +77,6 @@ namespace we
 	void Game::BindInput()
 	{
 		Subsystem.Input->Bind(ACTION_TOGGLE_PAUSE, Input::Keyboard{ sf::Keyboard::Scan::Escape });
+		Subsystem.Input->Bind(ACTION_TOGGLE_PAUSE, Input::Gamepad{GamepadButton::Start});
 	}
 }

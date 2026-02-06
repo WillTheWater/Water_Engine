@@ -124,8 +124,8 @@ namespace we
 		const Animation& Anim = it->second;
 
 		recti TexRect;
-		TexRect.position.x = CurrentFrame.x * FrameSize.x;
-		TexRect.position.y = CurrentFrame.y * FrameSize.y;
+		TexRect.position.x = CurrentFrame.y * FrameSize.x;
+		TexRect.position.y = CurrentFrame.x * FrameSize.y;
 		TexRect.size = vec2i(FrameSize);
 
 		sprite& Spr = const_cast<sprite&>(Owner->GetSprite());
@@ -165,19 +165,19 @@ namespace we
 
 		const Animation& Anim = it->second;
 
-		uint MaxX = (CurrentFrame.y == Anim.EndFrame.y) ? Anim.EndFrame.x : (FramesPerRow - 1);
+		uint MaxY = (CurrentFrame.x == Anim.EndFrame.x) ? Anim.EndFrame.y : (FramesPerRow - 1);
 
-		if (CurrentFrame.x >= MaxX && CurrentFrame.y >= Anim.EndFrame.y)
+		if (CurrentFrame.y >= MaxY && CurrentFrame.x >= Anim.EndFrame.x)
 		{
 			CurrentFrame = Anim.StartFrame;
 			return false;
 		}
 
-		CurrentFrame.x++;
-		if (CurrentFrame.x >= FramesPerRow)
+		CurrentFrame.y++;
+		if (CurrentFrame.y >= FramesPerRow)
 		{
-			CurrentFrame.x = 0;
-			CurrentFrame.y++;
+			CurrentFrame.y = 0; 
+			CurrentFrame.x++; 
 		}
 
 		return true;

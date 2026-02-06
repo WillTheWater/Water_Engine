@@ -17,6 +17,13 @@ namespace we
     class RandomGenerator
     {
     public:
+
+        static RandomGenerator& Get()
+        {
+            static RandomGenerator Instance;
+            return Instance;
+        }
+
         template<typename T>
         T Random(T Min, T Max);
 
@@ -48,6 +55,7 @@ namespace we
             return std::uniform_int_distribution<T>(Min, Max)(Generator);
         }
     }
+    inline RandomGenerator& RNG() { return RandomGenerator::Get(); }
 
     template<typename Container>
     inline auto& RandomGenerator::Random(const Container& C)

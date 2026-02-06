@@ -33,6 +33,7 @@ namespace we
 		weak<ActorType> SpawnActor(Args&&... args);
 
 		list<shared<Actor>> GetActors() const { return Actors; }
+		EngineSubsystem& GetSubsystem() const { return Subsystem; }
 
 	protected:
 		EngineSubsystem& Subsystem;

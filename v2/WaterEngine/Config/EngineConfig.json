@@ -28,5 +28,9 @@
   "DefaultButtonClickSound": "Assets/Audio/Default/defaultClick.wav",
   "MaxSFXStack": 16,
   "LevelOneBackground": "Assets/Textures/Default/level1.png",
-  "CharacterSheet": "Assets/Textures/Default/characterTest.png"
+  "CharacterSheet": "Assets/Textures/Default/characterTest.png",
+  "Footstep1": "Assets/Audio/Default/footstep1.wav",
+  "Footstep2": "Assets/Audio/Default/footstep2.wav",
+  "Footstep3": "Assets/Audio/Default/footstep3.wav",
+  "Footstep4": "Assets/Audio/Default/footstep4.wav"
 }

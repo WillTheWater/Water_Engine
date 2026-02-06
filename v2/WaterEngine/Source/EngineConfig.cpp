@@ -44,5 +44,9 @@ namespace we
         MaxSFXStack = Config["MaxSFXStack"];
         LevelOneBackground = Config["LevelOneBackground"];
         CharacterSheet = Config["CharacterSheet"];
+        Footstep1 = Config["Footstep1"];
+        Footstep2 = Config["Footstep2"];
+        Footstep3 = Config["Footstep3"];
+        Footstep4 = Config["Footstep4"];
     }
 }

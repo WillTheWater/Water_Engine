@@ -17,8 +17,14 @@ namespace we
 	enum class AnimState : uint8
 	{
 		None = 0,
-		Idle,
-		Run
+		IdleDown,
+		IdleLeft,
+		IdleRight,
+		IdleUp,
+		RunDown,
+		RunLeft,
+		RunRight,
+		RunUp
 	};
 
 	class Player : public Actor
@@ -30,8 +36,15 @@ namespace we
 		virtual void Tick(float DeltaTime) override;
 		virtual void Destroy() override;
 
+	public:
+		void InitializeAnimations();
+		void UpdateAnimation();
+		void UpdateFootsteps();
+		void PlayFootstep();
+
 	private:
 		shared<MovementComponent> MoveComp;
 		shared<AnimationComponent> AnimComp;
+		uint LastFootstepFrame = 255;
 	};
 }

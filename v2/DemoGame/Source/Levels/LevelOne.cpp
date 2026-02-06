@@ -27,6 +27,7 @@ namespace we
         }
 
         World::BeginPlay();
+        Subsystem.Cursor->SetVisibility(false);
     }
 
     void LevelOne::Render()
