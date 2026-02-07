@@ -7,6 +7,7 @@
 #include "Framework/WaterEngine.h"
 #include "AssetDirectory/PakDirectory.h"
 #include "Subsystem/ResourceSubsystem.h"
+#include "Subsystem/AsyncResourceSubsystem.h"
 #include "Framework/World/World.h"
 #include "Utility/Timer.h"
 #include "Utility/Log.h"
@@ -25,12 +26,14 @@ namespace we
         Subsystem.World->UnloadWorld();
         Subsystem.Render.reset();
         Asset().Shutdown();
+        AsyncAsset().Shutdown();
     }
 
     void WaterEngine::Configure()
     {
         auto PD = make_shared<PakDirectory>(EC.AssetDirectory);
         Asset().SetAssetDirectory(PD);
+        AsyncAsset().SetAssetDirectory(PD);
         if (EC.DisableSFMLLogs) { sf::err().rdbuf(nullptr); }
     }
 
@@ -63,6 +66,8 @@ namespace we
             ProcessEvents();
 
             Subsystem.Time->Tick(); // Always tick time
+
+            AsyncAsset().PollCompletedRequests();
 
             if (!Subsystem.Time->IsPaused())
             {

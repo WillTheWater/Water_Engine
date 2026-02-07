@@ -59,6 +59,7 @@ set(WATER_ENGINE_HEADERS
     Include/Framework/World/Object/Object.h
     Include/Framework/World/Actor/Actor.h
 
+    Include/Subsystem/AsyncResourceSubsystem.h
     Include/Subsystem/TimerSubsystem.h
     Include/Subsystem/RenderSubsystem.h
     Include/Subsystem/SaveLoadSubsystem.h
@@ -109,6 +110,7 @@ set(WATER_ENGINE_SOURCES
     Source/Framework/World/Object/Object.cpp
     Source/Framework/World/Actor/Actor.cpp
 
+    Source/Subsystem/AsyncResourceSubsystem.cpp
     Source/Subsystem/TimerSubsystem.cpp
     Source/Subsystem/RenderSubsystem.cpp
     Source/Subsystem/SaveLoadSubsystem.cpp
