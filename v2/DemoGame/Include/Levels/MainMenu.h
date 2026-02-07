@@ -6,6 +6,7 @@
 #pragma once
 #include "Utility/CoreMinimal.h"
 #include "Framework/World/World.h"
+#include "Utility/Delegate.h"
 
 namespace we
 {
@@ -16,11 +17,15 @@ namespace we
 	public:
 		explicit MainMenu(EngineSubsystem& Subsystem);
 		~MainMenu();
+
 		virtual void Render() override;
 
 	private:
 		shared<texture> BgTexture;
 		optional<sprite> Background;
 		unique<MainMenuUI> UI;
+
+	private:
+		void OnPlayClicked();
 	};
 }

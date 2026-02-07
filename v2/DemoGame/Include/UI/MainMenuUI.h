@@ -5,6 +5,7 @@
 
 #pragma once
 #include "Utility/CoreMinimal.h"
+#include "Utility/Delegate.h"
 
 namespace we
 {
@@ -17,6 +18,9 @@ namespace we
 	public:
 		explicit MainMenuUI(EngineSubsystem& Subsystem);
 		~MainMenuUI();
+
+	public:
+		Delegate<>OnPlayButtonClicked;
 
 	private:
 		void CreateUI();

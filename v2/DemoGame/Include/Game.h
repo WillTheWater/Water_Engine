@@ -19,7 +19,8 @@ namespace we
 		virtual void Tick(float DeltaTime) override;
 		void TogglePause();
 	private:
-		void OnStateEnter();
+		void OnStateEnter(shared<IGameStateToken> NewState);
+		void OnStateExit(shared<IGameStateToken> OldState);
 		void BindInput();
 		unique<PauseUI> PauseMenu;
 		bool bPaused;

@@ -48,7 +48,8 @@ namespace we
 
 	void MainMenuUI::OnPlayClicked()
 	{
-		Subsystem.GameState->RequestStateChange(GameState::Level1);
+		//Subsystem.GameState->RequestStateChange(GameState::Level1);
+		OnPlayButtonClicked.Broadcast();
 	}
 
 	void MainMenuUI::OnQuitClicked()

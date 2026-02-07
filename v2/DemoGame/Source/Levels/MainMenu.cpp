@@ -6,6 +6,7 @@
 #include "Levels/MainMenu.h"
 #include "Framework/EngineSubsystem.h"
 #include "Subsystem/ResourceSubsystem.h"
+#include "GameStates.h"
 #include "UI/MainMenuUI.h"
 #include "Utility/Log.h"
 
@@ -21,6 +22,7 @@ namespace we
 		}
 
 		UI = make_unique<MainMenuUI>(Subsystem);
+		UI->OnPlayButtonClicked.Bind(this, &MainMenu::OnPlayClicked);
 		Subsystem.Audio->PlayMusic(EC.DefaultMusic);
 		Subsystem.Audio->PlayAmbient(EC.DefaultAmbient);
 	}
@@ -37,5 +39,10 @@ namespace we
 		}
 
 		RenderActors();
+	}
+
+	void MainMenu::OnPlayClicked()
+	{
+		Subsystem.GameState->RequestStateChange(MakeState(EGameState::LevelOne));
 	}
 }

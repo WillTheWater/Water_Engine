@@ -7,19 +7,28 @@
 
 namespace we
 {
-    void GameStateSubsystem::RequestStateChange(GameState NewState)
+    void GameStateSubsystem::RequestStateChange(shared<IGameStateToken> NewState, bool bForce)
     {
-        if (NewState != CurrentState && NewState != GameState::None)
+        if (!NewState) return;
+
+        bool bIsDifferent = !CurrentState || (NewState->GetStateID() != CurrentState->GetStateID());
+
+        if ((bIsDifferent || bForce) &&
+            (!PendingState.has_value() || (*PendingState)->GetStateID() != NewState->GetStateID()))
+        {
             PendingState = NewState;
+        }
     }
 
     void GameStateSubsystem::ApplyPendingState()
     {
-        if (PendingState == GameState::None) return;
+        if (!PendingState.has_value()) return;
 
-        OnStateExit.Broadcast();
-        CurrentState = PendingState;
-        PendingState = GameState::None;
-        OnStateEnter.Broadcast();
+        auto OldState = CurrentState;
+        CurrentState = *PendingState;
+        PendingState.reset();
+
+        OnStateExit.Broadcast(OldState);
+        OnStateEnter.Broadcast(CurrentState);
     }
 }

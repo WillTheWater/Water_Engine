@@ -7,31 +7,25 @@
 
 #include "Utility/CoreMinimal.h"
 #include "Utility/Delegate.h"
+#include "Interface/IGameStateToken.h"
 
 namespace we
 {
-    enum class GameState
-    {
-        None,
-        MainMenu,
-        Level1
-    };
-
     class GameStateSubsystem
     {
     public:
-        void RequestStateChange(GameState NewState);
+        void RequestStateChange(shared<IGameStateToken> NewState, bool bForce = false);
         void ApplyPendingState();
 
-        GameState GetCurrentState() const { return CurrentState; }
-        bool IsTransitionPending() const { return PendingState != GameState::None; }
+        shared<IGameStateToken> GetCurrentState() const { return CurrentState; }
+        bool IsTransitionPending() const { return PendingState.has_value(); }
 
-        Delegate<> OnStateEnter;
-        Delegate<> OnStateExit;
+        Delegate<shared<IGameStateToken>> OnStateEnter;
+        Delegate<shared<IGameStateToken>> OnStateExit;
         Delegate<> OnQuitRequested;
 
     private:
-        GameState CurrentState = GameState::None;
-        GameState PendingState = GameState::None;
+        shared<IGameStateToken> CurrentState;
+        optional<shared<IGameStateToken>> PendingState;
     };
 }
