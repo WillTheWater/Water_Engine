@@ -11,6 +11,8 @@
 
 namespace we
 {
+    
+
     enum class EGameState : uint8
     {
         None,
@@ -42,9 +44,16 @@ namespace we
             return baseID ^ (std::hash<string>{}(Qualifier) << 1);
         }
 
+
+    public:
         EGameState GetState() const { return StateType; }
         const string& GetQualifier() const { return Qualifier; }
         bool Is(EGameState State) const { return StateType == State; }
+
+        bool IsMenu() const { return StateType == EGameState::MainMenu; }
+        bool IsLevelOne() const { return StateType == EGameState::LevelOne; }
+        bool IsGameplay() const { return IsLevelOne(); }
+        bool HasWorld() const { return IsMenu() || IsLevelOne(); }
 
     private:
         EGameState StateType;

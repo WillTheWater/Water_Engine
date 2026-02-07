@@ -9,8 +9,18 @@
 
 namespace we
 {
+    // ========================= REGISTRY MACRO =========================
+#define RegisterLevel(WORLD) \
+    Subsystem.World->RegisterWorld( \
+        MakeState(EGameState::WORLD)->GetStateID(), \
+        [](EngineSubsystem& Sub) { return make_shared<WORLD>(Sub); } \
+    )
+
     class World;
     struct EngineSubsystem;
+    class IGameStateToken;
+
+    using WorldFactory = std::function<shared<World>(EngineSubsystem&)>;
 
     class WorldSubsystem
     {
@@ -19,6 +29,11 @@ namespace we
         template<typename WorldType>
         weak<WorldType> LoadWorld();
 
+        void RegisterWorld(size_t StateID, WorldFactory Factory);
+
+        // Load world for given state (looks up factory, creates, sets current)
+        void LoadWorldForState(const IGameStateToken* State);
+
         void UnloadWorld();
         shared<World> GetCurrentWorld() const { return CurrentWorld; }
         bool HasWorld() const { return CurrentWorld != nullptr; }
@@ -26,6 +41,7 @@ namespace we
     private:
         EngineSubsystem& Subsystem;
         shared<World> CurrentWorld;
+        dictionary<size_t, WorldFactory> WorldRegistry;
     };
 
     template<typename WorldType>

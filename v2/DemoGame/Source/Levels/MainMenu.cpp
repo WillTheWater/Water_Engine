@@ -6,7 +6,7 @@
 #include "Levels/MainMenu.h"
 #include "Framework/EngineSubsystem.h"
 #include "Subsystem/ResourceSubsystem.h"
-#include "GameStates.h"
+#include "GameStateTokens.h"
 #include "UI/MainMenuUI.h"
 #include "Utility/Log.h"
 

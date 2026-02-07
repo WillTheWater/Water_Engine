@@ -17,12 +17,19 @@ namespace we
 		Game();
 
 		virtual void Tick(float DeltaTime) override;
+
+	public:
 		void TogglePause();
+
 	private:
+		unique<PauseUI> PauseMenu;
+		bool bPaused;
+
+	private:
+		void RegisterAllLevels();
 		void OnStateEnter(shared<IGameStateToken> NewState);
 		void OnStateExit(shared<IGameStateToken> OldState);
 		void BindInput();
-		unique<PauseUI> PauseMenu;
-		bool bPaused;
+
 	};
 }

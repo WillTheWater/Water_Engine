@@ -6,7 +6,7 @@
 #include "Game.h"
 #include "Framework/World/World.h"
 #include "Input/InputActions.h"
-#include "GameStates.h"
+#include "GameStateTokens.h"
 #include "Utility/Log.h"
 
 // ========================= LEVELS =========================
@@ -24,6 +24,8 @@ namespace we
 		: WaterEngine{}
 		, bPaused{false}
 	{
+		RegisterAllLevels();
+
 		Subsystem.GameState->OnStateEnter.Bind(this, &Game::OnStateEnter);
 		Subsystem.GameState->OnStateExit.Bind(this, &Game::OnStateExit);
 
@@ -34,70 +36,21 @@ namespace we
 		PauseMenu = make_unique<PauseUI>(Subsystem);
 		PauseMenu->OnResume.Bind(this, &Game::TogglePause);
 	}
+	
+	void Game::RegisterAllLevels()
+	{
+		RegisterLevel(MainMenu);
+		RegisterLevel(LevelOne);
+	}
 
 	void Game::Tick(float DeltaTime)
 	{
 	}
 
-	void Game::TogglePause()
-	{
-		bPaused = !Subsystem.Time->IsPaused();
-		Subsystem.Time->SetPaused(bPaused);
-
-		if (bPaused)
-		{
-			PauseMenu->Show();
-
-			auto Current = Subsystem.GameState->GetCurrentState();
-			if (auto GameState = Current->As<GameStateToken>())
-			{
-				if (GameState->Is(EGameState::LevelOne))
-				{
-					Subsystem.Cursor->SetVisibility(true);
-				}
-			}
-		}
-		else
-		{
-			PauseMenu->Hide();
-
-			auto Current = Subsystem.GameState->GetCurrentState();
-			if (auto GameState = Current->As<GameStateToken>())
-			{
-				if (GameState->Is(EGameState::LevelOne))
-				{
-					Subsystem.Cursor->SetVisibility(false);
-				}
-			}
-		}
-	}
-
 	void Game::OnStateEnter(shared<IGameStateToken> NewState)
 	{
-		auto GameState = NewState->As<GameStateToken>();
-		if (!GameState)
-		{
-			ERROR("Invalid state token received");
-			return;
-		}
-
-		LOG("Entering state: {}", GameState->GetDebugName());
-
-		Subsystem.World->UnloadWorld();
-
-		switch (GameState->GetState())
-		{
-		case EGameState::MainMenu:
-			Subsystem.World->LoadWorld<MainMenu>();
-			break;
-
-		case EGameState::LevelOne:
-			Subsystem.World->LoadWorld<LevelOne>();
-			break;
-
-		default:
-			break;
-		}
+		LOG("Entering state: {}", NewState->GetDebugName());
+		Subsystem.World->LoadWorldForState(NewState.get());
 	}
 
 	void Game::OnStateExit(shared<IGameStateToken> OldState)
@@ -115,5 +68,25 @@ namespace we
 		Subsystem.Input->Bind(ACTION_TOGGLE_PAUSE, Input::Gamepad{GamepadButton::Start});
 
 		Subsystem.Input->OnPressed(ACTION_TOGGLE_PAUSE, [this](){ TogglePause(); });
+	}
+	
+	void Game::TogglePause()
+	{
+		bPaused = !Subsystem.Time->IsPaused();
+		Subsystem.Time->SetPaused(bPaused);
+
+		if (bPaused)
+			PauseMenu->Show();
+		else
+			PauseMenu->Hide();
+
+		auto Current = Subsystem.GameState->GetCurrentState();
+		if (auto GameState = Current->As<GameStateToken>())
+		{
+			if (GameState->IsGameplay())
+			{
+				Subsystem.Cursor->SetVisibility(bPaused);
+			}
+		}
 	}
 }
