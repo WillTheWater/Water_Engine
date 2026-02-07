@@ -4,11 +4,15 @@
 // =============================================================================
 
 #pragma once
+
 #include "Utility/CoreMinimal.h"
 #include "Interface/IAssetDirector.h"
+#include <SFML/System/InputStream.hpp>
 
 namespace we
 {
+    class MusicMemoryStream;
+
     class ResourceSubsystem
     {
     public:
@@ -17,7 +21,6 @@ namespace we
         void SetAssetDirectory(shared<IAssetDirector> Directory);
         void Shutdown();
 
-    public:
         shared<texture> LoadTexture(const string& Path);
         shared<font> LoadFont(const string& Path);
         shared<soundBuffer> LoadSound(const string& Path);
@@ -27,21 +30,33 @@ namespace we
         ResourceSubsystem() = default;
         ~ResourceSubsystem() = default;
 
-    private:
         shared<IAssetDirector> AssetDirectory;
 
         dictionary<string, shared<texture>> Textures;
         dictionary<string, shared<font>> Fonts;
         dictionary<string, shared<soundBuffer>> Sounds;
         dictionary<string, list<uint8>> FontData;
-        dictionary<string, string> Music;
+        dictionary<string, shared<list<uint8>>> MusicData;
+        dictionary<string, shared<MusicMemoryStream>> MusicStreams;
 
-    private:
         template<typename Asset, typename Cache>
         shared<Asset> Load(const string& Path, Cache& AssetCache, auto&& LoadFunc);
-
-        string StreamMusic(const string& Path, const list<uint8>& Data);
     };
 
     inline ResourceSubsystem& Asset() { return ResourceSubsystem::Get(); }
+
+    class MusicMemoryStream : public sf::InputStream
+    {
+    public:
+        explicit MusicMemoryStream(shared<list<uint8>> InData);
+
+        optional<usize> read(void* data, usize size) override;
+        optional<usize> seek(usize position) override;
+        optional<usize> tell() override;
+        optional<usize> getSize() override;
+
+    private:
+        shared<list<uint8>> Data;
+        usize Pos;
+    };
 }

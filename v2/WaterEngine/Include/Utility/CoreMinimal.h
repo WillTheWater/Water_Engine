@@ -14,6 +14,7 @@
 #include <functional>
 #include <algorithm>
 #include <numbers>
+#include <cstdint>
 #include <map>
 #include <vector>
 #include <array>
@@ -46,6 +47,8 @@ namespace we
 
 	using uint8 = unsigned char;
 	using uint = std::uint32_t;
+	using int64 = std::int64_t;
+	using usize = std::size_t;
 
 	// ----- Math Types -----
 	template<typename T>

@@ -8,6 +8,38 @@
 
 namespace we
 {
+    MusicMemoryStream::MusicMemoryStream(shared<list<uint8>> InData)
+        : Data(std::move(InData)), Pos(0)
+    {
+    }
+
+    std::optional<usize> MusicMemoryStream::read(void* data, usize size)
+    {
+        usize Available = Data->size() - Pos;
+        usize ToRead = (size < Available) ? size : Available;
+        if (ToRead > 0)
+        {
+            std::memcpy(data, Data->data() + Pos, ToRead);
+            Pos += ToRead;
+        }
+        return ToRead;
+    }
+
+    std::optional<usize> MusicMemoryStream::seek(usize position)
+    {
+        Pos = (position > Data->size()) ? Data->size() : position;
+        return Pos;
+    }
+
+    std::optional<usize> MusicMemoryStream::tell()
+    {
+        return Pos;
+    }
+
+    std::optional<usize> MusicMemoryStream::getSize()
+    {
+        return Data->size();
+    }
     ResourceSubsystem& ResourceSubsystem::Get()
     {
         static ResourceSubsystem Instance;
@@ -20,7 +52,8 @@ namespace we
         Fonts.clear();
         Sounds.clear();
         FontData.clear();
-        Music.clear();
+        MusicData.clear();
+        MusicStreams.clear();
         AssetDirectory = nullptr;
     }
 
@@ -110,32 +143,10 @@ namespace we
             });
     }
 
-    string ResourceSubsystem::StreamMusic(const string& Path, const list<uint8>& Data)
-    {
-        auto FileName = Path.substr(Path.find_last_of("/\\") + 1);
-        auto TempPath = std::filesystem::temp_directory_path() / FileName;
-
-        int Counter = 0;
-        while (std::filesystem::exists(TempPath))
-        {
-            TempPath = std::filesystem::temp_directory_path() / (std::to_string(Counter++) + "_" + FileName);
-        }
-
-        std::ofstream OutFile(TempPath, std::ios::binary);
-        OutFile.write(reinterpret_cast<const char*>(Data.data()), Data.size());
-
-        return TempPath.string();
-    }
-
     shared<sf::Music> ResourceSubsystem::LoadMusic(const string& Path)
     {
-        string TargetTempPath;
-        auto it = Music.find(Path);
-        if (it != Music.end())
-        {
-            TargetTempPath = it->second;
-        }
-        else
+        auto It = MusicData.find(Path);
+        if (It == MusicData.end())
         {
             if (!AssetDirectory)
             {
@@ -150,17 +161,20 @@ namespace we
                 return nullptr;
             }
 
-            TargetTempPath = StreamMusic(Path, FileData);
-            Music[Path] = TargetTempPath;
+            auto DataPtr = make_shared<list<uint8>>(std::move(FileData));
+            It = MusicData.emplace(Path, DataPtr).first;
         }
 
-        auto MusicInstance = make_shared<sf::Music>();
-        if (!MusicInstance->openFromFile(TargetTempPath))
+        auto Stream = make_shared<MusicMemoryStream>(It->second);
+        auto Music = make_shared<sf::Music>();
+
+        if (!Music->openFromStream(*Stream))
         {
-            ERROR("Failed to open music file: {}", TargetTempPath);
+            ERROR("Failed to open music from stream: {}", Path);
             return nullptr;
         }
 
-        return MusicInstance;
+        MusicStreams[Path] = Stream;
+        return Music;
     }
 }

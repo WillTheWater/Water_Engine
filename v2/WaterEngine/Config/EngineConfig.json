@@ -22,15 +22,15 @@
   "DefaultFont": "Assets/Font/Default/defaultFont.ttf",
   "DefaultPanel": "Assets/Textures/Default/defaultPanel.png",
   "DefaultButton": "Assets/Textures/Default/defaultButton.png",
-  "DefaultMusic": "Assets/Audio/Default/defaultMusic.wav",
-  "DefaultAmbient": "/Assets/Audio/Default/defaultAmbient.wav",
-  "DefaultButtonHoverSound": "Assets/Audio/Default/defaultHover.wav",
-  "DefaultButtonClickSound": "Assets/Audio/Default/defaultClick.wav",
+  "DefaultMusic": "Assets/Audio/Default/defaultMusic.ogg",
+  "DefaultAmbient": "/Assets/Audio/Default/defaultAmbient.ogg",
+  "DefaultButtonHoverSound": "Assets/Audio/Default/defaultHover.ogg",
+  "DefaultButtonClickSound": "Assets/Audio/Default/defaultClick.ogg",
   "MaxSFXStack": 16,
   "LevelOneBackground": "Assets/Textures/Default/level1.png",
   "CharacterSheet": "Assets/Textures/Default/characterTest.png",
-  "Footstep1": "Assets/Audio/Default/footstep1.wav",
-  "Footstep2": "Assets/Audio/Default/footstep2.wav",
-  "Footstep3": "Assets/Audio/Default/footstep3.wav",
-  "Footstep4": "Assets/Audio/Default/footstep4.wav"
+  "Footstep1": "Assets/Audio/Default/footstep1.ogg",
+  "Footstep2": "Assets/Audio/Default/footstep2.ogg",
+  "Footstep3": "Assets/Audio/Default/footstep3.ogg",
+  "Footstep4": "Assets/Audio/Default/footstep4.ogg"
 }
