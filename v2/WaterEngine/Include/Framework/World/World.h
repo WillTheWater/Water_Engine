@@ -14,7 +14,7 @@ namespace we
 	class Actor;
 	struct EngineSubsystem;
 
-	class World
+	class World : public Object
 	{
 	public:
 		World(EngineSubsystem& Subsystem);

@@ -8,6 +8,7 @@
 #include "AssetDirectory/PakDirectory.h"
 #include "Subsystem/ResourceSubsystem.h"
 #include "Framework/World/World.h"
+#include "Utility/Timer.h"
 #include "Utility/Log.h"
 
 namespace we
@@ -91,6 +92,7 @@ namespace we
             Subsystem.GameState->ApplyPendingState();
         }
 
+        TimerManager::Get().Tick(DeltaTime);
         Subsystem.Input->ProcessHeld();
         Subsystem.Cursor->Update(DeltaTime);
         Subsystem.GUI->Update(DeltaTime);

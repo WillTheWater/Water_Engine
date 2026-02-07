@@ -11,7 +11,8 @@
 namespace we
 {
 	World::World(EngineSubsystem& Subsystem)
-		: Subsystem{ Subsystem }
+		: Object()
+		, Subsystem{ Subsystem }
 		, Actors{}
 		, PendingActors{}
 		, bHasBegunPlay{false}

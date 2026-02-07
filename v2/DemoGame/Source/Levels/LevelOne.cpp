@@ -7,6 +7,7 @@
 #include "Framework/EngineSubsystem.h"
 #include "Subsystem/ResourceSubsystem.h"
 #include "Character/PlayerCharacter.h"
+#include "Utility/Log.h"
 
 namespace we
 {
@@ -19,6 +20,9 @@ namespace we
 
     void LevelOne::BeginPlay()
     {
+        LOG("Level One Started - Timer set for 3 seconds");
+        TestTimer = TimerManager::Get().SetTimer(weak_from_this(), &LevelOne::OnTimerFinished, 3.0f, false);
+
         auto PlayerRef = SpawnActor<Player>(EC.CharacterSheet);
         if (auto P = PlayerRef.lock())
         {
@@ -39,5 +43,11 @@ namespace we
         if (Background) { Subsystem.Render->Draw(*Background); }
 
         RenderActors();
+    }
+
+    void LevelOne::OnTimerFinished()
+    {
+        LOG("Timer Worked!");
+        TestTimer.Invalidate();
     }
 }

@@ -7,6 +7,7 @@
 
 #include "Utility/CoreMinimal.h"
 #include "Framework/World/World.h"
+#include "Utility/Timer.h"
 
 namespace we
 {
@@ -19,8 +20,11 @@ namespace we
         virtual void Tick(float DeltaTime) override;
         virtual void Render() override;
 
+        void OnTimerFinished();
+
     private:
         shared<texture> BgTexture;
         optional<sprite> Background;
+        TimerHandle TestTimer;
     };
 }
