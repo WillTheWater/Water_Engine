@@ -83,6 +83,7 @@ set(WATER_ENGINE_HEADERS
     Include/AssetDirectory/PakDirectory.h
 
     Include/Interface/IAssetDirector.h
+    Include/Interface/IGameStateToken.h
     Include/Interface/Component/IActorComponent.h
     Include/Interface/Component/IAnimationComponent.h
     
