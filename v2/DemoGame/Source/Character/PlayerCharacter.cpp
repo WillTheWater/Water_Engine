@@ -5,7 +5,7 @@
 
 #include "Character/PlayerCharacter.h"
 #include "Character/MovementComponent.h"
-#include "Interface/Component/IAnimationComponent.h"
+#include "Interface/Component/AnimationComponent.h"
 #include "Framework/World/World.h"
 #include "Framework/EngineSubsystem.h"
 #include "Utility/RandomGenerator.h"

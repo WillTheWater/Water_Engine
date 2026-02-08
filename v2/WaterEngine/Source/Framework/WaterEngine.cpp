@@ -7,6 +7,7 @@
 #include "Framework/WaterEngine.h"
 #include "AssetDirectory/PakDirectory.h"
 #include "Subsystem/ResourceSubsystem.h"
+#include "Subsystem/PhysicsSubsystem.h"
 #include "Subsystem/AsyncResourceSubsystem.h"
 #include "Framework/World/World.h"
 #include "Utility/Timer.h"
@@ -25,6 +26,7 @@ namespace we
     {
         Subsystem.World->UnloadWorld();
         Subsystem.Render.reset();
+        Physics().Shutdown();
         Asset().Shutdown();
         AsyncAsset().Shutdown();
     }
@@ -47,6 +49,7 @@ namespace we
         Subsystem.World = make_unique<WorldSubsystem>(Subsystem);
         Subsystem.GameState = make_unique<GameStateSubsystem>();
         Subsystem.GameState->OnQuitRequested.Bind(this, &WaterEngine::Quit);
+        Physics().Initialize();
 
         WindowInit();
     }
@@ -98,6 +101,7 @@ namespace we
         }
 
         TimerManager::Get().Tick(DeltaTime);
+        Physics().Step(DeltaTime);
         Subsystem.Input->ProcessHeld();
         Subsystem.Cursor->Update(DeltaTime);
         Subsystem.GUI->Update(DeltaTime);

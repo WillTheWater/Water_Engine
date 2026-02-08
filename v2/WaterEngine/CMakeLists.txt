@@ -66,6 +66,7 @@ set(WATER_ENGINE_HEADERS
     Include/Subsystem/ResourceSubsystem.h
     Include/Subsystem/AudioSubsystem.h
     Include/Subsystem/InputSubsystem.h
+    Include/Subsystem/PhysicsSubsystem.h
     Include/Subsystem/WorldSubsystem.h
     Include/Subsystem/GameStateSubsystem.h
     Include/Subsystem/GUISubsystem.h
@@ -93,7 +94,9 @@ set(WATER_ENGINE_HEADERS
     Include/Interface/IAssetDirector.h
     Include/Interface/IGameStateToken.h
     Include/Interface/Component/IActorComponent.h
-    Include/Interface/Component/IAnimationComponent.h
+    Include/Interface/Component/IPhysicsComponent.h
+    Include/Interface/Component/AnimationComponent.h
+    Include/Interface/Component/PhysicsComponent.h
     
     Include/Utility/WindowUtility.h
     Include/Utility/CoreMinimal.h
@@ -124,6 +127,7 @@ set(WATER_ENGINE_SOURCES
     Source/Subsystem/ResourceSubsystem.cpp
     Source/Subsystem/AudioSubsystem.cpp
     Source/Subsystem/InputSubsystem.cpp    
+    Source/Subsystem/PhysicsSubsystem.cpp
     Source/Subsystem/WorldSubsystem.cpp
     Source/Subsystem/GameStateSubsystem.cpp
     Source/Subsystem/GUISubsystem.cpp
@@ -145,7 +149,8 @@ set(WATER_ENGINE_SOURCES
     
     Source/AssetDirectory/PakDirectory.cpp
 
-    Source/Interface/Component/IAnimationComponent.cpp
+    Source/Interface/Component/AnimationComponent.cpp
+    Source/Interface/Component/PhysicsComponent.cpp
 
     Source/Utility/RandomGenerator.cpp 
     Source/Utility/Timer.cpp

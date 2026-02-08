@@ -3,7 +3,7 @@
 // Copyright(C) 2026 Will The Water
 // =============================================================================
 
-#include "Interface/Component/IAnimationComponent.h"
+#include "Interface/Component/AnimationComponent.h"
 #include "Framework/World/Actor/Actor.h"
 #include "Utility/Log.h"
 
