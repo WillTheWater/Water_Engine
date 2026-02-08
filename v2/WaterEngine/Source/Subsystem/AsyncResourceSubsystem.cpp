@@ -185,8 +185,55 @@ namespace we
         return Asset().LoadSound(Path);
     }
 
+    void AsyncResourceSubsystem::GarbageCycle(float DeltaTime)
+    {
+        static float CleanupTimer = 0.0f;
+        CleanupTimer += DeltaTime;
+
+        if (CleanupTimer > 3.0f)
+        {
+            UnloadUnusedAssets();
+            CleanupTimer = 0.0f;
+        }
+    }
+
     void AsyncResourceSubsystem::UnloadUnusedAssets()
     {
-        // Clean caches of expired weak_ptrs
+        size_t TexturesBefore = TextureCache.size();
+        size_t FontsBefore = FontCache.size();
+        size_t SoundsBefore = SoundCache.size();
+
+        for (auto It = TextureCache.begin(); It != TextureCache.end();)
+        {
+            if (It->second.expired())
+                It = TextureCache.erase(It);
+            else
+                ++It;
+        }
+
+        for (auto It = FontCache.begin(); It != FontCache.end();)
+        {
+            if (It->second.expired())
+                It = FontCache.erase(It);
+            else
+                ++It;
+        }
+
+        for (auto It = SoundCache.begin(); It != SoundCache.end();)
+        {
+            if (It->second.expired())
+                It = SoundCache.erase(It);
+            else
+                ++It;
+        }
+
+        size_t TotalFreed = (TexturesBefore - TextureCache.size()) +
+            (FontsBefore - FontCache.size()) +
+            (SoundsBefore - SoundCache.size());
+
+        if (TotalFreed > 0)
+        {
+            LOG("AsyncAsset: Unloaded {} unused assets", TotalFreed);
+        }
     }
 }

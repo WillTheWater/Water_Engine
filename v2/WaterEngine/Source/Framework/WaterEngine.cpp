@@ -101,6 +101,7 @@ namespace we
         Subsystem.Input->ProcessHeld();
         Subsystem.Cursor->Update(DeltaTime);
         Subsystem.GUI->Update(DeltaTime);
+        AsyncAsset().GarbageCycle(DeltaTime);
 
         if (auto World = Subsystem.World->GetCurrentWorld())
         {

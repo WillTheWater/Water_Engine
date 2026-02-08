@@ -163,6 +163,7 @@ namespace we
         void PollCompletedRequests();
 
         // Cache management
+        void GarbageCycle(float DeltaTime);
         void UnloadUnusedAssets();
 
     private:

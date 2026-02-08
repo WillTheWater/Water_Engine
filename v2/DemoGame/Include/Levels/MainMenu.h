@@ -25,25 +25,10 @@ namespace we
 		virtual void Render() override;
 
 	private:
-		shared<texture> BgTexture;
+		AssetHandle<texture> BgHandle;
 		optional<sprite> Background;
+
 		unique<MainMenuUI> UI;
-
-		// Original tests
-		AssetHandle<texture> TestHandle;
-		optional<sprite> TestSpriteTick;
-		AssetHandle<texture> TestHandleRender;
-		optional<sprite> TestSpriteRender;
-		shared<texture> TestTextureSync;
-		optional<sprite> TestSpriteSync;
-
-		// Power tests
-		list<AssetHandle<texture>> MassHandles;
-		bool bMassTestLogged = false;
-		float MassTestStartTime = 0.0f;
-
-		list<AssetHandle<texture>> PriorityHandles;
-		bool bPriorityTestLogged = false;
 
 	private:
 		void OnPlayClicked();
