@@ -75,6 +75,8 @@ set(WATER_ENGINE_HEADERS
     Include/PostProcess/EmbeddedShaders.h
     Include/PostProcess/PPE/TestPPE.h
     Include/PostProcess/PPE/EmbeddedPPETest.h
+    Include/PostProcess/PPE/TimePPETest.h
+    Include/PostProcess/PPE/BloomPPE.h
     
     Include/UI/Clipboard/Clipboard.h
 
@@ -129,6 +131,8 @@ set(WATER_ENGINE_SOURCES
 
     Source/PostProcess/PPE/TestPPE.cpp
     Source/PostProcess/PPE/EmbeddedPPETest.cpp
+    Source/PostProcess/PPE/TimePPETest.cpp
+    Source/PostProcess/PPE/BloomPPE.cpp
 
     Source/UI/Clipboard/Clipboard.cpp
 

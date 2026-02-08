@@ -12,6 +12,8 @@
 // ============================= Shaders =====================================
 					#include "PostProcess/PPE/TestPPE.h"
 					#include "PostProcess/PPE/EmbeddedPPETest.h"
+					#include "PostProcess/PPE/TimePPETest.h"
+					#include "PostProcess/PPE/BloomPPE.h"
 
 namespace we
 {
@@ -31,7 +33,9 @@ namespace we
 
 			// PPE Effects applied to every frame
 			//PostProcessEffects.emplace_back(make_unique<PPETest>());
-			PostProcessEffects.emplace_back(make_unique<EmbeddedPPETest>());
+			//PostProcessEffects.emplace_back(make_unique<TimePPETest>());
+			//PostProcessEffects.emplace_back(make_unique<EmbeddedPPETest>());
+			PostProcessEffects.emplace_back(make_unique<BloomPPE>());
 		}
 	}
 

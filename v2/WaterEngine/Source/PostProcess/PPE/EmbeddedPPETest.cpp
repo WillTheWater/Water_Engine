@@ -12,7 +12,7 @@ namespace we
 	EmbeddedPPETest::EmbeddedPPETest()
 	{
 		TestShader = make_shared<shader>();
-		VERIFY(TestShader->loadFromMemory(std::string(EmbeddedShader::GrayscaleFragment), shader::Type::Fragment));
+		VERIFY(TestShader->loadFromMemory(std::string(EmbeddedShader::BrightnessContrastFragment), shader::Type::Fragment));
 	}
 
 	void EmbeddedPPETest::Apply(const sf::Texture& Input, sf::RenderTarget& Output)

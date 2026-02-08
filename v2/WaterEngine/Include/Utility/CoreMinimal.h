@@ -32,6 +32,7 @@
 #include <SFML/System/Vector2.hpp>
 #include <SFML/System/Vector3.hpp>
 #include <SFML/System/Angle.hpp>
+#include <SFML/System/Clock.hpp>
 #include <SFML/Audio.hpp>
 
 // =============================================================================
@@ -77,6 +78,7 @@ namespace we
 	using recti = sf::IntRect;
 	using color = sf::Color;
 	using shader = sf::Shader;
+	using clock = sf::Clock;
 
 	// =============================================================================
 	// Memory

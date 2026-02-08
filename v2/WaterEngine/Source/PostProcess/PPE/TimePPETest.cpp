@@ -3,23 +3,24 @@
 // Copyright(C) 2026 Will The Water
 // =============================================================================
 
-#include <SFML/Graphics/Sprite.hpp>
-
+#include "PostProcess/PPE/TimePPETest.h"
 #include "Subsystem/AsyncResourceSubsystem.h"
-#include "PostProcess/PPE/TestPPE.h"
+#include "PostProcess/EmbeddedShaders.h"
 #include "Utility/Assert.h"
 
 namespace we
 {
-	PPETest::PPETest()
+	TimePPETest::TimePPETest()
 	{
 		TestShader = AsyncAsset().LoadShader("Shaders/TimeTest.frag", shader::Type::Fragment);
 		VERIFY(TestShader != nullptr);
 	}
 
-	void PPETest::Apply(const sf::Texture& Input, sf::RenderTarget& Output)
+	void TimePPETest::Apply(const sf::Texture& Input, sf::RenderTarget& Output)
 	{
-		TestShader.get()->setUniform("Source", shader::CurrentTexture);
+		float Elapsed = Time.getElapsedTime().asSeconds();
+		TestShader->setUniform("Time", Elapsed);
+		TestShader->setUniform("Source", shader::CurrentTexture);
 		Output.draw(sprite(Input), TestShader.get());
 	}
 }
