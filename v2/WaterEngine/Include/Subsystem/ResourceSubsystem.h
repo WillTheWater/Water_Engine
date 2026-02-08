@@ -26,6 +26,8 @@ namespace we
         shared<soundBuffer> LoadSound(const string& Path);
         shared<sf::Music> LoadMusic(const string& Path);
 
+        shared<shader> LoadShader(const string& Path, shader::Type Type);
+
     private:
         ResourceSubsystem() = default;
         ~ResourceSubsystem() = default;

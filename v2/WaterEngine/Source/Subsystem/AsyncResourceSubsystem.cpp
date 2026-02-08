@@ -185,6 +185,11 @@ namespace we
         return Asset().LoadSound(Path);
     }
 
+    shared<shader> AsyncResourceSubsystem::LoadShader(const string& Path, shader::Type Type)
+    {
+        return Asset().LoadShader(Path, Type);
+    }
+
     void AsyncResourceSubsystem::GarbageCycle(float DeltaTime)
     {
         static float CleanupTimer = 0.0f;

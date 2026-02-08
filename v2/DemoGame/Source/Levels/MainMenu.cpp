@@ -37,7 +37,6 @@ namespace we
 		if (BgHandle.IsReady() && !Background.has_value())
 		{
 			Background.emplace(*BgHandle);
-			LOG("MainMenu: Background ready");
 		}
 	}
 

@@ -5,8 +5,13 @@
 
 #include "Subsystem/RenderSubsystem.h"
 #include "Subsystem/ResourceSubsystem.h"
+#include "Utility/Assert.h"
 #include "EngineConfig.h"
 #include "Utility/Log.h"
+
+// ============================= Shaders =====================================
+					#include "PostProcess/PPE/TestPPE.h"
+					#include "PostProcess/PPE/EmbeddedPPETest.h"
 
 namespace we
 {
@@ -19,6 +24,15 @@ namespace we
 	void RenderSubsystem::Initialize()
 	{
 		RenderTarget.setSmooth(EC.SetRenderSmooth);
+
+		if (sf::Shader::isAvailable)
+		{
+			VERIFY(PostProcessTarget.resize(vec2u(EC.WindowSize)));
+
+			// PPE Effects applied to every frame
+			//PostProcessEffects.emplace_back(make_unique<PPETest>());
+			PostProcessEffects.emplace_back(make_unique<EmbeddedPPETest>());
+		}
 	}
 
 	void RenderSubsystem::Draw(const drawable& RenderObject)
@@ -29,11 +43,13 @@ namespace we
 	void RenderSubsystem::SetRenderView(const view& RenderView)
 	{
 		RenderTarget.setView(RenderView);
+		PostProcessTarget.setView(RenderView);
 	}
 
 	void RenderSubsystem::ResetRenderView()
 	{
 		SetRenderView(RenderTarget.getDefaultView());
+		SetRenderView(PostProcessTarget.getDefaultView());
 	}
 
 	const view RenderSubsystem::ConstrainView(vec2u WindowSize)
@@ -55,6 +71,8 @@ namespace we
 		view NewView;
 		NewView.setSize(vec2f(RenderTarget.getSize()));
 		NewView.setCenter(vec2f(RenderTarget.getSize()).componentWiseDiv({ 2, 2 }));
+		NewView.setSize(vec2f(PostProcessTarget.getSize()));
+		NewView.setCenter(vec2f(PostProcessTarget.getSize()).componentWiseDiv({ 2, 2 }));
 
 		NewView.setViewport(rectf({ vPosX, vPosY }, { vWidth, vHeight }));
 
@@ -64,11 +82,23 @@ namespace we
 	void RenderSubsystem::StartRender()
 	{
 		RenderTarget.clear(color::Black);
+		PostProcessTarget.clear(color::Black);
 	}
 
 	const texture& RenderSubsystem::FinishRender()
 	{
 		RenderTarget.display();
-		return RenderTarget.getTexture();
+		renderTexture* Input = &RenderTarget;
+		renderTexture* Output = &PostProcessTarget;
+
+		for (auto& PPE : PostProcessEffects)
+		{
+			Output->clear(color::Black);
+			PPE->Apply(Input->getTexture(), *Output);
+			Output->display();
+			std::swap(Input, Output);
+		}
+
+		return Input->getTexture();
 	}
 }

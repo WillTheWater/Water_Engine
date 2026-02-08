@@ -158,6 +158,7 @@ namespace we
         shared<texture> LoadTextureSync(const string& Path);
         shared<font> LoadFontSync(const string& Path);
         shared<soundBuffer> LoadSoundSync(const string& Path);
+        shared<shader> LoadShader(const string& Path, shader::Type Type);
 
         // Call every frame from main thread
         void PollCompletedRequests();

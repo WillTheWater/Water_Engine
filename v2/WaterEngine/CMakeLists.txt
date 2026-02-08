@@ -70,7 +70,12 @@ set(WATER_ENGINE_HEADERS
     Include/Subsystem/GameStateSubsystem.h
     Include/Subsystem/GUISubsystem.h
     Include/UI/Cursor/CursorSubsystem.h
-
+    
+    Include/PostProcess/IPostProcess.h
+    Include/PostProcess/EmbeddedShaders.h
+    Include/PostProcess/PPE/TestPPE.h
+    Include/PostProcess/PPE/EmbeddedPPETest.h
+    
     Include/UI/Clipboard/Clipboard.h
 
     Include/UI/Widget/Panel.h
@@ -121,6 +126,9 @@ set(WATER_ENGINE_SOURCES
     Source/Subsystem/GameStateSubsystem.cpp
     Source/Subsystem/GUISubsystem.cpp
     Source/UI/Cursor/CursorSubsystem.cpp
+
+    Source/PostProcess/PPE/TestPPE.cpp
+    Source/PostProcess/PPE/EmbeddedPPETest.cpp
 
     Source/UI/Clipboard/Clipboard.cpp
 

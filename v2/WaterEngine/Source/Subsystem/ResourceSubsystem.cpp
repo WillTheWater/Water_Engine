@@ -69,7 +69,7 @@ namespace we
         {
             if (auto Existing = it->second)
             {
-                LOG("Cache hit for: {}", Path);
+                //LOG("Cache hit for: {}", Path);
                 return Existing;
             }
         }
@@ -176,5 +176,19 @@ namespace we
 
         MusicStreams[Path] = Stream;
         return Music;
+    }
+
+    shared<shader> ResourceSubsystem::LoadShader(const string& Path, shader::Type Type)
+    {
+        if (!AssetDirectory) return nullptr;
+
+        list<uint8> Data;
+        if (!AssetDirectory->ReadFile(Path, Data)) return nullptr;
+
+        string Source(Data.begin(), Data.end());
+        auto Shader = make_shared<shader>();
+        if (!Shader->loadFromMemory(Source, Type)) return nullptr;
+
+        return Shader;
     }
 }

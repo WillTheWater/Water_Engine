@@ -28,6 +28,7 @@
 // =============================================================================
 #include <nlohmann/json.hpp>
 #include <sfml/Graphics.hpp>
+#include <SFML/Graphics/Shader.hpp>
 #include <SFML/System/Vector2.hpp>
 #include <SFML/System/Vector3.hpp>
 #include <SFML/System/Angle.hpp>
@@ -75,6 +76,7 @@ namespace we
 	using rectf = sf::FloatRect;
 	using recti = sf::IntRect;
 	using color = sf::Color;
+	using shader = sf::Shader;
 
 	// =============================================================================
 	// Memory
