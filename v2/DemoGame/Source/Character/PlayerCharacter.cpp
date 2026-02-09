@@ -58,11 +58,7 @@ namespace we
 
 	void Player::InitializePhysics()
 	{
-		PhysComp = CreateComponent<PhysicsComponent>(this);
-		PhysComp->SetBodyType(BodyType::Kinematic);
-		PhysComp->SetCircleShape(80.0f);
-		Physics().RegisterComponent(PhysComp.get());
-		PhysComp->SetDebugDraw(true);
+		//PhysComp = CreateComponent<PhysicsComponent>(this);
 	}
 
 	void Player::UpdateAnimation()

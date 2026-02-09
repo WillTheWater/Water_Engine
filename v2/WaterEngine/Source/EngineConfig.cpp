@@ -48,5 +48,6 @@ namespace we
         Footstep2 = Config["Footstep2"];
         Footstep3 = Config["Footstep3"];
         Footstep4 = Config["Footstep4"];
+        DefaultGravity = { Config["DefaultGravity"][0], Config["DefaultGravity"][1] };
     }
 }

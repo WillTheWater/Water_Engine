@@ -32,5 +32,6 @@
   "Footstep1": "Assets/Audio/Default/footstep1.ogg",
   "Footstep2": "Assets/Audio/Default/footstep2.ogg",
   "Footstep3": "Assets/Audio/Default/footstep3.ogg",
-  "Footstep4": "Assets/Audio/Default/footstep4.ogg"
+  "Footstep4": "Assets/Audio/Default/footstep4.ogg",
+  "DefaultGravity": [ 0.0, 0.0 ]
 }

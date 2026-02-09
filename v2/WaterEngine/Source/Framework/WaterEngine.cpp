@@ -26,7 +26,6 @@ namespace we
     {
         Subsystem.World->UnloadWorld();
         Subsystem.Render.reset();
-        Physics().Shutdown();
         Asset().Shutdown();
         AsyncAsset().Shutdown();
     }
@@ -49,7 +48,6 @@ namespace we
         Subsystem.World = make_unique<WorldSubsystem>(Subsystem);
         Subsystem.GameState = make_unique<GameStateSubsystem>();
         Subsystem.GameState->OnQuitRequested.Bind(this, &WaterEngine::Quit);
-        Physics().Initialize();
 
         WindowInit();
     }
@@ -101,7 +99,6 @@ namespace we
         }
 
         TimerManager::Get().Tick(DeltaTime);
-        Physics().Step(DeltaTime);
         Subsystem.Input->ProcessHeld();
         Subsystem.Cursor->Update(DeltaTime);
         Subsystem.GUI->Update(DeltaTime);
@@ -136,8 +133,6 @@ namespace we
         {
             World->Render();
         }
-
-        Physics().DebugDraw(Subsystem.Render.get());
 
         Window->draw(sprite(Subsystem.Render->FinishRender()));
         

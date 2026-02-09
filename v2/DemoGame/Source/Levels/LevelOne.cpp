@@ -24,12 +24,7 @@ namespace we
         {
             SetPosition(Position);
 
-            auto Phys = CreateComponent<PhysicsComponent>(this);
-            Phys->SetBodyType(BodyType::Static);  // Static, doesn't move
-            Phys->SetCircleShape(Radius);
-            Phys->SetSensor(false);
-            Phys->SetDebugDraw(true);
-            Physics().RegisterComponent(Phys.get());
+            //auto Phys = CreateComponent<PhysicsComponent>(this);
         }
     };
 

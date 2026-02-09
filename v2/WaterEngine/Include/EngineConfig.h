@@ -6,7 +6,7 @@
 #pragma once
 
 #include "Utility/CoreMinimal.h"
-
+#include <box2d/b2_math.h>
 #include <SFML/System/Time.hpp>
 
 // =============================================================================
@@ -53,6 +53,7 @@ namespace we
 		string Footstep2;
 		string Footstep3;
 		string Footstep4;
+		b2Vec2 DefaultGravity;
 	};
 
 	// Global Accessor
