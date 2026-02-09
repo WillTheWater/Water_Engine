@@ -31,6 +31,8 @@ namespace we
         // IPhysicsComponent
         virtual void OnBeginOverlap(PhysicsComponent* Other) override;
         virtual void OnEndOverlap(PhysicsComponent* Other) override;
+        void SetOverlapping(bool bOverlapping) { bIsOverlapping = bOverlapping; }
+        bool IsOverlapping() const { return bIsOverlapping; }
         virtual b2Body* GetPhysicsBody() const override { return Body; }
 
         // Shape setup
@@ -50,6 +52,10 @@ namespace we
         void ApplyForce(const vec2f& Force);
         void ApplyImpulse(const vec2f& Impulse);
 
+        // Debug
+        void SetDebugDraw(bool bEnable) { bDebugDraw = bEnable; }
+        void DebugDraw(RenderSubsystem* Render);
+
     private:
         void SyncActorToBody();   // Kinematic: actor -> body
         void SyncBodyToActor();   // Dynamic: body -> actor
@@ -68,6 +74,9 @@ namespace we
         float Friction;
         float Restitution;
         bool bSensor;
+        bool bIsOverlapping;
+        int OverlapCount;
         bool bNeedsFixtureUpdate;
+        bool bDebugDraw;
     };
 }

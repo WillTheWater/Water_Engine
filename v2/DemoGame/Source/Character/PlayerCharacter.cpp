@@ -6,6 +6,7 @@
 #include "Character/PlayerCharacter.h"
 #include "Character/MovementComponent.h"
 #include "Interface/Component/AnimationComponent.h"
+#include "Interface/Component/PhysicsComponent.h"
 #include "Framework/World/World.h"
 #include "Framework/EngineSubsystem.h"
 #include "Utility/RandomGenerator.h"
@@ -21,6 +22,7 @@ namespace we
 	void Player::BeginPlay()
 	{
 		InitializeAnimations();
+		InitializePhysics();
 
 		Actor::BeginPlay();
 	}
@@ -52,6 +54,15 @@ namespace we
 		AnimComp->AddAnimation({ (uint8)AnimState::RunUp,     {7, 0}, {7, 7}, 0.10f, true });
 
 		AnimComp->Transition((uint8)AnimState::IdleDown);
+	}
+
+	void Player::InitializePhysics()
+	{
+		PhysComp = CreateComponent<PhysicsComponent>(this);
+		PhysComp->SetBodyType(BodyType::Kinematic);
+		PhysComp->SetCircleShape(80.0f);
+		Physics().RegisterComponent(PhysComp.get());
+		PhysComp->SetDebugDraw(true);
 	}
 
 	void Player::UpdateAnimation()

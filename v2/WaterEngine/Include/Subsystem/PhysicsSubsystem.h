@@ -12,6 +12,7 @@
 namespace we
 {
     class PhysicsComponent;
+    class RenderSubsystem;
 
     enum class BodyType : uint8
     {
@@ -41,6 +42,11 @@ namespace we
         b2Body* CreateBody(PhysicsComponent* Owner, BodyType Type, const vec2f& Position, float Rotation);
         void DestroyBody(b2Body* Body);
 
+        // Component Registration
+        void RegisterComponent(PhysicsComponent* Comp);
+        void UnregisterComponent(PhysicsComponent* Comp);
+        void DebugDraw(RenderSubsystem* Render);
+
         // World properties
         void SetGravity(const vec2f& Gravity);
         vec2f GetGravity() const;
@@ -63,6 +69,7 @@ namespace we
 
         PhysicsContactListener ContactListener;
         set<b2Body*> PendingRemovals;
+        set<PhysicsComponent*> Components;
     };
 
     inline PhysicsSubsystem& Physics() { return PhysicsSubsystem::Get(); }

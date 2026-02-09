@@ -13,6 +13,7 @@ namespace we
 {
 	class MovementComponent;
 	class AnimationComponent;
+	class PhysicsComponent;
 
 	enum class AnimState : uint8
 	{
@@ -38,6 +39,7 @@ namespace we
 
 	public:
 		void InitializeAnimations();
+		void InitializePhysics();
 		void UpdateAnimation();
 		void UpdateFootsteps();
 		void PlayFootstep();
@@ -45,6 +47,7 @@ namespace we
 	private:
 		shared<MovementComponent> MoveComp;
 		shared<AnimationComponent> AnimComp;
+		shared<PhysicsComponent> PhysComp;
 		uint LastFootstepFrame = 255;
 	};
 }

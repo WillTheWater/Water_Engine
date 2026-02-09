@@ -5,6 +5,9 @@
 
 #include "Interface/Component/PhysicsComponent.h"
 #include "Framework/World/Actor/Actor.h"
+#include "Framework/World/World.h"
+#include "Framework/EngineSubsystem.h"
+#include "Subsystem/RenderSubsystem.h"
 #include "Utility/Log.h"
 #include <box2d/b2_body.h>
 #include <box2d/b2_fixture.h>
@@ -14,18 +17,21 @@
 namespace we
 {
     PhysicsComponent::PhysicsComponent(Actor* InOwner)
-        : Owner(InOwner)
-        , Body(nullptr)
-        , Fixture(nullptr)
-        , Type(BodyType::Static)
+        : Owner{ InOwner }
+        , Body{ nullptr }
+        , Fixture{ nullptr }
+        , Type{ BodyType::Static }
         , ShapeHalfExtents{ 50.0f, 50.0f }
-        , ShapeRadius(50.0f)
-        , bIsCircle(false)
-        , Density(1.0f)
-        , Friction(0.3f)
-        , Restitution(0.0f)
-        , bSensor(false)
-        , bNeedsFixtureUpdate(false)
+        , ShapeRadius{ 50.0f }
+        , bIsCircle{ false }
+        , Density{ 1.0f }
+        , Friction{ 0.3f }
+        , Restitution{ 0.0f }
+        , bSensor{ false }
+        , bIsOverlapping{ false }
+        , OverlapCount{ 0 }
+        , bNeedsFixtureUpdate{ false }
+        , bDebugDraw{ false }
     {
     }
 
@@ -94,11 +100,15 @@ namespace we
         LOG("Begin overlap: {} with {}",
             Owner ? "Actor" : "None",
             Other && Other->GetOwner() ? "Other" : "None");
+        bIsOverlapping = true;
+        OverlapCount++;
     }
 
     void PhysicsComponent::OnEndOverlap(PhysicsComponent* Other)
     {
         LOG("End overlap");
+        bIsOverlapping = false;
+        OverlapCount = std::max(0, OverlapCount - 1);
     }
 
     void PhysicsComponent::SetBodyType(BodyType NewType)
@@ -242,6 +252,39 @@ namespace we
             Def.isSensor = bSensor;
 
             Fixture = Body->CreateFixture(&Def);
+        }
+    }
+
+    void PhysicsComponent::DebugDraw(RenderSubsystem* Render)
+    {
+        if (!bDebugDraw || !Owner || !Render) return;
+
+        vec2f Pos = Owner->GetPosition();
+        angle Rot = Owner->GetRotation();
+
+        color DebugColor = (OverlapCount > 0) ? color::Green : color::Red;
+
+        if (bIsCircle)
+        {
+            circle Circle(ShapeRadius);
+            Circle.setPosition(Pos);
+            Circle.setRotation(Rot);
+            Circle.setOrigin({ ShapeRadius, ShapeRadius });
+            Circle.setFillColor(color::Transparent);
+            Circle.setOutlineColor(DebugColor);
+            Circle.setOutlineThickness(2.0f);
+            Render->Draw(Circle);
+        }
+        else
+        {
+            rectangle Rect({ ShapeHalfExtents.x * 2, ShapeHalfExtents.y * 2 });
+            Rect.setPosition(Pos);
+            Rect.setRotation(Rot);
+            Rect.setOrigin({ ShapeHalfExtents.x, ShapeHalfExtents.y });
+            Rect.setFillColor(color::Transparent);
+            Rect.setOutlineColor(DebugColor);
+            Rect.setOutlineThickness(2.0f);
+            Render->Draw(Rect);
         }
     }
 }

@@ -13,6 +13,9 @@ namespace we
 {
 	Actor::Actor(World* OwningWorld)
 		: OwnerWorld{ OwningWorld }
+		, Position{}
+		, Rotation{}
+		, Scale{1.f, 1.f}
 		, bHasBegunPlay{ false }
 	{
 	}
@@ -21,6 +24,9 @@ namespace we
 		: OwnerWorld{OwningWorld}
 		, Texture{ Asset().LoadTexture(TexturePath) }
 		, Sprite{*Texture}
+		, Position{}
+		, Rotation{}
+		, Scale{ 1.f, 1.f }
 		, bHasBegunPlay{false}
 	{
 		if (Texture)
@@ -70,34 +76,37 @@ namespace we
 		Object::Destroy();
 	}
 
-	void Actor::SetPosition(const vec2f& Position)
+	void Actor::SetPosition(const vec2f& NewPosition)
 	{
+		Position = NewPosition;
 		if (Sprite) Sprite->setPosition(Position);
 	}
 
 	vec2f Actor::GetPosition() const
 	{
-		return Sprite ? Sprite->getPosition() : vec2f{};
+		return Position;
 	}
 
-	void Actor::SetRotation(angle Angle)
+	void Actor::SetRotation(angle NewAngle)
 	{
-		if (Sprite) Sprite->setRotation(Angle);
+		Rotation = NewAngle;
+		if (Sprite) Sprite->setRotation(Rotation);
 	}
 
 	angle Actor::GetRotation() const
 	{
-		return Sprite ? Sprite->getRotation() : angle{};
+		return Rotation;
 	}
 
-	void Actor::SetScale(const vec2f& Scale)
+	void Actor::SetScale(const vec2f& NewScale)
 	{
+		Scale = NewScale;
 		if (Sprite) Sprite->setScale(Scale);
 	}
 
 	vec2f Actor::GetScale() const
 	{
-		return Sprite ? Sprite->getScale() : vec2f{ 1, 1 };
+		return Scale;
 	}
 
 	rectf Actor::GetBounds() const

@@ -137,8 +137,10 @@ namespace we
             World->Render();
         }
 
-        Window->draw(sprite(Subsystem.Render->FinishRender()));
+        Physics().DebugDraw(Subsystem.Render.get());
 
+        Window->draw(sprite(Subsystem.Render->FinishRender()));
+        
         Subsystem.GUI->Render();
 
         Subsystem.Cursor->Render();

@@ -62,6 +62,9 @@ namespace we
 		list<shared<IActorComponent>> Components;
 		shared<texture> Texture;
 		optional<sprite> Sprite;
+		vec2f Position;
+		angle Rotation;
+		vec2f Scale;
 		bool bHasBegunPlay;
 	};
 

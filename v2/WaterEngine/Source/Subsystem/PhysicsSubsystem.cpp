@@ -5,6 +5,7 @@
 
 #include "Subsystem/PhysicsSubsystem.h"
 #include "Interface/Component/PhysicsComponent.h"
+#include "Subsystem/RenderSubsystem.h"
 #include "Utility/Log.h"
 #include <box2d/b2_fixture.h>
 #include <box2d/b2_contact.h>
@@ -100,6 +101,24 @@ namespace we
     {
         b2Vec2 G = World.GetGravity();
         return { G.x, G.y };
+    }
+
+    void PhysicsSubsystem::RegisterComponent(PhysicsComponent* Comp)
+    {
+        Components.insert(Comp);
+    }
+
+    void PhysicsSubsystem::UnregisterComponent(PhysicsComponent* Comp)
+    {
+        Components.erase(Comp);
+    }
+
+    void PhysicsSubsystem::DebugDraw(RenderSubsystem* Render)
+    {
+        for (PhysicsComponent* Comp : Components)
+        {
+            Comp->DebugDraw(Render);
+        }
     }
 
     void PhysicsContactListener::BeginContact(b2Contact* Contact)

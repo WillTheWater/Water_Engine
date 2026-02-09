@@ -9,8 +9,30 @@
 #include "Character/PlayerCharacter.h"
 #include "Utility/Log.h"
 
+// ========== TEST ===========
+#include "Interface/Component/PhysicsComponent.h"
+#include "Subsystem/PhysicsSubsystem.h"
+
 namespace we
 {
+    // Test actors
+    class CollisionTestActor : public Actor
+    {
+    public:
+        CollisionTestActor(World* OwningWorld, const vec2f& Position, float Radius)
+            : Actor(OwningWorld)
+        {
+            SetPosition(Position);
+
+            auto Phys = CreateComponent<PhysicsComponent>(this);
+            Phys->SetBodyType(BodyType::Static);  // Static, doesn't move
+            Phys->SetCircleShape(Radius);
+            Phys->SetSensor(false);
+            Phys->SetDebugDraw(true);
+            Physics().RegisterComponent(Phys.get());
+        }
+    };
+
     LevelOne::LevelOne(EngineSubsystem& Subsystem)
         : World(Subsystem)
     {
@@ -29,6 +51,10 @@ namespace we
             P->SetPosition(EC.WindowSize / 2.f);
             P->SetScale({ 4,4 });
         }
+
+        SpawnActor<CollisionTestActor>(vec2f{ 200, 200 }, 50.0f);
+        SpawnActor<CollisionTestActor>(vec2f{ 600, 400 }, 75.0f);
+        SpawnActor<CollisionTestActor>(vec2f{ 400, 600 }, 100.0f);
 
         World::BeginPlay();
         Subsystem.Cursor->SetVisibility(false);
