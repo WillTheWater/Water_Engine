@@ -48,7 +48,8 @@ namespace we
 		string DefaultButtonClickSound;
 		size_t MaxSFXStack;
 		string LevelOneBackground;
-		string CharacterSheet;
+		string CharacterSheetIdle;
+		string CharacterSheetWalk;
 		string Footstep1;
 		string Footstep2;
 		string Footstep3;

@@ -43,7 +43,7 @@ namespace we
         //LOG("Level One Started - Timer set for 3 seconds");
         TestTimer = TimerManager::Get().SetTimer(weak_from_this(), &LevelOne::OnTimerFinished, 3.0f, false);
 
-        auto PlayerRef = SpawnActor<Player>(EC.CharacterSheet);
+        auto PlayerRef = SpawnActor<Player>();
         if (auto P = PlayerRef.lock())
         {
             P->SetPosition(EC.WindowSize / 2.f);

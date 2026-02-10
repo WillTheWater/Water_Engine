@@ -132,6 +132,15 @@ namespace we
 		if (Sprite) Sprite->setColor(Color);
 	}
 
+	void Actor::SetSpriteTexture(shared<texture> NewTexture)
+	{
+		Texture = NewTexture;
+		if (Texture && Sprite)
+		{
+			Sprite->setTexture(*Texture);
+		}
+	}
+
 	void Actor::AddComponent(shared<IActorComponent> Component)
 	{
 		Components.push_back(std::move(Component));

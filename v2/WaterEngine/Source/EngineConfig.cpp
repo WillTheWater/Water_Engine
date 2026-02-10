@@ -43,7 +43,8 @@ namespace we
         DefaultButtonClickSound = Config["DefaultButtonClickSound"];
         MaxSFXStack = Config["MaxSFXStack"];
         LevelOneBackground = Config["LevelOneBackground"];
-        CharacterSheet = Config["CharacterSheet"];
+        CharacterSheetIdle = Config["CharacterSheetIdle"];
+        CharacterSheetWalk = Config["CharacterSheetWalk"];
         Footstep1 = Config["Footstep1"];
         Footstep2 = Config["Footstep2"];
         Footstep3 = Config["Footstep3"];

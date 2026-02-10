@@ -40,27 +40,32 @@ namespace we
 		MoveComp = CreateComponent<MovementComponent>(this);
 		MoveComp->SetSpeed(300.0f);
 
-		AnimComp = CreateComponent<AnimationComponent>(this, vec2u{ 256, 256 }, 8);
+		AnimComp = CreateComponent<AnimationComponent>(this);
 
-		// IDLE ANIMATIONS
-		AnimComp->AddAnimation({ (uint8)AnimState::IdleDown,       {0, 0}, {0, 7}, 0.15f, true });
-		AnimComp->AddAnimation({ (uint8)AnimState::IdleDownRight,  {1, 0}, {1, 7}, 0.15f, true });
-		AnimComp->AddAnimation({ (uint8)AnimState::IdleRight,      {2, 0}, {2, 7}, 0.15f, true });
-		AnimComp->AddAnimation({ (uint8)AnimState::IdleUpRight,    {3, 0}, {3, 7}, 0.15f, true });
-		AnimComp->AddAnimation({ (uint8)AnimState::IdleUp,         {4, 0}, {4, 7}, 0.15f, true });
-		AnimComp->AddAnimation({ (uint8)AnimState::IdleUpLeft,     {5, 0}, {5, 7}, 0.15f, true });
-		AnimComp->AddAnimation({ (uint8)AnimState::IdleLeft,       {6, 0}, {5, 7}, 0.15f, true });
-		AnimComp->AddAnimation({ (uint8)AnimState::IdleDownLeft,   {7, 0}, {7, 7}, 0.15f, true });
+		// Load idle sheet (ID 0)
+		AnimComp->AddSpriteSheet(0, SpriteSheet{ EC.CharacterSheetIdle, {256, 256}, 8 });
+		// Load run sheet (ID 1)  
+		AnimComp->AddSpriteSheet(1, SpriteSheet{ EC.CharacterSheetWalk, {256, 256}, 8 });
 
-		// RUN ANIMATIONS
-		AnimComp->AddAnimation({ (uint8)AnimState::RunDown,         {0, 0}, {0, 7}, 0.15f, true });
-		AnimComp->AddAnimation({ (uint8)AnimState::RunDownRight,	{1, 0}, {1, 7}, 0.15f, true });
-		AnimComp->AddAnimation({ (uint8)AnimState::RunRight,		{2, 0}, {2, 7}, 0.15f, true });
-		AnimComp->AddAnimation({ (uint8)AnimState::RunUpRight,		{3, 0}, {3, 7}, 0.15f, true });
-		AnimComp->AddAnimation({ (uint8)AnimState::RunUp,			{4, 0}, {4, 7}, 0.15f, true });
-		AnimComp->AddAnimation({ (uint8)AnimState::RunUpLeft,		{5, 0}, {5, 7}, 0.15f, true });
-		AnimComp->AddAnimation({ (uint8)AnimState::RunLeft,			{6, 0}, {6, 7}, 0.15f, true });
-		AnimComp->AddAnimation({ (uint8)AnimState::RunDownLeft,		{7, 0}, {7, 7}, 0.15f, true });
+		// IDLE animations - all use sheet 0
+		AnimComp->AddAnimation({ (uint8)AnimState::IdleDown,       0, {0, 0}, {0, 7}, 0.15f, true });
+		AnimComp->AddAnimation({ (uint8)AnimState::IdleDownRight,  0, {1, 0}, {1, 7}, 0.15f, true });
+		AnimComp->AddAnimation({ (uint8)AnimState::IdleRight,      0, {2, 0}, {2, 7}, 0.15f, true });
+		AnimComp->AddAnimation({ (uint8)AnimState::IdleUpRight,    0, {3, 0}, {3, 7}, 0.15f, true });
+		AnimComp->AddAnimation({ (uint8)AnimState::IdleUp,         0, {4, 0}, {4, 7}, 0.15f, true });
+		AnimComp->AddAnimation({ (uint8)AnimState::IdleUpLeft,     0, {5, 0}, {5, 7}, 0.15f, true });
+		AnimComp->AddAnimation({ (uint8)AnimState::IdleLeft,       0, {6, 0}, {6, 7}, 0.15f, true });
+		AnimComp->AddAnimation({ (uint8)AnimState::IdleDownLeft,   0, {7, 0}, {7, 7}, 0.15f, true });
+
+		// RUN animations - all use sheet 1
+		AnimComp->AddAnimation({ (uint8)AnimState::RunDown,        1, {0, 0}, {0, 7}, 0.10f, true });
+		AnimComp->AddAnimation({ (uint8)AnimState::RunDownRight,   1, {1, 0}, {1, 7}, 0.10f, true });
+		AnimComp->AddAnimation({ (uint8)AnimState::RunRight,       1, {2, 0}, {2, 7}, 0.10f, true });
+		AnimComp->AddAnimation({ (uint8)AnimState::RunUpRight,     1, {3, 0}, {3, 7}, 0.10f, true });
+		AnimComp->AddAnimation({ (uint8)AnimState::RunUp,          1, {4, 0}, {4, 7}, 0.10f, true });
+		AnimComp->AddAnimation({ (uint8)AnimState::RunUpLeft,      1, {5, 0}, {5, 7}, 0.10f, true });
+		AnimComp->AddAnimation({ (uint8)AnimState::RunLeft,        1, {6, 0}, {6, 7}, 0.10f, true });
+		AnimComp->AddAnimation({ (uint8)AnimState::RunDownLeft,    1, {7, 0}, {7, 7}, 0.10f, true });
 
 		AnimComp->Transition((uint8)AnimState::IdleDown);
 	}

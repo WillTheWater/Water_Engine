@@ -12,6 +12,7 @@ namespace we
 	struct Animation
 	{
 		uint8 StateID;
+		uint8 SpriteSheetID;
 		vec2u StartFrame;
 		vec2u EndFrame;
 		float FrameDuration;
@@ -22,10 +23,20 @@ namespace we
 		optional<uint8> NextState;
 	};
 
+	struct SpriteSheet
+	{
+		shared<texture> Tex;
+		vec2u FrameSize;
+		uint FramesPerRow;
+
+		SpriteSheet() = default;
+		SpriteSheet(const string& Path, vec2u InFrameSize, uint InFramesPerRow = 8);
+	};
+
 	class AnimationComponent : public IActorComponent
 	{
 	public:
-		explicit AnimationComponent(Actor* InOwner, vec2u InFrameSize = { 48, 48 }, uint FramesPerRow = 8);
+		explicit AnimationComponent(Actor* InOwner);
 
 		virtual void BeginPlay() override;
 		virtual void Tick(float DeltaTime) override;
@@ -33,13 +44,17 @@ namespace we
 		virtual Actor* GetOwner() const override;
 
 		void SetFrameSize(vec2u Size);
-		vec2u GetFrameSize() const { return FrameSize; }
 
 		// uint8 Enum State(Cuastom), vec2u Startframe, vec2u EndFrame, 
 		// float Frame Duration, float Playback Speed = 1.f, bool Loop = true,
 		// bool FlipX = false, bool FlipY = false, uint8 Auto Transition = nullopt
 		void AddAnimation(const Animation& Anim);
 		void Transition(uint8 StateID);
+
+		// Sprite sheet management
+		void AddSpriteSheet(uint8 SheetID, const SpriteSheet& Sheet);
+		void SetActiveSpriteSheet(uint8 SheetID);
+		uint8 GetActiveSpriteSheet() const { return ActiveSheetID; }
 
 		void SetGlobalPlaybackSpeed(float Multiplier);
 		float GetGlobalPlaybackSpeed() const { return GlobalPlaybackSpeed; }
@@ -53,8 +68,10 @@ namespace we
 
 	private:
 		Actor* Owner;
-		vec2u FrameSize;
-		uint FramesPerRow;
+
+		dictionary<uint8, SpriteSheet> SpriteSheets;
+		uint8 ActiveSheetID = 0;
+
 		dictionary<uint8, Animation> Animations;
 		uint8 CurrentState = 0;
 		vec2u CurrentFrame;
@@ -66,5 +83,7 @@ namespace we
 		void SyncOriginToFrame();
 		void RecalculateFramesPerRow();
 		bool AdvanceFrame();
+
+		const SpriteSheet* GetCurrentSheet() const;
 	};
 }

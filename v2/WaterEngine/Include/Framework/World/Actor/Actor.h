@@ -50,6 +50,8 @@ namespace we
 		World* GetWorld() const { return OwnerWorld; }
 		bool HasSprite() const { return Sprite.has_value(); }
 		const sprite& GetSprite() const { return *Sprite; }
+		void SetSpriteTexture(shared<texture> NewTexture);
+		shared<texture> GetTexture() const { return Texture; }
 
 		Delegate<Actor*> OnActorDestroyed;
 

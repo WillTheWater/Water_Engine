@@ -41,7 +41,7 @@ namespace we
 	class Player : public Actor
 	{
 	public:
-		Player(World* OwningWorld, const string& TexturePath = EC.CharacterSheet);
+		Player(World* OwningWorld, const string& TexturePath = EC.CharacterSheetIdle);
 
 		virtual void BeginPlay() override;
 		virtual void Tick(float DeltaTime) override;
