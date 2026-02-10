@@ -31,7 +31,7 @@ namespace we
 		if (Child)
 		{
 			Child->SetParent(this);
-			Children.push_back(std::move(Child));
+			Children.push_back(weak<Widget>(Child));
 		}
 	}
 
@@ -39,9 +39,10 @@ namespace we
 	{
 		for (auto it = Children.begin(); it != Children.end();)
 		{
-			if (it->get() == Child)
+			auto Locked = it->lock();
+			if (Locked && Locked.get() == Child)
 			{
-				(*it)->SetParent(nullptr);
+				Locked->DetachFromParent();
 				it = Children.erase(it);
 			}
 			else
@@ -53,18 +54,25 @@ namespace we
 
 	void Panel::ClearChildren()
 	{
-		for (auto& Child : Children)
+		for (auto& WeakChild : Children)
 		{
-			Child->SetParent(nullptr);
+			if (auto Child = WeakChild.lock())
+			{
+				Child->DetachFromParent();
+			}
 		}
 		Children.clear();
 	}
 
 	void Panel::Update(float DeltaTime)
 	{
-		for (auto& Child : Children)
+		auto newEnd = std::remove_if(Children.begin(), Children.end(),
+			[](const weak<Widget>& W) { return W.expired(); });
+		Children.erase(newEnd, Children.end());
+
+		for (auto& WeakChild : Children)
 		{
-			if (Child->IsVisible())
+			if (auto Child = WeakChild.lock(); Child && Child->IsVisible())
 			{
 				Child->Update(DeltaTime);
 			}
@@ -83,9 +91,9 @@ namespace we
 			Window.draw(*BgSprite);
 		}
 
-		for (auto& Child : Children)
+		for (auto& WeakChild : Children)
 		{
-			if (Child->IsVisible())
+			if (auto Child = WeakChild.lock(); Child && Child->IsVisible())
 			{
 				Child->Render(Window);
 			}

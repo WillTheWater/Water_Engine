@@ -16,6 +16,19 @@ namespace we
 	{
 	}
 
+	void GUISubsystem::DestroyWidget(Widget* InWidget)
+	{
+		if (!InWidget) return;
+
+		auto it = std::remove_if(Widgets.begin(), Widgets.end(),
+			[InWidget](const shared<Widget>& W) { return W.get() == InWidget; });
+
+		if (it != Widgets.end())
+		{
+			Widgets.erase(it);
+		}
+	}
+
 	GUISubsystem::~GUISubsystem()
 	{
 		Clear();
@@ -33,7 +46,7 @@ namespace we
 	{
 		for (auto& Widget : Widgets)
 		{
-			if (Widget->IsVisible())
+			if (Widget->IsVisible() && !Widget->GetParent())
 			{
 				Widget->Update(DeltaTime);
 			}
@@ -44,34 +57,11 @@ namespace we
 	{
 		for (auto& Widget : Widgets)
 		{
-			if (Widget->IsVisible())
+			if (Widget->IsVisible() && !Widget->GetParent())
 			{
 				Widget->Render(Window);
 			}
 		}
-	}
-
-	void GUISubsystem::AddWidget(shared<Widget> InWidget)
-	{
-		if (!InWidget) return;
-		auto it = std::find_if(Widgets.begin(), Widgets.end(),
-			[&](const shared<Widget>& W)
-			{
-				return W->GetZOrder() > InWidget->GetZOrder();
-			});
-
-		Widgets.insert(it, std::move(InWidget));
-	}
-
-	void GUISubsystem::RemoveWidget(Widget* InWidget)
-	{
-		auto it = std::remove_if(Widgets.begin(), Widgets.end(),
-			[InWidget](const shared<Widget>& W)
-			{
-				return W.get() == InWidget;
-			});
-
-		Widgets.erase(it, Widgets.end());
 	}
 
 	void GUISubsystem::Clear()

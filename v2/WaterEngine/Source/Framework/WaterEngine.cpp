@@ -25,39 +25,31 @@ namespace we
 
     WaterEngine::~WaterEngine()
     {
-        // 1. Kill the Window FIRST. 
-    // This stops the SFML event loop and its internal polling threads.
         if (Window) {
             Window->close();
             Window.reset();
         }
 
-        // 2. Kill the Async thread.
         AsyncAsset().Shutdown();
 
-        // 3. Stop Audio (Wait for its internal threads to join).
         if (Subsystem.Audio) {
             Subsystem.Audio->StopAll();
             Subsystem.Audio.reset();
         }
 
-        // 4. Wipe the logic.
         if (Subsystem.World) {
             Subsystem.World->UnloadWorld();
             Subsystem.World.reset();
         }
 
-        // 5. Clean up remaining subsystems.
         Subsystem.GUI.reset();
         Subsystem.Cursor.reset();
         Subsystem.Input.reset();
         Subsystem.Render.reset();
         Physics().Shutdown();
 
-        // 6. CLEAR THE CACHES (Now that window/audio/async are dead).
         Asset().Shutdown();
 
-        // 7. LAST STEP.
         spdlog::shutdown();
     }
 

@@ -21,8 +21,10 @@ namespace we
 		void Update(float DeltaTime);
 		void Render();
 
-		void AddWidget(shared<Widget> InWidget);
-		void RemoveWidget(Widget* InWidget);
+		template<typename T, typename... Args>
+		shared<T> CreateWidget(Args&&... args);
+
+		void DestroyWidget(Widget* InWidget);
 		void Clear();
 
 		bool IsMousePressed() const { return bMousePressed; }
@@ -30,6 +32,7 @@ namespace we
 	private:
 		GameWindow& Window;
 		list<shared<Widget>> Widgets;
+		list<weak<Widget>> RootWidgets;
 		bool bMousePressed = false;
 
 	private:
@@ -39,4 +42,14 @@ namespace we
 		void HandleEvent(const sf::Event::JoystickButtonReleased&);
 		void HandleEvent(const auto&) {}
 	};
+
+	template<typename T, typename ...Args>
+	inline shared<T> GUISubsystem::CreateWidget(Args && ...args)
+	{
+		static_assert(std::is_base_of_v<Widget, T>, "T must derive from Widget");
+
+		auto Widget = std::make_shared<T>(std::forward<Args>(args)...);
+		Widgets.push_back(Widget);
+		return Widget;
+	}
 }

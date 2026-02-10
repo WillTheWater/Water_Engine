@@ -39,6 +39,7 @@ namespace we
 		vec2f GetSize() const { return Size; }
 
 		void SetParent(Widget* InParent) { Parent = InParent; MarkDirty(); }
+		void DetachFromParent() { Parent = nullptr; MarkDirty(); }
 		Widget* GetParent() const { return Parent; }
 
 		void SetVisible(bool bInVisible) { bVisible = bInVisible; }
@@ -48,8 +49,6 @@ namespace we
 
 		uint GetZOrder() const { return ZOrder; }
 		void SetZOrder(uint InZOrder) { ZOrder = InZOrder; }
-
-	private:
 
 	protected:
 		EngineSubsystem& Subsystem;

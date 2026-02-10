@@ -23,7 +23,7 @@ namespace we
 		virtual void Render(GameWindow& Window) override;
 
 	private:
-		list<shared<Widget>> Children;
+		list<weak<Widget>> Children;
 		shared<texture> BgTexture;
 		optional<sprite> BgSprite;
 	};

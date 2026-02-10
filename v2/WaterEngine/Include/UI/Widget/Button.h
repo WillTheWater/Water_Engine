@@ -35,7 +35,6 @@ namespace we
 		void PlayClickSound();
 
 	private:
-
 		string Label;
 		shared<texture> BgTexture;
 		optional<sprite> BgSprite;

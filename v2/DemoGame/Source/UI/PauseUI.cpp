@@ -24,28 +24,27 @@ namespace we
     {
         if (MenuPanel)
         {
-            Subsystem.GUI->RemoveWidget(MenuPanel.get());
+            Subsystem.GUI->DestroyWidget(MenuPanel.get());
         }
     }
 
     void PauseUI::CreateUI()
     {
-        MenuPanel = make_shared<Panel>(Subsystem, EC.DefaultPanel);
+        MenuPanel = Subsystem.GUI->CreateWidget<Panel>(Subsystem, EC.DefaultPanel);
         MenuPanel->SetLocalOffset({ EC.WindowSize.x * 0.5f, EC.WindowSize.y * 0.5f });
         MenuPanel->SetLocalScale({ 1.5f, 1.5f });
         MenuPanel->SetZOrder(LAYER_PAUSE_MENU);
 
-        ResumeButton = make_shared<Button>(Subsystem, "Resume", EC.DefaultButton);
+        ResumeButton = Subsystem.GUI->CreateWidget<Button>(Subsystem, "Resume", EC.DefaultButton);
         ResumeButton->SetLocalOffset({ 0, -40 });
         ResumeButton->OnClicked.Bind(this, &PauseUI::OnResumeClicked);
 
-        QuitButton = make_shared<Button>(Subsystem, "Quit", EC.DefaultButton);
+        QuitButton = Subsystem.GUI->CreateWidget<Button>(Subsystem, "Quit", EC.DefaultButton);
         QuitButton->SetLocalOffset({ 0, 60 });
         QuitButton->OnClicked.Bind(this, &PauseUI::OnQuitClicked);
 
         MenuPanel->AddChild(ResumeButton);
         MenuPanel->AddChild(QuitButton);
-        Subsystem.GUI->AddWidget(MenuPanel);
     }
 
     void PauseUI::Show()

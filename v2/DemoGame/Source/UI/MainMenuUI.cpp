@@ -23,32 +23,30 @@ namespace we
 	{
 		if (MenuPanel)
 		{
-			Subsystem.GUI->RemoveWidget(MenuPanel.get());
+			Subsystem.GUI->DestroyWidget(MenuPanel.get());
 		}
 	}
 
 	void MainMenuUI::CreateUI()
 	{
-		MenuPanel = make_shared<Panel>(Subsystem, EC.DefaultPanel);
+		MenuPanel = Subsystem.GUI->CreateWidget<Panel>(Subsystem, EC.DefaultPanel);
 		MenuPanel->SetLocalOffset({ EC.WindowSize.x * 0.5f, EC.WindowSize.y * 0.83f });
 		MenuPanel->SetZOrder(LAYER_GAME_UI);
 
-		PlayButton = make_shared<Button>(Subsystem, "Play", EC.DefaultButton);
+		PlayButton = Subsystem.GUI->CreateWidget<Button>(Subsystem, "Play", EC.DefaultButton);
 		PlayButton->SetLocalOffset({ 0, -40 });
 		PlayButton->OnClicked.Bind(this, &MainMenuUI::OnPlayClicked);
 
-		QuitButton = make_shared<Button>(Subsystem, "Quit", EC.DefaultButton);
+		QuitButton = Subsystem.GUI->CreateWidget<Button>(Subsystem, "Quit", EC.DefaultButton);
 		QuitButton->SetLocalOffset({ 0, 60 });
 		QuitButton->OnClicked.Bind(this, &MainMenuUI::OnQuitClicked);
 
 		MenuPanel->AddChild(PlayButton);
 		MenuPanel->AddChild(QuitButton);
-		Subsystem.GUI->AddWidget(MenuPanel);
 	}
 
 	void MainMenuUI::OnPlayClicked()
 	{
-		//Subsystem.GameState->RequestStateChange(GameState::Level1);
 		OnPlayButtonClicked.Broadcast();
 	}
 

@@ -54,17 +54,12 @@ namespace we
 
 	void Game::OnStateEnter(shared<IGameStateToken> NewState)
 	{
-		//LOG("Entering state: {}", NewState->GetDebugName());
 		Subsystem.World->LoadWorldForState(NewState.get());
 	}
 
 	void Game::OnStateExit(shared<IGameStateToken> OldState)
 	{
 		auto GameState = OldState->As<GameStateToken>();
-		if (GameState)
-		{
-			//LOG("Exiting state: {}", GameState->GetDebugName());
-		}
 	}
 
 	void Game::BindInput()
