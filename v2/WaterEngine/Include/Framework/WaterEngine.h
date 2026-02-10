@@ -27,6 +27,7 @@ namespace we
 		void Quit();
 
 	public:
+		virtual void BeginPlay();
 		virtual void Tick(float DeltaTime);
 
 	protected:
@@ -35,6 +36,7 @@ namespace we
 	private:
 		unique<GameWindow> Window;
 		bool bExitRequested;
+		bool bHasBegunPlay;
 
 	private:
 		void TickGame();

@@ -40,6 +40,7 @@ namespace we
     {
         return Data->size();
     }
+
     ResourceSubsystem& ResourceSubsystem::Get()
     {
         static ResourceSubsystem Instance;

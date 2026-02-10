@@ -17,6 +17,7 @@ namespace we
 {
     WaterEngine::WaterEngine()
         : bExitRequested{false}
+        , bHasBegunPlay{ false }
     {
         Configure();
         Construct();
@@ -24,11 +25,40 @@ namespace we
 
     WaterEngine::~WaterEngine()
     {
-        Subsystem.World->UnloadWorld();
-        Subsystem.Render.reset();
-        Asset().Shutdown();
-        Physics().Shutdown();
+        // 1. Kill the Window FIRST. 
+    // This stops the SFML event loop and its internal polling threads.
+        if (Window) {
+            Window->close();
+            Window.reset();
+        }
+
+        // 2. Kill the Async thread.
         AsyncAsset().Shutdown();
+
+        // 3. Stop Audio (Wait for its internal threads to join).
+        if (Subsystem.Audio) {
+            Subsystem.Audio->StopAll();
+            Subsystem.Audio.reset();
+        }
+
+        // 4. Wipe the logic.
+        if (Subsystem.World) {
+            Subsystem.World->UnloadWorld();
+            Subsystem.World.reset();
+        }
+
+        // 5. Clean up remaining subsystems.
+        Subsystem.GUI.reset();
+        Subsystem.Cursor.reset();
+        Subsystem.Input.reset();
+        Subsystem.Render.reset();
+        Physics().Shutdown();
+
+        // 6. CLEAR THE CACHES (Now that window/audio/async are dead).
+        Asset().Shutdown();
+
+        // 7. LAST STEP.
+        spdlog::shutdown();
     }
 
     void WaterEngine::Configure()
@@ -92,6 +122,12 @@ namespace we
 
     void WaterEngine::TickGame()
     {
+        if (!bHasBegunPlay)
+        {
+            bHasBegunPlay = true;
+            BeginPlay();
+        }
+
         float DeltaTime = Subsystem.Time->GetDeltaTime();
 
         Tick(DeltaTime);
@@ -158,6 +194,11 @@ namespace we
     bool WaterEngine::IsRunning() const
     {
         return Window->isOpen() && !bExitRequested;
+    }
+
+    void WaterEngine::BeginPlay()
+    {
+
     }
 
     void WaterEngine::Tick(float DeltaTime)

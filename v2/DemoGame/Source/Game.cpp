@@ -24,6 +24,17 @@ namespace we
 		: WaterEngine{}
 		, bPaused{false}
 	{
+		
+	}
+	
+	void Game::RegisterAllLevels()
+	{
+		RegisterLevel(MainMenu);
+		RegisterLevel(LevelOne);
+	}
+
+	void Game::BeginPlay()
+	{
 		RegisterAllLevels();
 
 		Subsystem.GameState->OnStateEnter.Bind(this, &Game::OnStateEnter);
@@ -35,12 +46,6 @@ namespace we
 
 		PauseMenu = make_unique<PauseUI>(Subsystem);
 		PauseMenu->OnResume.Bind(this, &Game::TogglePause);
-	}
-	
-	void Game::RegisterAllLevels()
-	{
-		RegisterLevel(MainMenu);
-		RegisterLevel(LevelOne);
 	}
 
 	void Game::Tick(float DeltaTime)
