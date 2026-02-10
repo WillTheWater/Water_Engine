@@ -23,8 +23,12 @@ namespace we
             : Actor(OwningWorld)
         {
             SetPosition(Position);
-
-            //auto Phys = CreateComponent<PhysicsComponent>(this);
+            auto Phys = CreateComponent<PhysicsComponent>(this);
+            Phys->SetCircleShape(Radius);
+            Phys->SetDebugDraw(true);
+            Phys->SetBodyType(BodyType::Static);
+            Phys->SetSensor(true);
+            Physics().RegisterComponent(Phys.get());
         }
     };
 
@@ -44,7 +48,6 @@ namespace we
         if (auto P = PlayerRef.lock())
         {
             P->SetPosition(EC.WindowSize / 2.f);
-            P->SetScale({ 4,4 });
         }
 
         SpawnActor<CollisionTestActor>(vec2f{ 200, 200 }, 50.0f);

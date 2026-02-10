@@ -57,7 +57,7 @@ namespace we
 		}
 
 		Velocity = InputVector * Speed;
-		Owner->SetPosition(Owner->GetPosition() + Velocity * DeltaTime);
+		Owner->SetVelocity(Velocity);
 	}
 
 	void MovementComponent::EndPlay()

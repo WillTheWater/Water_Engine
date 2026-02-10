@@ -13,7 +13,6 @@ class b2Fixture;
 
 namespace we
 {
-    enum class BodyType : uint8;
     class PhysicsComponent;
 
     class IPhysicsComponent : public IActorComponent

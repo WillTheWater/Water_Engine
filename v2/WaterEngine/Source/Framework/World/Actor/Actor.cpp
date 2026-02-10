@@ -15,7 +15,8 @@ namespace we
 		: OwnerWorld{ OwningWorld }
 		, Position{}
 		, Rotation{}
-		, Scale{1.f, 1.f}
+		, Scale{ 1.f, 1.f }
+		, Velocity{ 0.f, 0.f }
 		, bHasBegunPlay{ false }
 	{
 	}

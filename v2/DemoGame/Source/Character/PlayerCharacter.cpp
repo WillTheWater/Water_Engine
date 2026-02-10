@@ -31,6 +31,7 @@ namespace we
 	{
 		UpdateAnimation();
 		UpdateFootsteps();
+		PhysComp->SetVelocity(GetVelocity());
 		Actor::Tick(DeltaTime);
 	}
 
@@ -39,7 +40,7 @@ namespace we
 		MoveComp = CreateComponent<MovementComponent>(this);
 		MoveComp->SetSpeed(300.0f);
 
-		AnimComp = CreateComponent<AnimationComponent>(this, vec2u{ 96, 80 }, 8);
+		AnimComp = CreateComponent<AnimationComponent>(this, vec2u{ 256, 256 }, 8);
 
 		// Idle animations
 		AnimComp->AddAnimation({ (uint8)AnimState::IdleDown,  {0, 0}, {0, 7}, 0.15f, true });
@@ -58,7 +59,12 @@ namespace we
 
 	void Player::InitializePhysics()
 	{
-		//PhysComp = CreateComponent<PhysicsComponent>(this);
+		PhysComp = CreateComponent<PhysicsComponent>(this);
+		PhysComp->SetBodyType(BodyType::Dynamic);
+		PhysComp->SetCircleShape(80.0f);
+		PhysComp->SetDebugDraw(true);
+		Physics().RegisterComponent(PhysComp.get());
+		PhysComp->SetSensor(true);
 	}
 
 	void Player::UpdateAnimation()

@@ -43,6 +43,9 @@ namespace we
 		void SetColor(const color& Color);
 		void SetTextureSmooth() { Texture.get()->setSmooth(true); }
 
+		void SetVelocity(vec2f NewVelocity) { Velocity = NewVelocity; }
+		vec2f GetVelocity() const { return Velocity; }
+
 	public:
 		World* GetWorld() const { return OwnerWorld; }
 		bool HasSprite() const { return Sprite.has_value(); }
@@ -65,6 +68,7 @@ namespace we
 		vec2f Position;
 		angle Rotation;
 		vec2f Scale;
+		vec2f Velocity;
 		bool bHasBegunPlay;
 	};
 
