@@ -18,14 +18,24 @@ namespace we
 	enum class AnimState : uint8
 	{
 		None = 0,
-		IdleDown,
-		IdleLeft,
-		IdleRight,
-		IdleUp,
-		RunDown,
-		RunLeft,
-		RunRight,
-		RunUp
+		// Idle states (8 directions)
+		IdleRight,      // 1
+		IdleDownRight,  // 2
+		IdleDown,       // 3
+		IdleDownLeft,   // 4
+		IdleLeft,       // 5
+		IdleUpLeft,     // 6
+		IdleUp,         // 7
+		IdleUpRight,    // 8
+		// Run states (8 directions)
+		RunRight,       // 9
+		RunDownRight,   // 10
+		RunDown,        // 11
+		RunDownLeft,    // 12
+		RunLeft,        // 13
+		RunUpLeft,      // 14
+		RunUp,          // 15
+		RunUpRight      // 16
 	};
 
 	class Player : public Actor

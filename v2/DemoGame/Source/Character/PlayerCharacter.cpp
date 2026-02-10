@@ -42,17 +42,25 @@ namespace we
 
 		AnimComp = CreateComponent<AnimationComponent>(this, vec2u{ 256, 256 }, 8);
 
-		// Idle animations
-		AnimComp->AddAnimation({ (uint8)AnimState::IdleDown,  {0, 0}, {0, 7}, 0.15f, true });
-		AnimComp->AddAnimation({ (uint8)AnimState::IdleLeft,  {1, 0}, {1, 7}, 0.15f, true });
-		AnimComp->AddAnimation({ (uint8)AnimState::IdleRight, {2, 0}, {2, 7}, 0.15f, true });
-		AnimComp->AddAnimation({ (uint8)AnimState::IdleUp,    {3, 0}, {3, 7}, 0.15f, true });
+		// IDLE ANIMATIONS
+		AnimComp->AddAnimation({ (uint8)AnimState::IdleDown,       {0, 0}, {0, 7}, 0.15f, true });
+		AnimComp->AddAnimation({ (uint8)AnimState::IdleDownRight,  {1, 0}, {1, 7}, 0.15f, true });
+		AnimComp->AddAnimation({ (uint8)AnimState::IdleRight,      {2, 0}, {2, 7}, 0.15f, true });
+		AnimComp->AddAnimation({ (uint8)AnimState::IdleUpRight,    {3, 0}, {3, 7}, 0.15f, true });
+		AnimComp->AddAnimation({ (uint8)AnimState::IdleUp,         {4, 0}, {4, 7}, 0.15f, true });
+		AnimComp->AddAnimation({ (uint8)AnimState::IdleUpLeft,     {5, 0}, {5, 7}, 0.15f, true });
+		AnimComp->AddAnimation({ (uint8)AnimState::IdleLeft,       {6, 0}, {5, 7}, 0.15f, true });
+		AnimComp->AddAnimation({ (uint8)AnimState::IdleDownLeft,   {7, 0}, {7, 7}, 0.15f, true });
 
-		// Run animations
-		AnimComp->AddAnimation({ (uint8)AnimState::RunDown,   {4, 0}, {4, 7}, 0.10f, true });
-		AnimComp->AddAnimation({ (uint8)AnimState::RunLeft,   {5, 0}, {5, 7}, 0.10f, true });
-		AnimComp->AddAnimation({ (uint8)AnimState::RunRight,  {6, 0}, {6, 7}, 0.10f, true });
-		AnimComp->AddAnimation({ (uint8)AnimState::RunUp,     {7, 0}, {7, 7}, 0.10f, true });
+		// RUN ANIMATIONS
+		AnimComp->AddAnimation({ (uint8)AnimState::RunDown,         {0, 0}, {0, 7}, 0.15f, true });
+		AnimComp->AddAnimation({ (uint8)AnimState::RunDownRight,	{1, 0}, {1, 7}, 0.15f, true });
+		AnimComp->AddAnimation({ (uint8)AnimState::RunRight,		{2, 0}, {2, 7}, 0.15f, true });
+		AnimComp->AddAnimation({ (uint8)AnimState::RunUpRight,		{3, 0}, {3, 7}, 0.15f, true });
+		AnimComp->AddAnimation({ (uint8)AnimState::RunUp,			{4, 0}, {4, 7}, 0.15f, true });
+		AnimComp->AddAnimation({ (uint8)AnimState::RunUpLeft,		{5, 0}, {5, 7}, 0.15f, true });
+		AnimComp->AddAnimation({ (uint8)AnimState::RunLeft,			{6, 0}, {6, 7}, 0.15f, true });
+		AnimComp->AddAnimation({ (uint8)AnimState::RunDownLeft,		{7, 0}, {7, 7}, 0.15f, true });
 
 		AnimComp->Transition((uint8)AnimState::IdleDown);
 	}
@@ -73,20 +81,23 @@ namespace we
 
 		vec2f Forward = MoveComp->GetForwardVector();
 		bool bIsMoving = MoveComp->GetVelocity().lengthSquared() > 1.0f;
-		AnimState TargetState;
 
-		if (std::abs(Forward.y) > std::abs(Forward.x))
-		{
-			TargetState = (Forward.y > 0) ?
-				(bIsMoving ? AnimState::RunDown : AnimState::IdleDown) :
-				(bIsMoving ? AnimState::RunUp : AnimState::IdleUp);
-		}
-		else
-		{
-			TargetState = (Forward.x > 0) ?
-				(bIsMoving ? AnimState::RunRight : AnimState::IdleRight) :
-				(bIsMoving ? AnimState::RunLeft : AnimState::IdleLeft);
-		}
+		// Determine direction index from ForwardVector (0-7)
+		// 0=Right, 1=DownRight, 2=Down, 3=DownLeft, 4=Left, 5=UpLeft, 6=Up, 7=UpRight
+		int DirIndex = 0;
+		float x = Forward.x;
+		float y = Forward.y;
+
+		// Use angle for reliable direction mapping
+		float Angle = std::atan2(y, x);
+		DirIndex = int(std::round(Angle / (PI / 4.0f))) % 8;
+		if (DirIndex < 0) DirIndex += 8;
+
+		// Map direction index to animation state
+		// Idle: 1-8, Run: 9-16
+		uint8 BaseState = bIsMoving ? 9 : 1; // RunRight or IdleRight
+		AnimState TargetState = static_cast<AnimState>(BaseState + DirIndex);
+
 		AnimComp->Transition((uint8)TargetState);
 	}
 

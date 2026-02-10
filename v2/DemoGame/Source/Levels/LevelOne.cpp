@@ -27,7 +27,6 @@ namespace we
             Phys->SetCircleShape(Radius);
             Phys->SetDebugDraw(true);
             Phys->SetBodyType(BodyType::Static);
-            Phys->SetSensor(true);
             Physics().RegisterComponent(Phys.get());
         }
     };

@@ -104,38 +104,33 @@ namespace we
 	{
 		if (InputVector.lengthSquared() < 0.01f) return;
 
-		// Determine which direction
-		float DotForward = InputVector.dot(ForwardVector);
-		float DotRight = InputVector.dot(RightVector);
+		// 8-way direction: calculate angle and snap to nearest 45 degrees
+		float Angle = std::atan2(InputVector.y, InputVector.x); // -PI to PI
 
-		// Threshold to prevent jitter
-		const float Threshold = 0.5f;
+		// Convert to 8-direction index: 0=Right, 1=DownRight, 2=Down, 3=DownLeft, 4=Left, 5=UpLeft, 6=Up, 7=UpRight
+		// Angle 0 = Right, PI/2 = Down, PI = Left, -PI/2 = Up
+		int DirIndex = int(std::round(Angle / (PI / 4.0f))) % 8;
+		if (DirIndex < 0) DirIndex += 8;
 
-		if (DotForward > Threshold)
-		{
-			// Moving forward (already facing this way)
-			// Keep current ForwardVector
+		// Set ForwardVector based on direction index
+		static const vec2f Directions[8] = {
+			{ 1, 0 },    // Right (0)
+			{ 1, 1 },    // DownRight (1) - normalized below
+			{ 0, 1 },    // Down (2)
+			{ -1, 1 },   // DownLeft (3)
+			{ -1, 0 },   // Left (4)
+			{ -1, -1 },  // UpLeft (5)
+			{ 0, -1 },   // Up (6)
+			{ 1, -1 }    // UpRight (7)
+		};
+
+		ForwardVector = Directions[DirIndex];
+		// Normalize diagonals
+		if (DirIndex % 2 == 1) {
+			ForwardVector = ForwardVector.normalized();
 		}
-		else if (DotForward < -Threshold)
-		{
-			// Moving backward - flip to opposite
-			ForwardVector = -ForwardVector;
-		}
-		else if (DotRight > Threshold)
-		{
-			// Moving right relative to current facing
-			// Rotate 90 degrees: (x,y) -> (-y,x) for right turn
-			ForwardVector = { -ForwardVector.y, ForwardVector.x };
-		}
-		else if (DotRight < -Threshold)
-		{
-			// Moving left relative to current facing
-			// Rotate -90 degrees: (x,y) -> (y,-x) for left turn
-			ForwardVector = { ForwardVector.y, -ForwardVector.x };
-		}
+
+		// Right vector is always 90 degrees clockwise from forward
 		RightVector = { -ForwardVector.y, ForwardVector.x };
-
-		//LOG("Forward: ({:.0f}, {:.0f}) | Right: ({:.0f}, {:.0f})",
-		//ForwardVector.x, ForwardVector.y, RightVector.x, RightVector.y);
 	}
 }
