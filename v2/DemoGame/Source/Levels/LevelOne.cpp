@@ -40,7 +40,7 @@ namespace we
 
     void LevelOne::BeginPlay()
     {
-        LOG("Level One Started - Timer set for 3 seconds");
+        //LOG("Level One Started - Timer set for 3 seconds");
         TestTimer = TimerManager::Get().SetTimer(weak_from_this(), &LevelOne::OnTimerFinished, 3.0f, false);
 
         auto PlayerRef = SpawnActor<Player>(EC.CharacterSheet);
@@ -70,7 +70,7 @@ namespace we
 
     void LevelOne::OnTimerFinished()
     {
-        LOG("Timer Worked!");
+        //LOG("Timer Worked!");
         TestTimer.Invalidate();
     }
 }

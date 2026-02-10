@@ -120,7 +120,7 @@ namespace we
             {
                 if (auto Existing = It->second.lock())
                 {
-                    LOG("Async cache hit for: {}", Path);
+                    //LOG("Async cache hit for: {}", Path);
                     return AssetHandle<T>(Existing);
                 }
             }
@@ -238,7 +238,7 @@ namespace we
 
         if (TotalFreed > 0)
         {
-            LOG("AsyncAsset: Unloaded {} unused assets", TotalFreed);
+            //LOG("AsyncAsset: Unloaded {} unused assets", TotalFreed);
         }
     }
 }

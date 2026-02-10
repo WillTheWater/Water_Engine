@@ -87,7 +87,7 @@ namespace we
 		auto it = Animations.find(StateID);
 		if (it == Animations.end())
 		{
-			LOG("Animation state not found: {}", StateID);
+			//LOG("Animation state not found: {}", StateID);
 			return;
 		}
 

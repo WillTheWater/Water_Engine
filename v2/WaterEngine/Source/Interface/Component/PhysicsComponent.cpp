@@ -97,16 +97,16 @@ namespace we
 
     void PhysicsComponent::OnBeginOverlap(PhysicsComponent* Other)
     {
-        LOG("Begin overlap: {} with {}",
-            Owner ? "Actor" : "None",
-            Other && Other->GetOwner() ? "Other" : "None");
+        //LOG("Begin overlap: {} with {}",
+            //Owner ? "Actor" : "None",
+            //Other && Other->GetOwner() ? "Other" : "None");
         bIsOverlapping = true;
         OverlapCount++;
     }
 
     void PhysicsComponent::OnEndOverlap(PhysicsComponent* Other)
     {
-        LOG("End overlap");
+        //LOG("End overlap");
         bIsOverlapping = false;
         OverlapCount = std::max(0, OverlapCount - 1);
     }
