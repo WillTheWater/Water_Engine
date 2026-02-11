@@ -11,14 +11,30 @@
 
 namespace we
 {
-	Panel::Panel(EngineSubsystem& Subsystem, const string& BackgroundTexturePath) : Widget{ Subsystem }
+	Panel::Panel(EngineSubsystem& Subsystem, const string& TexturePath)
+		: Widget{ Subsystem }
 	{
-		if (BackgroundTexturePath.empty()) return;
-		BgTexture = Asset().LoadTexture(BackgroundTexturePath);
-		if (!BgTexture) return;
-		BgSprite.emplace(*BgTexture);
-		Size = vec2f(BgTexture->getSize());
-		BgSprite->setOrigin(Size * 0.5f);
+		if (TexturePath.empty()) return;
+
+		auto Tex = Asset().LoadTexture(TexturePath);
+		if (!Tex) return;
+
+		Background.emplace();
+		Background->setSize(Size);
+		Background->setTexture(&*Tex);
+	}
+
+	Panel::Panel(EngineSubsystem& Subsystem,
+		color FillColor,
+		color OutlineColor,
+		float OutlineThickness)
+		: Widget{ Subsystem }
+	{
+		Background.emplace();
+		Background->setSize(Size);
+		Background->setFillColor(FillColor);
+		Background->setOutlineColor(OutlineColor);
+		Background->setOutlineThickness(OutlineThickness);
 	}
 
 	void Panel::AddChild(shared<Widget> Child)
@@ -61,12 +77,14 @@ namespace we
 	void Panel::Render(GameWindow& Window)
 	{
 		if (!IsVisible()) return;
-		if (BgSprite)
+
+		if (Background)
 		{
-			BgSprite->setPosition(GetWorldPosition());
-			BgSprite->setScale(GetWorldScale());
-			Window.draw(*BgSprite);
+			Background->setPosition(GetWorldPosition());
+			Background->setScale(GetWorldScale());
+			Window.draw(*Background);
 		}
+
 		for (auto& WeakChild : Children)
 			if (auto Child = WeakChild.lock(); Child->IsVisible())
 				Child->Render(Window);

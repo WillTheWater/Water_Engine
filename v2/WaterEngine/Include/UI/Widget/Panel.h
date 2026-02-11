@@ -13,7 +13,12 @@ namespace we
 	class Panel : public Widget
 	{
 	public:
-		explicit Panel(EngineSubsystem& Subsystem, const string& BackgroundTexturePath = "");
+		Panel(EngineSubsystem& Subsystem, const string& TexturePath);
+
+		Panel(EngineSubsystem& Subsystem,
+			color FillColor = color::White,
+			color OutlineColor = color::Black,
+			float OutlineThickness = 2.f);
 
 		void AddChild(shared<Widget> Child);
 		void RemoveChild(Widget* Child);
@@ -31,8 +36,7 @@ namespace we
 	private:
 		list<weak<Widget>> Children;
 		weak<Widget> HoveredChild;
-		shared<texture> BgTexture;
-		optional<sprite> BgSprite;
+		optional<rectangle> Background;
 
 		shared<Widget> FindChildAt(const vec2f& WorldPoint) const;
 	};

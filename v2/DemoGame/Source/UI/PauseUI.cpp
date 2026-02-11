@@ -45,6 +45,12 @@ namespace we
 
         MenuPanel->AddChild(ResumeButton);
         MenuPanel->AddChild(QuitButton);
+
+        auto ShapePanel = Subsystem.GUI->CreateWidget<Panel>(Subsystem);
+        ShapePanel->SetLocalOffset({ EC.WindowSize.x * 0.1f, EC.WindowSize.y * 0.5f });
+
+        auto RedPanel = Subsystem.GUI->CreateWidget<Panel>(Subsystem, color::Red, color::White, 8.f);
+        ShapePanel->SetLocalOffset({ EC.WindowSize.x * 0.8f, EC.WindowSize.y * 0.5f });
     }
 
     void PauseUI::Show()
