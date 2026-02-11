@@ -15,17 +15,16 @@ namespace we
 	Button::Button(EngineSubsystem& Subsystem, const string& Label, const string& TexturePath)
 		: Widget{ Subsystem }
 		, Label{ Label }
-		, HoverSoundPath{EC.DefaultButtonHoverSound}
-		, UnhoverSoundPath{""}
-		, PressedSoundPath{""}
-		, ClickSoundPath{EC.DefaultButtonClickSound}
+		, HoverSoundPath{ EC.DefaultButtonHoverSound }
+		, ClickSoundPath{ EC.DefaultButtonClickSound }
 	{
 		BgTexture = Asset().LoadTexture(TexturePath);
 		if (BgTexture)
 		{
 			BgSprite.emplace(*BgTexture);
 			Size = vec2f(BgTexture->getSize());
-			BgSprite->setOrigin(Size.componentWiseMul({ 0.5f, 0.5f }));
+			BgSprite->setOrigin(Size * 0.5f);
+			BgSprite->setColor(NormalColor);
 		}
 		TextFont = Asset().LoadFont(EC.DefaultTitleFont);
 		if (TextFont)
@@ -35,101 +34,65 @@ namespace we
 		}
 	}
 
-	void Button::Update(float DeltaTime)
-	{
-		bool bWasHovered = bHovered;
-		bool bWasPressed = bPressed;
-
-		bHovered = Contains(Subsystem.Cursor->GetPosition());
-		bPressed = bHovered && Subsystem.GUI->IsMousePressed();
-
-		// Hover start
-		if (!bWasHovered && bHovered)
-		{
-			PlayHoverSound();
-		}
-		// Hover end
-		else if (bWasHovered && !bHovered)
-		{
-			PlayUnhoverSound();
-		}
-
-		// Press start
-		if (!bWasPressed && bPressed)
-		{
-			PlayPressedSound();
-		}
-
-		// Click (released while hovered)
-		if (bWasPressed && !bPressed && bHovered)
-		{
-			PlayClickSound();
-			OnClicked.Broadcast();
-		}
-
-		UpdateVisualState();
-	}
-
 	void Button::Render(GameWindow& Window)
 	{
-		if (!bVisible || !BgSprite) return;
-
+		if (!IsVisible() || !BgSprite) return;
 		BgSprite->setPosition(GetWorldPosition());
-		BgSprite->setRotation(GetWorldRotation());
 		BgSprite->setScale(GetWorldScale());
 		Window.draw(*BgSprite);
 
 		if (LabelText)
 		{
-			sf::FloatRect TextBounds = LabelText->getLocalBounds();
-			LabelText->setOrigin({ TextBounds.position.x + TextBounds.size.x / 2.f,
-								   TextBounds.position.y + TextBounds.size.y / 2.f });
+			auto Bounds = LabelText->getLocalBounds();
+			LabelText->setOrigin({ Bounds.position.x + Bounds.size.x * 0.5f, Bounds.position.y + Bounds.size.y * 0.5f });
 			LabelText->setPosition(GetWorldPosition());
 			Window.draw(*LabelText);
 		}
 	}
 
+	void Button::OnMouseEnter()
+	{
+		bHovered = true;
+		PlaySound(HoverSoundPath);
+		UpdateVisualState();
+	}
+
+	void Button::OnMouseLeave()
+	{
+		bHovered = false;
+		bPressed = false;
+		PlaySound(UnhoverSoundPath);
+		UpdateVisualState();
+	}
+
+	bool Button::OnMouseButtonPressed()
+	{
+		bPressed = true;
+		PlaySound(PressedSoundPath);
+		UpdateVisualState();
+		return true;
+	}
+
+	void Button::OnMouseButtonReleased()
+	{
+		if (bPressed && bHovered)
+		{
+			PlaySound(ClickSoundPath);
+			OnClicked.Broadcast();
+		}
+		bPressed = false;
+		UpdateVisualState();
+	}
+
 	void Button::UpdateVisualState()
 	{
 		if (!BgSprite) return;
-
-		color TargetColor = NormalColor;
-		if (bPressed && bHovered) TargetColor = PressedColor;
-		else if (bHovered) TargetColor = HoverColor;
-
-		CurrentColor = TargetColor;
-		BgSprite->setColor(CurrentColor);
+		color Target = bPressed && bHovered ? PressedColor : bHovered ? HoverColor : NormalColor;
+		BgSprite->setColor(Target);
 	}
 
-	void Button::PlayHoverSound()
+	void Button::PlaySound(const string& Path)
 	{
-		if (!HoverSoundPath.empty())
-		{
-			Subsystem.Audio->PlaySFX(HoverSoundPath);
-		}
-	}
-
-	void Button::PlayUnhoverSound()
-	{
-		if (!UnhoverSoundPath.empty())
-		{
-			Subsystem.Audio->PlaySFX(UnhoverSoundPath);
-		}
-	}
-
-	void Button::PlayPressedSound()
-	{
-		if (!PressedSoundPath.empty())
-		{
-			Subsystem.Audio->PlaySFX(PressedSoundPath);
-		}
-	}
-
-	void Button::PlayClickSound()
-	{
-		if (!ClickSoundPath.empty())
-		{
-			Subsystem.Audio->PlaySFX(ClickSoundPath);
-		}
+		if (!Path.empty()) Subsystem.Audio->PlaySFX(Path);
 	}
 }

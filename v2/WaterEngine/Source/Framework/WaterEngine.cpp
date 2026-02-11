@@ -84,7 +84,7 @@ namespace we
         Window = make_unique<GameWindow>();
         Window->OnResize.Bind(this, &WaterEngine::ConstrainRender);
         Subsystem.Cursor = make_unique<CursorSubsystem>(*Window);
-        Subsystem.GUI = make_unique<GUISubsystem>(*Window);
+        Subsystem.GUI = make_unique<GUISubsystem>(*Window, *Subsystem.Cursor);
     }
 
     void WaterEngine::Run()

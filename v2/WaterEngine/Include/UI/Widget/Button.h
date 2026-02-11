@@ -18,10 +18,12 @@ namespace we
 
 		Delegate<> OnClicked;
 
-		virtual void Update(float DeltaTime) override;
-		virtual void Render(GameWindow& Window) override;
+		void Render(GameWindow& Window) override;
+		void OnMouseEnter() override;
+		void OnMouseLeave() override;
+		bool OnMouseButtonPressed() override;
+		void OnMouseButtonReleased() override;
 
-	public:
 		string HoverSoundPath;
 		string UnhoverSoundPath;
 		string PressedSoundPath;
@@ -29,23 +31,17 @@ namespace we
 
 	private:
 		void UpdateVisualState();
-		void PlayHoverSound();
-		void PlayUnhoverSound();
-		void PlayPressedSound();
-		void PlayClickSound();
+		void PlaySound(const string& Path);
 
-	private:
 		string Label;
 		shared<texture> BgTexture;
 		optional<sprite> BgSprite;
-
 		shared<font> TextFont;
 		optional<sf::Text> LabelText;
 
 		color NormalColor{ 200, 200, 200 };
 		color HoverColor{ 255, 255, 255 };
 		color PressedColor{ 150, 150, 150 };
-		color CurrentColor{ 200, 200, 200 };
 
 		bool bHovered = false;
 		bool bPressed = false;

@@ -11,51 +11,29 @@
 
 namespace we
 {
-	Widget::Widget(EngineSubsystem& InSubsystem)
-		: Subsystem{ InSubsystem }
-	{
-	}
+	Widget::Widget(EngineSubsystem& InSubsystem) : Subsystem{ InSubsystem } {}
 
 	void Widget::UpdateCache() const
 	{
 		if (!bDirty) return;
-
 		if (Parent)
 		{
 			CachedWorldPosition = Parent->GetWorldPosition() + LocalOffset;
-			CachedWorldRotation = Parent->GetWorldRotation() + LocalRotation;
 			CachedWorldScale = Parent->GetWorldScale().componentWiseMul(LocalScale);
 		}
 		else
 		{
 			CachedWorldPosition = LocalOffset;
-			CachedWorldRotation = LocalRotation;
 			CachedWorldScale = LocalScale;
 		}
-
 		bDirty = false;
 	}
 
-	vec2f Widget::GetWorldPosition() const
-	{
-		UpdateCache();
-		return CachedWorldPosition;
-	}
-
-	angle Widget::GetWorldRotation() const
-	{
-		UpdateCache();
-		return CachedWorldRotation;
-	}
-
-	vec2f Widget::GetWorldScale() const
-	{
-		UpdateCache();
-		return CachedWorldScale;
-	}
+	vec2f Widget::GetWorldPosition() const { UpdateCache(); return CachedWorldPosition; }
+	vec2f Widget::GetWorldScale() const { UpdateCache(); return CachedWorldScale; }
 
 	bool Widget::Contains(const vec2f& WorldPoint) const
 	{
-		return we::Contains(WorldPoint, GetWorldPosition(), Size);
+		return we::Contains(WorldPoint, GetWorldPosition(), Size.componentWiseMul(GetWorldScale()));
 	}
 }

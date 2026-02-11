@@ -19,12 +19,21 @@ namespace we
 		void RemoveChild(Widget* Child);
 		void ClearChildren();
 
-		virtual void Update(float DeltaTime) override;
-		virtual void Render(GameWindow& Window) override;
+		void Update(float DeltaTime) override;
+		void Render(GameWindow& Window) override;
+
+		void OnMouseEnter() override;
+		void OnMouseLeave() override;
+		void OnMouseMoved(const vec2f& MousePos) override;
+		bool OnMouseButtonPressed() override;
+		void OnMouseButtonReleased() override;
 
 	private:
 		list<weak<Widget>> Children;
+		weak<Widget> HoveredChild;
 		shared<texture> BgTexture;
 		optional<sprite> BgSprite;
+
+		shared<Widget> FindChildAt(const vec2f& WorldPoint) const;
 	};
 }
