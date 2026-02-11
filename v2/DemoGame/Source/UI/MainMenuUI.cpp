@@ -30,7 +30,7 @@ namespace we
 	void MainMenuUI::CreateUI()
 	{
 		MenuPanel = Subsystem.GUI->CreateWidget<Panel>(Subsystem, EC.DefaultPanel);
-		MenuPanel->SetLocalOffset({ EC.WindowSize.x * 0.5f, EC.WindowSize.y * 0.83f });
+		MenuPanel->SetAnchorPosition(Anchor::Center, Anchor::TopCenter, {0,200});
 		MenuPanel->SetZOrder(LAYER_GAME_UI);
 
 		PlayButton = Subsystem.GUI->CreateWidget<Button>(Subsystem, "Play", EC.DefaultButton);

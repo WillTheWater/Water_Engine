@@ -117,12 +117,13 @@ namespace we
 	{
 		vec2f Pos = GetWorldPosition();
 		vec2f Scl = GetWorldScale();
-		vec2f HalfSize = (Size.componentWiseMul(Scl)) * 0.5f;
+		vec2f Org = GetOrigin().componentWiseMul(Scl);
+		vec2f RealSize = Size.componentWiseMul(Scl);
 
-		return WorldPoint.x >= Pos.x - HalfSize.x &&
-			WorldPoint.x <= Pos.x + HalfSize.x &&
-			WorldPoint.y >= Pos.y - HalfSize.y &&
-			WorldPoint.y <= Pos.y + HalfSize.y;
+		return WorldPoint.x >= Pos.x - Org.x &&
+			WorldPoint.x <= Pos.x - Org.x + RealSize.x &&
+			WorldPoint.y >= Pos.y - Org.y &&
+			WorldPoint.y <= Pos.y - Org.y + RealSize.y;
 	}
 
 	void Widget::MarkDirty()

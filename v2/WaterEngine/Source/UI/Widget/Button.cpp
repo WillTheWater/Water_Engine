@@ -13,25 +13,51 @@
 namespace we
 {
 	Button::Button(EngineSubsystem& Subsystem, const string& Label, const string& TexturePath)
-		: Widget{ Subsystem }
-		, Label{ Label }
-		, HoverSoundPath{ EC.DefaultButtonHoverSound }
-		, ClickSoundPath{ EC.DefaultButtonClickSound }
+		: Widget{ Subsystem }, Label{ Label }
+		, HoverSoundPath{ EC.DefaultButtonHoverSound }, ClickSoundPath{ EC.DefaultButtonClickSound }
 	{
 		BgTexture = Asset().LoadTexture(TexturePath);
 		if (BgTexture)
 		{
+			vec2f TexSize = vec2f(BgTexture->getSize());
+			SetSize(TexSize);
 			BgSprite.emplace(*BgTexture);
-			SetSize(vec2f(BgTexture->getSize()));
-			BgSprite->setOrigin(GetSize().componentWiseMul({0.5f, 0.5f}));
 			BgSprite->setColor(NormalColor);
 		}
+
 		TextFont = Asset().LoadFont(EC.DefaultTitleFont);
 		if (TextFont)
 		{
 			LabelText.emplace(*TextFont, Label, 24);
 			LabelText->setFillColor(color::Black);
 		}
+	}
+
+	Button::Button(EngineSubsystem& Subsystem, const string& Label, const vec2f& InSize, color FillColor, color OutlineColor, float OutlineThickness)
+		: Widget{ Subsystem }, Label{ Label }
+		, HoverSoundPath{ EC.DefaultButtonHoverSound }, ClickSoundPath{ EC.DefaultButtonClickSound }
+	{
+		SetSize(InSize);
+		NormalColor = FillColor;
+
+		Background.emplace();
+		Background->setSize(InSize);
+		Background->setFillColor(FillColor);
+		Background->setOutlineColor(OutlineColor);
+		Background->setOutlineThickness(OutlineThickness);
+
+		TextFont = Asset().LoadFont(EC.DefaultTitleFont);
+		if (TextFont)
+		{
+			LabelText.emplace(*TextFont, Label, 24);
+			LabelText->setFillColor(color::Black);
+		}
+	}
+
+	void Button::UpdateCache() const
+	{
+		Widget::UpdateCache();
+		CachedWorldScale = LocalScale;
 	}
 
 	void Button::Render(GameWindow& Window)

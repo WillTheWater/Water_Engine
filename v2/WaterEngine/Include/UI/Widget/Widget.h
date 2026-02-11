@@ -72,6 +72,16 @@ namespace we
 
 		virtual void UpdateCache() const;
 		void MarkDirty();
+		// Cached world data
+		mutable bool bDirty = true;
+		mutable vec2f CachedWorldPosition;
+		mutable vec2f CachedWorldScale;
+		mutable vec2f CachedOrigin;
+		
+		// Transform data
+		vec2f LocalOffset{ 0, 0 };
+		vec2f LocalScale{ 1, 1 };
+		vec2f Size{ 50, 50 };
 
 	private:
 		// Anchor data
@@ -80,21 +90,12 @@ namespace we
 		vec2f AnchorOffset{ 0, 0 };
 		bool bUseAnchors = false;
 
-		// Transform data
-		vec2f LocalOffset{ 0, 0 };
-		vec2f LocalScale{ 1, 1 };
-		vec2f Size{ 50, 50 };
+		
 
 		// Hierarchy
 		Widget* Parent = nullptr;
 		bool bVisible = true;
 		uint ZOrder = 0;
-
-		// Cached world data
-		mutable bool bDirty = true;
-		mutable vec2f CachedWorldPosition;
-		mutable vec2f CachedWorldScale;
-		mutable vec2f CachedOrigin;
 
 		static vec2f GetAnchorPoint(const vec2f& InSize, Anchor InAnchor);
 		vec2f CalculateAnchorPosition() const;

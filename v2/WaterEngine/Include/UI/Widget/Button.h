@@ -16,6 +16,12 @@ namespace we
 	public:
 		Button(EngineSubsystem& Subsystem, const string& Label, const string& TexturePath);
 
+		Button(EngineSubsystem& Subsystem, const string& Label,
+			const vec2f& InSize = { 150.f, 50.f },
+			color FillColor = color{ 200, 200, 200 },
+			color OutlineColor = color::Black,
+			float OutlineThickness = 2.f);
+
 		Delegate<> OnClicked;
 
 		void Render(GameWindow& Window) override;
@@ -24,10 +30,8 @@ namespace we
 		bool OnMouseButtonPressed() override;
 		void OnMouseButtonReleased() override;
 
-		string HoverSoundPath;
-		string UnhoverSoundPath;
-		string PressedSoundPath;
-		string ClickSoundPath;
+	protected:
+		void UpdateCache() const override;
 
 	private:
 		void UpdateVisualState();
@@ -36,12 +40,18 @@ namespace we
 		string Label;
 		shared<texture> BgTexture;
 		optional<sprite> BgSprite;
+		optional<rectangle> Background;
 		shared<font> TextFont;
 		optional<sf::Text> LabelText;
 
+		string HoverSoundPath;
+		string UnhoverSoundPath;
+		string PressedSoundPath;
+		string ClickSoundPath;
+
 		color NormalColor{ 200, 200, 200 };
 		color HoverColor{ 255, 255, 255 };
-		color PressedColor{ 150, 150, 150 };
+		color PressedColor{ 100, 100, 100 };
 
 		bool bHovered = false;
 		bool bPressed = false;
