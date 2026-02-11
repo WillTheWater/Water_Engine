@@ -22,8 +22,8 @@ namespace we
 		if (BgTexture)
 		{
 			BgSprite.emplace(*BgTexture);
-			Size = vec2f(BgTexture->getSize());
-			BgSprite->setOrigin(Size * 0.5f);
+			SetSize(vec2f(BgTexture->getSize()));
+			BgSprite->setOrigin(GetSize().componentWiseMul({0.5f, 0.5f}));
 			BgSprite->setColor(NormalColor);
 		}
 		TextFont = Asset().LoadFont(EC.DefaultTitleFont);

@@ -8,6 +8,13 @@
 
 namespace we
 {
+	enum class Anchor
+	{
+		TopLeft, TopCenter, TopRight,
+		CenterLeft, Center, CenterRight,
+		BottomLeft, BottomCenter, BottomRight
+	};
+
 	struct EngineSubsystem;
 	class GameWindow;
 
@@ -26,45 +33,70 @@ namespace we
 		virtual void OnMouseButtonReleased() {}
 		virtual void OnMouseMoved(const vec2f&) {}
 
-		void SetLocalOffset(const vec2f& Offset) { LocalOffset = Offset; MarkDirty(); }
-		vec2f GetLocalOffset() const { return LocalOffset; }
+		// Positioning
+		void SetAnchorPosition(Anchor ScreenAnchor, Anchor WidgetAnchor, vec2f Offset = vec2f{0.f, 0.f});
 
-		void SetLocalScale(const vec2f& InScale) { LocalScale = InScale; MarkDirty(); }
-		vec2f GetLocalScale() const { return LocalScale; }
+		// Transform
+		void SetLocalOffset(const vec2f& Offset);
+		vec2f GetLocalOffset() const;
+		void SetLocalScale(const vec2f& InScale);
+		vec2f GetLocalScale() const;
 
+		// Size
+		void SetSize(const vec2f& InSize);
+		vec2f GetSize() const;
+
+		// World space
 		vec2f GetWorldPosition() const;
 		vec2f GetWorldScale() const;
+		vec2f GetOrigin() const;
 
-		void SetSize(const vec2f& InSize) { Size = InSize; }
-		vec2f GetSize() const { return Size; }
+		// Hierarchy
+		void SetParent(Widget* InParent);
+		void DetachFromParent();
+		Widget* GetParent() const;
 
-		void SetParent(Widget* InParent) { Parent = InParent; MarkDirty(); }
-		void DetachFromParent() { Parent = nullptr; MarkDirty(); }
-		Widget* GetParent() const { return Parent; }
+		// Visibility
+		void SetVisible(bool bInVisible);
+		bool IsVisible() const;
 
-		void SetVisible(bool bInVisible) { bVisible = bInVisible; }
-		bool IsVisible() const { return bVisible; }
+		// Z-Order
+		uint GetZOrder() const;
+		void SetZOrder(uint InZOrder);
 
-		uint GetZOrder() const { return ZOrder; }
-		void SetZOrder(uint InZOrder) { ZOrder = InZOrder; }
-
+		// Hit test
 		bool Contains(const vec2f& WorldPoint) const;
 
 	protected:
 		EngineSubsystem& Subsystem;
+
+		virtual void UpdateCache() const;
+		void MarkDirty();
+
+	private:
+		// Anchor data
+		Anchor ScreenAnchor = Anchor::TopLeft;
+		Anchor WidgetAnchor = Anchor::TopLeft;
+		vec2f AnchorOffset{ 0, 0 };
+		bool bUseAnchors = false;
+
+		// Transform data
 		vec2f LocalOffset{ 0, 0 };
 		vec2f LocalScale{ 1, 1 };
-		vec2f Size{ 100, 50 };
+		vec2f Size{ 50, 50 };
+
+		// Hierarchy
 		Widget* Parent = nullptr;
 		bool bVisible = true;
 		uint ZOrder = 0;
 
-	private:
+		// Cached world data
 		mutable bool bDirty = true;
 		mutable vec2f CachedWorldPosition;
 		mutable vec2f CachedWorldScale;
+		mutable vec2f CachedOrigin;
 
-		void MarkDirty() { bDirty = true; }
-		void UpdateCache() const;
+		static vec2f GetAnchorPoint(const vec2f& InSize, Anchor InAnchor);
+		vec2f CalculateAnchorPosition() const;
 	};
 }

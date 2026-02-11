@@ -19,19 +19,21 @@ namespace we
 		auto Tex = Asset().LoadTexture(TexturePath);
 		if (!Tex) return;
 
+		vec2f TexSize = vec2f(Tex->getSize());
+		SetSize(TexSize);
+
 		Background.emplace();
-		Background->setSize(Size);
+		Background->setSize(TexSize);
 		Background->setTexture(&*Tex);
 	}
 
-	Panel::Panel(EngineSubsystem& Subsystem,
-		color FillColor,
-		color OutlineColor,
-		float OutlineThickness)
+	Panel::Panel(EngineSubsystem& Subsystem, const vec2f& InSize, color FillColor, color OutlineColor, float OutlineThickness)
 		: Widget{ Subsystem }
 	{
+		SetSize(InSize);
+
 		Background.emplace();
-		Background->setSize(Size);
+		Background->setSize(InSize);
 		Background->setFillColor(FillColor);
 		Background->setOutlineColor(OutlineColor);
 		Background->setOutlineThickness(OutlineThickness);

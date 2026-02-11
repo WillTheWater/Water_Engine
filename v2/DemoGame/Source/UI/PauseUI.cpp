@@ -46,11 +46,26 @@ namespace we
         MenuPanel->AddChild(ResumeButton);
         MenuPanel->AddChild(QuitButton);
 
-        auto ShapePanel = Subsystem.GUI->CreateWidget<Panel>(Subsystem);
-        ShapePanel->SetLocalOffset({ EC.WindowSize.x * 0.1f, EC.WindowSize.y * 0.5f });
+        // Anchor test widgets
+        // Top-left corner, 20px padding
+        auto TopLeft = Subsystem.GUI->CreateWidget<Panel>(Subsystem);
+        TopLeft->SetAnchorPosition(Anchor::TopLeft, Anchor::Center, { 20, 20 });
 
-        auto RedPanel = Subsystem.GUI->CreateWidget<Panel>(Subsystem, color::Red, color::White, 8.f);
-        ShapePanel->SetLocalOffset({ EC.WindowSize.x * 0.8f, EC.WindowSize.y * 0.5f });
+        // Top-right corner
+        auto TopRight = Subsystem.GUI->CreateWidget<Panel>(Subsystem);
+        TopRight->SetAnchorPosition(Anchor::TopRight, Anchor::CenterRight, { -20, 20 });
+
+        // Bottom-left
+        auto BottomLeft = Subsystem.GUI->CreateWidget<Panel>(Subsystem);
+        BottomLeft->SetAnchorPosition(Anchor::BottomLeft, Anchor::BottomLeft, { 20, -20 });
+
+        // Bottom-right
+        auto BottomRight = Subsystem.GUI->CreateWidget<Panel>(Subsystem, vec2f{200,200});
+        BottomRight->SetAnchorPosition(Anchor::BottomRight, Anchor::BottomRight, {-4, -4});
+
+        // Center
+        auto Center = Subsystem.GUI->CreateWidget<Panel>(Subsystem, vec2f(300,300));
+        Center->SetAnchorPosition(Anchor::Center, Anchor::Center, { 0, 0 });
     }
 
     void PauseUI::Show()

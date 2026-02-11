@@ -16,9 +16,10 @@ namespace we
 		Panel(EngineSubsystem& Subsystem, const string& TexturePath);
 
 		Panel(EngineSubsystem& Subsystem,
+			const vec2f& InSize = {200, 50},
 			color FillColor = color::White,
 			color OutlineColor = color::Black,
-			float OutlineThickness = 2.f);
+			float OutlineThickness = 4.f);
 
 		void AddChild(shared<Widget> Child);
 		void RemoveChild(Widget* Child);

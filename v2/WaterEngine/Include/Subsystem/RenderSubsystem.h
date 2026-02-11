@@ -18,6 +18,7 @@ namespace we
 		void Draw(const drawable& RenderObject);
 
 		void SetRenderView(const view& RenderView);
+		vec2f GetRenderSize() const { return vec2f(RenderTarget.getSize()); }
 		void ResetRenderView();
 	
 	private:
