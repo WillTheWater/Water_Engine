@@ -9,8 +9,7 @@
 #include "Input/InputBinding.h"
 #include <SFML/Window/Event.hpp>
 
-namespace we
-{
+
 /*
  *
  *                              InputSubsystem
@@ -156,16 +155,22 @@ namespace we
  *
  * ============================================================================= */
 
+namespace we
+{
+	class CursorSubsystem;
+
 	class InputSubsystem
 	{
+
 	public:
+		explicit InputSubsystem(CursorSubsystem& InCursor);
+
 		// ============ STATE-BASED API ============
 		void Bind(int InputAction, const Input::Binding& Binding);
 		bool IsPressed(int InputAction) const;
 		void UnbindAll();
 
 		// ============ EVENT-BASED API ============
-
 		void HandleEvent(const sf::Event& Event);
 
 		bool IsJustPressed(int InputAction) const;
@@ -186,6 +191,7 @@ namespace we
 
 	private:
 		library<int, Input::Binding> InputBindings;
+		CursorSubsystem& Cursor;
 
 		uint64_t CurrentFrame = 0;
 		dictionary<int, uint64_t> PressedOnFrame;
@@ -195,6 +201,7 @@ namespace we
 		dictionary<int, std::vector<ActionCallback>> PressedCallbacks;
 		dictionary<int, std::vector<ActionCallback>> ReleasedCallbacks;
 
+	private:
 		bool IsPressed(const Input::Keyboard& Binding) const;
 		bool IsPressed(const Input::Mouse& Binding) const;
 		bool IsPressed(const Input::Gamepad& Binding) const;

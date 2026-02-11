@@ -63,6 +63,11 @@ namespace we
 		Window.EventKeyReleased();
 	}
 
+	void GameWindowEventHandler::operator()(const sf::Event::MouseMoved&)
+	{
+
+	}
+
 	void GameWindowEventHandler::operator()(const sf::Event::MouseButtonPressed&)
 	{
 		Window.EventMouseButtonPressed();

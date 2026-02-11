@@ -30,24 +30,20 @@ namespace we
     void CursorSubsystem::Update(float DeltaTime)
     {
         const sf::Vector2f JoystickDirection(
-            sf::Joystick::getAxisPosition(0, sf::Joystick::Axis::X) / 100,
-            sf::Joystick::getAxisPosition(0, sf::Joystick::Axis::Y) / 100);
+            sf::Joystick::getAxisPosition(0, sf::Joystick::Axis::X) / 100.f,
+            sf::Joystick::getAxisPosition(0, sf::Joystick::Axis::Y) / 100.f);
 
         if (JoystickDirection.length() > EC.JoystickDeadzone)
         {
             CursorShape.move(JoystickDirection * CursorSpeed * DeltaTime);
-            CursorShape.setPosition(
-                {
-                    std::clamp(CursorShape.getPosition().x, 0.f,
-                    EC.WindowSize.x - 1),
-                    std::clamp(CursorShape.getPosition().y, 0.f,
-                    EC.WindowSize.y - 1)
-                });
-            SetPosition(CursorShape.getPosition());
-        }
-        else
-        {
-            CursorShape.setPosition(GetPosition());
+
+            sf::Vector2f NewPos = {
+                std::clamp(CursorShape.getPosition().x, 0.f, EC.WindowSize.x - 1),
+                std::clamp(CursorShape.getPosition().y, 0.f, EC.WindowSize.y - 1)
+            };
+
+            CursorShape.setPosition(NewPos);
+            SetPosition(NewPos);
         }
     }
 
@@ -78,9 +74,15 @@ namespace we
         return bIsVisible;
     }
 
+    void CursorSubsystem::EventUpdatePosition(vec2f Position)
+    {
+        CursorShape.setPosition(Position);
+    }
+
     void CursorSubsystem::SetPosition(vec2f Position)
     {
         sf::Mouse::setPosition(Window.mapCoordsToPixel(Position, Window.getDefaultView()), Window);
+        CursorShape.setPosition(Position);
     }
 
     vec2f CursorSubsystem::GetPosition() const

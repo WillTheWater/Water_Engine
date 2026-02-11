@@ -11,10 +11,18 @@
 namespace we
 {
 	class InputSubsystem;
+	class CursorSubsystem;
 
 	struct InputEventHandler
 	{
+		InputEventHandler(InputSubsystem& InInput, CursorSubsystem& InCursor)
+			: Input{ InInput }
+			, Cursor{ InCursor }
+		{
+		}
+
 		InputSubsystem& Input;
+		CursorSubsystem& Cursor;
 
 		void operator()(const sf::Event::JoystickConnected&);
 		void operator()(const sf::Event::JoystickDisconnected&);
@@ -24,6 +32,7 @@ namespace we
 		void operator()(const sf::Event::KeyPressed&);
 		void operator()(const sf::Event::KeyReleased&);
 
+		void operator()(const sf::Event::MouseMoved&);
 		void operator()(const sf::Event::MouseButtonPressed&);
 		void operator()(const sf::Event::MouseButtonReleased&);
 

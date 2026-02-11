@@ -67,22 +67,24 @@ namespace we
         Subsystem.Render = make_unique<RenderSubsystem>();
         Subsystem.SaveLoad = make_unique<SaveLoadSubsystem>();
         Subsystem.Audio = make_unique<AudioSubsystem>();
-        Subsystem.Input = make_unique<InputSubsystem>();
+
+        WindowInit();
+
+        Subsystem.Input = make_unique<InputSubsystem>(*Subsystem.Cursor);
         Subsystem.World = make_unique<WorldSubsystem>(Subsystem);
         Subsystem.GameState = make_unique<GameStateSubsystem>();
         Subsystem.GameState->OnQuitRequested.Bind(this, &WaterEngine::Quit);
         
         Physics().Initialize();
 
-        WindowInit();
     }
 
     void WaterEngine::WindowInit()
     {
         Window = make_unique<GameWindow>();
         Window->OnResize.Bind(this, &WaterEngine::ConstrainRender);
-        Subsystem.GUI = make_unique<GUISubsystem>(*Window);
         Subsystem.Cursor = make_unique<CursorSubsystem>(*Window);
+        Subsystem.GUI = make_unique<GUISubsystem>(*Window);
     }
 
     void WaterEngine::Run()

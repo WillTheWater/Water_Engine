@@ -24,10 +24,12 @@ namespace we
 		void operator()(const sf::Event::JoystickDisconnected&);
 		void operator()(const sf::Event::JoystickButtonPressed&);
 		void operator()(const sf::Event::JoystickButtonReleased&);
+		
 
 		void operator()(const sf::Event::KeyPressed&);
 		void operator()(const sf::Event::KeyReleased&);
 
+		void operator()(const sf::Event::MouseMoved&);
 		void operator()(const sf::Event::MouseButtonPressed&);
 		void operator()(const sf::Event::MouseButtonReleased&);
 

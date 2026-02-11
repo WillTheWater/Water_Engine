@@ -25,6 +25,7 @@ namespace we
         void SetVisibility(bool Visible);
         bool IsVisible() const;
 
+        void EventUpdatePosition(vec2f Position);
         void SetPosition(vec2f Position);
         vec2f GetPosition() const;
         vec2f GetPosition(const view& View) const;
