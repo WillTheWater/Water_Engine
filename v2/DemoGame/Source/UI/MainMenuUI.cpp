@@ -8,6 +8,7 @@
 #include "UI/Widget/Button.h"
 #include "UI/Widget/VerticalBox.h"
 #include "UI/Widget/HorizontalBox.h"
+#include "UI/Widget/GridBox.h"
 #include "Framework/EngineSubsystem.h"
 #include "Subsystem/ResourceSubsystem.h"
 #include "EngineConfig.h"
@@ -51,7 +52,7 @@ namespace we
 		//Btn1->SetAnchorPosition(Anchor::Center, Anchor::TopCenter, { 0, 0 });
 		//Btn2->SetAnchorPosition(Anchor::Center, Anchor::TopCenter, { 0, 0 });
 
-		auto VBox = Subsystem.GUI->CreateWidget<VerticalBox>(
+		/*auto VBox = Subsystem.GUI->CreateWidget<VerticalBox>(
 			Subsystem,
 			list<shared<Widget>>{ Btn1, Btn2 },
 			20.f,
@@ -71,10 +72,14 @@ namespace we
 			list<shared<Widget>>{ VBox, VBox2},
 			20.f,
 			Anchor::Center,
-			Anchor::Center);
+			Anchor::Center);*/
+
+		auto Grid = Subsystem.GUI->CreateWidget<GridBox>(Subsystem, 
+			list<shared<Widget>>{Btn1, Btn2, Btn3, Btn4}, 
+			2.f);
 
 		auto TestPanel = Subsystem.GUI->CreateWidget<Panel>(Subsystem,
-			list<shared<Widget>>{HBox}, rectf{ {50,50},{50,50} }, Anchor::Center, Anchor::Center, vec2f{-100.f,0.f});
+			list<shared<Widget>>{Grid}, rectf{ {50,50},{50,50} }, Anchor::Center, Anchor::Center, vec2f{-100.f,0.f});
 
 		Btn1->OnClicked.Bind(this, &MainMenuUI::OnPlayClicked);
 		Btn3->OnClicked.Bind(this, &MainMenuUI::OnPlayClicked);
