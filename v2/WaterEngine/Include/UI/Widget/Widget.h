@@ -37,9 +37,9 @@ namespace we
 		void SetAnchorPosition(Anchor ScreenAnchor, Anchor WidgetAnchor, vec2f Offset = vec2f{0.f, 0.f});
 		
 		// Nesting
-		void AddChild(shared<Widget> Child, Anchor InTargetAnchor, Anchor InWidgetAnchor, vec2f InOffset = { 0,0 });
-		void RemoveChild(Widget* Child);
-		void RenderChildren(GameWindow& Window);
+		virtual void AddChild(shared<Widget> Child, Anchor InTargetAnchor, Anchor InWidgetAnchor, vec2f InOffset = { 0,0 });
+		virtual void RemoveChild(Widget* Child);
+		virtual void RenderChildren(GameWindow& Window);
 
 		// Transform
 		void SetLocalOffset(const vec2f& Offset);
@@ -50,6 +50,8 @@ namespace we
 		// Size
 		void SetSize(const vec2f& InSize);
 		vec2f GetSize() const;
+		void SetAutoSize(bool bEnabled, float Padding = 0.f);
+		void CalculateAutoSize();
 
 		// World space
 		vec2f GetWorldPosition() const;
@@ -73,12 +75,12 @@ namespace we
 		bool Contains(const vec2f& WorldPoint) const;
 		shared<Widget> FindDeepestChildAt(const vec2f& WorldPoint);
 
-	protected:
 		EngineSubsystem& Subsystem;
 
 		virtual void UpdateCache() const;
 		void MarkDirty();
 		// Cached world data
+		list<weak<Widget>> Children;
 		mutable bool bDirty = true;
 		mutable vec2f CachedWorldPosition;
 		mutable vec2f CachedWorldScale;
@@ -88,8 +90,9 @@ namespace we
 		vec2f LocalOffset{ 0, 0 };
 		vec2f LocalScale{ 1, 1 };
 		vec2f Size{ 50, 50 };
+		bool bAutoSize = false;
+		float AutoSizePadding = 0.f;
 
-	private:
 		// Anchor data
 		Anchor TargetAnchor = Anchor::TopLeft;
 		Anchor WidgetAnchor = Anchor::TopLeft;
@@ -98,7 +101,6 @@ namespace we
 
 		// Hierarchy
 		Widget* Parent = nullptr;
-		list<weak<Widget>> Children;
 		bool bVisible = true;
 		uint ZOrder = 0;
 

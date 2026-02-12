@@ -23,14 +23,6 @@ namespace we
 		Clear();
 	}
 
-	void GUISubsystem::DestroyWidget(Widget* InWidget)
-	{
-		if (!InWidget) return;
-		auto it = std::remove_if(Widgets.begin(), Widgets.end(),
-			[InWidget](const shared<Widget>& W) { return W.get() == InWidget; });
-		if (it != Widgets.end()) Widgets.erase(it);
-	}
-
 	void GUISubsystem::Clear()
 	{
 		Widgets.clear();

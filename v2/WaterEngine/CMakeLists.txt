@@ -84,6 +84,9 @@ set(WATER_ENGINE_HEADERS
     Include/UI/Widget/Panel.h
     Include/UI/Widget/Widget.h
     Include/UI/Widget/Button.h
+    Include/UI/Widget/HorizontalBox.h
+    Include/UI/Widget/VerticalBox.h
+    Include/UI/Widget/GridBox.h
     Include/UI/UILayerOrder.h
 
     Include/Input/InputBinding.h
@@ -143,6 +146,9 @@ set(WATER_ENGINE_SOURCES
     Source/UI/Widget/Panel.cpp
     Source/UI/Widget/Widget.cpp
     Source/UI/Widget/Button.cpp
+    Source/UI/Widget/HorizontalBox.cpp
+    Source/UI/Widget/VerticalBox.cpp
+    Source/UI/Widget/GridBox.cpp
 
     Source/Input/InputBinding.cpp    
     Source/Input/InputEventHandler.cpp

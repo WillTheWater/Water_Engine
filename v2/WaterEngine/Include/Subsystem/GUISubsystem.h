@@ -25,7 +25,6 @@ namespace we
 		template<typename T, typename... Args>
 		shared<T> CreateWidget(Args&&... args);
 
-		void DestroyWidget(Widget* InWidget);
 		void Clear();
 
 	private:

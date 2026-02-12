@@ -54,6 +54,11 @@ namespace we
 		}
 	}
 
+	void Button::Update(float DeltaTime)
+	{
+
+	}
+
 	void Button::Render(GameWindow& Window)
 	{
 		if (!IsVisible()) return;

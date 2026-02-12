@@ -31,5 +31,9 @@ namespace we
 		shared<Panel> MenuPanel;
 		shared<Button> PlayButton;
 		shared<Button> QuitButton;
+
+		//TEST
+		shared<Button> Btn1;
+		shared<Button> Btn2;
 	};
 }

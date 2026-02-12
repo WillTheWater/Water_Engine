@@ -22,10 +22,6 @@ namespace we
 
     PauseUI::~PauseUI()
     {
-        if (MenuPanel)
-        {
-            Subsystem.GUI->DestroyWidget(MenuPanel.get());
-        }
     }
 
     void PauseUI::CreateUI()

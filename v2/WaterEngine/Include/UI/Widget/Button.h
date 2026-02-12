@@ -25,6 +25,7 @@ namespace we
 
 		Delegate<> OnClicked;
 
+		void Update(float DeltaTime) override;
 		void Render(GameWindow& Window) override;
 		void OnMouseEnter() override;
 		void OnMouseLeave() override;
@@ -47,9 +48,9 @@ namespace we
 		string PressedSoundPath;
 		string ClickSoundPath;
 
-		color NormalColor{ 200, 200, 200 };
-		color HoverColor{ 255, 255, 255 };
-		color PressedColor{ 100, 100, 100 };
+		color NormalColor{ 160, 160, 160 };
+		color HoverColor{ 230, 230, 230 };
+		color PressedColor{ 80, 80, 80 };
 
 		bool bHovered = false;
 		bool bPressed = false;

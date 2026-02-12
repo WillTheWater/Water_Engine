@@ -26,13 +26,72 @@ namespace we
 	}
 
 	void Widget::AddChild(shared<Widget> Child, Anchor InTargetAnchor, Anchor InWidgetAnchor, vec2f InOffset)
+{
+    if (!Child || Child.get() == this) return;
+
+    Child->SetParent(this);
+    
+    if (bAutoSize)
+    {
+        // Force TopLeft target anchor
+        Child->SetAnchorPosition(Anchor::TopLeft, InWidgetAnchor, InOffset);
+    }
+    else
+    {
+        Child->SetAnchorPosition(InTargetAnchor, InWidgetAnchor, InOffset);
+    }
+
+    Children.push_back(Child);
+    
+    if (bAutoSize)
+        CalculateAutoSize();
+}
+
+	void Widget::SetAutoSize(bool bEnabled, float Padding)
 	{
-		if (!Child || Child.get() == this) return;
+		bAutoSize = bEnabled;
+		AutoSizePadding = Padding;
+		if (bAutoSize)
+			CalculateAutoSize();
+	}
 
-		Child->SetParent(this);
-		Child->SetAnchorPosition(InTargetAnchor, InWidgetAnchor, InOffset);
+	void Widget::CalculateAutoSize()
+	{
+		if (!bAutoSize || Children.empty()) return;
 
-		Children.push_back(Child);
+		float MinX = FLT_MAX;
+		float MinY = FLT_MAX;
+		float MaxX = -FLT_MAX;
+		float MaxY = -FLT_MAX;
+
+		for (auto& Weak : Children)
+		{
+			if (auto Child = Weak.lock())
+			{
+				if (!Child->IsVisible()) continue;
+
+				// Child local position = AnchorOffset + LocalOffset
+				// In auto-size mode, TargetAnchor is forced to TopLeft so this is correct
+				vec2f ChildPos = Child->AnchorOffset + Child->LocalOffset;
+				vec2f ChildSize = Child->GetSize().componentWiseMul(Child->GetWorldScale());
+				vec2f ChildOrigin = Child->GetOrigin().componentWiseMul(Child->GetWorldScale());
+
+				float Left = ChildPos.x - ChildOrigin.x;
+				float Top = ChildPos.y - ChildOrigin.y;
+				float Right = Left + ChildSize.x;
+				float Bottom = Top + ChildSize.y;
+
+				MinX = std::min(MinX, Left);
+				MinY = std::min(MinY, Top);
+				MaxX = std::max(MaxX, Right);
+				MaxY = std::max(MaxY, Bottom);
+			}
+		}
+
+		if (MinX != FLT_MAX)
+		{
+			SetSize({ MaxX - MinX + AutoSizePadding * 2, MaxY - MinY + AutoSizePadding * 2 });
+		}
 	}
 
 	void Widget::Render(GameWindow& Window)
