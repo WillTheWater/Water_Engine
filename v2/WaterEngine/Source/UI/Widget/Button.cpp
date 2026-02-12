@@ -54,26 +54,35 @@ namespace we
 		}
 	}
 
-	void Button::UpdateCache() const
-	{
-		Widget::UpdateCache();
-		CachedWorldScale = LocalScale;
-	}
-
 	void Button::Render(GameWindow& Window)
 	{
-		if (!IsVisible() || !BgSprite) return;
-		BgSprite->setPosition(GetWorldPosition());
-		BgSprite->setScale(GetWorldScale());
-		Window.draw(*BgSprite);
+		if (!IsVisible()) return;
+
+		// Draw background
+		if (BgSprite)
+		{
+			BgSprite->setPosition(GetWorldPosition());
+			BgSprite->setScale(GetWorldScale());
+			Window.draw(*BgSprite);
+		}
+		else if (Background)
+		{
+			Background->setPosition(GetWorldPosition());
+			Background->setScale(GetWorldScale());
+			Window.draw(*Background);
+		}
 
 		if (LabelText)
 		{
 			auto Bounds = LabelText->getLocalBounds();
-			LabelText->setOrigin({ Bounds.position.x + Bounds.size.x * 0.5f, Bounds.position.y + Bounds.size.y * 0.5f });
-			LabelText->setPosition(GetWorldPosition());
+			LabelText->setOrigin({ Bounds.position.x + Bounds.size.x * 0.5f,
+								   Bounds.position.y + Bounds.size.y * 0.5f });
+
+			LabelText->setPosition(GetWorldPosition() + (Size.componentWiseMul(GetWorldScale()) * 0.5f));
 			Window.draw(*LabelText);
 		}
+
+		Widget::Render(Window);
 	}
 
 	void Button::OnMouseEnter()
@@ -112,9 +121,18 @@ namespace we
 
 	void Button::UpdateVisualState()
 	{
-		if (!BgSprite) return;
 		color Target = bPressed && bHovered ? PressedColor : bHovered ? HoverColor : NormalColor;
-		BgSprite->setColor(Target);
+
+		if (BgSprite)
+		{
+			BgSprite->setColor(Target);
+		}
+
+		// Support the rectangle background path
+		if (Background)
+		{
+			Background->setFillColor(Target);
+		}
 	}
 
 	void Button::PlaySound(const string& Path)

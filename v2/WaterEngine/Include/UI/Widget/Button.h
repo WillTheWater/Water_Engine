@@ -16,7 +16,8 @@ namespace we
 	public:
 		Button(EngineSubsystem& Subsystem, const string& Label, const string& TexturePath);
 
-		Button(EngineSubsystem& Subsystem, const string& Label,
+		Button(EngineSubsystem& Subsystem, 
+			const string& Label,
 			const vec2f& InSize = { 150.f, 50.f },
 			color FillColor = color{ 200, 200, 200 },
 			color OutlineColor = color::Black,
@@ -29,9 +30,6 @@ namespace we
 		void OnMouseLeave() override;
 		bool OnMouseButtonPressed() override;
 		void OnMouseButtonReleased() override;
-
-	protected:
-		void UpdateCache() const override;
 
 	private:
 		void UpdateVisualState();

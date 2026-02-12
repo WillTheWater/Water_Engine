@@ -29,7 +29,7 @@ namespace we
 
 	void MainMenuUI::CreateUI()
 	{
-		MenuPanel = Subsystem.GUI->CreateWidget<Panel>(Subsystem, EC.DefaultPanel);
+		/*MenuPanel = Subsystem.GUI->CreateWidget<Panel>(Subsystem, EC.DefaultPanel);
 		MenuPanel->SetAnchorPosition(Anchor::Center, Anchor::TopCenter, {0,200});
 		MenuPanel->SetZOrder(LAYER_GAME_UI);
 
@@ -41,8 +41,17 @@ namespace we
 		QuitButton->SetLocalOffset({ 0, 60 });
 		QuitButton->OnClicked.Bind(this, &MainMenuUI::OnQuitClicked);
 
-		MenuPanel->AddChild(PlayButton);
-		MenuPanel->AddChild(QuitButton);
+		MenuPanel->AddChild(PlayButton, Anchor::Center, Anchor::BottomCenter);
+		MenuPanel->AddChild(QuitButton, Anchor::Center, Anchor::TopCenter);*/
+
+		auto MainPanel2 = Subsystem.GUI->CreateWidget<Panel>(Subsystem, vec2f{ 400, 200 });
+		MainPanel2->SetAnchorPosition(Anchor::Center, Anchor::Center);
+		MainPanel2->SetLocalScale({ 2,1.3 });
+		MainPanel2->SetLocalOffset({ 0, -200 });
+
+		auto SaveBtn = Subsystem.GUI->CreateWidget<Button>(Subsystem, "Save");
+
+		MainPanel2->AddChild(SaveBtn, Anchor::Center, Anchor::Center);
 	}
 
 	void MainMenuUI::OnPlayClicked()

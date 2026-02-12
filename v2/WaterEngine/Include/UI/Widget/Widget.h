@@ -25,7 +25,7 @@ namespace we
 		virtual ~Widget() = default;
 
 		virtual void Update(float DeltaTime) {}
-		virtual void Render(GameWindow& Window) {}
+		virtual void Render(GameWindow& Window);
 
 		virtual void OnMouseEnter() {}
 		virtual void OnMouseLeave() {}
@@ -35,6 +35,11 @@ namespace we
 
 		// Positioning
 		void SetAnchorPosition(Anchor ScreenAnchor, Anchor WidgetAnchor, vec2f Offset = vec2f{0.f, 0.f});
+		
+		// Nesting
+		void AddChild(shared<Widget> Child, Anchor InTargetAnchor, Anchor InWidgetAnchor, vec2f InOffset = { 0,0 });
+		void RemoveChild(Widget* Child);
+		void RenderChildren(GameWindow& Window);
 
 		// Transform
 		void SetLocalOffset(const vec2f& Offset);
@@ -66,6 +71,7 @@ namespace we
 
 		// Hit test
 		bool Contains(const vec2f& WorldPoint) const;
+		shared<Widget> FindDeepestChildAt(const vec2f& WorldPoint);
 
 	protected:
 		EngineSubsystem& Subsystem;
@@ -85,15 +91,14 @@ namespace we
 
 	private:
 		// Anchor data
-		Anchor ScreenAnchor = Anchor::TopLeft;
+		Anchor TargetAnchor = Anchor::TopLeft;
 		Anchor WidgetAnchor = Anchor::TopLeft;
 		vec2f AnchorOffset{ 0, 0 };
 		bool bUseAnchors = false;
 
-		
-
 		// Hierarchy
 		Widget* Parent = nullptr;
+		list<weak<Widget>> Children;
 		bool bVisible = true;
 		uint ZOrder = 0;
 

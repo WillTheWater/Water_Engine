@@ -66,13 +66,23 @@ namespace we
 
 	shared<Widget> GUISubsystem::FindWidgetAt(const vec2f& WorldPoint) const
 	{
-		for (auto it = Widgets.rbegin(); it != Widgets.rend(); ++it)
+		list<shared<Widget>> Roots;
+		for (auto& W : Widgets)
 		{
-			auto& Widget = *it;
-			if (!Widget->IsVisible()) continue;
-			if (Widget->GetParent() && !Widget->GetParent()->IsVisible()) continue;
-			if (Widget->Contains(WorldPoint)) return Widget;
+			if (W->IsVisible() && !W->GetParent())
+				Roots.push_back(W);
 		}
+
+		std::sort(Roots.begin(), Roots.end(), [](const shared<Widget>& A, const shared<Widget>& B) {
+			return A->GetZOrder() > B->GetZOrder();
+			});
+
+		for (auto& Root : Roots)
+		{
+			if (auto Hit = Root->FindDeepestChildAt(WorldPoint))
+				return Hit;
+		}
+
 		return nullptr;
 	}
 

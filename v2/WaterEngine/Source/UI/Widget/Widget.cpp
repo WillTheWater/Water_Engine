@@ -18,11 +18,61 @@ namespace we
 
 	void Widget::SetAnchorPosition(Anchor InScreenAnchor, Anchor InWidgetAnchor, vec2f Offset)
 	{
-		ScreenAnchor = InScreenAnchor;
+		TargetAnchor = InScreenAnchor;
 		WidgetAnchor = InWidgetAnchor;
 		AnchorOffset = Offset;
 		bUseAnchors = true;
 		MarkDirty();
+	}
+
+	void Widget::AddChild(shared<Widget> Child, Anchor InTargetAnchor, Anchor InWidgetAnchor, vec2f InOffset)
+	{
+		if (!Child || Child.get() == this) return;
+
+		Child->SetParent(this);
+		Child->SetAnchorPosition(InTargetAnchor, InWidgetAnchor, InOffset);
+
+		Children.push_back(Child);
+	}
+
+	void Widget::Render(GameWindow& Window)
+	{
+		RenderChildren(Window);
+	}
+
+	void Widget::RenderChildren(GameWindow& Window)
+	{
+		list<shared<Widget>> ValidChildren;
+		for (auto& ChildWeak : Children)
+		{
+			if (auto Child = ChildWeak.lock())
+				ValidChildren.push_back(Child);
+		}
+
+		// Sort by ZOrder
+		std::sort(ValidChildren.begin(), ValidChildren.end(),
+			[](const shared<Widget>& A, const shared<Widget>& B) {
+				return A->GetZOrder() < B->GetZOrder();
+			});
+
+		for (auto& Child : ValidChildren)
+		{
+			if (Child->IsVisible())
+				Child->Render(Window);
+		}
+	}
+
+	void Widget::RemoveChild(Widget* Child)
+	{
+		for (auto it = Children.begin(); it != Children.end();)
+		{
+			if (auto Locked = it->lock(); Locked && Locked.get() == Child)
+			{
+				Locked->DetachFromParent();
+				it = Children.erase(it);
+			}
+			else ++it;
+		}
 	}
 
 	void Widget::SetLocalOffset(const vec2f& Offset)
@@ -117,13 +167,13 @@ namespace we
 	{
 		vec2f Pos = GetWorldPosition();
 		vec2f Scl = GetWorldScale();
-		vec2f Org = GetOrigin().componentWiseMul(Scl);
+
 		vec2f RealSize = Size.componentWiseMul(Scl);
 
-		return WorldPoint.x >= Pos.x - Org.x &&
-			WorldPoint.x <= Pos.x - Org.x + RealSize.x &&
-			WorldPoint.y >= Pos.y - Org.y &&
-			WorldPoint.y <= Pos.y - Org.y + RealSize.y;
+		return WorldPoint.x >= Pos.x &&
+			WorldPoint.x <= Pos.x + RealSize.x &&
+			WorldPoint.y >= Pos.y &&
+			WorldPoint.y <= Pos.y + RealSize.y;
 	}
 
 	void Widget::MarkDirty()
@@ -135,31 +185,54 @@ namespace we
 	{
 		if (!bDirty) return;
 
+		CachedWorldScale = LocalScale;
+
 		CachedOrigin = GetAnchorPoint(Size, WidgetAnchor);
 
-		if (Parent)
+		if (bUseAnchors)
 		{
-			CachedWorldScale = Parent->GetWorldScale().componentWiseMul(LocalScale);
-		}
-		else
-		{
-			CachedWorldScale = LocalScale;
-		}
+			vec2f RefSize = Parent ? Parent->GetSize() : Subsystem.Render->GetRenderSize();
+			vec2f RefPos = Parent ? Parent->GetWorldPosition() : vec2f{ 0.f, 0.f };
 
-		if (bUseAnchors && !Parent)
-		{
-			CachedWorldPosition = CalculateAnchorPosition();
-		}
-		else if (Parent)
-		{
-			CachedWorldPosition = Parent->GetWorldPosition() + LocalOffset;
+			vec2f ParentScl = Parent ? Parent->GetWorldScale() : vec2f{ 1.f, 1.f };
+
+			vec2f ParentPoint = GetAnchorPoint(RefSize.componentWiseMul(ParentScl), TargetAnchor);
+
+			vec2f MyPoint = GetAnchorPoint(Size.componentWiseMul(CachedWorldScale), WidgetAnchor);
+
+			CachedWorldPosition = RefPos + ParentPoint - MyPoint + AnchorOffset + LocalOffset;
 		}
 		else
 		{
-			CachedWorldPosition = LocalOffset;
+			vec2f RefPos = Parent ? Parent->GetWorldPosition() : vec2f{ 0.f, 0.f };
+			CachedWorldPosition = RefPos + LocalOffset;
 		}
 
 		bDirty = false;
+	}
+
+	shared<Widget> Widget::FindDeepestChildAt(const vec2f& WorldPoint)
+	{
+		if (!IsVisible() || !Contains(WorldPoint)) return nullptr;
+
+		list<shared<Widget>> ValidChildren;
+		for (auto& WeakChild : Children)
+		{
+			if (auto Child = WeakChild.lock())
+				ValidChildren.push_back(Child);
+		}
+
+		std::sort(ValidChildren.begin(), ValidChildren.end(), [](const shared<Widget>& A, const shared<Widget>& B) {
+			return A->GetZOrder() > B->GetZOrder();
+			});
+
+		for (auto& Child : ValidChildren)
+		{
+			if (auto Hit = Child->FindDeepestChildAt(WorldPoint))
+				return Hit;
+		}
+
+		return shared_from_this();
 	}
 
 	vec2f Widget::GetAnchorPoint(const vec2f& InSize, Anchor InAnchor)
@@ -183,7 +256,7 @@ namespace we
 	{
 		vec2f ScreenSize = Subsystem.Render->GetRenderSize();
 
-		vec2f ScreenPoint = GetAnchorPoint(ScreenSize, ScreenAnchor);
+		vec2f ScreenPoint = GetAnchorPoint(ScreenSize, TargetAnchor);
 		vec2f WidgetOffset = GetAnchorPoint(Size.componentWiseMul(LocalScale), WidgetAnchor);
 
 		return ScreenPoint - WidgetOffset + AnchorOffset;
