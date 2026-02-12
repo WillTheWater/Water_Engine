@@ -10,17 +10,16 @@
 
 namespace we
 {
-	/*class VerticalBox : public Widget
+	class VerticalBox : public Widget
 	{
 	public:
-		VerticalBox(EngineSubsystem& Subsystem, float InSpacing = 10.f);
-
-		void AddChild(shared<Widget> Child, Anchor InTargetAnchor, Anchor InWidgetAnchor, vec2f InOffset = { 0,0 }) override;
-
-		void Update(float DeltaTime) override;
-		void Render(GameWindow& Window) override;
-
-	private:
-		float Spacing = 10.f;
-	};*/
+		VerticalBox(
+			EngineSubsystem& Subsystem,
+			const list<shared<Widget>>& InChildren,
+			float InPadding = 10.f,
+			Anchor InTargetAnchor = Anchor::TopLeft,
+			Anchor InWidgetAnchor = Anchor::TopLeft,
+			const vec2f& InOffset = { 0.f, 0.f }
+		);
+	};
 }

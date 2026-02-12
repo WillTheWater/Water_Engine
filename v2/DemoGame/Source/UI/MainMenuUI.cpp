@@ -7,6 +7,7 @@
 #include "UI/Widget/Panel.h"
 #include "UI/Widget/Button.h"
 #include "UI/Widget/VerticalBox.h"
+#include "UI/Widget/HorizontalBox.h"
 #include "Framework/EngineSubsystem.h"
 #include "Subsystem/ResourceSubsystem.h"
 #include "EngineConfig.h"
@@ -42,24 +43,55 @@ namespace we
 		MenuPanel->AddChild(PlayButton, Anchor::Center, Anchor::BottomCenter);
 		MenuPanel->AddChild(QuitButton, Anchor::Center, Anchor::TopCenter);*/
 
-		Btn1 = Subsystem.GUI->CreateWidget<Button>(Subsystem, "Play", vec2f{ 220, 40 });
-		Btn2 = Subsystem.GUI->CreateWidget<Button>(Subsystem, "Quit", vec2f{ 120, 40 });
+		Btn1 = Subsystem.GUI->CreateWidget<Button>(Subsystem, "Play", vec2f{ 200, 40 });
+		Btn2 = Subsystem.GUI->CreateWidget<Button>(Subsystem, "Quit", vec2f{ 200, 40 });
+		Btn3 = Subsystem.GUI->CreateWidget<Button>(Subsystem, "Play", vec2f{ 200, 40 });
+		Btn4 = Subsystem.GUI->CreateWidget<Button>(Subsystem, "Quit", vec2f{ 200, 40 });
 
-		Btn1->SetAnchorPosition(Anchor::Center, Anchor::Center, { 0, 0 });
-		Btn2->SetAnchorPosition(Anchor::Center, Anchor::Center, { 0, 50 });
+		//Btn1->SetAnchorPosition(Anchor::Center, Anchor::TopCenter, { 0, 0 });
+		//Btn2->SetAnchorPosition(Anchor::Center, Anchor::TopCenter, { 0, 0 });
+
+		auto VBox = Subsystem.GUI->CreateWidget<VerticalBox>(
+			Subsystem,
+			list<shared<Widget>>{ Btn1, Btn2 },
+			20.f,
+			Anchor::Center,
+			Anchor::TopRight
+		);
+
+		auto VBox2 = Subsystem.GUI->CreateWidget<VerticalBox>(
+			Subsystem,
+			list<shared<Widget>>{ Btn3, Btn4 },
+			20.f,
+			Anchor::Center,
+			Anchor::TopCenter
+		);
+
+		auto HBox = Subsystem.GUI->CreateWidget<HorizontalBox>(Subsystem,
+			list<shared<Widget>>{ VBox, VBox2},
+			20.f,
+			Anchor::Center,
+			Anchor::Center);
 
 		auto TestPanel = Subsystem.GUI->CreateWidget<Panel>(Subsystem,
-			list<shared<Widget>>{Btn1, Btn2}, rectf{ {100,200},{10,10} }, Anchor::Center, Anchor::Center);
+			list<shared<Widget>>{HBox}, rectf{ {50,50},{50,50} }, Anchor::Center, Anchor::Center, vec2f{-100.f,0.f});
+
 		Btn1->OnClicked.Bind(this, &MainMenuUI::OnPlayClicked);
+		Btn3->OnClicked.Bind(this, &MainMenuUI::OnPlayClicked);
+		Btn2->OnClicked.Bind(this, &MainMenuUI::OnQuitClicked);
+		Btn4->OnClicked.Bind(this, &MainMenuUI::OnQuitClicked);
+
 	}
 
 	void MainMenuUI::OnPlayClicked()
 	{
 		//OnPlayButtonClicked.Broadcast();
+		LOG("Play")
 	}
 
 	void MainMenuUI::OnQuitClicked()
 	{
-		Subsystem.GameState->OnQuitRequested.Broadcast();
+		//Subsystem.GameState->OnQuitRequested.Broadcast();
+		LOG("QUIT")
 	}
 }

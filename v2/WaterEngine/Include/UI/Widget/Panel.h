@@ -13,14 +13,12 @@ namespace we
 	class Panel : public Widget
 	{
 	public:
-		// TEST
 		Panel(EngineSubsystem& Subsystem,
 			const list<shared<Widget>>& InChildren,
 			rectf Margins = {{0.f,0.f},{0.f,0.f}},
 			Anchor InTargetAnchor = Anchor::Center,
 			Anchor InWidgetAnchor = Anchor::Center,
 			const vec2f& InOffset = { 0.f, 0.f });
-		// ---------------------------------------
 
 		Panel(EngineSubsystem& Subsystem, const string& TexturePath);
 

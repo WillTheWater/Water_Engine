@@ -35,5 +35,7 @@ namespace we
 		//TEST
 		shared<Button> Btn1;
 		shared<Button> Btn2;
+		shared<Button> Btn3;
+		shared<Button> Btn4;
 	};
 }
