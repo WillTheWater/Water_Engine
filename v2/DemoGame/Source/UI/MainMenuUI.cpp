@@ -9,6 +9,7 @@
 #include "UI/Widget/VerticalBox.h"
 #include "UI/Widget/HorizontalBox.h"
 #include "UI/Widget/GridBox.h"
+#include "UI/Widget/Slider.h"
 #include "Framework/EngineSubsystem.h"
 #include "Subsystem/ResourceSubsystem.h"
 #include "EngineConfig.h"
@@ -74,12 +75,14 @@ namespace we
 			Anchor::Center,
 			Anchor::Center);*/
 
-		auto Grid = Subsystem.GUI->CreateWidget<GridBox>(Subsystem, 
+		/*auto Grid = Subsystem.GUI->CreateWidget<GridBox>(Subsystem, 
 			list<shared<Widget>>{Btn1, Btn2, Btn3, Btn4}, 
-			2.f);
+			2.f);*/
+
+		auto Slid = Subsystem.GUI->CreateWidget<Slider>(Subsystem);
 
 		auto TestPanel = Subsystem.GUI->CreateWidget<Panel>(Subsystem,
-			list<shared<Widget>>{Grid}, rectf{ {50,50},{50,50} }, Anchor::Center, Anchor::Center, vec2f{-100.f,0.f});
+			list<shared<Widget>>{Slid}, rectf{ {50,50},{50,50} }, Anchor::Center, Anchor::Center, vec2f{-100.f,0.f});
 
 		Btn1->OnClicked.Bind(this, &MainMenuUI::OnPlayClicked);
 		Btn3->OnClicked.Bind(this, &MainMenuUI::OnPlayClicked);

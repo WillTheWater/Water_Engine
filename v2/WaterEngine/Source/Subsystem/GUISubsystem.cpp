@@ -81,6 +81,17 @@ namespace we
 	void GUISubsystem::HandleEvent(const sf::Event::MouseMoved& Mouse)
 	{
 		vec2f MousePos = Window.mapPixelToCoords(Mouse.position);
+
+		// If pressed widget wants capture, send moves to it
+		if (auto Pressed = PressedWidget.lock())
+		{
+			if (Pressed->ShouldCaptureMouse())
+			{
+				Pressed->OnMouseMoved(MousePos);
+				return;
+			}
+		}
+
 		shared<Widget> NewHovered = FindWidgetAt(MousePos);
 		shared<Widget> OldHovered = HoveredWidget.lock();
 

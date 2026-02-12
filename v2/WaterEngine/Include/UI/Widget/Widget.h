@@ -32,6 +32,7 @@ namespace we
 		virtual bool OnMouseButtonPressed() { return false; }
 		virtual void OnMouseButtonReleased() {}
 		virtual void OnMouseMoved(const vec2f&) {}
+		virtual bool ShouldCaptureMouse() const { return false; }
 
 		// Positioning
 		void SetAnchorPosition(Anchor ScreenAnchor, Anchor WidgetAnchor, vec2f Offset = vec2f{0.f, 0.f});
