@@ -44,7 +44,5 @@ namespace we
 
 		float Value = 0.f;
 		ProgressDirection Direction = ProgressDirection::LeftToRight;
-
-		void UpdateFillVisual();
 	};
 }

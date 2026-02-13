@@ -111,7 +111,7 @@ set(WATER_ENGINE_HEADERS
     Include/Utility/Assert.h
     Include/Utility/Delegate.h
     Include/Utility/Timer.h
-)
+ "Include/UI/Widget/TextBlock.h")
 
 set(WATER_ENGINE_SOURCES
     Source/Entry.cpp
@@ -166,7 +166,7 @@ set(WATER_ENGINE_SOURCES
 
     Source/Utility/RandomGenerator.cpp 
     Source/Utility/Timer.cpp
-)
+ "Source/UI/Widget/TextBlock.cpp")
 
 add_library(${WATER_ENGINE} STATIC
     ${WATER_ENGINE_SOURCES}

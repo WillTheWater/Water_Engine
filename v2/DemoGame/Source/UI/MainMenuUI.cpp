@@ -12,6 +12,7 @@
 #include "UI/Widget/Slider.h"
 #include "UI/Widget/CheckBox.h"
 #include "UI/Widget/ProgressBar.h"
+#include "UI/Widget/TextBlock.h"
 #include "Framework/EngineSubsystem.h"
 #include "Subsystem/ResourceSubsystem.h"
 #include "EngineConfig.h"
@@ -104,15 +105,28 @@ namespace we
 		ManaBar->SetDirection(ProgressDirection::RightToLeft);
 		ManaBar->SetFillColor(color{ 50, 100, 220 });
 
+
+		auto Text = Subsystem.GUI->CreateWidget<TextBlock>(Subsystem
+			, "This is random text as a test to see if it work, odds are it doesn't work! This is random text as a test to see if it work, odds are it doesn't work! This is random text as a test to see if it work, odds are it doesn't work!"
+			, 400);
+
+		auto TextPanel = Subsystem.GUI->CreateWidget<Panel>(
+			Subsystem,
+			list<shared<Widget>>{Text},
+			rectf{ {10.f, 10.f}, {10.f, 10.f} },
+			Anchor::Center,
+			Anchor::BottomCenter,
+			vec2f{30,0}
+		);
+
 		// In a panel
 		auto TestPanel = Subsystem.GUI->CreateWidget<Panel>(
 			Subsystem,
-			list<shared<Widget>>{HealthBar, ManaBar},
+			list<shared<Widget>>{HealthBar, ManaBar, TextPanel},
 			rectf{ {50.f, 50.f}, {50.f, 50.f} },
 			Anchor::Center,
 			Anchor::Center
 		);
-
 		//auto Slid = Subsystem.GUI->CreateWidget<Slider>(Subsystem);
 
 		//Btn1->OnClicked.Bind(this, &MainMenuUI::OnPlayClicked);
