@@ -161,20 +161,17 @@ namespace we
 
 	void MainMenuUI::OnPlayClicked()
 	{
-		//OnPlayButtonClicked.Broadcast();
-		LOG("Play")
+		OnPlayButtonClicked.Broadcast();
 	}
 
 	void MainMenuUI::OnSettingsClicked()
 	{
 		// Open Settings Menu
 		OnSettingsButtonClicked.Broadcast();
-		LOG("Open Settings")
 	}
 
 	void MainMenuUI::OnQuitClicked()
 	{
-		//Subsystem.GameState->OnQuitRequested.Broadcast();
-		LOG("Quit")
+		Subsystem.GameState->OnQuitRequested.Broadcast();
 	}
 }

@@ -18,6 +18,11 @@ namespace we
 	public:
 		SettingsMenuUI(EngineSubsystem& Subsystem);
 
+		void Show();
+		void Hide();
+
+		bool IsVisible() const { return bVisible; }
+
 	public:
 		Delegate<>OnExitClicked;
 
@@ -25,7 +30,12 @@ namespace we
 		void CreateUI();
 		void OnExitButtonClicked();
 
+	private:
 		EngineSubsystem& Subsystem;
+
+		bool bVisible = false;
+
+		shared<Panel> SettingsPanel;
 		shared<Button> ExitButton;
 	};
 }

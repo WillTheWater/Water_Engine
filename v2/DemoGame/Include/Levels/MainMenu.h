@@ -13,6 +13,7 @@
 namespace we
 {
 	class MainMenuUI;
+	class SettingsMenuUI;
 
 	class MainMenu : public World
 	{
@@ -28,7 +29,8 @@ namespace we
 		AssetHandle<texture> BgHandle;
 		optional<sprite> Background;
 
-		unique<MainMenuUI> UI;
+		unique<MainMenuUI> MainUI;
+		unique<SettingsMenuUI> SettingsUI;
 
 	private:
 		void OnPlayClicked();

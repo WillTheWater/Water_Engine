@@ -25,17 +25,58 @@ namespace we
 		: Subsystem{ Subsystem }
 	{
 		CreateUI();
+		Hide();
+	}
+
+	void SettingsMenuUI::Show()
+	{
+		if (SettingsPanel)
+		{
+			SettingsPanel->SetVisible(true);
+			bVisible = true;
+		}
+	}
+
+	void SettingsMenuUI::Hide()
+	{
+		if (SettingsPanel)
+		{
+			SettingsPanel->SetVisible(false);
+			bVisible = false;
+		}
 	}
 
 	void SettingsMenuUI::CreateUI()
 	{
-		ExitButton = Subsystem.GUI->CreateWidget<Button>(Subsystem, "Play", EC.DefaultButton);
+		// TODO
+		// * Vsync			[X]
+		// * Framerate		[ ]
+		// * Full Screen	[ ]
+		// * Mute			[X]
+		// * Master Volume	[ ]
+		// * Music Volume	[ ]
+		// * Ambient Volume	[ ]
+		// * SFX Volume		[ ]
+		// * Controls		[ ]
+		// * Exit Settings	[X]
+
+		auto VsyncText = Subsystem.GUI->CreateWidget<TextBlock>(Subsystem, "Enable Vsync", 200);
+		auto VsyncToggle = Subsystem.GUI->CreateWidget<Checkbox>(Subsystem, "", EC.VsyncEnabled, 30.f);
+		auto HBox1 = Subsystem.GUI->CreateWidget<HorizontalBox>(Subsystem, list<shared<Widget>>{VsyncText, VsyncToggle});
+
+		auto MuteText = Subsystem.GUI->CreateWidget<TextBlock>(Subsystem, "Mute Audio", 200);
+		auto MuteToggle = Subsystem.GUI->CreateWidget<Checkbox>(Subsystem, "", false, 30.f);
+		auto HBox2 = Subsystem.GUI->CreateWidget<HorizontalBox>(Subsystem, list<shared<Widget>>{MuteText, MuteToggle});
+
+
+
+		ExitButton = Subsystem.GUI->CreateWidget<Button>(Subsystem, "Exit", EC.DefaultButton);
 		ExitButton->OnClicked.Bind(this, &SettingsMenuUI::OnExitButtonClicked);
 
 		auto VBox = Subsystem.GUI->CreateWidget<VerticalBox>(Subsystem
-			, list<shared<Widget>>{ExitButton});
+			, list<shared<Widget>>{HBox1, HBox2, ExitButton});
 
-		auto SettingsPanel = Subsystem.GUI->CreateWidget<Panel>(Subsystem
+		SettingsPanel = Subsystem.GUI->CreateWidget<Panel>(Subsystem
 			, list<shared<Widget>>{VBox}
 			, rectf{ {10,10},{10,10} }
 			, Anchor::Center
@@ -151,6 +192,6 @@ namespace we
 	void SettingsMenuUI::OnExitButtonClicked()
 	{
 		OnExitClicked.Broadcast();
-		LOG("Open Settings")
+		LOG("Exit Settings")
 	}
 }

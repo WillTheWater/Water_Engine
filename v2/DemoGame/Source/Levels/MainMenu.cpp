@@ -9,6 +9,7 @@
 #include "Subsystem/AsyncResourceSubsystem.h"
 #include "GameStateTokens.h"
 #include "UI/MainMenuUI.h"
+#include "UI/SettingsMenuUI.h"
 #include "Utility/Log.h"
 
 namespace we
@@ -16,9 +17,11 @@ namespace we
 	MainMenu::MainMenu(EngineSubsystem& Subsystem)
 		: World(Subsystem)
 	{
-		UI = make_unique<MainMenuUI>(Subsystem);
-		UI->OnPlayButtonClicked.Bind(this, &MainMenu::OnPlayClicked);
-		UI->OnSettingsButtonClicked.Bind(this, &MainMenu::ToggleSettings);
+		MainUI = make_unique<MainMenuUI>(Subsystem);
+		SettingsUI = make_unique<SettingsMenuUI>(Subsystem);
+		SettingsUI->OnExitClicked.Bind(this, &MainMenu::ToggleSettings);
+		MainUI->OnPlayButtonClicked.Bind(this, &MainMenu::OnPlayClicked);
+		MainUI->OnSettingsButtonClicked.Bind(this, &MainMenu::ToggleSettings);
 	}
 
 	MainMenu::~MainMenu()
@@ -58,6 +61,10 @@ namespace we
 
 	void MainMenu::ToggleSettings()
 	{
-		LOG("Toggle Settings Menu")
+		if (SettingsUI->IsVisible())
+		{
+			SettingsUI->Hide();
+		}
+		else { SettingsUI->Show(); }
 	}
 }
