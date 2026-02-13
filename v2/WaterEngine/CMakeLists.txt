@@ -90,6 +90,7 @@ set(WATER_ENGINE_HEADERS
     Include/UI/UILayerOrder.h
     Include/UI/Widget/Slider.h
     Include/UI/Widget/CheckBox.h
+    Include/UI/Widget/ProgressBar.h
 
     Include/Input/InputBinding.h
     Include/Input/InputEventHandler.h
@@ -153,6 +154,7 @@ set(WATER_ENGINE_SOURCES
     Source/UI/Widget/GridBox.cpp
     Source/UI/Widget/Slider.cpp
     Source/UI/Widget/CheckBox.cpp
+    Source/UI/Widget/ProgressBar.cpp
 
     Source/Input/InputBinding.cpp    
     Source/Input/InputEventHandler.cpp

@@ -11,6 +11,7 @@
 #include "UI/Widget/GridBox.h"
 #include "UI/Widget/Slider.h"
 #include "UI/Widget/CheckBox.h"
+#include "UI/Widget/ProgressBar.h"
 #include "Framework/EngineSubsystem.h"
 #include "Subsystem/ResourceSubsystem.h"
 #include "EngineConfig.h"
@@ -79,31 +80,63 @@ namespace we
 		/*auto Grid = Subsystem.GUI->CreateWidget<GridBox>(Subsystem, 
 			list<shared<Widget>>{Btn1, Btn2, Btn3, Btn4}, 
 			2.f);*/
-
-		auto Slid = Subsystem.GUI->CreateWidget<Slider>(Subsystem);
-
-		Btn1->OnClicked.Bind(this, &MainMenuUI::OnPlayClicked);
-		Btn3->OnClicked.Bind(this, &MainMenuUI::OnPlayClicked);
-		Btn2->OnClicked.Bind(this, &MainMenuUI::OnQuitClicked);
-		Btn4->OnClicked.Bind(this, &MainMenuUI::OnQuitClicked);
-
-		// Create a settings checkbox
-		auto SoundCheckbox = Subsystem.GUI->CreateWidget<Checkbox>(
+			// Create a health bar
+		auto HealthBar = Subsystem.GUI->CreateWidget<ProgressBar>(
 			Subsystem,
-			"Enable Sound Effects",
-			true  // Initially checked
+			vec2f{ 260.f, 24.f },
+			50.f
 		);
 
-		SoundCheckbox->SetAnchorPosition(
+		HealthBar->SetAnchorPosition(Anchor::Center, Anchor::BottomCenter, { 20.f, 20.f });
+
+		HealthBar->SetFillColor(color{ 220, 50, 50 });
+		HealthBar->SetBackgroundColor(color{ 60, 20, 20 });
+
+		HealthBar->SetValue(.5);
+
+		// Vertical mana bar (BottomToTop fills from bottom)
+		auto ManaBar = Subsystem.GUI->CreateWidget<ProgressBar>(
+			Subsystem,
+			vec2f{ 240.f, 150.f },
+			.2f
+		);
+		ManaBar->SetAnchorPosition(Anchor::Center, Anchor::TopCenter, { 20.f, 60.f });
+		ManaBar->SetDirection(ProgressDirection::RightToLeft);
+		ManaBar->SetFillColor(color{ 50, 100, 220 });
+
+		// In a panel
+		auto TestPanel = Subsystem.GUI->CreateWidget<Panel>(
+			Subsystem,
+			list<shared<Widget>>{HealthBar, ManaBar},
+			rectf{ {50.f, 50.f}, {50.f, 50.f} },
 			Anchor::Center,
-			Anchor::BottomLeft,
-			{ 0.f, -20.f }
+			Anchor::Center
 		);
 
-		SoundCheckbox->SetChecked(On);
-		SoundCheckbox->OnToggled.Bind(this, &MainMenuUI::Test);
-		auto TestPanel = Subsystem.GUI->CreateWidget<Panel>(Subsystem,
-			list<shared<Widget>>{Slid, SoundCheckbox}, rectf{ {50,50},{50,50} }, Anchor::Center, Anchor::Center, vec2f{-100.f,0.f});
+		//auto Slid = Subsystem.GUI->CreateWidget<Slider>(Subsystem);
+
+		//Btn1->OnClicked.Bind(this, &MainMenuUI::OnPlayClicked);
+		//Btn3->OnClicked.Bind(this, &MainMenuUI::OnPlayClicked);
+		//Btn2->OnClicked.Bind(this, &MainMenuUI::OnQuitClicked);
+		//Btn4->OnClicked.Bind(this, &MainMenuUI::OnQuitClicked);
+
+		//// Create a settings checkbox
+		//auto SoundCheckbox = Subsystem.GUI->CreateWidget<Checkbox>(
+		//	Subsystem,
+		//	"Enable Sound Effects",
+		//	true  // Initially checked
+		//);
+
+		//SoundCheckbox->SetAnchorPosition(
+		//	Anchor::Center,
+		//	Anchor::BottomLeft,
+		//	{ 0.f, -20.f }
+		//);
+
+		//SoundCheckbox->SetChecked(On);
+		//SoundCheckbox->OnToggled.Bind(this, &MainMenuUI::Test);
+		//auto TestPanel = Subsystem.GUI->CreateWidget<Panel>(Subsystem,
+		//	list<shared<Widget>>{Slid, SoundCheckbox, HealthBar, ManaBar}, rectf{ {50,50},{50,50} }, Anchor::Center, Anchor::Center, vec2f{-100.f,0.f});
 
 	}
 
