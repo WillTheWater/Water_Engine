@@ -37,5 +37,7 @@ namespace we
 		shared<Button> Btn2;
 		shared<Button> Btn3;
 		shared<Button> Btn4;
+		void Test(bool);
+		bool On = true;
 	};
 }

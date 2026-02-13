@@ -10,6 +10,7 @@
 #include "UI/Widget/HorizontalBox.h"
 #include "UI/Widget/GridBox.h"
 #include "UI/Widget/Slider.h"
+#include "UI/Widget/CheckBox.h"
 #include "Framework/EngineSubsystem.h"
 #include "Subsystem/ResourceSubsystem.h"
 #include "EngineConfig.h"
@@ -81,13 +82,28 @@ namespace we
 
 		auto Slid = Subsystem.GUI->CreateWidget<Slider>(Subsystem);
 
-		auto TestPanel = Subsystem.GUI->CreateWidget<Panel>(Subsystem,
-			list<shared<Widget>>{Slid}, rectf{ {50,50},{50,50} }, Anchor::Center, Anchor::Center, vec2f{-100.f,0.f});
-
 		Btn1->OnClicked.Bind(this, &MainMenuUI::OnPlayClicked);
 		Btn3->OnClicked.Bind(this, &MainMenuUI::OnPlayClicked);
 		Btn2->OnClicked.Bind(this, &MainMenuUI::OnQuitClicked);
 		Btn4->OnClicked.Bind(this, &MainMenuUI::OnQuitClicked);
+
+		// Create a settings checkbox
+		auto SoundCheckbox = Subsystem.GUI->CreateWidget<Checkbox>(
+			Subsystem,
+			"Enable Sound Effects",
+			true  // Initially checked
+		);
+
+		SoundCheckbox->SetAnchorPosition(
+			Anchor::Center,
+			Anchor::BottomLeft,
+			{ 0.f, -20.f }
+		);
+
+		SoundCheckbox->SetChecked(On);
+		SoundCheckbox->OnToggled.Bind(this, &MainMenuUI::Test);
+		auto TestPanel = Subsystem.GUI->CreateWidget<Panel>(Subsystem,
+			list<shared<Widget>>{Slid, SoundCheckbox}, rectf{ {50,50},{50,50} }, Anchor::Center, Anchor::Center, vec2f{-100.f,0.f});
 
 	}
 
@@ -101,5 +117,11 @@ namespace we
 	{
 		//Subsystem.GameState->OnQuitRequested.Broadcast();
 		LOG("QUIT")
+	}
+
+	void MainMenuUI::Test(bool newbool)
+	{
+		On = !On;
+		LOG("Sound: {}", On)
 	}
 }
