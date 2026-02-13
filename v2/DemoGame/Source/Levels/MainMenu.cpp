@@ -18,6 +18,7 @@ namespace we
 	{
 		UI = make_unique<MainMenuUI>(Subsystem);
 		UI->OnPlayButtonClicked.Bind(this, &MainMenu::OnPlayClicked);
+		UI->OnSettingsButtonClicked.Bind(this, &MainMenu::ToggleSettings);
 	}
 
 	MainMenu::~MainMenu()
@@ -53,5 +54,10 @@ namespace we
 	void MainMenu::OnPlayClicked()
 	{
 		Subsystem.GameState->RequestStateChange(MakeState(EGameState::LevelOne));
+	}
+
+	void MainMenu::ToggleSettings()
+	{
+		LOG("Toggle Settings Menu")
 	}
 }

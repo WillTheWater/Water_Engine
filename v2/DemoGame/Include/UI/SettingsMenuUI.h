@@ -13,26 +13,19 @@ namespace we
 	class Panel;
 	struct EngineSubsystem;
 
-	class MainMenuUI
+	class SettingsMenuUI
 	{
 	public:
-		explicit MainMenuUI(EngineSubsystem& Subsystem);
-		~MainMenuUI();
+		SettingsMenuUI(EngineSubsystem& Subsystem);
 
 	public:
-		Delegate<>OnPlayButtonClicked;
-		Delegate<>OnSettingsButtonClicked;
+		Delegate<>OnExitClicked;
 
 	private:
 		void CreateUI();
-		void OnPlayClicked();
-		void OnSettingsClicked();
-		void OnQuitClicked();
+		void OnExitButtonClicked();
 
 		EngineSubsystem& Subsystem;
-		shared<Panel> MenuPanel;
-		shared<Button> PlayButton;
-		shared<Button> SettingsButton;
-		shared<Button> QuitButton;
+		shared<Button> ExitButton;
 	};
 }

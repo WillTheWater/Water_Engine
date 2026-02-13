@@ -20,13 +20,14 @@ set(PAK_OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/Contents.pak")
 
 set(GAME_HEADERS
     Include/Game.h
-    "Include/GameStateTokens.h"
+    Include/GameStateTokens.h
 
     Include/Levels/MainMenu.h
     Include/Levels/LevelOne.h
     
     Include/UI/MainMenuUI.h
     Include/UI/PauseUI.h
+    Include/UI/SettingsMenuUI.h
     
     Include/Input/InputActions.h
 
@@ -42,6 +43,7 @@ set(GAME_SOURCES
     
     Source/UI/MainMenuUI.cpp
     Source/UI/PauseUI.cpp
+    Source/UI/SettingsMenuUI.cpp
     
     Source/Character/PlayerCharacter.cpp
     Source/Character/MovementComponent.cpp

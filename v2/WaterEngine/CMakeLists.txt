@@ -91,6 +91,7 @@ set(WATER_ENGINE_HEADERS
     Include/UI/Widget/Slider.h
     Include/UI/Widget/CheckBox.h
     Include/UI/Widget/ProgressBar.h
+    Include/UI/Widget/TextBlock.h
 
     Include/Input/InputBinding.h
     Include/Input/InputEventHandler.h
@@ -111,7 +112,7 @@ set(WATER_ENGINE_HEADERS
     Include/Utility/Assert.h
     Include/Utility/Delegate.h
     Include/Utility/Timer.h
- "Include/UI/Widget/TextBlock.h")
+)
 
 set(WATER_ENGINE_SOURCES
     Source/Entry.cpp
@@ -155,6 +156,7 @@ set(WATER_ENGINE_SOURCES
     Source/UI/Widget/Slider.cpp
     Source/UI/Widget/CheckBox.cpp
     Source/UI/Widget/ProgressBar.cpp
+    Source/UI/Widget/TextBlock.cpp
 
     Source/Input/InputBinding.cpp    
     Source/Input/InputEventHandler.cpp
@@ -166,7 +168,7 @@ set(WATER_ENGINE_SOURCES
 
     Source/Utility/RandomGenerator.cpp 
     Source/Utility/Timer.cpp
- "Source/UI/Widget/TextBlock.cpp")
+)
 
 add_library(${WATER_ENGINE} STATIC
     ${WATER_ENGINE_SOURCES}

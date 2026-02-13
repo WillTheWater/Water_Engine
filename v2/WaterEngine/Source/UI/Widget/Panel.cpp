@@ -139,18 +139,6 @@ namespace we
 		Background->setTexture(&*Tex);
 	}
 
-	Panel::Panel(EngineSubsystem& Subsystem, const vec2f& InSize, color FillColor, color OutlineColor, float OutlineThickness)
-		: Widget{ Subsystem }
-	{
-		SetSize(InSize);
-
-		Background.emplace();
-		Background->setSize(InSize);
-		Background->setFillColor(FillColor);
-		Background->setOutlineColor(OutlineColor);
-		Background->setOutlineThickness(OutlineThickness);
-	}
-
 	void Panel::Update(float DeltaTime)
 	{
 	}

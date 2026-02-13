@@ -33,25 +33,30 @@ namespace we
 
 	void MainMenuUI::CreateUI()
 	{
-		/*MenuPanel = Subsystem.GUI->CreateWidget<Panel>(Subsystem, EC.DefaultPanel);
-		MenuPanel->SetAnchorPosition(Anchor::Center, Anchor::TopCenter, {0,200});
-		MenuPanel->SetZOrder(LAYER_GAME_UI);
-
 		PlayButton = Subsystem.GUI->CreateWidget<Button>(Subsystem, "Play", EC.DefaultButton);
-		PlayButton->SetLocalOffset({ 0, -40 });
 		PlayButton->OnClicked.Bind(this, &MainMenuUI::OnPlayClicked);
 
+		SettingsButton = Subsystem.GUI->CreateWidget<Button>(Subsystem, "Settings", EC.DefaultButton);
+		SettingsButton->OnClicked.Bind(this, &MainMenuUI::OnSettingsClicked);
+
 		QuitButton = Subsystem.GUI->CreateWidget<Button>(Subsystem, "Quit", EC.DefaultButton);
-		QuitButton->SetLocalOffset({ 0, 60 });
 		QuitButton->OnClicked.Bind(this, &MainMenuUI::OnQuitClicked);
 
-		MenuPanel->AddChild(PlayButton, Anchor::Center, Anchor::BottomCenter);
-		MenuPanel->AddChild(QuitButton, Anchor::Center, Anchor::TopCenter);*/
+		auto VBox = Subsystem.GUI->CreateWidget<VerticalBox>(Subsystem
+			, list<shared<Widget>>{PlayButton, SettingsButton, QuitButton});
 
-		Btn1 = Subsystem.GUI->CreateWidget<Button>(Subsystem, "Play", vec2f{ 200, 40 });
+		MenuPanel = Subsystem.GUI->CreateWidget<Panel>(Subsystem
+				, list<shared<Widget>>{VBox}
+				, rectf{{10,10},{10,10}}
+				, Anchor::Center
+				, Anchor::TopCenter
+				, vec2f{0,200}
+			);
+
+		/*Btn1 = Subsystem.GUI->CreateWidget<Button>(Subsystem, "Play", vec2f{ 200, 40 });
 		Btn2 = Subsystem.GUI->CreateWidget<Button>(Subsystem, "Quit", vec2f{ 200, 40 });
 		Btn3 = Subsystem.GUI->CreateWidget<Button>(Subsystem, "Play", vec2f{ 200, 40 });
-		Btn4 = Subsystem.GUI->CreateWidget<Button>(Subsystem, "Quit", vec2f{ 200, 40 });
+		Btn4 = Subsystem.GUI->CreateWidget<Button>(Subsystem, "Quit", vec2f{ 200, 40 });*/
 
 		//Btn1->SetAnchorPosition(Anchor::Center, Anchor::TopCenter, { 0, 0 });
 		//Btn2->SetAnchorPosition(Anchor::Center, Anchor::TopCenter, { 0, 0 });
@@ -82,51 +87,51 @@ namespace we
 			list<shared<Widget>>{Btn1, Btn2, Btn3, Btn4}, 
 			2.f);*/
 			// Create a health bar
-		auto HealthBar = Subsystem.GUI->CreateWidget<ProgressBar>(
-			Subsystem,
-			vec2f{ 260.f, 24.f },
-			50.f
-		);
+		//auto HealthBar = Subsystem.GUI->CreateWidget<ProgressBar>(
+		//	Subsystem,
+		//	vec2f{ 260.f, 24.f },
+		//	50.f
+		//);
 
-		HealthBar->SetAnchorPosition(Anchor::Center, Anchor::BottomCenter, { 20.f, 20.f });
+		//HealthBar->SetAnchorPosition(Anchor::Center, Anchor::BottomCenter, { 20.f, 20.f });
 
-		HealthBar->SetFillColor(color{ 220, 50, 50 });
-		HealthBar->SetBackgroundColor(color{ 60, 20, 20 });
+		//HealthBar->SetFillColor(color{ 220, 50, 50 });
+		//HealthBar->SetBackgroundColor(color{ 60, 20, 20 });
 
-		HealthBar->SetValue(.5);
+		//HealthBar->SetValue(.5);
 
-		// Vertical mana bar (BottomToTop fills from bottom)
-		auto ManaBar = Subsystem.GUI->CreateWidget<ProgressBar>(
-			Subsystem,
-			vec2f{ 240.f, 150.f },
-			.2f
-		);
-		ManaBar->SetAnchorPosition(Anchor::Center, Anchor::TopCenter, { 20.f, 60.f });
-		ManaBar->SetDirection(ProgressDirection::RightToLeft);
-		ManaBar->SetFillColor(color{ 50, 100, 220 });
+		//// Vertical mana bar (BottomToTop fills from bottom)
+		//auto ManaBar = Subsystem.GUI->CreateWidget<ProgressBar>(
+		//	Subsystem,
+		//	vec2f{ 240.f, 150.f },
+		//	.2f
+		//);
+		//ManaBar->SetAnchorPosition(Anchor::Center, Anchor::TopCenter, { 20.f, 60.f });
+		//ManaBar->SetDirection(ProgressDirection::RightToLeft);
+		//ManaBar->SetFillColor(color{ 50, 100, 220 });
 
 
-		auto Text = Subsystem.GUI->CreateWidget<TextBlock>(Subsystem
-			, "This is random text as a test to see if it work, odds are it doesn't work! This is random text as a test to see if it work, odds are it doesn't work! This is random text as a test to see if it work, odds are it doesn't work!"
-			, 400);
+		//auto Text = Subsystem.GUI->CreateWidget<TextBlock>(Subsystem
+		//	, "This is random text as a test to see if it work, odds are it doesn't work! This is random text as a test to see if it work, odds are it doesn't work! This is random text as a test to see if it work, odds are it doesn't work!"
+		//	, 400);
 
-		auto TextPanel = Subsystem.GUI->CreateWidget<Panel>(
-			Subsystem,
-			list<shared<Widget>>{Text},
-			rectf{ {10.f, 10.f}, {10.f, 10.f} },
-			Anchor::Center,
-			Anchor::BottomCenter,
-			vec2f{30,0}
-		);
+		//auto TextPanel = Subsystem.GUI->CreateWidget<Panel>(
+		//	Subsystem,
+		//	list<shared<Widget>>{Text},
+		//	rectf{ {10.f, 10.f}, {10.f, 10.f} },
+		//	Anchor::Center,
+		//	Anchor::BottomCenter,
+		//	vec2f{30,0}
+		//);
 
-		// In a panel
-		auto TestPanel = Subsystem.GUI->CreateWidget<Panel>(
-			Subsystem,
-			list<shared<Widget>>{HealthBar, ManaBar, TextPanel},
-			rectf{ {50.f, 50.f}, {50.f, 50.f} },
-			Anchor::Center,
-			Anchor::Center
-		);
+		//// In a panel
+		//auto TestPanel = Subsystem.GUI->CreateWidget<Panel>(
+		//	Subsystem,
+		//	list<shared<Widget>>{HealthBar, ManaBar, TextPanel},
+		//	rectf{ {50.f, 50.f}, {50.f, 50.f} },
+		//	Anchor::Center,
+		//	Anchor::Center
+		//);
 		//auto Slid = Subsystem.GUI->CreateWidget<Slider>(Subsystem);
 
 		//Btn1->OnClicked.Bind(this, &MainMenuUI::OnPlayClicked);
@@ -160,15 +165,16 @@ namespace we
 		LOG("Play")
 	}
 
+	void MainMenuUI::OnSettingsClicked()
+	{
+		// Open Settings Menu
+		OnSettingsButtonClicked.Broadcast();
+		LOG("Open Settings")
+	}
+
 	void MainMenuUI::OnQuitClicked()
 	{
 		//Subsystem.GameState->OnQuitRequested.Broadcast();
-		LOG("QUIT")
-	}
-
-	void MainMenuUI::Test(bool newbool)
-	{
-		On = !On;
-		LOG("Sound: {}", On)
+		LOG("Quit")
 	}
 }

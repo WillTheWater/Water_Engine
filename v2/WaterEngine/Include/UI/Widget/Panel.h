@@ -22,12 +22,6 @@ namespace we
 
 		Panel(EngineSubsystem& Subsystem, const string& TexturePath);
 
-		Panel(EngineSubsystem& Subsystem,
-			const vec2f& InSize = {200, 200},
-			color FillColor = color::White,
-			color OutlineColor = color::Black,
-			float OutlineThickness = 4.f);
-
 		void Update(float DeltaTime) override;
 		void Render(GameWindow& Window) override;
 

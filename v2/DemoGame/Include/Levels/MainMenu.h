@@ -32,5 +32,6 @@ namespace we
 
 	private:
 		void OnPlayClicked();
+		void ToggleSettings();
 	};
 }
