@@ -140,4 +140,9 @@ namespace we
 			PressedWidget.reset();
 		}
 	}
+
+	void GUISubsystem::EventToggleFullscreen()
+	{
+		Window.EventToggleBorderlessFullscreen();
+	}
 }

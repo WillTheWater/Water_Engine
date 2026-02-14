@@ -27,6 +27,8 @@ namespace we
 
 		void Clear();
 
+		void EventToggleFullscreen();
+
 	private:
 		GameWindow& Window;
 		CursorSubsystem& Cursor;

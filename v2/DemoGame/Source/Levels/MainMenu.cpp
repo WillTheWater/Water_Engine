@@ -20,6 +20,7 @@ namespace we
 		MainUI = make_unique<MainMenuUI>(Subsystem);
 		SettingsUI = make_unique<SettingsMenuUI>(Subsystem);
 		SettingsUI->OnExitClicked.Bind(this, &MainMenu::ToggleSettings);
+		SettingsUI->OnToggleFSClicked.Bind(this, &MainMenu::ToggleFullscreen);
 		MainUI->OnPlayButtonClicked.Bind(this, &MainMenu::OnPlayClicked);
 		MainUI->OnSettingsButtonClicked.Bind(this, &MainMenu::ToggleSettings);
 	}
@@ -66,5 +67,11 @@ namespace we
 			SettingsUI->Hide();
 		}
 		else { SettingsUI->Show(); }
+	}
+
+	void MainMenu::ToggleFullscreen()
+	{
+		//Window.EventToggleBorderlessFullscreen();
+		Subsystem.GUI->EventToggleFullscreen();
 	}
 }

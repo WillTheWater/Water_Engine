@@ -9,6 +9,7 @@
 
 #include "Utility/CoreMinimal.h"
 #include "Framework/GameWindowEventHandler.h"
+#include "Subsystem/GUISubsystem.h"
 #include "Utility/Delegate.h"
 
 namespace we
@@ -30,6 +31,7 @@ namespace we
 
 	private:
 		friend GameWindowEventHandler;
+		friend GUISubsystem;
 
 		void ApplyWindowSettings();
 		void CreateGameWindow(const sf::VideoMode& Mode, uint Style, sf::State State = sf::State::Windowed);
