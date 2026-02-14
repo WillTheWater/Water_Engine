@@ -25,10 +25,12 @@ namespace we
 
 	public:
 		Delegate<>OnExitClicked;
+		Delegate<>OnToggleFSClicked;
 
 	private:
 		void CreateUI();
 		void OnExitButtonClicked();
+		void ToggleFullscreen();
 
 	private:
 		EngineSubsystem& Subsystem;
@@ -36,6 +38,7 @@ namespace we
 		bool bVisible = false;
 
 		shared<Panel> SettingsPanel;
+		shared<Button> ToggleFullscreenButton;
 		shared<Button> ExitButton;
 	};
 }
