@@ -133,11 +133,16 @@ namespace we
 
         //Physics().DebugDraw(Subsystem.Render.get());
 
-        Subsystem.Window->draw(sprite(Subsystem.Render->FinishRender()));
+        //Subsystem.Window->draw(sprite(Subsystem.Render->FinishRender()));
         
        // Subsystem.GUI->Render();
 
        // Subsystem.Cursor->Render();
+
+
+        // Apply constrained view for letterboxing
+        Subsystem.Window->setView(Subsystem.Window->getConstrainedView());
+        Subsystem.Window->draw(sprite(Subsystem.Render->FinishRender()));
 
         Subsystem.Window->display();
     }

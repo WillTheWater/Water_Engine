@@ -4,105 +4,243 @@
 // =============================================================================
 
 #include "Subsystem/RenderSubsystem.h"
-#include "Subsystem/ResourceSubsystem.h"
 #include "Utility/Assert.h"
 #include "EngineConfig.h"
-#include "Utility/Log.h"
 
-// ============================= Shaders =====================================
-					#include "PostProcess/PPE/TestPPE.h"
-					#include "PostProcess/PPE/EmbeddedPPETest.h"
-					#include "PostProcess/PPE/TimePPETest.h"
-					#include "PostProcess/PPE/BloomPPE.h"
+// Post-process includes
+#include "PostProcess/PPE/BloomPPE.h"
 
 namespace we
 {
-	RenderSubsystem::RenderSubsystem()
-		: RenderTarget{vec2u(EC.WindowSize)}
-	{
-		Initialize();
-	}
+    RenderSubsystem::RenderSubsystem()
+        : CurrentWindowSize(EC.WindowSize)
+    {
+        Initialize();
+    }
 
-	void RenderSubsystem::Initialize()
-	{
-		RenderTarget.setSmooth(EC.SetRenderSmooth);
+    void RenderSubsystem::Initialize()
+    {
+        // Set Render Targets Pixel Size
+        VERIFY(GameRenderTarget.resize(vec2u(EC.WindowSize)));
+        VERIFY(UIRenderTarget.resize(vec2u(EC.WindowSize)));
+        VERIFY(CursorRenderTarget.resize(vec2u(EC.WindowSize)));
+        VERIFY(CompositeTarget.resize(vec2u(EC.WindowSize)));
 
-		if (sf::Shader::isAvailable)
-		{
-			VERIFY(PostProcessTarget.resize(vec2u(EC.WindowSize)));
+        // Set Smoothing for Render Targets
+        GameRenderTarget.setSmooth(EC.SetRenderSmooth);
+        UIRenderTarget.setSmooth(EC.SetRenderSmooth);
+        CursorRenderTarget.setSmooth(EC.SetRenderSmooth);
+        CompositeTarget.setSmooth(EC.SetRenderSmooth);
 
-			// PPE Effects applied to every frame
-			/*PostProcessEffects.emplace_back(make_unique<PPETest>());
-			PostProcessEffects.emplace_back(make_unique<TimePPETest>());
-			PostProcessEffects.emplace_back(make_unique<EmbeddedPPETest>());
-			PostProcessEffects.emplace_back(make_unique<BloomPPE>());*/
-		}
-	}
+        // *********************************************************
+         //
+         //				TODO: Make this Editable-Dynamic
+         //
+         // *********************************************************
 
-	void RenderSubsystem::Draw(const drawable& RenderObject)
-	{
-		RenderTarget.draw(RenderObject);
-	}
+         // Apply Shaders to Render Targets
+        if (sf::Shader::isAvailable)
+        {
+            VERIFY(GamePostProcessTarget.resize(vec2u(EC.WindowSize)));
+            VERIFY(UIPostProcessTarget.resize(vec2u(EC.WindowSize)));
+            VERIFY(CursorPostProcessTarget.resize(vec2u(EC.WindowSize)));
 
-	void RenderSubsystem::SetRenderView(const view& RenderView)
-	{
-		RenderTarget.setView(RenderView);
-		PostProcessTarget.setView(RenderView);
-	}
+            //PPE Applied to Game
+            GamePostProcessEffects.emplace_back(make_unique<BloomPPE>());
 
-	void RenderSubsystem::ResetRenderView()
-	{
-		SetRenderView(RenderTarget.getDefaultView());
-		SetRenderView(PostProcessTarget.getDefaultView());
-	}
+            //PPE Applied to UI
+            // UIPostEffects.emplace_back(make_unique<PPETest>()); Example
 
-	const view RenderSubsystem::ConstrainView(vec2u WindowSize)
-	{
-		float targetRatio = static_cast<float>(EC.AspectRatio.x) / static_cast<float>(EC.AspectRatio.y);
-		float windowRatio = static_cast<float>(WindowSize.x) / static_cast<float>(WindowSize.y);
+            //PPE Applied to Cursor (Rare)
+            // CursorPostProcessEffects.emplace_back(make_unique<TimePPETest>()); Example
+        }
+    }
 
-		float vWidth = 1.0f, vHeight = 1.0f, vPosX = 0.0f, vPosY = 0.0f;
+    void RenderSubsystem::OnWindowResized(vec2u NewWindowSize)
+    {
+        CurrentWindowSize = NewWindowSize;
+        // Optionally resize targets if you want dynamic resolution
+    }
 
-		if (windowRatio > targetRatio) {
-			vWidth = targetRatio / windowRatio;
-			vPosX = (1.0f - vWidth) / 2.0f;
-		}
-		else {
-			vHeight = windowRatio / targetRatio;
-			vPosY = (1.0f - vHeight) / 2.0f;
-		}
+    renderTexture* RenderSubsystem::GetTargetForLayer(ERenderLayer Layer)
+    {
+        switch (Layer)
+        {
+            case ERenderLayer::Game:    return &GameRenderTarget;
+            case ERenderLayer::UI:      return &UIRenderTarget;
+            case ERenderLayer::Cursor:  return &CursorRenderTarget;
+            default:                    return &GameRenderTarget;
+        }
+    }
 
-		view NewView;
-		NewView.setSize(vec2f(RenderTarget.getSize()));
-		NewView.setCenter(vec2f(RenderTarget.getSize()).componentWiseDiv({ 2, 2 }));
-		NewView.setSize(vec2f(PostProcessTarget.getSize()));
-		NewView.setCenter(vec2f(PostProcessTarget.getSize()).componentWiseDiv({ 2, 2 }));
+    void RenderSubsystem::Draw(const drawable& RenderObject, ERenderLayer Layer)
+    {
+        GetTargetForLayer(Layer)->draw(RenderObject);
+    }
 
-		NewView.setViewport(rectf({ vPosX, vPosY }, { vWidth, vHeight }));
+    void RenderSubsystem::SetRenderView(const view& RenderView)
+    {
+        GameRenderTarget.setView(RenderView);
+        GamePostProcessTarget.setView(RenderView);
+    }
 
-		return NewView;
-	}
+    void RenderSubsystem::SetLayerView(ERenderLayer Layer, const view& View)
+    {
+        renderTexture* Target = GetTargetForLayer(Layer);
+        if (Target)
+        {
+            view TextureView = View;
+            TextureView.setViewport(rectf({ 0.f, 0.f }, { 1.f, 1.f }));
+            Target->setView(TextureView);
+        }
+    }
 
-	void RenderSubsystem::StartRender()
-	{
-		RenderTarget.clear(color::Black);
-		PostProcessTarget.clear(color::Black);
-	}
+    void RenderSubsystem::ResetRenderView()
+    {
+        SetRenderView(GameRenderTarget.getDefaultView());
+    }
 
-	const texture& RenderSubsystem::FinishRender()
-	{
-		RenderTarget.display();
-		renderTexture* Input = &RenderTarget;
-		renderTexture* Output = &PostProcessTarget;
+    void RenderSubsystem::ApplyRenderView()
+    {
+        view DefaultView = GameRenderTarget.getDefaultView();
+        DefaultView.setViewport(rectf({ 0.f, 0.f }, { 1.f, 1.f }));
 
-		for (auto& PPE : PostProcessEffects)
-		{
-			Output->clear(color::Black);
-			PPE->Apply(Input->getTexture(), *Output);
-			Output->display();
-			std::swap(Input, Output);
-		}
+        GameRenderTarget.setView(DefaultView);
+        GamePostProcessTarget.setView(DefaultView);
+        UIRenderTarget.setView(DefaultView);
+        UIPostProcessTarget.setView(DefaultView);
+        CursorRenderTarget.setView(DefaultView);
+        CursorPostProcessTarget.setView(DefaultView);
+    }
 
-		return Input->getTexture();
-	}
+    vec2f RenderSubsystem::WindowToRenderCoords(vec2i WindowPixel, const view& View) const
+    {
+        // Requires the view to be provided by caller (from window)
+        // This is now window-agnostic
+        return vec2f(View.getCenter().x - View.getSize().x / 2.0f +
+            (WindowPixel.x / static_cast<float>(CurrentWindowSize.x)) * View.getSize().x,
+            View.getCenter().y - View.getSize().y / 2.0f +
+            (WindowPixel.y / static_cast<float>(CurrentWindowSize.y)) * View.getSize().y);
+    }
+
+    vec2i RenderSubsystem::RenderToWindowCoords(vec2f RenderPos, const view& View) const
+    {
+        return vec2i(
+            static_cast<int>((RenderPos.x - View.getCenter().x + View.getSize().x / 2.0f) /
+                View.getSize().x * CurrentWindowSize.x),
+            static_cast<int>((RenderPos.y - View.getCenter().y + View.getSize().y / 2.0f) /
+                View.getSize().y * CurrentWindowSize.y)
+        );
+    }
+
+    void RenderSubsystem::StartRender()
+    {
+        // Clear all layer targets
+        GameRenderTarget.clear(color{ 86, 164, 183 });
+        UIRenderTarget.clear(color::Transparent);
+        CursorRenderTarget.clear(color::Transparent);
+        CompositeTarget.clear(color::Transparent);
+
+        if (sf::Shader::isAvailable)
+        {
+            GamePostProcessTarget.clear(color::Transparent);
+            UIPostProcessTarget.clear(color::Transparent);
+            CursorPostProcessTarget.clear(color::Transparent);
+        }
+    }
+
+    void RenderSubsystem::ProcessPostEffects(renderTexture* Input, renderTexture* Output, vector<unique<IPostProcess>>& Effects)
+    {
+        if (Effects.empty())
+        {
+            Input->display();
+            return;
+        }
+
+        Input->display();
+        renderTexture* In = Input;
+        renderTexture* Out = Output;
+
+        for (auto& Effect : Effects)
+        {
+            Out->clear(color::Transparent);
+            Effect->Apply(In->getTexture(), *Out);
+            Out->display();
+            std::swap(In, Out);
+        }
+    }
+
+    void RenderSubsystem::CompositeLayers()
+    {
+        // Get final textures for each layer
+        const texture* GameTexture = &GameRenderTarget.getTexture();
+        const texture* UITexture = &UIRenderTarget.getTexture();
+        const texture* CursorTexture = &CursorRenderTarget.getTexture();
+
+        // Apply post-processing
+        if (sf::Shader::isAvailable)
+        {
+            if (!GamePostProcessEffects.empty())
+            {
+                ProcessPostEffects(&GameRenderTarget, &GamePostProcessTarget, GamePostProcessEffects);
+                GameTexture = &GamePostProcessTarget.getTexture();
+            }
+            else
+            {
+                GameRenderTarget.display();
+            }
+
+            if (!UIPostEffects.empty())
+            {
+                ProcessPostEffects(&UIRenderTarget, &UIPostProcessTarget, UIPostEffects);
+                UITexture = &UIPostProcessTarget.getTexture();
+            }
+            else
+            {
+                UIRenderTarget.display();
+            }
+
+            if (!CursorPostProcessEffects.empty())
+            {
+                ProcessPostEffects(&CursorRenderTarget, &CursorPostProcessTarget, CursorPostProcessEffects);
+                CursorTexture = &CursorPostProcessTarget.getTexture();
+            }
+            else
+            {
+                CursorRenderTarget.display();
+            }
+        }
+        else
+        {
+            GameRenderTarget.display();
+            UIRenderTarget.display();
+            CursorRenderTarget.display();
+        }
+
+        // Composite all layers to internal CompositeTarget (no window dependency!)
+        CompositeTarget.clear(color::Transparent);
+
+        view DefaultView = CompositeTarget.getDefaultView();
+        CompositeTarget.setView(DefaultView);
+
+        // Layer 1: Game (background)
+        sprite GameSprite(*GameTexture);
+        CompositeTarget.draw(GameSprite);
+
+        // Layer 2: UI (middle)
+        sprite UISprite(*UITexture);
+        CompositeTarget.draw(UISprite, sf::BlendAlpha);
+
+        // Layer 3: Cursor (top)
+        sprite CursorSprite(*CursorTexture);
+        CompositeTarget.draw(CursorSprite, sf::BlendAlpha);
+
+        CompositeTarget.display();
+    }
+
+    const texture& RenderSubsystem::FinishRender()
+    {
+        CompositeLayers();
+        return CompositeTarget.getTexture();
+    }
 }

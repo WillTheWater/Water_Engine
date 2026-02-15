@@ -93,6 +93,31 @@ namespace we
         EventWindowResized();
     }
 
+    view WindowSubsystem::getConstrainedView() const
+    {
+        float targetRatio = static_cast<float>(EC.AspectRatio.x) / static_cast<float>(EC.AspectRatio.y);
+        vec2u WinSize = getSize();
+        float windowRatio = static_cast<float>(WinSize.x) / static_cast<float>(WinSize.y);
+
+        float vWidth = 1.0f, vHeight = 1.0f, vPosX = 0.0f, vPosY = 0.0f;
+
+        if (windowRatio > targetRatio) {
+            vWidth = targetRatio / windowRatio;
+            vPosX = (1.0f - vWidth) / 2.0f;
+        }
+        else {
+            vHeight = windowRatio / targetRatio;
+            vPosY = (1.0f - vHeight) / 2.0f;
+        }
+
+        view ConstrainedView;
+        ConstrainedView.setSize(vec2f(EC.WindowSize));
+        ConstrainedView.setCenter(vec2f(EC.WindowSize) / 2.0f);
+        ConstrainedView.setViewport(rectf({ vPosX, vPosY }, { vWidth, vHeight }));
+
+        return ConstrainedView;
+    }
+
     void WindowSubsystem::EventWindowClose()
     {
         close();

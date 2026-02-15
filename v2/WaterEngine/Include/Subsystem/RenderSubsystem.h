@@ -10,28 +10,64 @@
 
 namespace we
 {
-	class RenderSubsystem
-	{
-	public:
-		RenderSubsystem();
+    enum class ERenderLayer : uint8
+    {
+        Game,
+        UI,
+        Cursor
+    };
 
-		void Draw(const drawable& RenderObject);
+    class RenderSubsystem
+    {
+    public:
+        RenderSubsystem();
 
-		void SetRenderView(const view& RenderView);
-		vec2f GetRenderSize() const { return vec2f(RenderTarget.getSize()); }
-		void ResetRenderView();
-	
-	private:
-		renderTexture RenderTarget;
-		renderTexture PostProcessTarget;
-		vector<unique<IPostProcess>> PostProcessEffects;
+        void Draw(const drawable& RenderObject, ERenderLayer Layer = ERenderLayer::Game);
 
-	private:
-		friend class WaterEngine;
+        void SetRenderView(const view& RenderView);
+        renderTexture* GetTargetForLayer(ERenderLayer Layer);
+        void SetLayerView(ERenderLayer Layer, const view& View);
+        vec2f GetRenderSize() const { return vec2f(GameRenderTarget.getSize()); }
+        void ResetRenderView();
 
-		void Initialize();
-		const view ConstrainView(vec2u WindowSize);
-		void StartRender();
-		const texture& FinishRender();
-	};
+        // Decoupled: Returns the final composited texture
+        const texture& FinishRender();
+
+        // Window-agnostic coordinate conversion using view
+        vec2f WindowToRenderCoords(vec2i WindowPixel, const view& View) const;
+        vec2i RenderToWindowCoords(vec2f RenderPos, const view& View) const;
+
+        // Called by engine when window resizes
+        void OnWindowResized(vec2u NewWindowSize);
+
+    private:
+        // Game Render
+        renderTexture GameRenderTarget;
+        renderTexture GamePostProcessTarget;
+        vector<unique<IPostProcess>> GamePostProcessEffects;
+
+        // UI Render
+        renderTexture UIRenderTarget;
+        renderTexture UIPostProcessTarget;
+        vector<unique<IPostProcess>> UIPostEffects;
+
+        // Cursor Render
+        renderTexture CursorRenderTarget;
+        renderTexture CursorPostProcessTarget;
+        vector<unique<IPostProcess>> CursorPostProcessEffects;
+
+        // Final composite target (the decoupling point)
+        renderTexture CompositeTarget;
+
+        vec2u CurrentWindowSize;
+
+    private:
+        friend class WaterEngine;
+
+        void ApplyRenderView();
+        void ProcessPostEffects(renderTexture* Input, renderTexture* Output, vector<unique<IPostProcess>>& Effects);
+        void CompositeLayers();
+        void Initialize();
+        void StartRender();
+    };
 }

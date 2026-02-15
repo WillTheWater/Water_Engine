@@ -17,6 +17,8 @@ namespace we
 	public:
 		WindowSubsystem();
 
+		view getConstrainedView() const;
+
 	protected:
 		void onResize() override;
 
