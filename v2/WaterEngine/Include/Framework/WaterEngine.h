@@ -19,29 +19,27 @@ namespace we
 
 		void Run();
 		void ProcessEvents();
-		void Render();
+		void Update();
 		void PostUpdate();
 
+	public:
 		bool IsRunning() const;
 		bool HasFocus() const;
-		void Quit();
+		void Shutdown();
 
 	public:
 		virtual void BeginPlay();
 		virtual void Tick(float DeltaTime);
 
-	protected:
+	private:
 		EngineSubsystem Subsystem;
 
 	private:
-		unique<GameWindow> Window;
-		bool bExitRequested;
-		bool bHasBegunPlay;
-
-	private:
-		void TickGame();
+		void PreConstruct();
 		void Configure();
-		void Construct();
+		void TickGame();
+
+		// These need to be removed
 		void WindowInit();
 		void ConstrainRender(vec2u NewSize);
 	};

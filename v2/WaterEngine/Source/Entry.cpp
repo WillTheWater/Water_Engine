@@ -23,7 +23,7 @@ int main()
             continue;
         }
         WE->Run();
-        WE->Render();
+        WE->Update();
         WE->PostUpdate();
     }
 }
