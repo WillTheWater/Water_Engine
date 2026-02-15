@@ -29,11 +29,11 @@ namespace we
 	
 	void Game::RegisterAllLevels()
 	{
-		RegisterLevel(MainMenu);
-		RegisterLevel(LevelOne);
+		//RegisterLevel(MainMenu);
+		//RegisterLevel(LevelOne);
 	}
 
-	void Game::BeginPlay()
+	/*void Game::BeginPlay()
 	{
 		RegisterAllLevels();
 
@@ -50,11 +50,11 @@ namespace we
 
 	void Game::Tick(float DeltaTime)
 	{
-	}
+	}*/
 
 	void Game::OnStateEnter(shared<IGameStateToken> NewState)
 	{
-		Subsystem.World->LoadWorldForState(NewState.get());
+		//Subsystem.World->LoadWorldForState(NewState.get());
 	}
 
 	void Game::OnStateExit(shared<IGameStateToken> OldState)
@@ -64,15 +64,15 @@ namespace we
 
 	void Game::BindInput()
 	{
-		Subsystem.Input->Bind(ACTION_TOGGLE_PAUSE, Input::Keyboard{ sf::Keyboard::Scan::Escape });
+		/*Subsystem.Input->Bind(ACTION_TOGGLE_PAUSE, Input::Keyboard{ sf::Keyboard::Scan::Escape });
 		Subsystem.Input->Bind(ACTION_TOGGLE_PAUSE, Input::Gamepad{GamepadButton::Start});
 
-		Subsystem.Input->OnPressed(ACTION_TOGGLE_PAUSE, [this](){ TogglePause(); });
+		Subsystem.Input->OnPressed(ACTION_TOGGLE_PAUSE, [this](){ TogglePause(); });*/
 	}
 	
 	void Game::TogglePause()
 	{
-		bPaused = !Subsystem.Time->IsPaused();
+		/*bPaused = !Subsystem.Time->IsPaused();
 		Subsystem.Time->SetPaused(bPaused);
 
 		if (bPaused)
@@ -87,6 +87,6 @@ namespace we
 			{
 				Subsystem.Cursor->SetVisibility(bPaused);
 			}
-		}
+		}*/
 	}
 }

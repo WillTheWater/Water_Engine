@@ -15,7 +15,7 @@ namespace we
 		VERIFY(TestShader->loadFromMemory(std::string(EmbeddedShader::BrightnessContrastFragment), shader::Type::Fragment));
 	}
 
-	void EmbeddedPPETest::Apply(const sf::Texture& Input, sf::RenderTarget& Output)
+	void EmbeddedPPETest::Apply(const texture& Input, renderTarget& Output)
 	{
 		TestShader->setUniform("Source", shader::CurrentTexture);
 		Output.draw(sprite(Input), TestShader.get());

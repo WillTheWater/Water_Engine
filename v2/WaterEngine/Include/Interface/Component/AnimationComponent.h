@@ -4,7 +4,7 @@
 // =============================================================================
 
 #pragma once
-#include "Core/CoreMinimal.h
+#include "Core/CoreMinimal.h"
 #include "Interface/Component/IActorComponent.h"
 
 namespace we

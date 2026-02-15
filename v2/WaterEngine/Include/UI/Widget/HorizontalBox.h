@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "Core/CoreMinimal.h
+#include "Core/CoreMinimal.h"
 #include "UI/Widget/Widget.h"
 
 namespace we
@@ -15,7 +15,7 @@ namespace we
 	public:
 		HorizontalBox(
 			EngineSubsystem& Subsystem,
-			const list<shared<Widget>>& InChildren,
+			const vector<shared<Widget>>& InChildren,
 			float Padding = 10.f,
 			Anchor InTargetAnchor = Anchor::TopLeft,
 			Anchor InWidgetAnchor = Anchor::TopLeft,

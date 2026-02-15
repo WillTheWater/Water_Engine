@@ -6,14 +6,14 @@
 #include "UI/Widget/Panel.h"
 #include "Subsystem/ResourceSubsystem.h"
 #include "Subsystem/GUISubsystem.h"
-#include "Framework/GameWindow.h"
+#include "Subsystem/WindowSubsystem.h"
 #include "Framework/EngineSubsystem.h"
 
 namespace we
 {
     Panel::Panel(
         EngineSubsystem& Subsystem,
-        const list<shared<Widget>>& InChildren,
+        const vector<shared<Widget>>& InChildren,
         rectf Margins,
         Anchor InTargetAnchor,
         Anchor InWidgetAnchor,
@@ -151,7 +151,7 @@ namespace we
 		{
 			Background->setPosition(GetWorldPosition());
 			Background->setScale(GetWorldScale());
-			Window.draw(*Background);
+			//Window.draw(*Background);
 		}
 
 		Widget::Render(Window);

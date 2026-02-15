@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "Core/CoreMinimal.h
+#include "Core/CoreMinimal.h"
 
 namespace we
 {
@@ -72,6 +72,6 @@ namespace we
 		bool IsEmpty() const { return Callbacks.empty(); }
 
 	private:
-		list<CallbackFunction> Callbacks;
+		vector<CallbackFunction> Callbacks;
 	};
 }

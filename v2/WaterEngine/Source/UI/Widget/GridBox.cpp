@@ -1,12 +1,12 @@
 #include "UI/Widget/GridBox.h"
 #include "Framework/EngineSubsystem.h"
-#include "Framework/GameWindow.h"
+#include "Subsystem/WindowSubsystem.h"
 
 namespace we
 {
 	GridBox::GridBox(
 		EngineSubsystem& Subsystem,
-		const list<shared<Widget>>& InChildren,
+		const vector<shared<Widget>>& InChildren,
 		uint Columns,
 		float Padding,
 		Anchor InTargetAnchor,
@@ -17,8 +17,8 @@ namespace we
 		if (Columns == 0) Columns = 1;
 
 		// Track max width per column and max height per row
-		list<float> ColumnWidths(Columns, 0.f);
-		list<float> RowHeights;
+		vector<float> ColumnWidths(Columns, 0.f);
+		vector<float> RowHeights;
 
 		uint CurrentColumn = 0;
 		float CurrentRowMaxHeight = 0.f;

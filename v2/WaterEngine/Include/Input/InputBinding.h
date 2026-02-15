@@ -7,7 +7,7 @@
 
 #include <SFML/Window.hpp>
 
-#include "Core/CoreMinimal.h
+#include "Core/CoreMinimal.h"
 #include "EngineConfig.h"
 
 namespace we

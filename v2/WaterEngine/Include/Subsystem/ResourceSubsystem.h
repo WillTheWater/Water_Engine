@@ -5,7 +5,8 @@
 
 #pragma once
 
-#include "Core/CoreMinimal.h
+#include "Core/CoreMinimal.h"
+#include "Core/AudioTypes.h"
 #include "Interface/IAssetDirector.h"
 #include <SFML/System/InputStream.hpp>
 
@@ -24,7 +25,7 @@ namespace we
         shared<texture> LoadTexture(const string& Path);
         shared<font> LoadFont(const string& Path);
         shared<soundBuffer> LoadSound(const string& Path);
-        shared<sf::Music> LoadMusic(const string& Path);
+        shared<music> LoadMusic(const string& Path);
 
         shared<shader> LoadShader(const string& Path, shader::Type Type);
 
@@ -37,8 +38,8 @@ namespace we
         dictionary<string, shared<texture>> Textures;
         dictionary<string, shared<font>> Fonts;
         dictionary<string, shared<soundBuffer>> Sounds;
-        dictionary<string, list<uint8>> FontData;
-        dictionary<string, shared<list<uint8>>> MusicData;
+        dictionary<string, vector<uint8>> FontData;
+        dictionary<string, shared<vector<uint8>>> MusicData;
         dictionary<string, shared<MusicMemoryStream>> MusicStreams;
 
         template<typename Asset, typename Cache>
@@ -50,15 +51,15 @@ namespace we
     class MusicMemoryStream : public sf::InputStream
     {
     public:
-        explicit MusicMemoryStream(shared<list<uint8>> InData);
+        explicit MusicMemoryStream(shared<vector<uint8>> InData);
 
-        optional<usize> read(void* data, usize size) override;
-        optional<usize> seek(usize position) override;
-        optional<usize> tell() override;
-        optional<usize> getSize() override;
+        optional<ulong> read(void* data, ulong size) override;
+        optional<ulong> seek(ulong position) override;
+        optional<ulong> tell() override;
+        optional<ulong> getSize() override;
 
     private:
-        shared<list<uint8>> Data;
-        usize Pos;
+        shared<vector<uint8>> Data;
+        ulong Pos;
     };
 }

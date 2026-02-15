@@ -4,22 +4,21 @@
 // =============================================================================
 
 #include "Framework/WaterEngine.h"
-
-#include "EngineConfig.h"
 #include "AssetDirectory/PakDirectory.h"
-#include "Subsystem/ResourceSubsystem.h"
-#include "Subsystem/PhysicsSubsystem.h"
-#include "Subsystem/AsyncResourceSubsystem.h"
-#include "Framework/World/World.h"
-#include "Utility/Timer.h"
-#include "Utility/Log.h"
+
+//#include "EngineConfig.h"
+//#include "Subsystem/ResourceSubsystem.h"
+//#include "Subsystem/PhysicsSubsystem.h"
+//#include "Subsystem/AsyncResourceSubsystem.h"
+//#include "Framework/World/World.h"
+//#include "Utility/Timer.h"
+//#include "Utility/Log.h"
 
 namespace we
 {
     WaterEngine::WaterEngine()
     {
         PreConstruct();
-        Configure();
     }
 
     WaterEngine::~WaterEngine()
@@ -29,13 +28,14 @@ namespace we
 
     void WaterEngine::PreConstruct()
     {
+        MountAssetDirectory();
         // Build All Subsystems
         Subsystem.Window = make_unique<WindowSubsystem>();
-
-
-        Subsystem.Time = make_unique<TimerSubsystem>();
         Subsystem.Render = make_unique<RenderSubsystem>();
-        Subsystem.SaveLoad = make_unique<SaveLoadSubsystem>();
+        Subsystem.Time = make_unique<TimeSubsystem>();
+
+
+        /*Subsystem.SaveLoad = make_unique<SaveLoadSubsystem>();
         Subsystem.Audio = make_unique<AudioSubsystem>();
 
         WindowInit();
@@ -44,49 +44,41 @@ namespace we
         Subsystem.World = make_unique<WorldSubsystem>(Subsystem);
         Subsystem.GameState = make_unique<GameStateSubsystem>();
         
-        Physics().Initialize();
+        Physics().Initialize();*/
 
     }
 
-    void WaterEngine::Configure()
+    void WaterEngine::MountAssetDirectory()
     {
         // Mount .pak For Resources
         auto PD = make_shared<PakDirectory>(EC.AssetDirectory);
-        Asset().SetAssetDirectory(PD);
-        AsyncAsset().SetAssetDirectory(PD);
+        //Asset().SetAssetDirectory(PD);
+        //AsyncAsset().SetAssetDirectory(PD);
         if (EC.DisableSFMLLogs) { sf::err().rdbuf(nullptr); }
     }
 
     void WaterEngine::TickGame()
     {
-        if (!bHasBegunPlay)
-        {
-            bHasBegunPlay = true;
-            BeginPlay();
-        }
+        //float DeltaTime = Subsystem.Time->GetDeltaTime();
 
-        float DeltaTime = Subsystem.Time->GetDeltaTime();
+        //if (Subsystem.GameState->IsTransitionPending())
+        //{
+        //    Subsystem.GameState->ApplyPendingState();
+        //}
 
-        Tick(DeltaTime);
+        //TimerManager::Get().Tick(DeltaTime);
+        //Subsystem.Input->ProcessHeld();
+        //Subsystem.Cursor->Update(DeltaTime);
+        //Subsystem.GUI->Update(DeltaTime);
+        //AsyncAsset().GarbageCycle(DeltaTime);
 
-        if (Subsystem.GameState->IsTransitionPending())
-        {
-            Subsystem.GameState->ApplyPendingState();
-        }
+        //if (auto World = Subsystem.World->GetCurrentWorld())
+        //{
+        //    World->BeginPlayGlobal();
+        //    World->TickGlobal(DeltaTime);
+        //}
 
-        TimerManager::Get().Tick(DeltaTime);
-        Subsystem.Input->ProcessHeld();
-        Subsystem.Cursor->Update(DeltaTime);
-        Subsystem.GUI->Update(DeltaTime);
-        AsyncAsset().GarbageCycle(DeltaTime);
-
-        if (auto World = Subsystem.World->GetCurrentWorld())
-        {
-            World->BeginPlayGlobal();
-            World->TickGlobal(DeltaTime);
-        }
-
-        Physics().Step(DeltaTime);
+        //Physics().Step(DeltaTime);
 
         PostUpdate();
     }
@@ -99,7 +91,7 @@ namespace we
 
             Subsystem.Time->Tick(); // Always tick time
 
-            AsyncAsset().PollCompletedRequests();
+            //AsyncAsset().PollCompletedRequests();
 
             if (!Subsystem.Time->IsPaused())
             {
@@ -108,46 +100,46 @@ namespace we
             else
             {
                 // UI only update when paused
-                Subsystem.Input->ProcessHeld();
+                /*Subsystem.Input->ProcessHeld();
                 Subsystem.Cursor->Update(Subsystem.Time->GetUnscaledDeltaTime());
-                Subsystem.GUI->Update(Subsystem.Time->GetUnscaledDeltaTime());
+                Subsystem.GUI->Update(Subsystem.Time->GetUnscaledDeltaTime());*/
                 PostUpdate();
             }
 
-            Render();
+            Update();
         }
     }
 
     void WaterEngine::ProcessEvents()
     {
-        while (const auto Event = Window->pollEvent())
+        while (const auto Event = Subsystem.Window->pollEvent())
         {
-            Event->visit(GameWindowEventHandler{ *Window });
-            Subsystem.Input->HandleEvent(*Event);
-            Subsystem.GUI->ProcessEvent(*Event);
+            Event->visit(GameWindowEventHandler{ *Subsystem.Window });
+            //Subsystem.Input->HandleEvent(*Event);
+            //Subsystem.GUI->ProcessEvent(*Event);
         }
     }
    
     void WaterEngine::Update()
     {
-        Window->clear(color::Black);
+        Subsystem.Window->clear(color::Black);
 
         Subsystem.Render->StartRender();
 
-        if (auto World = Subsystem.World->GetCurrentWorld())
+       /* if (auto World = Subsystem.World->GetCurrentWorld())
         {
             World->Render();
-        }
+        }*/
 
-        Physics().DebugDraw(Subsystem.Render.get());
+        //Physics().DebugDraw(Subsystem.Render.get());
 
-        Window->draw(sprite(Subsystem.Render->FinishRender()));
+        Subsystem.Window->draw(sprite(Subsystem.Render->FinishRender()));
         
-        Subsystem.GUI->Render();
+       // Subsystem.GUI->Render();
 
-        Subsystem.Cursor->Render();
+       // Subsystem.Cursor->Render();
 
-        Window->display();
+        Subsystem.Window->display();
     }
 
     void WaterEngine::PostUpdate()
@@ -157,26 +149,18 @@ namespace we
 
     bool WaterEngine::IsRunning() const
     {
-        bExitRequested;
+        //bExitRequested;
+        return true;
     }
 
     bool WaterEngine::HasFocus() const
     {
-        return Window->hasFocus();
+        return Subsystem.Window->hasFocus();
     }
 
     void WaterEngine::Shutdown()
     {
-        bExitRequested = true;
-    }
-
-    void WaterEngine::BeginPlay()
-    {
-
-    }
-
-    void WaterEngine::Tick(float DeltaTime)
-    {
+        //bExitRequested = true;
     }
 
 
@@ -187,15 +171,15 @@ namespace we
 
     void WaterEngine::WindowInit()
     {
-        Window = make_unique<GameWindow>();
-        Window->OnResize.Bind(this, &WaterEngine::ConstrainRender);
-        Subsystem.Cursor = make_unique<CursorSubsystem>(*Window);
-        Subsystem.GUI = make_unique<GUISubsystem>(*Window, *Subsystem.Cursor);
+        //Window = make_unique<GameWindow>();
+        //Window->OnResize.Bind(this, &WaterEngine::ConstrainRender);
+        //Subsystem.Cursor = make_unique<CursorSubsystem>(*Window);
+        //Subsystem.GUI = make_unique<GUISubsystem>(*Window, *Subsystem.Cursor);
     }
 
     void WaterEngine::ConstrainRender(vec2u NewSize)
     {
-        Window->setView(Subsystem.Render->ConstrainView(NewSize));
+        //Window->setView(Subsystem.Render->ConstrainView(NewSize));
     }
 
 }

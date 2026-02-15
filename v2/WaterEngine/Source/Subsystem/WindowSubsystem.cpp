@@ -69,9 +69,9 @@ namespace we
 
     void WindowSubsystem::SetWindowIcon()
     {
-        auto IconTexture = Asset().LoadTexture(EC.WindowIcon);
-        const auto& Image = IconTexture->copyToImage();
-        setIcon(Image);
+       // auto IconTexture = Asset().LoadTexture(EC.WindowIcon);
+        //const auto& Image = IconTexture->copyToImage();
+        //setIcon(Image);
     }
 
     void WindowSubsystem::EventToggleBorderlessFullscreen()
@@ -100,7 +100,6 @@ namespace we
 
     void WindowSubsystem::EventWindowResized()
     {
-        OnResize.Broadcast(getSize());
     }
 
     void WindowSubsystem::EventWindowFocusLost()

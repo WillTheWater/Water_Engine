@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "Core/CoreMinimal.h
+#include "Core/CoreMinimal.h"
 #include "Utility/Delegate.h"
 
 namespace we

@@ -5,10 +5,10 @@
 
 #pragma once
 
-#include <sfml/Graphics.hpp>
-
 #include "Core/CoreMinimal.h"
-#include "Framework/GameWindowEventHandler.h"
+#include <sfml/Graphics.hpp>
+#include "Framework/EventHandling/GameWindowEventHandler.h"
+
 
 namespace we
 {

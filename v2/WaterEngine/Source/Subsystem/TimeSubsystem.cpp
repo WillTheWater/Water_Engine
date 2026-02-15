@@ -3,12 +3,12 @@
 // Copyright(C) 2026 Will The Water
 // =============================================================================
 
-#include "Subsystem/TimerSubsystem.h"
+#include "Subsystem/TimeSubsystem.h"
 #include "EngineConfig.h"
 
 namespace we
 {
-	void TimerSubsystem::Tick()
+	void TimeSubsystem::Tick()
 	{
 		const sf::Time CurrentTime = GlobalTick.getElapsedTime();
 		UnscaledDeltaTime = std::min(CurrentTime - PreviousTick, EC.MaxDeltaTime);
@@ -24,27 +24,27 @@ namespace we
 		}
 	}
 
-	float TimerSubsystem::GetDeltaTime() const
+	float TimeSubsystem::GetDeltaTime() const
 	{
 		return DeltaTime.asSeconds();
 	}
 
-	float TimerSubsystem::GetUnscaledDeltaTime() const
+	float TimeSubsystem::GetUnscaledDeltaTime() const
 	{
 		return UnscaledDeltaTime.asSeconds();
 	}
 
-	float TimerSubsystem::GetElapsedTime() const
+	float TimeSubsystem::GetElapsedTime() const
 	{
 		return GlobalTick.getElapsedTime().asSeconds();
 	}
 
-	void TimerSubsystem::SetPaused(bool bInPaused)
+	void TimeSubsystem::SetPaused(bool bInPaused)
 	{
 		bPaused = bInPaused;
 	}
 
-	void TimerSubsystem::SetTimeScale(float Scale)
+	void TimeSubsystem::SetTimeScale(float Scale)
 	{
 		TimeScale = std::max(0.0f, Scale);
 	}

@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "Core/CoreMinimal.h
+#include "Core/CoreMinimal.h"
 #include "Framework/World/Object/Object.h"
 
 namespace we
@@ -64,7 +64,7 @@ namespace we
 		World* OwnerWorld;
 
 	private:
-		list<shared<IActorComponent>> Components;
+		vector<shared<IActorComponent>> Components;
 		shared<texture> Texture;
 		optional<sprite> Sprite;
 		vec2f Position;

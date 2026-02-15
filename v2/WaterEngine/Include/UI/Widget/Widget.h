@@ -4,7 +4,7 @@
 // =============================================================================
 
 #pragma once
-#include "Core/CoreMinimal.h
+#include "Core/CoreMinimal.h"
 
 namespace we
 {
@@ -81,7 +81,7 @@ namespace we
 		virtual void UpdateCache() const;
 		void MarkDirty();
 		// Cached world data
-		list<weak<Widget>> Children;
+		vector<weak<Widget>> Children;
 		mutable bool bDirty = true;
 		mutable vec2f CachedWorldPosition;
 		mutable vec2f CachedWorldScale;

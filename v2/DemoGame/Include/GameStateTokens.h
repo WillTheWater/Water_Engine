@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "Core/CoreMinimal.h
+#include "Core/CoreMinimal.h"
 #include "Interface/IGameStateToken.h"
 #include <magic_enum/magic_enum.hpp>
 

@@ -4,7 +4,7 @@
 // =============================================================================
 
 #include "UI/Cursor/CursorSubsystem.h"
-#include "Framework/GameWindow.h"
+#include "Subsystem/WindowSubsystem.h"
 #include "Subsystem/ResourceSubsystem.h"
 #include "EngineConfig.h"
 
@@ -51,7 +51,7 @@ namespace we
     {
         if (!bIsVisible) return;
         
-        Window.draw(CursorShape);
+        //Window.draw(CursorShape);
     }
 
     void CursorSubsystem::SetSpeed(float Speed)
@@ -81,17 +81,19 @@ namespace we
 
     void CursorSubsystem::SetPosition(vec2f Position)
     {
-        sf::Mouse::setPosition(Window.mapCoordsToPixel(Position, Window.getDefaultView()), Window);
+       // sf::Mouse::setPosition(Window.mapCoordsToPixel(Position, Window.getDefaultView()), Window);
         CursorShape.setPosition(Position);
     }
 
     vec2f CursorSubsystem::GetPosition() const
     {
-        return GetPosition(Window.getDefaultView());
+        //return GetPosition(Window.getDefaultView());
+        return vec2f{ 0,0 };
     }
 
     vec2f CursorSubsystem::GetPosition(const view& View) const
     {
-        return Window.mapPixelToCoords(sf::Mouse::getPosition(Window), View);
+        //return Window.mapPixelToCoords(sf::Mouse::getPosition(Window), View);
+        return vec2f{ 0,0 };
     }
 }

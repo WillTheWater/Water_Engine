@@ -101,7 +101,7 @@ namespace we
 
 	void Widget::RenderChildren(GameWindow& Window)
 	{
-		list<shared<Widget>> ValidChildren;
+		vector<shared<Widget>> ValidChildren;
 		for (auto& ChildWeak : Children)
 		{
 			if (auto Child = ChildWeak.lock())
@@ -274,7 +274,7 @@ namespace we
 	{
 		if (!IsVisible() || !Contains(WorldPoint)) return nullptr;
 
-		list<shared<Widget>> ValidChildren;
+		vector<shared<Widget>> ValidChildren;
 		for (auto& WeakChild : Children)
 		{
 			if (auto Child = WeakChild.lock())

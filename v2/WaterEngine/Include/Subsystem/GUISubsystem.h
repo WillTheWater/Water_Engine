@@ -4,7 +4,7 @@
 // =============================================================================
 
 #pragma once
-#include "Core/CoreMinimal.h
+#include "Core/CoreMinimal.h"
 
 namespace we
 {
@@ -32,7 +32,7 @@ namespace we
 	private:
 		GameWindow& Window;
 		CursorSubsystem& Cursor;
-		list<shared<Widget>> Widgets;
+		vector<shared<Widget>> Widgets;
 		weak<Widget> HoveredWidget;
 		weak<Widget> PressedWidget;
 

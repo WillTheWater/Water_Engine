@@ -4,17 +4,11 @@
 // =============================================================================
 
 #pragma once
-#include "Core/CoreMinimal.h
+#include "Core/CoreMinimal.h"
 #include "EngineConfig.h"
 
 namespace we
 {
-	inline const font& GetDefaultTitleFont()
-	{
-		static const font Font(EC.DefaultTitleFont);
-		return Font;
-	}
-
 	inline const font& GetDefaultFont()
 	{
 		static const font Font(EC.DefaultFont);

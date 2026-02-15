@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "Core/CoreMinimal.h
+#include "Core/CoreMinimal.h"
 #include "PostProcess/IPostProcess.h"
 
 namespace we
@@ -15,7 +15,7 @@ namespace we
 	public:
 		EmbeddedPPETest();
 
-		virtual void Apply(const sf::Texture& Input, sf::RenderTarget& Output) override;
+		virtual void Apply(const texture& Input, renderTarget& Output) override;
 
 	private:
 		shared<shader> TestShader;

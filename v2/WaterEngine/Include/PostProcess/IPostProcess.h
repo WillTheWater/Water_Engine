@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "Core/CoreMinimal.h
+#include "Core/CoreMinimal.h"
 
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/Texture.hpp>
@@ -17,7 +17,7 @@ namespace we
     public:
         virtual ~IPostProcess() = default;
 
-        virtual void Apply(const sf::Texture& Input, sf::RenderTarget& Output) = 0;
+        virtual void Apply(const texture& Input, renderTarget& Output) = 0;
 
     };
 }

@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "Core/CoreMinimal.h
+#include "Core/CoreMinimal.h"
 #include "UI/Widget/Widget.h"
 
 namespace we
@@ -14,7 +14,7 @@ namespace we
 	{
 	public:
 		Panel(EngineSubsystem& Subsystem,
-			const list<shared<Widget>>& InChildren,
+			const vector<shared<Widget>>& InChildren,
 			rectf Margins = {{0.f,0.f},{0.f,0.f}},
 			Anchor InTargetAnchor = Anchor::Center,
 			Anchor InWidgetAnchor = Anchor::Center,

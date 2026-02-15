@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "Core/CoreMinimal.h
+#include "Core/CoreMinimal.h"
 #include "Framework/World/Object/Object.h"
 #include "EngineConfig.h"
 
@@ -32,7 +32,7 @@ namespace we
 		template<typename ActorType, typename... Args>
 		weak<ActorType> SpawnActor(Args&&... args);
 
-		list<shared<Actor>> GetActors() const { return Actors; }
+		vector<shared<Actor>> GetActors() const { return Actors; }
 		EngineSubsystem& GetSubsystem() const { return Subsystem; }
 
 	protected:
@@ -41,8 +41,8 @@ namespace we
 		void RenderActors();
 
 	private:
-		list<shared<Actor>> Actors;
-		list<shared<Actor>> PendingActors;
+		vector<shared<Actor>> Actors;
+		vector<shared<Actor>> PendingActors;
 		bool bHasBegunPlay;
 
 	private:

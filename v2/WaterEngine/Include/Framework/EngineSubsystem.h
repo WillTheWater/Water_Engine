@@ -9,9 +9,9 @@
 
 #include "Subsystem/WindowSubsystem.h"
 #include "Subsystem/RenderSubsystem.h"
+#include "Subsystem/TimeSubsystem.h"
 
 
-#include "Subsystem/TimerSubsystem.h"
 #include "Subsystem/SaveLoadSubsystem.h"
 #include "Subsystem/AudioSubsystem.h"
 #include "Subsystem/InputSubsystem.h"
@@ -26,16 +26,16 @@ namespace we
 	{
 		unique<WindowSubsystem> Window;
 		unique<RenderSubsystem> Render;
+		unique<TimeSubsystem> Time;
 
 
 
-		unique<TimerSubsystem> Time;
-		unique<SaveLoadSubsystem> SaveLoad;
-		unique<AudioSubsystem> Audio;
-		unique<InputSubsystem> Input;
-		unique<WorldSubsystem> World;
-		unique<GameStateSubsystem> GameState;
-		unique<GUISubsystem> GUI;
-		unique<CursorSubsystem> Cursor;
+		// unique<SaveLoadSubsystem> SaveLoad;
+		// unique<AudioSubsystem> Audio;
+		// unique<InputSubsystem> Input;
+		// unique<WorldSubsystem> World;
+		// unique<GameStateSubsystem> GameState;
+		// unique<GUISubsystem> GUI;
+		// unique<CursorSubsystem> Cursor;
 	};
 }

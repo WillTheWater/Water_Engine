@@ -5,7 +5,7 @@
 
 #include "UI/Widget/Checkbox.h"
 #include "Subsystem/ResourceSubsystem.h"
-#include "Framework/GameWindow.h"
+#include "Subsystem/WindowSubsystem.h"
 #include "Utility/Log.h"
 
 namespace we
@@ -58,14 +58,14 @@ namespace we
         if (BoxDrawable)
         {
             BoxDrawable->setPosition(Pos);
-            Window.draw(*BoxDrawable);
+           // Window.draw(*BoxDrawable);
         }
 
         // Draw label
         if (LabelDrawable)
         {
             LabelDrawable->setPosition(Pos + vec2f{ BoxSize + LabelOffset, 0.f });
-            Window.draw(*LabelDrawable);
+            //Window.draw(*LabelDrawable);
         }
 
         Widget::Render(Window);

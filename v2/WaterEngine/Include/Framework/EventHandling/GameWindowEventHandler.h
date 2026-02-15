@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "Core/CoreMinimal.h
+#include "Core/CoreMinimal.h"
 
 #include <SFML/Window/Event.hpp>
 
@@ -13,7 +13,7 @@ namespace we
 {
 	struct GameWindowEventHandler
 	{
-		class GameWindow& Window;
+		class WindowSubsystem& Window;
 	
 		void operator()(const sf::Event::Closed&);
 		void operator()(const sf::Event::Resized&);

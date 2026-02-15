@@ -3,8 +3,8 @@
 // Copyright(C) 2026 Will The Water
 // =============================================================================
 
-#include "Framework/GameWindowEventHandler.h"
-#include "Framework/GameWindow.h"
+#include "Framework/EventHandling/GameWindowEventHandler.h"
+#include "Subsystem/WindowSubsystem.h"
 #include "Utility/Log.h"
 
 namespace we

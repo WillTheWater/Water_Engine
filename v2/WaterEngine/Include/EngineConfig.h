@@ -5,9 +5,8 @@
 
 #pragma once
 
-#include "Core/CoreMinimal.h
-#include <box2d/b2_math.h>
-#include <SFML/System/Time.hpp>
+#include "Core/CoreMinimal.h"
+#include "box2d/b2_math.h"
 
 // =============================================================================
 // Used to set global engine configurations
@@ -23,30 +22,36 @@ namespace we
 		vec2f WindowSize;
 		vec2f AspectRatio;
 		vec2f WindowMinimumSize;
-		float TargetFPS;
+		string WindowIcon;
+		string WindowName;
+		bool EnableKeyRepeat;
+		
+		string DefaultCursor;
+		vec2f DefaultCursorSize;
+		string DefaultFont;
+
 		bool VsyncEnabled;
+		float TargetFPS;
+		time MaxDeltaTime;
 		bool FullscreenMode;
 		bool SetRenderSmooth;
-		string WindowName;
 		bool DisableSFMLLogs;
-		sf::Time MaxDeltaTime;
-		string WindowIcon;
-		string DefaultBackground;
-		string DefaultCursor;
-		float StartupGlobalVolume;
-		bool EnableKeyRepeat;
-		vec2f DefaultCursorSize;
-		float DefaultCursorSpeed;
+		ulong MaxSFXStack;
+
 		float JoystickDeadzone;
+		float DefaultCursorSpeed;
+
+		b2Vec2 DefaultGravity;
+
+		/*string DefaultBackground;
+		float StartupGlobalVolume;
 		string DefaultTitleFont;
-		string DefaultFont;
 		string DefaultPanel;
 		string DefaultButton;
 		string DefaultMusic;
 		string DefaultAmbient;
 		string DefaultButtonHoverSound;
 		string DefaultButtonClickSound;
-		size_t MaxSFXStack;
 		string LevelOneBackground;
 		string CharacterSheetIdle;
 		string CharacterSheetWalk;
@@ -54,7 +59,7 @@ namespace we
 		string Footstep2;
 		string Footstep3;
 		string Footstep4;
-		b2Vec2 DefaultGravity;
+		*/
 	};
 
 	// Global Accessor

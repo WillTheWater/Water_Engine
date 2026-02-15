@@ -10,4 +10,6 @@
 namespace we
 {
 	using soundBuffer = sf::SoundBuffer;
+	using music = sf::Music;
+	using sound = sf::Sound;
 }

@@ -52,7 +52,7 @@ set(WATER_ENGINE_HEADERS
 
     Include/Framework/WaterEngine.h
     Include/Framework/EngineSubsystem.h
-    Include/Framework/GameWindowEventHandler.h
+    "Include/Framework/EventHandling/GameWindowEventHandler.h"
     
     Include/Core/CoreMinimal.h
     Include/Core/JsonTypes.h
@@ -64,7 +64,7 @@ set(WATER_ENGINE_HEADERS
 
     Include/Subsystem/WindowSubsystem.h
     Include/Subsystem/AsyncResourceSubsystem.h
-    Include/Subsystem/TimerSubsystem.h
+    "Include/Subsystem/TimeSubsystem.h"
     Include/Subsystem/RenderSubsystem.h
     Include/Subsystem/SaveLoadSubsystem.h
     Include/Subsystem/ResourceSubsystem.h
@@ -123,7 +123,7 @@ set(WATER_ENGINE_SOURCES
     Source/EngineConfig.cpp
 	
     Source/Framework/WaterEngine.cpp
-    Source/Framework/GameWindowEventHandler.cpp
+    "Source/Framework/EventHandling/GameWindowEventHandler.cpp"
 
     Source/Framework/World/World.cpp
     
@@ -132,7 +132,7 @@ set(WATER_ENGINE_SOURCES
 
     Source/Subsystem/WindowSubsystem.cpp
     Source/Subsystem/AsyncResourceSubsystem.cpp
-    Source/Subsystem/TimerSubsystem.cpp
+    "Source/Subsystem/TimeSubsystem.cpp"
     Source/Subsystem/RenderSubsystem.cpp
     Source/Subsystem/SaveLoadSubsystem.cpp
     Source/Subsystem/ResourceSubsystem.cpp

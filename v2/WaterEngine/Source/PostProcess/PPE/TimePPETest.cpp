@@ -16,7 +16,7 @@ namespace we
 		VERIFY(TestShader != nullptr);
 	}
 
-	void TimePPETest::Apply(const sf::Texture& Input, sf::RenderTarget& Output)
+	void TimePPETest::Apply(const texture& Input, renderTarget& Output)
 	{
 		float Elapsed = Time.getElapsedTime().asSeconds();
 		TestShader->setUniform("Time", Elapsed);

@@ -87,7 +87,7 @@ namespace we
 
     void AsyncResourceSubsystem::PollCompletedRequests()
     {
-        list<unique<IAsyncAssetRequest>> ToFinalize;
+        vector<unique<IAsyncAssetRequest>> ToFinalize;
 
         // Grab all completed
         {
@@ -105,7 +105,7 @@ namespace we
 
     template<typename T>
     AssetHandle<T> AsyncResourceSubsystem::LoadAsyncInternal(const string& Path, AssetPriority Priority,
-        std::function<bool(T&, const list<uint8>&)> Loader)
+        std::function<bool(T&, const vector<uint8>&)> Loader)
     {
         // Check cache first
         dictionary<string, weak<T>>* Cache = nullptr;
@@ -148,7 +148,7 @@ namespace we
     AssetHandle<texture> AsyncResourceSubsystem::LoadTextureAsync(const string& Path, AssetPriority Priority)
     {
         return LoadAsyncInternal<texture>(Path, Priority,
-            [](texture& Tex, const list<uint8>& Data) {
+            [](texture& Tex, const vector<uint8>& Data) {
                 return Tex.loadFromMemory(Data.data(), Data.size());
             });
     }
@@ -156,7 +156,7 @@ namespace we
     AssetHandle<font> AsyncResourceSubsystem::LoadFontAsync(const string& Path, AssetPriority Priority)
     {
         return LoadAsyncInternal<font>(Path, Priority,
-            [](font& Fnt, const list<uint8>& Data) {
+            [](font& Fnt, const vector<uint8>& Data) {
                 return Fnt.openFromMemory(Data.data(), Data.size());
             });
     }
@@ -164,7 +164,7 @@ namespace we
     AssetHandle<soundBuffer> AsyncResourceSubsystem::LoadSoundAsync(const string& Path, AssetPriority Priority)
     {
         return LoadAsyncInternal<soundBuffer>(Path, Priority,
-            [](soundBuffer& Snd, const list<uint8>& Data) {
+            [](soundBuffer& Snd, const vector<uint8>& Data) {
                 return Snd.loadFromMemory(Data.data(), Data.size());
             });
     }

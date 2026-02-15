@@ -47,7 +47,7 @@ namespace we
 	using uint8 = unsigned char;
 	using uint = std::uint32_t;
 	using int64 = std::int64_t;
-	using usize = std::size_t;
+	using ulong = std::size_t;
 
 	// ----- Math Types -----
 	template<typename T>
@@ -57,24 +57,27 @@ namespace we
 	using vec2i = sf::Vector2i;
 	using vec2u = sf::Vector2u;
 	using vec3f = sf::Vector3f;
+	using rectf = sf::FloatRect;
+	using recti = sf::IntRect;
 	using angle = sf::Angle;
+	using clock = sf::Clock;
+	using time = sf::Time;
 
 	// ----- SFML Graphics Types -----
+	using drawable = sf::Drawable;
 	using sprite = sf::Sprite;
 	using texture = sf::Texture;
 	using image = sf::Image;
-	using font = sf::Font;
-	using renderTexture = sf::RenderTexture;
+	using rectangle = sf::RectangleShape;
 	using circle = sf::CircleShape;
 	using shape = sf::Shape;
-	using rectangle = sf::RectangleShape;
-	using drawable = sf::Drawable;
-	using view = sf::View;
-	using rectf = sf::FloatRect;
-	using recti = sf::IntRect;
+	using font = sf::Font;
 	using color = sf::Color;
+
+	using view = sf::View;
+	using renderTexture = sf::RenderTexture;
+	using renderTarget = sf::RenderTarget;
 	using shader = sf::Shader;
-	using clock = sf::Clock;
 
 	// =============================================================================
 	// Math Constants

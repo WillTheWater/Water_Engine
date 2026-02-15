@@ -4,7 +4,7 @@
 // =============================================================================
 
 #include "Subsystem/GUISubsystem.h"
-#include "Framework/GameWindow.h"
+#include "Subsystem/WindowSubsystem.h"
 #include "UI/Cursor/CursorSubsystem.h"
 #include "UI/Widget/Widget.h"
 #include "Input/InputBinding.h"
@@ -42,7 +42,7 @@ namespace we
 
 	void GUISubsystem::Render()
 	{
-		list<shared<Widget>> Roots;
+		vector<shared<Widget>> Roots;
 		for (auto& Widget : Widgets)
 			if (Widget->IsVisible() && !Widget->GetParent())
 				Roots.push_back(Widget);
@@ -58,7 +58,7 @@ namespace we
 
 	shared<Widget> GUISubsystem::FindWidgetAt(const vec2f& WorldPoint) const
 	{
-		list<shared<Widget>> Roots;
+		vector<shared<Widget>> Roots;
 		for (auto& W : Widgets)
 		{
 			if (W->IsVisible() && !W->GetParent())
@@ -80,29 +80,29 @@ namespace we
 
 	void GUISubsystem::HandleEvent(const sf::Event::MouseMoved& Mouse)
 	{
-		vec2f MousePos = Window.mapPixelToCoords(Mouse.position);
+		//vec2f MousePos = Window.mapPixelToCoords(Mouse.position);
 
-		// If pressed widget wants capture, send moves to it
-		if (auto Pressed = PressedWidget.lock())
-		{
-			if (Pressed->ShouldCaptureMouse())
-			{
-				Pressed->OnMouseMoved(MousePos);
-				return;
-			}
-		}
+		//// If pressed widget wants capture, send moves to it
+		//if (auto Pressed = PressedWidget.lock())
+		//{
+		//	if (Pressed->ShouldCaptureMouse())
+		//	{
+		//		Pressed->OnMouseMoved(MousePos);
+		//		return;
+		//	}
+		//}
 
-		shared<Widget> NewHovered = FindWidgetAt(MousePos);
-		shared<Widget> OldHovered = HoveredWidget.lock();
+		//shared<Widget> NewHovered = FindWidgetAt(MousePos);
+		//shared<Widget> OldHovered = HoveredWidget.lock();
 
-		if (NewHovered != OldHovered)
-		{
-			if (OldHovered) OldHovered->OnMouseLeave();
-			if (NewHovered) NewHovered->OnMouseEnter();
-			HoveredWidget = NewHovered;
-		}
+		//if (NewHovered != OldHovered)
+		//{
+		//	if (OldHovered) OldHovered->OnMouseLeave();
+		//	if (NewHovered) NewHovered->OnMouseEnter();
+		//	HoveredWidget = NewHovered;
+		//}
 
-		if (NewHovered) NewHovered->OnMouseMoved(MousePos);
+		//if (NewHovered) NewHovered->OnMouseMoved(MousePos);
 	}
 
 	void GUISubsystem::HandleEvent(const sf::Event::MouseButtonPressed&)
@@ -143,6 +143,6 @@ namespace we
 
 	void GUISubsystem::EventToggleFullscreen()
 	{
-		Window.EventToggleBorderlessFullscreen();
+		//Window.EventToggleBorderlessFullscreen();
 	}
 }

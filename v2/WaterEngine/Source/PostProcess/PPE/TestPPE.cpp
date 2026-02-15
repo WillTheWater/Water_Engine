@@ -17,7 +17,7 @@ namespace we
 		VERIFY(TestShader != nullptr);
 	}
 
-	void PPETest::Apply(const sf::Texture& Input, sf::RenderTarget& Output)
+	void PPETest::Apply(const texture& Input, renderTarget& Output)
 	{
 		TestShader.get()->setUniform("Source", shader::CurrentTexture);
 		Output.draw(sprite(Input), TestShader.get());

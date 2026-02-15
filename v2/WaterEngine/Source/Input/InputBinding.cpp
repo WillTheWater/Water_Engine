@@ -9,8 +9,8 @@ namespace we
 {
     namespace Mapping
     {
-        const arr<int, 16> PlayStation = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9,10,11,16,17,18,19 };
-        const arr<int, 16> Xbox = { 2, 0, 1, 3, 4, 5,-1,-1, 6, 7, 8, 9,12, 13, 14, 15 };
+        const array<int, 16> PlayStation = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9,10,11,16,17,18,19 };
+        const array<int, 16> Xbox = { 2, 0, 1, 3, 4, 5,-1,-1, 6, 7, 8, 9,12, 13, 14, 15 };
 
         const int SonyVID = 0x054C;
         const int MicrosoftVID = 0x045E;

@@ -4,7 +4,7 @@
 // =============================================================================
 
 #include "UI/Widget/ProgressBar.h"
-#include "Framework/GameWindow.h"
+#include "Subsystem/WindowSubsystem.h"
 
 namespace we
 {
@@ -63,7 +63,7 @@ namespace we
 		if (Background)
 		{
 			Background->setPosition(Pos);
-			Window.draw(*Background);
+			//Window.draw(*Background);
 		}
 
 		if (Fill && Value > 0.f)
@@ -94,7 +94,7 @@ namespace we
 
 			Fill->setPosition(FillPos);
 			Fill->setSize(FillSize);
-			Window.draw(*Fill);
+			//Window.draw(*Fill);
 		}
 
 		Widget::Render(Window);

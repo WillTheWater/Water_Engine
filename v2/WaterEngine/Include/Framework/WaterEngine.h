@@ -26,16 +26,12 @@ namespace we
 		bool HasFocus() const;
 		void Shutdown();
 
-	public:
-		virtual void BeginPlay();
-		virtual void Tick(float DeltaTime);
-
 	private:
 		EngineSubsystem Subsystem;
 
 	private:
 		void PreConstruct();
-		void Configure();
+		void MountAssetDirectory();
 		void TickGame();
 
 		// These need to be removed
