@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "Utility/CoreMinimal.h"
+#include "Core/CoreMinimal.h
 #include "Interface/IAssetDirector.h"
 
 namespace we

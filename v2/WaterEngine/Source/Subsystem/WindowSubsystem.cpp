@@ -3,13 +3,13 @@
 // Copyright(C) 2026 Will The Water
 // =============================================================================
 
-#include "Framework/GameWindow.h"
+#include "Subsystem/WindowSubsystem.h"
 #include "EngineConfig.h"
 #include "Subsystem/ResourceSubsystem.h"
 
 namespace we
 {
-    GameWindow::GameWindow()
+    WindowSubsystem::WindowSubsystem()
         : WindowedPosition{ vec2i(sf::VideoMode::getDesktopMode().size.x / 4, sf::VideoMode::getDesktopMode().size.y / 4) }
         , bIsFullscreen{ EC.FullscreenMode }
     {
@@ -19,7 +19,7 @@ namespace we
         CreateGameWindow(mode, style, state);
     }
 
-    void GameWindow::onResize()
+    void WindowSubsystem::onResize()
     {
         const vec2f TargetRes = vec2f(EC.AspectRatio);
         const float TargetRatio = TargetRes.x / TargetRes.y;
@@ -44,13 +44,13 @@ namespace we
         }
     }
 
-    void GameWindow::CreateGameWindow(const sf::VideoMode& Mode, uint Style, sf::State State)
+    void WindowSubsystem::CreateGameWindow(const sf::VideoMode& Mode, uint Style, sf::State State)
     {
         create(Mode, EC.WindowName, Style, State);
         ApplyWindowSettings();
     }
 
-    void GameWindow::ApplyWindowSettings()
+    void WindowSubsystem::ApplyWindowSettings()
     {
         SetWindowIcon();
         setKeyRepeatEnabled(EC.EnableKeyRepeat);
@@ -67,14 +67,14 @@ namespace we
         }
     }
 
-    void GameWindow::SetWindowIcon()
+    void WindowSubsystem::SetWindowIcon()
     {
         auto IconTexture = Asset().LoadTexture(EC.WindowIcon);
         const auto& Image = IconTexture->copyToImage();
         setIcon(Image);
     }
 
-    void GameWindow::EventToggleBorderlessFullscreen()
+    void WindowSubsystem::EventToggleBorderlessFullscreen()
     {
         bIsFullscreen = !bIsFullscreen;
 
@@ -93,53 +93,53 @@ namespace we
         EventWindowResized();
     }
 
-    void GameWindow::EventWindowClose()
+    void WindowSubsystem::EventWindowClose()
     {
         close();
     }
 
-    void GameWindow::EventWindowResized()
+    void WindowSubsystem::EventWindowResized()
     {
         OnResize.Broadcast(getSize());
     }
 
-    void GameWindow::EventWindowFocusLost()
+    void WindowSubsystem::EventWindowFocusLost()
     {
     }
 
-    void GameWindow::EventWindowFocusGained()
+    void WindowSubsystem::EventWindowFocusGained()
     {
     }
 
-    void GameWindow::EventJoypadConnected()
+    void WindowSubsystem::EventJoypadConnected()
     {
     }
 
-    void GameWindow::EventJoypadDisconnected()
+    void WindowSubsystem::EventJoypadDisconnected()
     {
     }
 
-    void GameWindow::EventJoypadButtonPressed()
+    void WindowSubsystem::EventJoypadButtonPressed()
     {
     }
 
-    void GameWindow::EventJoypadButtonReleased()
+    void WindowSubsystem::EventJoypadButtonReleased()
     {
     }
 
-    void GameWindow::EventKeyPressed()
+    void WindowSubsystem::EventKeyPressed()
     {
     }
 
-    void GameWindow::EventKeyReleased()
+    void WindowSubsystem::EventKeyReleased()
     {
     }
 
-    void GameWindow::EventMouseButtonPressed()
+    void WindowSubsystem::EventMouseButtonPressed()
     {
     }
 
-    void GameWindow::EventMouseButtonReleased()
+    void WindowSubsystem::EventMouseButtonReleased()
     {
     }
 }

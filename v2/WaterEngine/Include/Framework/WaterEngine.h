@@ -5,9 +5,8 @@
 
 #pragma once
 
-#include "Utility/CoreMinimal.h"
+#include "Core/CoreMinimal.h"
 #include "Framework/EngineSubsystem.h"
-#include "Framework/GameWindow.h"
 
 namespace we
 {

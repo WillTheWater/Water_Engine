@@ -7,20 +7,15 @@
 
 #include <sfml/Graphics.hpp>
 
-#include "Utility/CoreMinimal.h"
+#include "Core/CoreMinimal.h"
 #include "Framework/GameWindowEventHandler.h"
-#include "Subsystem/GUISubsystem.h"
-#include "Utility/Delegate.h"
 
 namespace we
 {
-	class GameWindow : public sf::RenderWindow
+	class WindowSubsystem : public sf::RenderWindow
 	{
 	public:
-		GameWindow();
-
-	public:
-		Delegate<vec2u> OnResize;
+		WindowSubsystem();
 
 	protected:
 		void onResize() override;
@@ -31,7 +26,6 @@ namespace we
 
 	private:
 		friend GameWindowEventHandler;
-		friend GUISubsystem;
 
 		void ApplyWindowSettings();
 		void CreateGameWindow(const sf::VideoMode& Mode, uint Style, sf::State State = sf::State::Windowed);

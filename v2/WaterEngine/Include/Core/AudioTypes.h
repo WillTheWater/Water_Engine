@@ -5,9 +5,9 @@
 
 #pragma once
 
-#include "Core/CoreMinimal.h
+#include <SFML/Audio.hpp>
 
-enum InputActions
+namespace we
 {
-	ACTION_TOGGLE_PAUSE
-};
+	using soundBuffer = sf::SoundBuffer;
+}

@@ -5,9 +5,13 @@
 
 #pragma once
 
-#include "Utility/CoreMinimal.h"
-#include "Subsystem/TimerSubsystem.h"
+#include "Core/CoreMinimal.h"
+
+#include "Subsystem/WindowSubsystem.h"
 #include "Subsystem/RenderSubsystem.h"
+
+
+#include "Subsystem/TimerSubsystem.h"
 #include "Subsystem/SaveLoadSubsystem.h"
 #include "Subsystem/AudioSubsystem.h"
 #include "Subsystem/InputSubsystem.h"
@@ -20,8 +24,12 @@ namespace we
 {
 	struct EngineSubsystem
 	{
-		unique<TimerSubsystem> Time;
+		unique<WindowSubsystem> Window;
 		unique<RenderSubsystem> Render;
+
+
+
+		unique<TimerSubsystem> Time;
 		unique<SaveLoadSubsystem> SaveLoad;
 		unique<AudioSubsystem> Audio;
 		unique<InputSubsystem> Input;

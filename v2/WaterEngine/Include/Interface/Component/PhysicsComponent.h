@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "Utility/CoreMinimal.h"
+#include "Core/CoreMinimal.h
 #include "Interface/Component/IPhysicsComponent.h"
 #include "Subsystem/PhysicsSubsystem.h"
 

@@ -5,9 +5,9 @@
 
 #pragma once
 
-#include "Core/CoreMinimal.h
+#include <nlohmann/json.hpp>
 
-enum InputActions
+namespace we
 {
-	ACTION_TOGGLE_PAUSE
-};
+	using json = nlohmann::json;
+}

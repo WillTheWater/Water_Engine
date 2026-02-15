@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "Utility/CoreMinimal.h"
+#include "Core/CoreMinimal.h
 
 #include <SFML/System/Vector2.hpp>
 #include <SFML/System/Angle.hpp>

@@ -3,8 +3,9 @@
 // Copyright(C) 2026 Will The Water
 // =============================================================================
 
-#include "EngineConfig.h"
 #include "Framework/WaterEngine.h"
+
+#include "EngineConfig.h"
 #include "AssetDirectory/PakDirectory.h"
 #include "Subsystem/ResourceSubsystem.h"
 #include "Subsystem/PhysicsSubsystem.h"
@@ -29,6 +30,8 @@ namespace we
     void WaterEngine::PreConstruct()
     {
         // Build All Subsystems
+        Subsystem.Window = make_unique<WindowSubsystem>();
+
 
         Subsystem.Time = make_unique<TimerSubsystem>();
         Subsystem.Render = make_unique<RenderSubsystem>();

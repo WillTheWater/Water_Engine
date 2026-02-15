@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "Utility/CoreMinimal.h"
+#include "Core/CoreMinimal.h
 #include "Utility/Delegate.h"
 #include "Interface/IGameStateToken.h"
 

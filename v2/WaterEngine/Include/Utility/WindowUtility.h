@@ -4,7 +4,7 @@
 // =============================================================================
 
 #pragma once
-#include "Utility/CoreMinimal.h"
+#include "Core/CoreMinimal.h
 #include "EngineConfig.h"
 
 namespace we
