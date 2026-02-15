@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "Utility/CoreMinimal.h"
+#include "Core/CoreMinimal.h"
 #include "UI/Widget/Widget.h"
 
 namespace we
@@ -14,7 +14,7 @@ namespace we
 	{
 	public:
 		GridBox(EngineSubsystem& Subsystem,
-			const list<shared<Widget>>& InChildren,
+			const vector<shared<Widget>>& InChildren,
 			uint Columns = 2,
 			float Padding = 10.f,
 			Anchor InTargetAnchor = Anchor::TopLeft,

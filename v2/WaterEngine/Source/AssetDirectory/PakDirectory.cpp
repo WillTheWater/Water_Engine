@@ -48,7 +48,7 @@ namespace we
 		return PHYSFS_exists(Path.data()) != 0;
 	}
 
-	bool PakDirectory::ReadFile(stringView Path, list<uint8>& OutData) const
+	bool PakDirectory::ReadFile(stringView Path, vector<uint8>& OutData) const
 	{
 		// Open the file for reading from the virtual filesystem.
 		PHYSFS_File* File = PHYSFS_openRead(Path.data());

@@ -5,13 +5,11 @@
 
 #pragma once
 
-#include "Utility/CoreMinimal.h"
-#include <sfml/System/Clock.hpp>
-#include <sfml/System/Time.hpp>
+#include "Core/CoreMinimal.h"
 
 namespace we
 {
-	class TimerSubsystem
+	class TimeSubsystem
 	{
 	public:
 		float GetDeltaTime() const;

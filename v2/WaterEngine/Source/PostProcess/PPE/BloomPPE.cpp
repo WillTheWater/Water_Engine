@@ -28,7 +28,7 @@ namespace we
 		}
 	}
 
-	void BloomPPE::Apply(const sf::Texture& Input, sf::RenderTarget& Output)
+	void BloomPPE::Apply(const texture& Input, renderTarget& Output)
 	{
 		// 1. DownSample
 		DownSample.get()->setUniform("Source", Input);

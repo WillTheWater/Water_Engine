@@ -5,7 +5,7 @@
 
 #include "EngineConfig.h"
 #include "EngineConfigData.h"
-#include <nlohmann/json.hpp>
+#include "Core/JsonTypes.h"
 
 namespace we
 {
@@ -15,33 +15,40 @@ namespace we
         json Config = json::parse(EMBEDDED_ENGINE_CONFIG);
 
         AssetDirectory = Config["AssetDirectory"];
+
         WindowSize = { Config["WindowSize"][0], Config["WindowSize"][1] };
         AspectRatio = { Config["AspectRatio"][0], Config["AspectRatio"][1] };
         WindowMinimumSize = { Config["WindowMinimumSize"][0], Config["WindowMinimumSize"][1] };
-        TargetFPS = Config["TargetFPS"];
+        WindowIcon = Config["WindowIcon"];
+        WindowName = Config["WindowName"];
+        EnableKeyRepeat = Config["EnableKeyRepeat"];
+        
+        DefaultCursor = Config["DefaultCursor"];
+        DefaultCursorSize = { Config["DefaultCursorSize"][0], Config["DefaultCursorSize"][1] };
+        DefaultFont = Config["DefaultFont"];
+
         VsyncEnabled = Config["VsyncEnabled"];
+        TargetFPS = Config["TargetFPS"];
+        MaxDeltaTime = sf::seconds(Config["MaxDeltaTime"]);
         FullscreenMode = Config["FullscreenMode"];
         SetRenderSmooth = Config["SetRenderSmooth"];
-        WindowName = Config["WindowName"];
         DisableSFMLLogs = Config["DisableSFMLLogs"];
-        MaxDeltaTime = sf::seconds(Config["MaxDeltaTime"]);
-        WindowIcon = Config["WindowIcon"];
-        DefaultBackground = Config["DefaultBackground"];
-        DefaultCursor = Config["DefaultCursor"];
-        StartupGlobalVolume = Config["StartupGlobalVolume"];
-        EnableKeyRepeat = Config["EnableKeyRepeat"];
-        DefaultCursorSize = { Config["DefaultCursorSize"][0], Config["DefaultCursorSize"][1] };
-        DefaultCursorSpeed = Config["DefaultCursorSpeed"];
+        MaxSFXStack = Config["MaxSFXStack"];
+
         JoystickDeadzone = Config["JoystickDeadzone"];
+        DefaultCursorSpeed = Config["DefaultCursorSpeed"];
+        
+        DefaultGravity = { Config["DefaultGravity"][0], Config["DefaultGravity"][1] };
+        
+       /* DefaultBackground = Config["DefaultBackground"];
+        StartupGlobalVolume = Config["StartupGlobalVolume"];
         DefaultTitleFont = Config["DefaultTitleFont"];
-        DefaultFont = Config["DefaultFont"];
         DefaultPanel = Config["DefaultPanel"];
         DefaultButton = Config["DefaultButton"];
         DefaultMusic = Config["DefaultMusic"];
         DefaultAmbient = Config["DefaultAmbient"];
         DefaultButtonHoverSound = Config["DefaultButtonHoverSound"];
         DefaultButtonClickSound = Config["DefaultButtonClickSound"];
-        MaxSFXStack = Config["MaxSFXStack"];
         LevelOneBackground = Config["LevelOneBackground"];
         CharacterSheetIdle = Config["CharacterSheetIdle"];
         CharacterSheetWalk = Config["CharacterSheetWalk"];
@@ -49,6 +56,6 @@ namespace we
         Footstep2 = Config["Footstep2"];
         Footstep3 = Config["Footstep3"];
         Footstep4 = Config["Footstep4"];
-        DefaultGravity = { Config["DefaultGravity"][0], Config["DefaultGravity"][1] };
+        */
     }
 }

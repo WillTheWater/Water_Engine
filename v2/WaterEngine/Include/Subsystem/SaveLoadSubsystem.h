@@ -5,9 +5,9 @@
 
 #pragma once
 
-#include "Utility/CoreMinimal.h"
+#include "Core/CoreMinimal.h"
+#include "Core/JsonTypes.h"
 
-#include <nlohmann/json.hpp>
 
 namespace we
 {

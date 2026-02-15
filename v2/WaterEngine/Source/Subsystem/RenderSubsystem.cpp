@@ -32,10 +32,10 @@ namespace we
 			VERIFY(PostProcessTarget.resize(vec2u(EC.WindowSize)));
 
 			// PPE Effects applied to every frame
-			//PostProcessEffects.emplace_back(make_unique<PPETest>());
-			//PostProcessEffects.emplace_back(make_unique<TimePPETest>());
-			//PostProcessEffects.emplace_back(make_unique<EmbeddedPPETest>());
-			PostProcessEffects.emplace_back(make_unique<BloomPPE>());
+			/*PostProcessEffects.emplace_back(make_unique<PPETest>());
+			PostProcessEffects.emplace_back(make_unique<TimePPETest>());
+			PostProcessEffects.emplace_back(make_unique<EmbeddedPPETest>());
+			PostProcessEffects.emplace_back(make_unique<BloomPPE>());*/
 		}
 	}
 

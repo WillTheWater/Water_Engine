@@ -52,15 +52,19 @@ set(WATER_ENGINE_HEADERS
 
     Include/Framework/WaterEngine.h
     Include/Framework/EngineSubsystem.h
-    Include/Framework/GameWindow.h
-    Include/Framework/GameWindowEventHandler.h
+    "Include/Framework/EventHandling/GameWindowEventHandler.h"
+    
+    Include/Core/CoreMinimal.h
+    Include/Core/JsonTypes.h
+    Include/Core/AudioTypes.h
 
     Include/Framework/World/World.h    
     Include/Framework/World/Object/Object.h
     Include/Framework/World/Actor/Actor.h
 
+    Include/Subsystem/WindowSubsystem.h
     Include/Subsystem/AsyncResourceSubsystem.h
-    Include/Subsystem/TimerSubsystem.h
+    "Include/Subsystem/TimeSubsystem.h"
     Include/Subsystem/RenderSubsystem.h
     Include/Subsystem/SaveLoadSubsystem.h
     Include/Subsystem/ResourceSubsystem.h
@@ -97,6 +101,7 @@ set(WATER_ENGINE_HEADERS
     Include/Input/InputEventHandler.h
 
     Include/AssetDirectory/PakDirectory.h
+    
 
     Include/Interface/IAssetDirector.h
     Include/Interface/IGameStateToken.h
@@ -106,7 +111,6 @@ set(WATER_ENGINE_HEADERS
     Include/Interface/Component/PhysicsComponent.h
     
     Include/Utility/WindowUtility.h
-    Include/Utility/CoreMinimal.h
     Include/Utility/Log.h
     Include/Utility/RandomGenerator.h
     Include/Utility/Assert.h
@@ -119,16 +123,16 @@ set(WATER_ENGINE_SOURCES
     Source/EngineConfig.cpp
 	
     Source/Framework/WaterEngine.cpp
-    Source/Framework/GameWindow.cpp
-    Source/Framework/GameWindowEventHandler.cpp
+    "Source/Framework/EventHandling/GameWindowEventHandler.cpp"
 
     Source/Framework/World/World.cpp
     
     Source/Framework/World/Object/Object.cpp
     Source/Framework/World/Actor/Actor.cpp
 
+    Source/Subsystem/WindowSubsystem.cpp
     Source/Subsystem/AsyncResourceSubsystem.cpp
-    Source/Subsystem/TimerSubsystem.cpp
+    "Source/Subsystem/TimeSubsystem.cpp"
     Source/Subsystem/RenderSubsystem.cpp
     Source/Subsystem/SaveLoadSubsystem.cpp
     Source/Subsystem/ResourceSubsystem.cpp
@@ -173,6 +177,14 @@ set(WATER_ENGINE_SOURCES
 add_library(${WATER_ENGINE} STATIC
     ${WATER_ENGINE_SOURCES}
     ${WATER_ENGINE_HEADERS}
+)
+
+# =============================================================================
+# Precompiled Headers (PCH)
+# =============================================================================
+# This speeds up build times by pre-compiling CoreMinimal.h once
+target_precompile_headers(${PROJECT_NAME} PRIVATE 
+    "$<$<COMPILE_LANGUAGE:CXX>:${CMAKE_CURRENT_SOURCE_DIR}/Include/Core/CoreMinimal.h>"
 )
 
 # =============================================================================

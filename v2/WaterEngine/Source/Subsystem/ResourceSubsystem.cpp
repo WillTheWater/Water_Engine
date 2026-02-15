@@ -8,15 +8,15 @@
 
 namespace we
 {
-    MusicMemoryStream::MusicMemoryStream(shared<list<uint8>> InData)
+    MusicMemoryStream::MusicMemoryStream(shared<vector<uint8>> InData)
         : Data(std::move(InData)), Pos(0)
     {
     }
 
-    std::optional<usize> MusicMemoryStream::read(void* data, usize size)
+    std::optional<ulong> MusicMemoryStream::read(void* data, ulong size)
     {
-        usize Available = Data->size() - Pos;
-        usize ToRead = (size < Available) ? size : Available;
+        ulong Available = Data->size() - Pos;
+        ulong ToRead = (size < Available) ? size : Available;
         if (ToRead > 0)
         {
             std::memcpy(data, Data->data() + Pos, ToRead);
@@ -25,18 +25,18 @@ namespace we
         return ToRead;
     }
 
-    std::optional<usize> MusicMemoryStream::seek(usize position)
+    std::optional<ulong> MusicMemoryStream::seek(ulong position)
     {
         Pos = (position > Data->size()) ? Data->size() : position;
         return Pos;
     }
 
-    std::optional<usize> MusicMemoryStream::tell()
+    std::optional<ulong> MusicMemoryStream::tell()
     {
         return Pos;
     }
 
-    std::optional<usize> MusicMemoryStream::getSize()
+    std::optional<ulong> MusicMemoryStream::getSize()
     {
         return Data->size();
     }
@@ -81,7 +81,7 @@ namespace we
             return nullptr;
         }
 
-        list<uint8> FileData;
+        vector<uint8> FileData;
         if (!AssetDirectory->ReadFile(Path, FileData))
         {
             ERROR("Failed to read: {}", Path);
@@ -102,7 +102,7 @@ namespace we
     shared<texture> ResourceSubsystem::LoadTexture(const string& Path)
     {
         return Load<texture>(Path, Textures,
-            [](texture& Tex, const list<uint8>& Data) {
+            [](texture& Tex, const vector<uint8>& Data) {
                 return Tex.loadFromMemory(Data.data(), Data.size());
             });
     }
@@ -118,10 +118,10 @@ namespace we
         {
             if (!AssetDirectory) return nullptr;
 
-            list<uint8> FileData;
+            vector<uint8> FileData;
             if (!AssetDirectory->ReadFile(Path, FileData)) return nullptr;
 
-            list<uint8> Buffer(FileData.begin(), FileData.end());
+            vector<uint8> Buffer(FileData.begin(), FileData.end());
             DataIt = FontData.emplace(Path, std::move(Buffer)).first;
         }
 
@@ -139,12 +139,12 @@ namespace we
     shared<soundBuffer> ResourceSubsystem::LoadSound(const string& Path)
     {
         return Load<soundBuffer>(Path, Sounds,
-            [](soundBuffer& Snd, const list<uint8>& Data) {
+            [](soundBuffer& Snd, const vector<uint8>& Data) {
                 return Snd.loadFromMemory(Data.data(), Data.size());
             });
     }
 
-    shared<sf::Music> ResourceSubsystem::LoadMusic(const string& Path)
+    shared<music> ResourceSubsystem::LoadMusic(const string& Path)
     {
         auto It = MusicData.find(Path);
         if (It == MusicData.end())
@@ -155,19 +155,19 @@ namespace we
                 return nullptr;
             }
 
-            list<uint8> FileData;
+            vector<uint8> FileData;
             if (!AssetDirectory->ReadFile(Path, FileData))
             {
                 ERROR("Failed to read music: {}", Path);
                 return nullptr;
             }
 
-            auto DataPtr = make_shared<list<uint8>>(std::move(FileData));
+            auto DataPtr = make_shared<vector<uint8>>(std::move(FileData));
             It = MusicData.emplace(Path, DataPtr).first;
         }
 
         auto Stream = make_shared<MusicMemoryStream>(It->second);
-        auto Music = make_shared<sf::Music>();
+        auto Music = make_shared<music>();
 
         if (!Music->openFromStream(*Stream))
         {
@@ -183,7 +183,7 @@ namespace we
     {
         if (!AssetDirectory) return nullptr;
 
-        list<uint8> Data;
+        vector<uint8> Data;
         if (!AssetDirectory->ReadFile(Path, Data)) return nullptr;
 
         string Source(Data.begin(), Data.end());

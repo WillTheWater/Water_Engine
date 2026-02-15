@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "Utility/CoreMinimal.h"
+#include "Core/CoreMinimal.h"
 #include "PostProcess/IPostProcess.h"
 
 namespace we
@@ -24,7 +24,7 @@ namespace we
 	private:
 		renderTexture RenderTarget;
 		renderTexture PostProcessTarget;
-		list<unique<IPostProcess>> PostProcessEffects;
+		vector<unique<IPostProcess>> PostProcessEffects;
 
 	private:
 		friend class WaterEngine;

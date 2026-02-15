@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "Utility/CoreMinimal.h"
+#include "Core/CoreMinimal.h"
 
 namespace we
 {
@@ -18,6 +18,6 @@ namespace we
 		virtual bool Exists(stringView Path) const = 0;
 
 		// Loads entire file into memory
-		virtual bool ReadFile(stringView Path, list<uint8>& OutData) const = 0;
+		virtual bool ReadFile(stringView Path, vector<uint8>& OutData) const = 0;
 	};
 }

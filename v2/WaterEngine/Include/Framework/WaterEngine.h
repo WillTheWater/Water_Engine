@@ -5,9 +5,8 @@
 
 #pragma once
 
-#include "Utility/CoreMinimal.h"
+#include "Core/CoreMinimal.h"
 #include "Framework/EngineSubsystem.h"
-#include "Framework/GameWindow.h"
 
 namespace we
 {
@@ -19,29 +18,23 @@ namespace we
 
 		void Run();
 		void ProcessEvents();
-		void Render();
+		void Update();
 		void PostUpdate();
 
+	public:
 		bool IsRunning() const;
 		bool HasFocus() const;
-		void Quit();
+		void Shutdown();
 
-	public:
-		virtual void BeginPlay();
-		virtual void Tick(float DeltaTime);
-
-	protected:
+	private:
 		EngineSubsystem Subsystem;
 
 	private:
-		unique<GameWindow> Window;
-		bool bExitRequested;
-		bool bHasBegunPlay;
-
-	private:
+		void PreConstruct();
+		void MountAssetDirectory();
 		void TickGame();
-		void Configure();
-		void Construct();
+
+		// These need to be removed
 		void WindowInit();
 		void ConstrainRender(vec2u NewSize);
 	};

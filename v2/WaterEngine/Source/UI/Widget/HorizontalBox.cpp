@@ -5,7 +5,7 @@
 
 #include "UI/Widget/Button.h"
 #include "Framework/EngineSubsystem.h"
-#include "Framework/GameWindow.h"
+#include "Subsystem/WindowSubsystem.h"
 #include "Subsystem/ResourceSubsystem.h"
 #include "UI/Cursor/CursorSubsystem.h"
 #include "Utility/Log.h"
@@ -15,7 +15,7 @@ namespace we
 {
 	HorizontalBox::HorizontalBox(
 		EngineSubsystem& Subsystem,
-		const list<shared<Widget>>& InChildren,
+		const vector<shared<Widget>>& InChildren,
 		float Padding,
 		Anchor InTargetAnchor,
 		Anchor InWidgetAnchor,

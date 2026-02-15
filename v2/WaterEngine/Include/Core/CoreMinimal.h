@@ -26,14 +26,12 @@
 // =============================================================================
 // Third Party
 // =============================================================================
-#include <nlohmann/json.hpp>
 #include <sfml/Graphics.hpp>
 #include <SFML/Graphics/Shader.hpp>
 #include <SFML/System/Vector2.hpp>
 #include <SFML/System/Vector3.hpp>
 #include <SFML/System/Angle.hpp>
 #include <SFML/System/Clock.hpp>
-#include <SFML/Audio.hpp>
 
 // =============================================================================
 // Core Types
@@ -45,12 +43,11 @@ namespace we
 	using stringView = std::string_view;
 	using filestream = std::fstream;
 	using outstream = std::ofstream;
-	using json = nlohmann::json;
 
 	using uint8 = unsigned char;
 	using uint = std::uint32_t;
 	using int64 = std::int64_t;
-	using usize = std::size_t;
+	using ulong = std::size_t;
 
 	// ----- Math Types -----
 	template<typename T>
@@ -60,25 +57,27 @@ namespace we
 	using vec2i = sf::Vector2i;
 	using vec2u = sf::Vector2u;
 	using vec3f = sf::Vector3f;
+	using rectf = sf::FloatRect;
+	using recti = sf::IntRect;
 	using angle = sf::Angle;
+	using clock = sf::Clock;
+	using time = sf::Time;
 
 	// ----- SFML Graphics Types -----
+	using drawable = sf::Drawable;
 	using sprite = sf::Sprite;
 	using texture = sf::Texture;
 	using image = sf::Image;
-	using font = sf::Font;
-	using soundBuffer = sf::SoundBuffer;
-	using renderTexture = sf::RenderTexture;
+	using rectangle = sf::RectangleShape;
 	using circle = sf::CircleShape;
 	using shape = sf::Shape;
-	using rectangle = sf::RectangleShape;
-	using drawable = sf::Drawable;
-	using view = sf::View;
-	using rectf = sf::FloatRect;
-	using recti = sf::IntRect;
+	using font = sf::Font;
 	using color = sf::Color;
+
+	using view = sf::View;
+	using renderTexture = sf::RenderTexture;
+	using renderTarget = sf::RenderTarget;
 	using shader = sf::Shader;
-	using clock = sf::Clock;
 
 	// =============================================================================
 	// Math Constants
@@ -125,10 +124,10 @@ namespace we
 	using optional = std::optional<T>;
 
 	template<typename T, std::size_t N>
-	using arr = std::array<T, N>;
+	using array = std::array<T, N>;
 
 	template<typename T>
-	using list = std::vector<T>;
+	using vector = std::vector<T>;
 
 	template<typename T>
 	using set = std::unordered_set<T>;

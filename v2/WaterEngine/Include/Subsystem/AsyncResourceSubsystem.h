@@ -5,7 +5,8 @@
 
 #pragma once
 
-#include "Utility/CoreMinimal.h"
+#include "Core/CoreMinimal.h"
+#include "Core/AudioTypes.h"
 #include "Interface/IAssetDirector.h"
 
 #include <thread>
@@ -81,7 +82,7 @@ namespace we
     class AssetRequest : public IAsyncAssetRequest
     {
     public:
-        using LoadFunc = std::function<bool(T&, const list<uint8>&)>;
+        using LoadFunc = std::function<bool(T&, const vector<uint8>&)>;
         using FinalizeFunc = std::function<void(shared<T>)>;
 
         AssetRequest(string Path, AssetPriority Priority, AssetHandle<T> Handle, LoadFunc Loader, FinalizeFunc Finalizer)
@@ -93,7 +94,7 @@ namespace we
 
         void Load(shared<IAssetDirector> AssetDir) override
         {
-            list<uint8> FileData;
+            vector<uint8> FileData;
             if (!AssetDir || !AssetDir->ReadFile(Path, FileData))
             {
                 bComplete = true;
@@ -136,7 +137,7 @@ namespace we
         LoadFunc Loader;
         FinalizeFunc Finalizer;
 
-        list<uint8> LoadedData;
+        vector<uint8> LoadedData;
         bool bComplete;
         bool bSuccess;
     };
@@ -174,7 +175,7 @@ namespace we
 
         template<typename T>
         AssetHandle<T> LoadAsyncInternal(const string& Path, AssetPriority Priority,
-            std::function<bool(T&, const list<uint8>&)> Loader);
+            std::function<bool(T&, const vector<uint8>&)> Loader);
 
     private:
         shared<IAssetDirector> AssetDirectory;
@@ -184,12 +185,12 @@ namespace we
         bool bRunning;
 
         // Job queue (loader thread consumes)
-        list<unique<IAsyncAssetRequest>> PendingRequests;
+        vector<unique<IAsyncAssetRequest>> PendingRequests;
         std::mutex PendingMutex;
         std::condition_variable PendingCV;
 
         // Completion queue (main thread finalizes)
-        list<unique<IAsyncAssetRequest>> CompletedRequests;
+        vector<unique<IAsyncAssetRequest>> CompletedRequests;
         std::mutex CompletedMutex;
 
         // Caches - shared_ptr keeps assets alive while handles exist

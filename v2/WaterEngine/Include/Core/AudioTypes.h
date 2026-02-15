@@ -4,12 +4,12 @@
 // =============================================================================
 
 #pragma once
-#include "Core/CoreMinimal.h"
+
+#include <SFML/Audio.hpp>
 
 namespace we
 {
-	constexpr uint LAYER_BACKGROUND = 0;
-	constexpr uint LAYER_GAME_UI = 10;
-	constexpr uint LAYER_PAUSE_MENU = 100;
-	constexpr uint LAYER_CURSOR = 1000;
+	using soundBuffer = sf::SoundBuffer;
+	using music = sf::Music;
+	using sound = sf::Sound;
 }

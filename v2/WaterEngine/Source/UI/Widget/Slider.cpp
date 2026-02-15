@@ -1,5 +1,5 @@
 #include "UI/Widget/Slider.h"
-#include "Framework/GameWindow.h"
+#include "Subsystem/WindowSubsystem.h"
 #include "Framework/EngineSubsystem.h"
 
 namespace we
@@ -42,7 +42,7 @@ namespace we
 		if (Track)
 		{
 			Track->setPosition(Pos);
-			Window.draw(*Track);
+			//Window.draw(*Track);
 		}
 
 		if (Thumb)
@@ -51,7 +51,7 @@ namespace we
 			float ThumbCenterY = TrackSize.y * 0.5f;
 
 			Thumb->setPosition(Pos + vec2f{ ThumbCenterX, ThumbCenterY });
-			Window.draw(*Thumb);
+			//Window.draw(*Thumb);
 		}
 
 		Widget::Render(Window);
@@ -71,7 +71,7 @@ namespace we
 
 	bool Slider::OnMouseButtonPressed()
 	{
-		vec2f MousePos = Subsystem.Cursor->GetPosition();
+		/*vec2f MousePos = Subsystem.Cursor->GetPosition();
 		vec2f TrackPos = GetWorldPosition();
 
 		if (MousePos.x < TrackPos.x || MousePos.x > TrackPos.x + TrackSize.x ||
@@ -84,7 +84,7 @@ namespace we
 		float MaxX = TrackSize.x - ThumbSize.x;
 		SetValue(LocalX / MaxX);
 
-		UpdateVisualState();
+		UpdateVisualState();*/
 		return true;
 	}
 

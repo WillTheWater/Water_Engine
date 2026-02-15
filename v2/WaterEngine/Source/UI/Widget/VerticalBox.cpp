@@ -5,13 +5,13 @@
 
 #include "UI/Widget/VerticalBox.h"
 #include "Framework/EngineSubsystem.h"
-#include "Framework/GameWindow.h"
+#include "Subsystem/WindowSubsystem.h"
 
 namespace we
 {
 	VerticalBox::VerticalBox(
 		EngineSubsystem& Subsystem,
-		const list<shared<Widget>>& InChildren,
+		const vector<shared<Widget>>& InChildren,
 		float Padding,
 		Anchor InTargetAnchor,
 		Anchor InWidgetAnchor,

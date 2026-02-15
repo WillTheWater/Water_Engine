@@ -5,6 +5,7 @@
 
 #pragma once
 
+#include "Core/CoreMinimal.h"
 #include "UI/Widget/Widget.h"
 #include "Framework/EngineSubsystem.h"
 #include <SFML/Graphics/RectangleShape.hpp>
