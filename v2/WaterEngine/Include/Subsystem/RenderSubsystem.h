@@ -51,10 +51,10 @@ namespace we
         friend class WaterEngine;
 
         void ApplyRenderView();
-        void ProcessPostEffects(renderTexture* Input, renderTexture* Output, vector<unique<IPostProcess>>& Effects);
         void CompositeLayers();
         void Initialize();
         void StartRender();
+        renderTexture* ProcessPostEffects(renderTexture* Input, renderTexture* Output, vector<unique<IPostProcess>>& Effects);
         renderTexture* GetTargetForLayer(ERenderLayer Layer);
 
     private:

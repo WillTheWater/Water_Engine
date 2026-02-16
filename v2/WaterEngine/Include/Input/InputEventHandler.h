@@ -11,18 +11,15 @@
 namespace we
 {
 	class InputSubsystem;
-	class CursorSubsystem;
 
 	struct InputEventHandler
 	{
-		InputEventHandler(InputSubsystem& InInput, CursorSubsystem& InCursor)
+		InputEventHandler(InputSubsystem& InInput)
 			: Input{ InInput }
-			, Cursor{ InCursor }
 		{
 		}
 
 		InputSubsystem& Input;
-		CursorSubsystem& Cursor;
 
 		void operator()(const sf::Event::JoystickConnected&);
 		void operator()(const sf::Event::JoystickDisconnected&);

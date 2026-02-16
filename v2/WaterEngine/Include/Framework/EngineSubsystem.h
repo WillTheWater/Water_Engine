@@ -28,12 +28,12 @@ namespace we
 		unique<RenderSubsystem> Render;
 		unique<TimeSubsystem> Time;
 		unique<CursorSubsystem> Cursor;
+		unique<InputSubsystem> Input;
 
 
 
 		// unique<SaveLoadSubsystem> SaveLoad;
 		// unique<AudioSubsystem> Audio;
-		// unique<InputSubsystem> Input;
 		// unique<WorldSubsystem> World;
 		// unique<GameStateSubsystem> GameState;
 		// unique<GUISubsystem> GUI;

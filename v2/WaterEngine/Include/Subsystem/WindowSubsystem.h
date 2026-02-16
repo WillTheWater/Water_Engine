@@ -17,7 +17,9 @@ namespace we
 	public:
 		WindowSubsystem();
 
+		void HandleEvent(const sf::Event& Event);
 		view GetConstrainedView() const;
+		vec2f GetMousePosition() const;
 
 	protected:
 		void onResize() override;

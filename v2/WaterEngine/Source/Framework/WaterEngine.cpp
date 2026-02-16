@@ -30,17 +30,17 @@ namespace we
     {
         MountAssetDirectory();
         // Build All Subsystems
-        Subsystem.Window = make_unique<WindowSubsystem>();
-        Subsystem.Render = make_unique<RenderSubsystem>();
-        Subsystem.Time   = make_unique<TimeSubsystem>();
-
+        Subsystem.Window   = make_unique<WindowSubsystem>();
+        Subsystem.Render   = make_unique<RenderSubsystem>();
+        Subsystem.Time     = make_unique<TimeSubsystem>();
+        Subsystem.Cursor   = make_unique<CursorSubsystem>();
+        Subsystem.Input    = make_unique<InputSubsystem>();
 
         /*Subsystem.SaveLoad = make_unique<SaveLoadSubsystem>();
         Subsystem.Audio = make_unique<AudioSubsystem>();
 
         WindowInit();
 
-        Subsystem.Input = make_unique<InputSubsystem>(*Subsystem.Cursor);
         Subsystem.World = make_unique<WorldSubsystem>(Subsystem);
         Subsystem.GameState = make_unique<GameStateSubsystem>();
         
@@ -59,7 +59,7 @@ namespace we
 
     void WaterEngine::TickGame()
     {
-        //float DeltaTime = Subsystem.Time->GetDeltaTime();
+        float DeltaTime = Subsystem.Time->GetDeltaTime();
 
         //if (Subsystem.GameState->IsTransitionPending())
         //{
@@ -67,7 +67,7 @@ namespace we
         //}
 
         //TimerManager::Get().Tick(DeltaTime);
-        //Subsystem.Input->ProcessHeld();
+        Subsystem.Input->ProcessHeld();
         //Subsystem.Cursor->Update(DeltaTime);
         //Subsystem.GUI->Update(DeltaTime);
         //AsyncAsset().GarbageCycle(DeltaTime);
@@ -99,9 +99,10 @@ namespace we
             }
             else
             {
+                Subsystem.Cursor->Update(Subsystem.Time->GetUnscaledDeltaTime());
                 // UI only update when paused
                 /*Subsystem.Input->ProcessHeld();
-                Subsystem.Cursor->Update(Subsystem.Time->GetUnscaledDeltaTime());
+
                 Subsystem.GUI->Update(Subsystem.Time->GetUnscaledDeltaTime());*/
                 PostUpdate();
             }
@@ -114,9 +115,14 @@ namespace we
     {
         while (const auto Event = Subsystem.Window->pollEvent())
         {
-            Event->visit(GameWindowEventHandler{ *Subsystem.Window });
-            //Subsystem.Input->HandleEvent(*Event);
+            Subsystem.Window->HandleEvent(*Event);
+            Subsystem.Input->HandleEvent(*Event);
             //Subsystem.GUI->ProcessEvent(*Event);
+        }
+
+        if (Subsystem.Window->hasFocus())
+        {
+            Subsystem.Cursor->SetPosition(Subsystem.Window->GetMousePosition());
         }
     }
    
@@ -137,7 +143,7 @@ namespace we
         
         // Subsystem.GUI->Render();
 
-        // Subsystem.Cursor->Render();
+        Subsystem.Cursor->Render(*Subsystem.Render);
 
         Subsystem.Window->setView(Subsystem.Window->GetConstrainedView());
 

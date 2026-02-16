@@ -28,9 +28,9 @@ namespace we
 
         // Set Smoothing for Render Targets
         GameRenderTarget.setSmooth(EC.SetRenderSmooth);
-        UIRenderTarget.setSmooth(EC.SetRenderSmooth);
-        CursorRenderTarget.setSmooth(EC.SetRenderSmooth);
-        CompositeTarget.setSmooth(EC.SetRenderSmooth);
+        UIRenderTarget.setSmooth(false);
+        CursorRenderTarget.setSmooth(false);
+        CompositeTarget.setSmooth(false);
 
         // *********************************************************
          //
@@ -46,7 +46,7 @@ namespace we
             VERIFY(CursorPostProcessTarget.resize(vec2u(RenderResolution)));
 
             //PPE Applied to Game
-            GamePostProcessEffects.emplace_back(make_unique<BloomPPE>());
+            //GamePostProcessEffects.emplace_back(make_unique<BloomPPE>());
 
             //PPE Applied to UI
             // UIPostEffects.emplace_back(make_unique<PPETest>()); Example
@@ -101,12 +101,12 @@ namespace we
         }
     }
 
-    void RenderSubsystem::ProcessPostEffects(renderTexture* Input, renderTexture* Output, vector<unique<IPostProcess>>& Effects)
+    renderTexture* RenderSubsystem::ProcessPostEffects(renderTexture* Input, renderTexture* Output, vector<unique<IPostProcess>>& Effects)
     {
         if (Effects.empty())
         {
             Input->display();
-            return;
+            return Input;
         }
 
         Input->display();
@@ -120,6 +120,8 @@ namespace we
             Out->display();
             std::swap(In, Out);
         }
+
+        return In;
     }
 
     void RenderSubsystem::CompositeLayers()
@@ -127,8 +129,7 @@ namespace we
         // Render Post Processing
         auto RenderLayer = [&](renderTexture& main, renderTexture& pp, vector<unique<IPostProcess>>& effects) -> const texture& {
             if (sf::Shader::isAvailable && !effects.empty()) {
-                ProcessPostEffects(&main, &pp, effects);
-                return pp.getTexture();
+                return ProcessPostEffects(&main, &pp, effects)->getTexture();
             }
             main.display();
             return main.getTexture();
@@ -151,7 +152,6 @@ namespace we
 
     const sprite RenderSubsystem::FinishRender()
     {
-        // TODO Return a Sprite Not a Texture
         CompositeLayers();
         return sprite(CompositeTarget.getTexture());
     }
