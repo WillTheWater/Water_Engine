@@ -9,35 +9,32 @@
 
 namespace we
 {
-    class GameWindow;
+	class RenderSubsystem;
 
-    class CursorSubsystem
-    {
-    public:
-        CursorSubsystem(GameWindow& Window);
+	class CursorSubsystem
+	{
+	public:
+		CursorSubsystem();
 
-        void Update(float DeltaTime);
-        void Render() const;
+		void Update(float DeltaTime);
+		void Render(RenderSubsystem& Renderer) const;
 
-        void SetSpeed(float Speed);
-        float GetSpeed() const;
+		void SetSpeed(float Speed) { CursorSpeed = Speed; }
+		float GetSpeed() const { return CursorSpeed; }
 
-        void SetVisibility(bool Visible);
-        bool IsVisible() const;
+		void SetVisibility(bool Visible) { bIsVisible = Visible; }
+		bool IsVisible() const { return bIsVisible; }
 
-        void EventUpdatePosition(vec2f Position);
-        void SetPosition(vec2f Position);
-        vec2f GetPosition() const;
-        vec2f GetPosition(const view& View) const;
+		void SetPosition(vec2f Position);
+		vec2f GetPosition() const;
 
-    private:
-        GameWindow& Window;
-        rectangle CursorShape;
-        shared<texture> CursorTexture;
-        float CursorSpeed;
-        bool bIsVisible;
+	private:
+		void InitializeCursor();
 
-    private:
-        void InitializeCursor();
-    };
+	private:
+		rectangle CursorShape;
+		shared<texture> CursorTexture; // Reserved for later
+		float CursorSpeed;
+		bool bIsVisible;
+	};
 }

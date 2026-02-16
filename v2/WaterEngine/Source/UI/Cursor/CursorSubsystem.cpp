@@ -4,96 +4,66 @@
 // =============================================================================
 
 #include "UI/Cursor/CursorSubsystem.h"
-#include "Subsystem/WindowSubsystem.h"
-#include "Subsystem/ResourceSubsystem.h"
+#include "Subsystem/RenderSubsystem.h"
 #include "EngineConfig.h"
 
 namespace we
 {
-    CursorSubsystem::CursorSubsystem(GameWindow& Window)
-        : Window(Window)
-        , CursorShape(EC.DefaultCursorSize)
-        , CursorSpeed(EC.DefaultCursorSpeed)
-        , bIsVisible(true)
-    {
-        InitializeCursor();
-    }
+	CursorSubsystem::CursorSubsystem()
+		: CursorShape(EC.DefaultCursorSize)
+		, CursorSpeed(EC.DefaultCursorSpeed)
+		, bIsVisible(true)
+	{
+		InitializeCursor();
+	}
 
-    void CursorSubsystem::InitializeCursor()
-    {
-        CursorShape.setFillColor(sf::Color::White);
-        CursorTexture = Asset().LoadTexture(EC.DefaultCursor);
-        CursorShape.setTexture(CursorTexture.get());
-        CursorShape.setPosition(EC.RenderResolution / 2.f);
-    }
+	void CursorSubsystem::InitializeCursor()
+	{
+		// Default visual state since Resource Subsystem is unhooked
+		CursorShape.setFillColor(color::White);
+		CursorShape.setOutlineColor(color::Black);
+		CursorShape.setOutlineThickness(1.0f);
 
-    void CursorSubsystem::Update(float DeltaTime)
-    {
-        const sf::Vector2f JoystickDirection(
-            sf::Joystick::getAxisPosition(0, sf::Joystick::Axis::X) / 100.f,
-            sf::Joystick::getAxisPosition(0, sf::Joystick::Axis::Y) / 100.f);
+		// Set starting position to center of logical resolution
+		CursorShape.setPosition(vec2f(EC.RenderResolution) / 2.0f);
+	}
 
-        if (JoystickDirection.length() > EC.JoystickDeadzone)
-        {
-            CursorShape.move(JoystickDirection * CursorSpeed * DeltaTime);
+	void CursorSubsystem::Update(float DeltaTime)
+	{
+		// Joystick Logic
+		const vec2f JoystickDirection(
+			sf::Joystick::getAxisPosition(0, sf::Joystick::Axis::X) / 100.0f,
+			sf::Joystick::getAxisPosition(0, sf::Joystick::Axis::Y) / 100.0f);
 
-            sf::Vector2f NewPos = {
-                std::clamp(CursorShape.getPosition().x, 0.f, EC.RenderResolution.x - 1),
-                std::clamp(CursorShape.getPosition().y, 0.f, EC.RenderResolution.y - 1)
-            };
+		if (JoystickDirection.length() > EC.JoystickDeadzone)
+		{
+			CursorShape.move(JoystickDirection * CursorSpeed * DeltaTime);
 
-            CursorShape.setPosition(NewPos);
-            SetPosition(NewPos);
-        }
-    }
+			// Clamp to the logical render resolution (internal pixels)
+			vec2f ClampedPos = {
+				std::clamp(CursorShape.getPosition().x, 0.0f, (float)EC.RenderResolution.x),
+				std::clamp(CursorShape.getPosition().y, 0.0f, (float)EC.RenderResolution.y)
+			};
+			CursorShape.setPosition(ClampedPos);
+		}
+	}
 
-    void CursorSubsystem::Render() const
-    {
-        if (!bIsVisible) return;
-        
-        //Window.draw(CursorShape);
-    }
+	void CursorSubsystem::Render(RenderSubsystem& Renderer) const
+	{
+		if (bIsVisible)
+		{
+			// Pushes the shape to the dedicated Cursor layer in the renderer
+			Renderer.Draw(CursorShape, ERenderLayer::Cursor);
+		}
+	}
 
-    void CursorSubsystem::SetSpeed(float Speed)
-    {
-        CursorSpeed = Speed;
-    }
+	void CursorSubsystem::SetPosition(vec2f Position)
+	{
+		CursorShape.setPosition(Position);
+	}
 
-    float CursorSubsystem::GetSpeed() const
-    {
-        return CursorSpeed;
-    }
-
-    void CursorSubsystem::SetVisibility(bool Visible)
-    {
-        bIsVisible = Visible;
-    }
-
-    bool CursorSubsystem::IsVisible() const
-    {
-        return bIsVisible;
-    }
-
-    void CursorSubsystem::EventUpdatePosition(vec2f Position)
-    {
-        CursorShape.setPosition(Position);
-    }
-
-    void CursorSubsystem::SetPosition(vec2f Position)
-    {
-       // sf::Mouse::setPosition(Window.mapCoordsToPixel(Position, Window.getDefaultView()), Window);
-        CursorShape.setPosition(Position);
-    }
-
-    vec2f CursorSubsystem::GetPosition() const
-    {
-        //return GetPosition(Window.getDefaultView());
-        return vec2f{ 0,0 };
-    }
-
-    vec2f CursorSubsystem::GetPosition(const view& View) const
-    {
-        //return Window.mapPixelToCoords(sf::Mouse::getPosition(Window), View);
-        return vec2f{ 0,0 };
-    }
+	vec2f CursorSubsystem::GetPosition() const
+	{
+		return CursorShape.getPosition();
+	}
 }

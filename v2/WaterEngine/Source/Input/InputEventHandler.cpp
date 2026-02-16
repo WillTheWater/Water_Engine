@@ -5,7 +5,6 @@
 
 #include "Input/InputEventHandler.h"
 #include "Subsystem/InputSubsystem.h"
-#include "UI/Cursor/CursorSubsystem.h"
 #include "Utility/Log.h"
 
 namespace we
@@ -52,7 +51,7 @@ namespace we
 
 	void InputEventHandler::operator()(const sf::Event::MouseMoved& Mouse)
 	{
-		Cursor.EventUpdatePosition(vec2f(Mouse.position));
+		
 	}
 
 	void InputEventHandler::operator()(const sf::Event::MouseButtonPressed& Button)

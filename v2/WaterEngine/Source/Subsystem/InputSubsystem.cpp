@@ -4,13 +4,11 @@
 // =============================================================================
 
 #include "Subsystem/InputSubsystem.h"
-#include "UI/Cursor/CursorSubsystem.h"
 #include "Input/InputEventHandler.h"
 
 namespace we
 {
-	InputSubsystem::InputSubsystem(CursorSubsystem& InCursor)
-		: Cursor{ InCursor }
+	InputSubsystem::InputSubsystem()
 	{
 	}
 
@@ -46,8 +44,8 @@ namespace we
 
 	void InputSubsystem::HandleEvent(const sf::Event& event)
 	{
-		InputEventHandler handler{ *this, Cursor };
-		event.visit(handler);
+		InputEventHandler Handler{ *this};
+		event.visit(Handler);
 	}
 
 	void InputSubsystem::ProcessPressed(const Input::Binding& binding)

@@ -22,7 +22,13 @@ namespace we
         const auto state = EC.FullscreenMode ? sf::State::Fullscreen : sf::State::Windowed;
         CreateGameWindow(mode, style, state);
     }
-  
+
+    void WindowSubsystem::HandleEvent(const sf::Event& Event)
+    {
+        GameWindowEventHandler Handler{ *this };
+        Event.visit(Handler);
+    }
+
     view WindowSubsystem::GetConstrainedView() const
     {
         float targetRatio = static_cast<float>(EC.AspectRatio.x) / static_cast<float>(EC.AspectRatio.y);
@@ -46,6 +52,13 @@ namespace we
         ConstrainedView.setViewport(rectf({ vPosX, vPosY }, { vWidth, vHeight }));
 
         return ConstrainedView;
+    }
+
+    vec2f WindowSubsystem::GetMousePosition() const
+    {
+        vec2i PixelPos = sf::Mouse::getPosition(*this);
+
+        return mapPixelToCoords(PixelPos, GetConstrainedView());
     }
 
     void WindowSubsystem::onResize()

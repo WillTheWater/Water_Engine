@@ -157,13 +157,11 @@
 
 namespace we
 {
-	class CursorSubsystem;
-
 	class InputSubsystem
 	{
 
 	public:
-		explicit InputSubsystem(CursorSubsystem& InCursor);
+		explicit InputSubsystem();
 
 		// ============ STATE-BASED API ============
 		void Bind(int InputAction, const Input::Binding& Binding);
@@ -191,7 +189,6 @@ namespace we
 
 	private:
 		library<int, Input::Binding> InputBindings;
-		CursorSubsystem& Cursor;
 
 		uint64_t CurrentFrame = 0;
 		dictionary<int, uint64_t> PressedOnFrame;
