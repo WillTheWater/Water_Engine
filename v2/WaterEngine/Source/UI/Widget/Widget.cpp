@@ -5,7 +5,7 @@
 
 #include "UI/Widget/Widget.h"
 #include "Framework/EngineSubsystem.h"
-#include "UI/Cursor/CursorSubsystem.h"
+#include "Subsystem/CursorSubsystem.h"
 #include "Utility/WindowUtility.h"
 #include "Utility/Log.h"
 

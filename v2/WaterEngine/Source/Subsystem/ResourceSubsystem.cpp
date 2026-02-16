@@ -5,191 +5,304 @@
 
 #include "Subsystem/ResourceSubsystem.h"
 #include "Utility/Log.h"
+#include "Utility/Assert.h"
 
 namespace we
 {
-    MusicMemoryStream::MusicMemoryStream(shared<vector<uint8>> InData)
-        : Data(std::move(InData)), Pos(0)
-    {
-    }
-
-    std::optional<ulong> MusicMemoryStream::read(void* data, ulong size)
-    {
-        ulong Available = Data->size() - Pos;
-        ulong ToRead = (size < Available) ? size : Available;
-        if (ToRead > 0)
-        {
-            std::memcpy(data, Data->data() + Pos, ToRead);
-            Pos += ToRead;
-        }
-        return ToRead;
-    }
-
-    std::optional<ulong> MusicMemoryStream::seek(ulong position)
-    {
-        Pos = (position > Data->size()) ? Data->size() : position;
-        return Pos;
-    }
-
-    std::optional<ulong> MusicMemoryStream::tell()
-    {
-        return Pos;
-    }
-
-    std::optional<ulong> MusicMemoryStream::getSize()
-    {
-        return Data->size();
-    }
+    ResourceSubsystem* ResourceSubsystem::RSubInstance = nullptr;
 
     ResourceSubsystem& ResourceSubsystem::Get()
     {
-        static ResourceSubsystem Instance;
-        return Instance;
+        VERIFY(RSubInstance && "ResourceSubsystem not initialized!");
+        return *RSubInstance;
+    }
+
+    ResourceSubsystem::ResourceSubsystem()
+    {
+        VERIFY(!RSubInstance && "ResourceSubsystem already exists!");
+        RSubInstance = this;
+        AssetThread = std::thread(&ResourceSubsystem::LoaderThread, this);
+    }
+
+    ResourceSubsystem::~ResourceSubsystem()
+    {
+        Shutdown();
+        RSubInstance = nullptr;
     }
 
     void ResourceSubsystem::Shutdown()
     {
-        Textures.clear();
-        Fonts.clear();
-        Sounds.clear();
-        FontData.clear();
-        MusicData.clear();
-        MusicStreams.clear();
-        AssetDirectory = nullptr;
+        if (!bIsRunning) return;
+
+        {
+            std::lock_guard lock(PendingMutex);
+            bIsRunning = false;
+        }
+        CV.notify_all();
+
+        if (AssetThread.joinable())
+            AssetThread.join();
+
+        PendingRequests.clear();
+        CompletedRequests.clear();
+        AssetDirector = nullptr;
     }
 
     void ResourceSubsystem::SetAssetDirectory(shared<IAssetDirector> Directory)
     {
-        AssetDirectory = Directory;
+        AssetDirector = std::move(Directory);
     }
 
-    template<typename Asset, typename Cache>
-    shared<Asset> ResourceSubsystem::Load(const string& Path, Cache& AssetCache, auto&& LoadFunc)
+    void ResourceSubsystem::LoaderThread()
     {
-        if (auto it = AssetCache.find(Path); it != AssetCache.end())
+        while (true)
         {
-            if (auto Existing = it->second)
+            unique<RequestBase> req;
+
             {
-                //LOG("Cache hit for: {}", Path);
-                return Existing;
+                std::unique_lock lock(PendingMutex);
+                CV.wait(lock, [this] { return !PendingRequests.empty() || !bIsRunning; });
+
+                if (!bIsRunning) return;
+
+                // Find highest priority request
+                auto it = std::max_element(PendingRequests.begin(), PendingRequests.end(),
+                    [](const unique<RequestBase>& a, const unique<RequestBase>& b) {
+                        return static_cast<uint8>(a->GetPriority()) < static_cast<uint8>(b->GetPriority());
+                    });
+
+                req = std::move(*it);
+                PendingRequests.erase(it);
+            }
+
+            if (req)
+            {
+                req->ExecuteLoad(AssetDirector);
+                req->bIsDone = true;
+
+                std::lock_guard lock(CompletedMutex);
+                CompletedRequests.push_back(std::move(req));
             }
         }
+    }
 
-        if (!AssetDirectory)
+    void ResourceSubsystem::PollCompletedRequests()
+    {
+        vector<unique<RequestBase>> ready;
         {
-            ERROR("No AssetDirectory for: {}", Path);
+            std::lock_guard lock(CompletedMutex);
+            ready = std::move(CompletedRequests);
+        }
+
+        for (auto& req : ready)
+            req->ExecuteFinalize();
+    }
+
+    template<typename T>
+    AssetHandle<T> ResourceSubsystem::LoadAsyncInternal(const string& Path, AssetPriority Priority,
+        std::function<bool(T&, const vector<uint8>&)> Loader)
+    {
+        AssetHandle<T> handle;
+
+        auto req = std::make_unique<Request<T>>();
+        req->Path = Path;
+        req->Priority = Priority;
+        req->Handle = handle;
+        req->Loader = std::move(Loader);
+
+        {
+            std::lock_guard lock(PendingMutex);
+            PendingRequests.push_back(std::move(req));
+        }
+        CV.notify_one();
+
+        return handle;
+    }
+
+    template<typename T>
+    shared<T> ResourceSubsystem::LoadSyncInternal(const string& Path,
+        std::function<bool(T&, const vector<uint8>&)> Loader)
+    {
+        if (!AssetDirector)
+        {
+            ERROR("No asset directory set");
             return nullptr;
         }
 
-        vector<uint8> FileData;
-        if (!AssetDirectory->ReadFile(Path, FileData))
+        vector<uint8> data;
+        if (!AssetDirector->ReadFile(Path, data))
         {
             ERROR("Failed to read: {}", Path);
             return nullptr;
         }
 
-        auto NewAsset = make_shared<Asset>();
-        if (!LoadFunc(*NewAsset, FileData))
+        auto asset = make_shared<T>();
+        if (!Loader(*asset, data))
         {
             ERROR("Failed to load: {}", Path);
             return nullptr;
         }
 
-        AssetCache[Path] = NewAsset;
-        return NewAsset;
+        return asset;
     }
 
-    shared<texture> ResourceSubsystem::LoadTexture(const string& Path)
+    // ============================================================================
+    // Public API
+    // ============================================================================
+
+    AssetHandle<texture> ResourceSubsystem::LoadTextureAsync(const string& Path, AssetPriority Priority)
     {
-        return Load<texture>(Path, Textures,
-            [](texture& Tex, const vector<uint8>& Data) {
-                return Tex.loadFromMemory(Data.data(), Data.size());
+        if (auto cached = FindInCache<texture>(Path, TextureCache))
+            return AssetHandle<texture>(cached);
+
+        return LoadAsyncInternal<texture>(Path, Priority,
+            [](texture& t, const vector<uint8>& d) {
+                return t.loadFromMemory(d.data(), d.size());
             });
     }
 
-    shared<font> ResourceSubsystem::LoadFont(const string& Path)
+    AssetHandle<font> ResourceSubsystem::LoadFontAsync(const string& Path, AssetPriority Priority)
     {
-        if (auto it = Fonts.find(Path); it != Fonts.end())
-            if (auto Existing = it->second)
-                return Existing;
+        if (auto cached = FindInCache<font>(Path, FontCache))
+            return AssetHandle<font>(cached);
 
-        auto DataIt = FontData.find(Path);
-        if (DataIt == FontData.end())
+        return LoadAsyncInternal<font>(Path, Priority,
+            [this, Path](font& f, const vector<uint8>& d) {
+                // Store data persistently for fonts
+                auto dataPtr = make_shared<vector<uint8>>(d);
+                FontDataCache[Path] = dataPtr;
+                return f.openFromMemory(dataPtr->data(), dataPtr->size());
+            });
+    }
+
+    AssetHandle<soundBuffer> ResourceSubsystem::LoadSoundAsync(const string& Path, AssetPriority Priority)
+    {
+        if (auto cached = FindInCache<soundBuffer>(Path, SoundCache))
+            return AssetHandle<soundBuffer>(cached);
+
+        return LoadAsyncInternal<soundBuffer>(Path, Priority,
+            [](soundBuffer& s, const vector<uint8>& d) {
+                return s.loadFromMemory(d.data(), d.size());
+            });
+    }
+
+    shared<texture> ResourceSubsystem::LoadTextureSync(const string& Path)
+    {
+        if (auto cached = FindInCache<texture>(Path, TextureCache))
+            return cached;
+
+        auto asset = LoadSyncInternal<texture>(Path,
+            [](texture& t, const vector<uint8>& d) {
+                return t.loadFromMemory(d.data(), d.size());
+            });
+
+        if (asset) AddToCache(Path, asset, TextureCache);
+        return asset;
+    }
+
+    shared<font> ResourceSubsystem::LoadFontSync(const string& Path)
+    {
+        if (auto cached = FindInCache<font>(Path, FontCache))
+            return cached;
+
+        // Load data first
+        if (!AssetDirector) return nullptr;
+
+        auto& data = FontDataCache[Path];
+        if (!data)
         {
-            if (!AssetDirectory) return nullptr;
-
-            vector<uint8> FileData;
-            if (!AssetDirectory->ReadFile(Path, FileData)) return nullptr;
-
-            vector<uint8> Buffer(FileData.begin(), FileData.end());
-            DataIt = FontData.emplace(Path, std::move(Buffer)).first;
+            vector<uint8> raw;
+            if (!AssetDirector->ReadFile(Path, raw)) return nullptr;
+            data = make_shared<vector<uint8>>(std::move(raw));
         }
 
-        auto NewFont = make_shared<font>();
-        if (!NewFont->openFromMemory(DataIt->second.data(), DataIt->second.size()))
+        auto font = make_shared<we::font>();
+        if (!font->openFromMemory(data->data(), data->size()))
         {
             ERROR("Failed to load font: {}", Path);
             return nullptr;
         }
 
-        Fonts[Path] = NewFont;
-        return NewFont;
+        AddToCache(Path, font, FontCache);
+        return font;
     }
 
-    shared<soundBuffer> ResourceSubsystem::LoadSound(const string& Path)
+    shared<soundBuffer> ResourceSubsystem::LoadSoundSync(const string& Path)
     {
-        return Load<soundBuffer>(Path, Sounds,
-            [](soundBuffer& Snd, const vector<uint8>& Data) {
-                return Snd.loadFromMemory(Data.data(), Data.size());
+        if (auto cached = FindInCache<soundBuffer>(Path, SoundCache))
+            return cached;
+
+        auto asset = LoadSyncInternal<soundBuffer>(Path,
+            [](soundBuffer& s, const vector<uint8>& d) {
+                return s.loadFromMemory(d.data(), d.size());
             });
+
+        if (asset) AddToCache(Path, asset, SoundCache);
+        return asset;
     }
 
     shared<music> ResourceSubsystem::LoadMusic(const string& Path)
     {
-        auto It = MusicData.find(Path);
-        if (It == MusicData.end())
+        if (!AssetDirector)
         {
-            if (!AssetDirectory)
-            {
-                ERROR("No AssetDirectory for: {}", Path);
-                return nullptr;
-            }
+            ERROR("No asset directory for: {}", Path);
+            return nullptr;
+        }
 
-            vector<uint8> FileData;
-            if (!AssetDirectory->ReadFile(Path, FileData))
+        auto& data = MusicDataCache[Path];
+        if (!data)
+        {
+            vector<uint8> raw;
+            if (!AssetDirector->ReadFile(Path, raw))
             {
                 ERROR("Failed to read music: {}", Path);
                 return nullptr;
             }
-
-            auto DataPtr = make_shared<vector<uint8>>(std::move(FileData));
-            It = MusicData.emplace(Path, DataPtr).first;
+            data = make_shared<vector<uint8>>(std::move(raw));
         }
 
-        auto Stream = make_shared<MusicMemoryStream>(It->second);
-        auto Music = make_shared<music>();
+        auto stream = make_shared<MusicMemoryStream>(data);
+        auto music = make_shared<we::music>();
 
-        if (!Music->openFromStream(*Stream))
+        if (!music->openFromStream(*stream))
         {
-            ERROR("Failed to open music from stream: {}", Path);
+            ERROR("Failed to open music stream: {}", Path);
             return nullptr;
         }
 
-        MusicStreams[Path] = Stream;
-        return Music;
+        MusicStreamCache[Path] = stream;
+        return music;
     }
 
     shared<shader> ResourceSubsystem::LoadShader(const string& Path, shader::Type Type)
     {
-        if (!AssetDirectory) return nullptr;
+        if (!AssetDirector) return nullptr;
 
-        vector<uint8> Data;
-        if (!AssetDirectory->ReadFile(Path, Data)) return nullptr;
+        vector<uint8> data;
+        if (!AssetDirector->ReadFile(Path, data)) return nullptr;
 
-        string Source(Data.begin(), Data.end());
-        auto Shader = make_shared<shader>();
-        if (!Shader->loadFromMemory(Source, Type)) return nullptr;
+        string source(data.begin(), data.end());
+        auto shader = make_shared<we::shader>();
 
-        return Shader;
+        if (!shader->loadFromMemory(source, Type))
+            return nullptr;
+
+        return shader;
+    }
+
+    void ResourceSubsystem::GarbageCycle(float DeltaTime)
+    {
+        GarbageCycleTimer += DeltaTime;
+        if (GarbageCycleTimer < 3.0f) return;
+        GarbageCycleTimer = 0.0f;
+
+        auto cleanup = [](auto& cache) {
+            for (auto it = cache.begin(); it != cache.end();)
+                it = it->second.expired() ? cache.erase(it) : std::next(it);
+            };
+
+        cleanup(TextureCache);
+        cleanup(FontCache);
+        cleanup(SoundCache);
     }
 }

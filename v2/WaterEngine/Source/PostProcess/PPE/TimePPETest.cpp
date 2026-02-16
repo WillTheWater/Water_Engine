@@ -4,7 +4,7 @@
 // =============================================================================
 
 #include "PostProcess/PPE/TimePPETest.h"
-#include "Subsystem/AsyncResourceSubsystem.h"
+#include "Subsystem/ResourceSubsystem.h"
 #include "PostProcess/EmbeddedShaders.h"
 #include "Utility/Assert.h"
 
@@ -12,7 +12,7 @@ namespace we
 {
 	TimePPETest::TimePPETest()
 	{
-		TestShader = AsyncAsset().LoadShader("Shaders/TimeTest.frag", shader::Type::Fragment);
+		TestShader = LoadAsset().LoadShader("Shaders/TimeTest.frag", shader::Type::Fragment);
 		VERIFY(TestShader != nullptr);
 	}
 

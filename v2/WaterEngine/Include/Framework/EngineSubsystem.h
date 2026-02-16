@@ -7,10 +7,11 @@
 
 #include "Core/CoreMinimal.h"
 
+#include "Subsystem/ResourceSubsystem.h"
 #include "Subsystem/WindowSubsystem.h"
 #include "Subsystem/RenderSubsystem.h"
 #include "Subsystem/TimeSubsystem.h"
-#include "UI/Cursor/CursorSubsystem.h"
+#include "Subsystem/CursorSubsystem.h"
 
 
 #include "Subsystem/SaveLoadSubsystem.h"
@@ -24,6 +25,7 @@ namespace we
 {
 	struct EngineSubsystem
 	{
+		unique<ResourceSubsystem> AssetLoader;
 		unique<WindowSubsystem> Window;
 		unique<RenderSubsystem> Render;
 		unique<TimeSubsystem> Time;

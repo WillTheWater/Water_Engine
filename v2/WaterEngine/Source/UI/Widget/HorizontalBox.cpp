@@ -7,7 +7,7 @@
 #include "Framework/EngineSubsystem.h"
 #include "Subsystem/WindowSubsystem.h"
 #include "Subsystem/ResourceSubsystem.h"
-#include "UI/Cursor/CursorSubsystem.h"
+#include "Subsystem/CursorSubsystem.h"
 #include "Utility/Log.h"
 #include "UI/Widget/HorizontalBox.h"
 

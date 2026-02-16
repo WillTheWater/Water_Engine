@@ -46,7 +46,7 @@ namespace we
             VERIFY(CursorPostProcessTarget.resize(vec2u(RenderResolution)));
 
             //PPE Applied to Game
-            //GamePostProcessEffects.emplace_back(make_unique<BloomPPE>());
+            GamePostProcessEffects.emplace_back(make_unique<BloomPPE>());
 
             //PPE Applied to UI
             // UIPostEffects.emplace_back(make_unique<PPETest>()); Example

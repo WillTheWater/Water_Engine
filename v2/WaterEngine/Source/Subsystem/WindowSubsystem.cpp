@@ -3,9 +3,10 @@
 // Copyright(C) 2026 Will The Water
 // =============================================================================
 
-#include "Subsystem/WindowSubsystem.h"
 #include "EngineConfig.h"
+#include "Subsystem/WindowSubsystem.h"
 #include "Subsystem/ResourceSubsystem.h"
+#include "Utility/Log.h"
 
 namespace we
 {
@@ -21,6 +22,7 @@ namespace we
         const auto style = EC.FullscreenMode ? sf::Style::None : sf::Style::Default;
         const auto state = EC.FullscreenMode ? sf::State::Fullscreen : sf::State::Windowed;
         CreateGameWindow(mode, style, state);
+        SetWindowIcon();
     }
 
     void WindowSubsystem::HandleEvent(const sf::Event& Event)
@@ -102,9 +104,9 @@ namespace we
 
     void WindowSubsystem::SetWindowIcon()
     {
-       // auto IconTexture = Asset().LoadTexture(EC.WindowIcon);
-        //const auto& Image = IconTexture->copyToImage();
-        //setIcon(Image);
+        auto IconHandle = LoadAsset().LoadTextureSync(EC.WindowIcon);
+        const auto& Image = IconHandle->copyToImage();
+        setIcon(Image);
     }
 
     void WindowSubsystem::EventToggleBorderlessFullscreen()

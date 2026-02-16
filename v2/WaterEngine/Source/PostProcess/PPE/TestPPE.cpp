@@ -5,7 +5,7 @@
 
 #include <SFML/Graphics/Sprite.hpp>
 
-#include "Subsystem/AsyncResourceSubsystem.h"
+#include "Subsystem/ResourceSubsystem.h"
 #include "PostProcess/PPE/TestPPE.h"
 #include "Utility/Assert.h"
 
@@ -13,7 +13,7 @@ namespace we
 {
 	PPETest::PPETest()
 	{
-		TestShader = AsyncAsset().LoadShader("Shaders/TimeTest.frag", shader::Type::Fragment);
+		TestShader = LoadAsset().LoadShader("Shaders/TimeTest.frag", shader::Type::Fragment);
 		VERIFY(TestShader != nullptr);
 	}
 

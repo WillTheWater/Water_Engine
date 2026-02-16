@@ -52,7 +52,8 @@ set(WATER_ENGINE_HEADERS
 
     Include/Framework/WaterEngine.h
     Include/Framework/EngineSubsystem.h
-    "Include/Framework/EventHandling/GameWindowEventHandler.h"
+    
+    Include/Framework/EventHandling/GameWindowEventHandler.h
     
     Include/Core/CoreMinimal.h
     Include/Core/JsonTypes.h
@@ -63,18 +64,17 @@ set(WATER_ENGINE_HEADERS
     Include/Framework/World/Actor/Actor.h
 
     Include/Subsystem/WindowSubsystem.h
-    Include/Subsystem/AsyncResourceSubsystem.h
-    "Include/Subsystem/TimeSubsystem.h"
-    Include/Subsystem/RenderSubsystem.h
-    Include/Subsystem/SaveLoadSubsystem.h
     Include/Subsystem/ResourceSubsystem.h
+    Include/Subsystem/TimeSubsystem.h
+    Include/Subsystem/RenderSubsystem.h
+    Include/Subsystem/SaveLoadSubsystem.h    
     Include/Subsystem/AudioSubsystem.h
     Include/Subsystem/InputSubsystem.h
     Include/Subsystem/PhysicsSubsystem.h
     Include/Subsystem/WorldSubsystem.h
     Include/Subsystem/GameStateSubsystem.h
     Include/Subsystem/GUISubsystem.h
-    Include/UI/Cursor/CursorSubsystem.h
+    Include/Subsystem/CursorSubsystem.h
     
     Include/PostProcess/IPostProcess.h
     Include/PostProcess/EmbeddedShaders.h
@@ -123,7 +123,8 @@ set(WATER_ENGINE_SOURCES
     Source/EngineConfig.cpp
 	
     Source/Framework/WaterEngine.cpp
-    "Source/Framework/EventHandling/GameWindowEventHandler.cpp"
+    
+    Source/Framework/EventHandling/GameWindowEventHandler.cpp
 
     Source/Framework/World/World.cpp
     
@@ -131,18 +132,18 @@ set(WATER_ENGINE_SOURCES
     Source/Framework/World/Actor/Actor.cpp
 
     Source/Subsystem/WindowSubsystem.cpp
-    Source/Subsystem/AsyncResourceSubsystem.cpp
-    "Source/Subsystem/TimeSubsystem.cpp"
+    Source/Subsystem/ResourceSubsystem.cpp
+    Source/Subsystem/TimeSubsystem.cpp
     Source/Subsystem/RenderSubsystem.cpp
     Source/Subsystem/SaveLoadSubsystem.cpp
-    Source/Subsystem/ResourceSubsystem.cpp
+    
     Source/Subsystem/AudioSubsystem.cpp
     Source/Subsystem/InputSubsystem.cpp    
     Source/Subsystem/PhysicsSubsystem.cpp
     Source/Subsystem/WorldSubsystem.cpp
     Source/Subsystem/GameStateSubsystem.cpp
     Source/Subsystem/GUISubsystem.cpp
-    Source/UI/Cursor/CursorSubsystem.cpp
+    Source/Subsystem/CursorSubsystem.cpp
 
     Source/PostProcess/PPE/TestPPE.cpp
     Source/PostProcess/PPE/EmbeddedPPETest.cpp

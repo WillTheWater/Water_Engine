@@ -8,7 +8,7 @@
 //#include "Framework/World/World.h"
 //#include "Utility/Delegate.h"
 //
-//#include "Subsystem/AsyncResourceSubsystem.h"
+//#include "Subsystem/ResourceSubsystem.h"
 //
 //namespace we
 //{

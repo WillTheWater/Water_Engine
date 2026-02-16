@@ -5,7 +5,7 @@
 
 #include "Subsystem/GUISubsystem.h"
 #include "Subsystem/WindowSubsystem.h"
-#include "UI/Cursor/CursorSubsystem.h"
+#include "Subsystem/CursorSubsystem.h"
 #include "UI/Widget/Widget.h"
 #include "Input/InputBinding.h"
 #include "Utility/Log.h"

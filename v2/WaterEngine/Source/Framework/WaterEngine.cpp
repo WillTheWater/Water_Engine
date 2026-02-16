@@ -9,7 +9,7 @@
 //#include "EngineConfig.h"
 //#include "Subsystem/ResourceSubsystem.h"
 //#include "Subsystem/PhysicsSubsystem.h"
-//#include "Subsystem/AsyncResourceSubsystem.h"
+//#include "Subsystem/ResourceSubsystem.h"
 //#include "Framework/World/World.h"
 //#include "Utility/Timer.h"
 //#include "Utility/Log.h"
@@ -39,21 +39,19 @@ namespace we
         /*Subsystem.SaveLoad = make_unique<SaveLoadSubsystem>();
         Subsystem.Audio = make_unique<AudioSubsystem>();
 
-        WindowInit();
 
         Subsystem.World = make_unique<WorldSubsystem>(Subsystem);
         Subsystem.GameState = make_unique<GameStateSubsystem>();
         
         Physics().Initialize();*/
-
     }
 
     void WaterEngine::MountAssetDirectory()
     {
         // Mount .pak For Resources
         auto PD = make_shared<PakDirectory>(EC.AssetDirectory);
-        //Asset().SetAssetDirectory(PD);
-        //AsyncAsset().SetAssetDirectory(PD);
+        Subsystem.AssetLoader = make_unique<ResourceSubsystem>();
+        Subsystem.AssetLoader->SetAssetDirectory(PD);
         if (EC.DisableSFMLLogs) { sf::err().rdbuf(nullptr); }
     }
 
@@ -70,7 +68,7 @@ namespace we
         Subsystem.Input->ProcessHeld();
         //Subsystem.Cursor->Update(DeltaTime);
         //Subsystem.GUI->Update(DeltaTime);
-        //AsyncAsset().GarbageCycle(DeltaTime);
+        Subsystem.AssetLoader->GarbageCycle(DeltaTime);
 
         //if (auto World = Subsystem.World->GetCurrentWorld())
         //{
@@ -91,7 +89,7 @@ namespace we
 
             Subsystem.Time->Tick(); // Always tick time
 
-            //AsyncAsset().PollCompletedRequests();
+            Subsystem.AssetLoader->PollCompletedRequests();
 
             if (!Subsystem.Time->IsPaused())
             {
@@ -139,7 +137,6 @@ namespace we
 
         //Physics().DebugDraw(Subsystem.Render.get());
 
-        //Subsystem.Window->draw(sprite(Subsystem.Render->FinishRender()));
         
         // Subsystem.GUI->Render();
 

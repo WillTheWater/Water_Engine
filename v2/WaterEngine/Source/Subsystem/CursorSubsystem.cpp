@@ -3,7 +3,7 @@
 // Copyright(C) 2026 Will The Water
 // =============================================================================
 
-#include "UI/Cursor/CursorSubsystem.h"
+#include "Subsystem/CursorSubsystem.h"
 #include "Subsystem/RenderSubsystem.h"
 #include "EngineConfig.h"
 
