@@ -19,7 +19,7 @@ namespace we
 		EngineConfig();
 
 		string AssetDirectory;
-		vec2f WindowSize;
+		vec2f RenderResolution;
 		vec2f AspectRatio;
 		vec2f WindowMinimumSize;
 		string WindowIcon;

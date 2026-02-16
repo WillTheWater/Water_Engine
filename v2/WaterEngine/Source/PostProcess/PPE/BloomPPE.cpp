@@ -24,7 +24,7 @@ namespace we
 
 		for (auto& T : Targets)
 		{
-			VERIFY(T.resize(vec2u(EC.WindowSize / 2.f)));
+			VERIFY(T.resize(vec2u(EC.RenderResolution / 2.f)));
 		}
 	}
 

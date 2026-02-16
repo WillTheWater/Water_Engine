@@ -1,6 +1,6 @@
 {
   "AssetDirectory": "Contents.pak",
-  "WindowSize": [ 1920, 1080 ],
+  "RenderResolution": [ 1920, 1080 ],
   "AspectRatio": [ 16, 9 ],
   "WindowMinimumSize": [ 960, 540 ],
   "WindowIcon": "Assets/Icon/icon.png",

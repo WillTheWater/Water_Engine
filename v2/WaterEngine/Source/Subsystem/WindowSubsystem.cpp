@@ -10,13 +10,42 @@
 namespace we
 {
     WindowSubsystem::WindowSubsystem()
-        : WindowedPosition{ vec2i(sf::VideoMode::getDesktopMode().size.x / 4, sf::VideoMode::getDesktopMode().size.y / 4) }
-        , bIsFullscreen{ EC.FullscreenMode }
+        : bIsFullscreen{ EC.FullscreenMode }
     {
-        const sf::VideoMode mode(static_cast<vec2u>(EC.WindowSize));
+        Init();
+    }
+
+    void WindowSubsystem::Init()
+    {
+        const sf::VideoMode mode(static_cast<vec2u>(EC.RenderResolution));
         const auto style = EC.FullscreenMode ? sf::Style::None : sf::Style::Default;
         const auto state = EC.FullscreenMode ? sf::State::Fullscreen : sf::State::Windowed;
         CreateGameWindow(mode, style, state);
+    }
+  
+    view WindowSubsystem::GetConstrainedView() const
+    {
+        float targetRatio = static_cast<float>(EC.AspectRatio.x) / static_cast<float>(EC.AspectRatio.y);
+        vec2u WinSize = getSize();
+        float windowRatio = static_cast<float>(WinSize.x) / static_cast<float>(WinSize.y);
+
+        float vWidth = 1.0f, vHeight = 1.0f, vPosX = 0.0f, vPosY = 0.0f;
+
+        if (windowRatio > targetRatio) {
+            vWidth = targetRatio / windowRatio;
+            vPosX = (1.0f - vWidth) / 2.0f;
+        }
+        else {
+            vHeight = windowRatio / targetRatio;
+            vPosY = (1.0f - vHeight) / 2.0f;
+        }
+
+        view ConstrainedView;
+        ConstrainedView.setSize(vec2f(EC.RenderResolution));
+        ConstrainedView.setCenter(vec2f(EC.RenderResolution) / 2.0f);
+        ConstrainedView.setViewport(rectf({ vPosX, vPosY }, { vWidth, vHeight }));
+
+        return ConstrainedView;
     }
 
     void WindowSubsystem::onResize()
@@ -38,10 +67,7 @@ namespace we
                 NewSize.y = static_cast<uint>(NewSize.x / TargetRatio);
         }
 
-        if (NewSize != getSize())
-        {
-            setSize(NewSize);
-        }
+        if (NewSize != getSize()) { setSize(NewSize); }
     }
 
     void WindowSubsystem::CreateGameWindow(const sf::VideoMode& Mode, uint Style, sf::State State)
@@ -56,15 +82,9 @@ namespace we
         setKeyRepeatEnabled(EC.EnableKeyRepeat);
         setMouseCursorVisible(false);
 
-        // HVSync takes priority over FPS
-        if (EC.VsyncEnabled)
-        {
-            setVerticalSyncEnabled(EC.VsyncEnabled);
-        }
-        else
-        {
-            setFramerateLimit(static_cast<uint>(EC.TargetFPS));
-        }
+        // VSync takes priority over FPS
+        if (EC.VsyncEnabled) { setVerticalSyncEnabled(EC.VsyncEnabled); }
+        else { setFramerateLimit(static_cast<uint>(EC.TargetFPS)); }
     }
 
     void WindowSubsystem::SetWindowIcon()
@@ -80,42 +100,14 @@ namespace we
 
         if (bIsFullscreen)
         {
-            WindowedPosition = getPosition();
-            const auto Desktop = sf::VideoMode::getDesktopMode();
-            CreateGameWindow(Desktop, sf::Style::None, sf::State::Fullscreen);
+            CreateGameWindow(sf::VideoMode::getDesktopMode(), sf::Style::None, sf::State::Fullscreen);
         }
         else
         {
-            const sf::VideoMode Mode(static_cast<sf::Vector2u>(EC.WindowSize));
-            CreateGameWindow(Mode, sf::Style::Default, sf::State::Windowed);
-            setPosition(WindowedPosition);
+            CreateGameWindow(sf::VideoMode(static_cast<sf::Vector2u>(EC.RenderResolution)), sf::Style::Default, sf::State::Windowed);
+            const auto desktop = sf::VideoMode::getDesktopMode().size;
+            setPosition(vec2i((desktop.x - EC.RenderResolution.x) / 2, (desktop.y - EC.RenderResolution.y) / 2));
         }
-        EventWindowResized();
-    }
-
-    view WindowSubsystem::getConstrainedView() const
-    {
-        float targetRatio = static_cast<float>(EC.AspectRatio.x) / static_cast<float>(EC.AspectRatio.y);
-        vec2u WinSize = getSize();
-        float windowRatio = static_cast<float>(WinSize.x) / static_cast<float>(WinSize.y);
-
-        float vWidth = 1.0f, vHeight = 1.0f, vPosX = 0.0f, vPosY = 0.0f;
-
-        if (windowRatio > targetRatio) {
-            vWidth = targetRatio / windowRatio;
-            vPosX = (1.0f - vWidth) / 2.0f;
-        }
-        else {
-            vHeight = windowRatio / targetRatio;
-            vPosY = (1.0f - vHeight) / 2.0f;
-        }
-
-        view ConstrainedView;
-        ConstrainedView.setSize(vec2f(EC.WindowSize));
-        ConstrainedView.setCenter(vec2f(EC.WindowSize) / 2.0f);
-        ConstrainedView.setViewport(rectf({ vPosX, vPosY }, { vWidth, vHeight }));
-
-        return ConstrainedView;
     }
 
     void WindowSubsystem::EventWindowClose()

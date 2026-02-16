@@ -10,6 +10,7 @@
 #include "Subsystem/WindowSubsystem.h"
 #include "Subsystem/RenderSubsystem.h"
 #include "Subsystem/TimeSubsystem.h"
+#include "UI/Cursor/CursorSubsystem.h"
 
 
 #include "Subsystem/SaveLoadSubsystem.h"
@@ -18,7 +19,6 @@
 #include "Subsystem/WorldSubsystem.h"
 #include "Subsystem/GameStateSubsystem.h"
 #include "Subsystem/GUISubsystem.h"
-#include "UI/Cursor/CursorSubsystem.h"
 
 namespace we
 {
@@ -27,6 +27,7 @@ namespace we
 		unique<WindowSubsystem> Window;
 		unique<RenderSubsystem> Render;
 		unique<TimeSubsystem> Time;
+		unique<CursorSubsystem> Cursor;
 
 
 
@@ -36,6 +37,5 @@ namespace we
 		// unique<WorldSubsystem> World;
 		// unique<GameStateSubsystem> GameState;
 		// unique<GUISubsystem> GUI;
-		// unique<CursorSubsystem> Cursor;
 	};
 }

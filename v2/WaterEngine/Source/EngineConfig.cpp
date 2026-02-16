@@ -16,7 +16,7 @@ namespace we
 
         AssetDirectory = Config["AssetDirectory"];
 
-        WindowSize = { Config["WindowSize"][0], Config["WindowSize"][1] };
+        RenderResolution = { Config["RenderResolution"][0], Config["RenderResolution"][1] };
         AspectRatio = { Config["AspectRatio"][0], Config["AspectRatio"][1] };
         WindowMinimumSize = { Config["WindowMinimumSize"][0], Config["WindowMinimumSize"][1] };
         WindowIcon = Config["WindowIcon"];

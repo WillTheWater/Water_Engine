@@ -27,15 +27,11 @@ namespace we
 		void Shutdown();
 
 	private:
-		EngineSubsystem Subsystem;
-
-	private:
 		void PreConstruct();
 		void MountAssetDirectory();
 		void TickGame();
 
-		// These need to be removed
-		void WindowInit();
-		void ConstrainRender(vec2u NewSize);
+	private:
+		EngineSubsystem Subsystem;
 	};
 }
