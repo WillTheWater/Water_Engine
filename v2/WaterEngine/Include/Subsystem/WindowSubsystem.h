@@ -17,18 +17,18 @@ namespace we
 	public:
 		WindowSubsystem();
 
-		view getConstrainedView() const;
+		view GetConstrainedView() const;
 
 	protected:
 		void onResize() override;
 
 	private:
-		vec2i WindowedPosition;
 		bool bIsFullscreen;
 
 	private:
 		friend GameWindowEventHandler;
 
+		void Init();
 		void ApplyWindowSettings();
 		void CreateGameWindow(const sf::VideoMode& Mode, uint Style, sf::State State = sf::State::Windowed);
 		void SetWindowIcon();

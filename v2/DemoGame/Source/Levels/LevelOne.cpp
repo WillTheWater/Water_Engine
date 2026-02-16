@@ -46,7 +46,7 @@
 //        auto PlayerRef = SpawnActor<Player>();
 //        if (auto P = PlayerRef.lock())
 //        {
-//            P->SetPosition(EC.WindowSize / 2.f);
+//            P->SetPosition(EC.RenderResolution / 2.f);
 //        }
 //
 //        SpawnActor<CollisionTestActor>(vec2f{ 200, 200 }, 50.0f);

@@ -22,7 +22,7 @@ namespace we
 
 	inline bool IsOutsideWindowRight(const shape& Bounds)
 	{
-		return Bounds.getPosition().x > EC.WindowSize.x - Bounds.getGlobalBounds().size.x / 2.f;
+		return Bounds.getPosition().x > EC.RenderResolution.x - Bounds.getGlobalBounds().size.x / 2.f;
 	}
 
 	inline bool IsOutsideWindowTop(const shape& Bounds)
@@ -32,14 +32,14 @@ namespace we
 
 	inline bool IsOutsideWindowBottom(const shape& Bounds)
 	{
-		return Bounds.getPosition().y > EC.WindowSize.y - Bounds.getGlobalBounds().size.y / 2.f;
+		return Bounds.getPosition().y > EC.RenderResolution.y - Bounds.getGlobalBounds().size.y / 2.f;
 	}
 
 	inline bool IsOutsideWindow(vec2f Point)
 	{
 		return Point.x < 0 || Point.y < 0 ||
-			Point.x >= EC.WindowSize.x ||
-			Point.y >= EC.WindowSize.y;
+			Point.x >= EC.RenderResolution.x ||
+			Point.y >= EC.RenderResolution.y;
 	}
 
 	inline optional<sf::FloatRect> Intersects(const shape& ObjectA, const shape& ObjectB)

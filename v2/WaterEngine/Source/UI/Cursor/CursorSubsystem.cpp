@@ -24,7 +24,7 @@ namespace we
         CursorShape.setFillColor(sf::Color::White);
         CursorTexture = Asset().LoadTexture(EC.DefaultCursor);
         CursorShape.setTexture(CursorTexture.get());
-        CursorShape.setPosition(EC.WindowSize / 2.f);
+        CursorShape.setPosition(EC.RenderResolution / 2.f);
     }
 
     void CursorSubsystem::Update(float DeltaTime)
@@ -38,8 +38,8 @@ namespace we
             CursorShape.move(JoystickDirection * CursorSpeed * DeltaTime);
 
             sf::Vector2f NewPos = {
-                std::clamp(CursorShape.getPosition().x, 0.f, EC.WindowSize.x - 1),
-                std::clamp(CursorShape.getPosition().y, 0.f, EC.WindowSize.y - 1)
+                std::clamp(CursorShape.getPosition().x, 0.f, EC.RenderResolution.x - 1),
+                std::clamp(CursorShape.getPosition().y, 0.f, EC.RenderResolution.y - 1)
             };
 
             CursorShape.setPosition(NewPos);

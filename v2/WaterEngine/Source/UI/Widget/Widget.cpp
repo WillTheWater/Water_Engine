@@ -242,7 +242,7 @@ namespace we
 
 	void Widget::UpdateCache() const
 	{
-		if (!bDirty) return;
+		/*if (!bDirty) return;
 
 		CachedWorldScale = LocalScale;
 
@@ -267,7 +267,7 @@ namespace we
 			CachedWorldPosition = RefPos + LocalOffset;
 		}
 
-		bDirty = false;
+		bDirty = false;*/
 	}
 
 	shared<Widget> Widget::FindDeepestChildAt(const vec2f& WorldPoint)
@@ -313,11 +313,12 @@ namespace we
 
 	vec2f Widget::CalculateAnchorPosition() const
 	{
-		vec2f ScreenSize = Subsystem.Render->GetRenderSize();
+		/*vec2f ScreenSize = Subsystem.Render->GetRenderSize();
 
 		vec2f ScreenPoint = GetAnchorPoint(ScreenSize, TargetAnchor);
 		vec2f WidgetOffset = GetAnchorPoint(Size.componentWiseMul(LocalScale), WidgetAnchor);
 
-		return ScreenPoint - WidgetOffset + AnchorOffset;
+		return ScreenPoint - WidgetOffset + AnchorOffset;*/
+		return vec2f{};
 	}
 }

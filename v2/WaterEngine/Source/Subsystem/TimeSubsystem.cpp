@@ -20,7 +20,7 @@ namespace we
 		}
 		else
 		{
-			DeltaTime = sf::seconds(UnscaledDeltaTime.asSeconds() * TimeScale);
+			DeltaTime = UnscaledDeltaTime * TimeScale;
 		}
 	}
 

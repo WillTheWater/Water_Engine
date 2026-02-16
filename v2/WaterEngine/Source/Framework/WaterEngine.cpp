@@ -32,7 +32,7 @@ namespace we
         // Build All Subsystems
         Subsystem.Window = make_unique<WindowSubsystem>();
         Subsystem.Render = make_unique<RenderSubsystem>();
-        Subsystem.Time = make_unique<TimeSubsystem>();
+        Subsystem.Time   = make_unique<TimeSubsystem>();
 
 
         /*Subsystem.SaveLoad = make_unique<SaveLoadSubsystem>();
@@ -135,14 +135,13 @@ namespace we
 
         //Subsystem.Window->draw(sprite(Subsystem.Render->FinishRender()));
         
-       // Subsystem.GUI->Render();
+        // Subsystem.GUI->Render();
 
-       // Subsystem.Cursor->Render();
+        // Subsystem.Cursor->Render();
 
+        Subsystem.Window->setView(Subsystem.Window->GetConstrainedView());
 
-        // Apply constrained view for letterboxing
-        Subsystem.Window->setView(Subsystem.Window->getConstrainedView());
-        Subsystem.Window->draw(sprite(Subsystem.Render->FinishRender()));
+        Subsystem.Window->draw(Subsystem.Render->FinishRender());
 
         Subsystem.Window->display();
     }
@@ -154,8 +153,7 @@ namespace we
 
     bool WaterEngine::IsRunning() const
     {
-        //bExitRequested;
-        return true;
+        return Subsystem.Window->isOpen();
     }
 
     bool WaterEngine::HasFocus() const
@@ -167,24 +165,4 @@ namespace we
     {
         //bExitRequested = true;
     }
-
-
-
-    // NEEDS REFACTORED
-
-
-
-    void WaterEngine::WindowInit()
-    {
-        //Window = make_unique<GameWindow>();
-        //Window->OnResize.Bind(this, &WaterEngine::ConstrainRender);
-        //Subsystem.Cursor = make_unique<CursorSubsystem>(*Window);
-        //Subsystem.GUI = make_unique<GUISubsystem>(*Window, *Subsystem.Cursor);
-    }
-
-    void WaterEngine::ConstrainRender(vec2u NewSize)
-    {
-        //Window->setView(Subsystem.Render->ConstrainView(NewSize));
-    }
-
 }
