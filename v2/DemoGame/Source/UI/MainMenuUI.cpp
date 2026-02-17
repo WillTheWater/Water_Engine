@@ -13,6 +13,8 @@
 #include "UI/Widget/Spacer.h"
 #include "UI/Widget/CheckBox.h"
 #include "UI/Widget/Slider.h"
+#include "UI/Widget/ProgressBar.h"
+#include "UI/Widget/TextBlock.h"
 #include "Framework/EngineSubsystem.h"
 #include "Subsystem/GUISubsystem.h"
 #include "Utility/Log.h"
@@ -74,6 +76,42 @@ namespace we
 		HBox->AddChild(HB2);
 		HBox->AddChild(HB3);
 
+		// Test TextBlocks - Center Left
+		// Left aligned wrapped text
+		auto TextLeft = Subsystem.GUI->CreateTextBlock(
+			"This is left aligned text that wraps automatically when it gets too long.",
+			200.f,  // wrap width
+			18);
+		TextLeft->SetRenderDepth(100.f);
+		TextLeft->SetAlignment(TextAlignment::Left);
+		TextLeft->SetColor(color::White);
+		TextLeft->SetOutlineColor(color::Black);
+		TextLeft->SetOutlineThickness(1.5f);
+		TextLeft->SetAnchorPosition(Anchor::CenterLeft, Anchor::CenterLeft, { 400.f, -60.f });
+
+		// Center aligned wrapped text
+		auto TextCenter = Subsystem.GUI->CreateTextBlock(
+			"Center aligned text stays centered within the wrap width.",
+			200.f,
+			18);
+		TextCenter->SetRenderDepth(100.f);
+		TextCenter->SetAlignment(TextAlignment::Center);
+		TextCenter->SetColor(color{ 100, 200, 100 });
+		TextCenter->SetAnchorPosition(Anchor::CenterLeft, Anchor::CenterLeft, { 20.f, 0.f });
+
+		// Right aligned wrapped text with outline
+		auto TextRight = Subsystem.GUI->CreateTextBlock(
+			"Right aligned text with outline and custom line spacing.",
+			200.f,
+			18);
+		TextRight->SetRenderDepth(100.f);
+		TextRight->SetAlignment(TextAlignment::Right);
+		TextRight->SetColor(color{ 200, 150, 100 });
+		TextRight->SetOutlineColor(color::Black);
+		TextRight->SetOutlineThickness(1.5f);
+		TextRight->SetLineSpacing(2.5f);
+		TextRight->SetAnchorPosition(Anchor::CenterLeft, Anchor::CenterLeft, { 200.f, 200.f });
+
 		// Test GridBox - Bottom Left
 		auto GBox = Subsystem.GUI->CreateGridBox(2, 10.f);
 		GBox->SetAnchorPosition(Anchor::BottomLeft, Anchor::BottomLeft, { 20.f, -20.f });
@@ -94,7 +132,7 @@ namespace we
 
 		// Test AutoPanel with different alignments - Bottom Right
 		auto AutoP = Subsystem.GUI->CreateAutoPanel(color{ 0, 0, 0, 128 }, color::White, 4.f, 10.f);
-		AutoP->SetAnchorPosition(Anchor::BottomRight, Anchor::BottomRight, { -200.f, -200.f });
+		AutoP->SetAnchorPosition(Anchor::BottomRight, Anchor::BottomRight, { -300.f, -50.f });
 		AutoP->SetRenderDepth(70.f);
 		AutoP->SetBorder(20.f, 20.f, 15.f, 150.f);
 
@@ -156,6 +194,35 @@ namespace we
 		Slider2->SetThumbColor(color{ 100, 200, 100 });
 		Slider2->OnValueChanged.Bind([](float Value) { LOG("Slider2 (V): {:.2f}", Value); });
 		AutoP->AddChild(Slider2, ChildAlignment::Left);
+
+		// Add spacer before progress bars
+		auto Spacer3 = Subsystem.GUI->CreateSpacer(10.f, 15.f);
+		Spacer3->SetRenderDepth(175.f);
+		AutoP->AddChild(Spacer3, ChildAlignment::Left);
+
+		// Test ProgressBars
+		// Horizontal rectangle progress bar (LTR)
+		auto Bar1 = Subsystem.GUI->CreateProgressBar({ 180.f, 20.f }, 0.5f);
+		Bar1->SetRenderDepth(75.f);
+		Bar1->SetBackgroundColor(color{ 50, 50, 50 });
+		Bar1->SetFillColor(color{ 100, 200, 100 });
+		AutoP->AddChild(Bar1, ChildAlignment::Left);
+
+		// Horizontal progress bar (RTL)
+		auto Bar2 = Subsystem.GUI->CreateProgressBar({ 180.f, 20.f }, 0.3f);
+		Bar2->SetRenderDepth(75.f);
+		Bar2->SetDirection(ProgressDirection::RightToLeft);
+		Bar2->SetBackgroundColor(color{ 50, 50, 50 });
+		Bar2->SetFillColor(color{ 200, 100, 100 });
+		AutoP->AddChild(Bar2, ChildAlignment::Left);
+
+		// Vertical progress bar (bottom to top)
+		auto Bar3 = Subsystem.GUI->CreateProgressBar({ 20.f, 100.f }, 0.7f);
+		Bar3->SetRenderDepth(75.f);
+		Bar3->SetDirection(ProgressDirection::BottomToTop);
+		Bar3->SetBackgroundColor(color{ 50, 50, 50 });
+		Bar3->SetFillColor(color{ 100, 100, 200 });
+		AutoP->AddChild(Bar3, ChildAlignment::Left);
 	}
 
 	void MainMenuUI::OnColorButtonClicked()

@@ -18,6 +18,8 @@
 #include "UI/Widget/Spacer.h"
 #include "UI/Widget/CheckBox.h"
 #include "UI/Widget/Slider.h"
+#include "UI/Widget/ProgressBar.h"
+#include "UI/Widget/TextBlock.h"
 #include "Framework/World/RenderTypes.h"
 #include "UI/UIUtility.h"
 #include "Utility/Log.h"
@@ -179,6 +181,55 @@ namespace we
 		auto NewSlider = make_shared<Slider>(TrackTexturePath, ThumbTexturePath, Orient);
 		Widgets.push_back(NewSlider);
 		return NewSlider;
+	}
+
+	shared<ProgressBar> GUISubsystem::CreateProgressBar(
+		const vec2f& Size,
+		float InitialValue)
+	{
+		auto NewBar = make_shared<ProgressBar>(Size, InitialValue);
+		Widgets.push_back(NewBar);
+		return NewBar;
+	}
+
+	shared<ProgressBar> GUISubsystem::CreateTextureBackgroundProgressBar(
+		const string& BackgroundTexturePath,
+		const vec2f& Size,
+		float InitialValue)
+	{
+		auto NewBar = make_shared<ProgressBar>(BackgroundTexturePath, Size, InitialValue);
+		Widgets.push_back(NewBar);
+		return NewBar;
+	}
+
+	shared<ProgressBar> GUISubsystem::CreateTextureFillProgressBar(
+		const vec2f& Size,
+		const string& FillTexturePath,
+		float InitialValue)
+	{
+		auto NewBar = make_shared<ProgressBar>(Size, FillTexturePath, InitialValue);
+		Widgets.push_back(NewBar);
+		return NewBar;
+	}
+
+	shared<ProgressBar> GUISubsystem::CreateTextureProgressBar(
+		const string& BackgroundTexturePath,
+		const string& FillTexturePath,
+		float InitialValue)
+	{
+		auto NewBar = make_shared<ProgressBar>(BackgroundTexturePath, FillTexturePath, InitialValue);
+		Widgets.push_back(NewBar);
+		return NewBar;
+	}
+
+	shared<TextBlock> GUISubsystem::CreateTextBlock(
+		const string& Text,
+		float WrapWidth,
+		uint CharSize)
+	{
+		auto NewText = make_shared<TextBlock>(Text, WrapWidth, CharSize);
+		Widgets.push_back(NewText);
+		return NewText;
 	}
 
 	void GUISubsystem::Clear()

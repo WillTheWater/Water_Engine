@@ -8,6 +8,8 @@
 #include "Core/CoreMinimal.h"
 #include "UI/Widget/CheckBox.h"
 #include "UI/Widget/Slider.h"
+#include "UI/Widget/ProgressBar.h"
+#include "UI/Widget/TextBlock.h"
 
 namespace we
 {
@@ -21,6 +23,8 @@ namespace we
 	class Spacer;
 	class CheckBox;
 	class Slider;
+	class ProgressBar;
+	class TextBlock;
 	struct EngineSubsystem;
 
 	class GUISubsystem
@@ -126,6 +130,35 @@ namespace we
 			const string& TrackTexturePath,
 			const string& ThumbTexturePath,
 			SliderOrientation Orient = SliderOrientation::Horizontal);
+
+		// Factory: Rectangle progress bar
+		shared<ProgressBar> CreateProgressBar(
+			const vec2f& Size = { 200.f, 24.f },
+			float InitialValue = 0.f);
+
+		// Factory: Texture background + rectangle fill progress bar
+		shared<ProgressBar> CreateTextureBackgroundProgressBar(
+			const string& BackgroundTexturePath,
+			const vec2f& Size = { 200.f, 24.f },
+			float InitialValue = 0.f);
+
+		// Factory: Rectangle background + texture fill progress bar
+		shared<ProgressBar> CreateTextureFillProgressBar(
+			const vec2f& Size,
+			const string& FillTexturePath,
+			float InitialValue = 0.f);
+
+		// Factory: Texture background + texture fill progress bar
+		shared<ProgressBar> CreateTextureProgressBar(
+			const string& BackgroundTexturePath,
+			const string& FillTexturePath,
+			float InitialValue = 0.f);
+
+		// Factory: TextBlock with auto-wrap
+		shared<TextBlock> CreateTextBlock(
+			const string& Text = "",
+			float WrapWidth = 0.f,
+			uint CharSize = 24);
 
 		// Handle raw input events, returns true if consumed by GUI
 		bool HandleEvent(const sf::Event& Event);
