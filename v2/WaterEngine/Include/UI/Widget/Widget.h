@@ -47,7 +47,7 @@ namespace we
 		vec2f GetWorldPosition() const;
 		vec2f GetOrigin() const;
 
-		void AddChild(shared<Widget> Child, Anchor InTargetAnchor = Anchor::TopLeft, Anchor InWidgetAnchor = Anchor::TopLeft, vec2f InOffset = vec2f{ 0, 0 });
+		virtual void AddChild(shared<Widget> Child, Anchor InTargetAnchor = Anchor::TopLeft, Anchor InWidgetAnchor = Anchor::TopLeft, vec2f InOffset = vec2f{ 0, 0 });
 		void RemoveChild(Widget* Child);
 		void SetParent(Widget* InParent);
 		void DetachFromParent();
@@ -97,8 +97,11 @@ namespace we
 		float AutoSizePadding = 0.f;
 
 		Widget* Parent = nullptr;
+
+	protected:
 		vector<weak<Widget>> Children;
 
+	private:
 		bool bVisible = true;
 		bool bIsFocusable = false;
 		RenderDepth RenderDepthValue{ nullptr, 0.f };

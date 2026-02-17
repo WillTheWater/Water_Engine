@@ -10,6 +10,12 @@
 #include "Framework/EngineSubsystem.h"
 #include "UI/Widget/Widget.h"
 #include "UI/Widget/Button.h"
+#include "UI/Widget/Panel.h"
+#include "UI/Widget/VerticalBox.h"
+#include "UI/Widget/HorizontalBox.h"
+#include "UI/Widget/GridBox.h"
+#include "UI/Widget/AutoPanel.h"
+#include "UI/Widget/Spacer.h"
 #include "Framework/World/RenderTypes.h"
 #include "UI/UIUtility.h"
 #include "Utility/Log.h"
@@ -48,6 +54,65 @@ namespace we
 		auto NewButton = make_shared<Button>(Label, TexturePath, Size, bUseColorTint);
 		Widgets.push_back(NewButton);
 		return NewButton;
+	}
+
+	shared<Panel> GUISubsystem::CreatePanel(
+		const vec2f& Size,
+		color FillColor,
+		color OutlineColor,
+		float OutlineThickness)
+	{
+		auto NewPanel = make_shared<Panel>(Size, FillColor, OutlineColor, OutlineThickness);
+		Widgets.push_back(NewPanel);
+		return NewPanel;
+	}
+
+	shared<Panel> GUISubsystem::CreateTexturePanel(
+		const string& TexturePath,
+		const vec2f& Size)
+	{
+		auto NewPanel = make_shared<Panel>(TexturePath, Size);
+		Widgets.push_back(NewPanel);
+		return NewPanel;
+	}
+
+	shared<VerticalBox> GUISubsystem::CreateVerticalBox(float Padding)
+	{
+		auto NewBox = make_shared<VerticalBox>(Padding);
+		Widgets.push_back(NewBox);
+		return NewBox;
+	}
+
+	shared<HorizontalBox> GUISubsystem::CreateHorizontalBox(float Padding)
+	{
+		auto NewBox = make_shared<HorizontalBox>(Padding);
+		Widgets.push_back(NewBox);
+		return NewBox;
+	}
+
+	shared<GridBox> GUISubsystem::CreateGridBox(uint Columns, float Padding)
+	{
+		auto NewBox = make_shared<GridBox>(Columns, Padding);
+		Widgets.push_back(NewBox);
+		return NewBox;
+	}
+
+	shared<AutoPanel> GUISubsystem::CreateAutoPanel(
+		color FillColor,
+		color OutlineColor,
+		float OutlineThickness,
+		float Spacing)
+	{
+		auto NewPanel = make_shared<AutoPanel>(FillColor, OutlineColor, OutlineThickness, Spacing);
+		Widgets.push_back(NewPanel);
+		return NewPanel;
+	}
+
+	shared<Spacer> GUISubsystem::CreateSpacer(float Width, float Height)
+	{
+		auto NewSpacer = make_shared<Spacer>(Width, Height);
+		Widgets.push_back(NewSpacer);
+		return NewSpacer;
 	}
 
 	void GUISubsystem::Clear()

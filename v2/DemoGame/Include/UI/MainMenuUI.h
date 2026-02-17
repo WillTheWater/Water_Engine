@@ -10,6 +10,12 @@
 namespace we
 {
 	class Button;
+	class Panel;
+	class VerticalBox;
+	class HorizontalBox;
+	class GridBox;
+	class AutoPanel;
+	class Spacer;
 	struct EngineSubsystem;
 
 	class MainMenuUI
@@ -27,6 +33,7 @@ namespace we
 		void OnTextureButtonClicked();
 
 		EngineSubsystem& Subsystem;
+		shared<Panel> MenuPanel;
 		shared<Button> ColorButton;
 		shared<Button> TextureButton;
 	};

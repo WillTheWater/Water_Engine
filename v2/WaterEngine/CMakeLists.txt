@@ -87,6 +87,8 @@ set(WATER_ENGINE_HEADERS
     Include/UI/Clipboard/Clipboard.h
 
     Include/UI/Widget/Panel.h
+    Include/UI/Widget/AutoPanel.h
+    Include/UI/Widget/Spacer.h
     Include/UI/Widget/Widget.h
     Include/UI/Widget/Button.h
     Include/UI/Widget/HorizontalBox.h
@@ -152,6 +154,7 @@ set(WATER_ENGINE_SOURCES
     Source/UI/Clipboard/Clipboard.cpp
 
     Source/UI/Widget/Panel.cpp
+    Source/UI/Widget/AutoPanel.cpp
     Source/UI/Widget/Widget.cpp
     Source/UI/Widget/Button.cpp
     Source/UI/Widget/HorizontalBox.cpp

@@ -11,6 +11,12 @@ namespace we
 {
 	class Widget;
 	class Button;
+	class Panel;
+	class AutoPanel;
+	class VerticalBox;
+	class HorizontalBox;
+	class GridBox;
+	class Spacer;
 	struct EngineSubsystem;
 
 	class GUISubsystem
@@ -45,6 +51,37 @@ namespace we
 			const string& TexturePath = "",
 			const vec2f& Size = { 0.f, 0.f },
 			bool bUseColorTint = false);
+
+		// Factory: Rectangle panel
+		shared<Panel> CreatePanel(
+			const vec2f& Size = { 300.f, 200.f },
+			color FillColor = color{ 50, 50, 50, 200 },
+			color OutlineColor = color{ 100, 100, 100 },
+			float OutlineThickness = 1.f);
+
+		// Factory: Texture panel
+		shared<Panel> CreateTexturePanel(
+			const string& TexturePath,
+			const vec2f& Size = { 0.f, 0.f });
+
+		// Factory: Vertical layout box
+		shared<VerticalBox> CreateVerticalBox(float Padding = 10.f);
+
+		// Factory: Horizontal layout box
+		shared<HorizontalBox> CreateHorizontalBox(float Padding = 10.f);
+
+		// Factory: Grid layout box
+		shared<GridBox> CreateGridBox(uint Columns = 2, float Padding = 10.f);
+
+		// Factory: Auto-sizing panel with child alignment
+		shared<AutoPanel> CreateAutoPanel(
+			color FillColor = color{ 50, 50, 50, 200 },
+			color OutlineColor = color{ 100, 100, 100 },
+			float OutlineThickness = 1.f,
+			float Spacing = 10.f);
+
+		// Factory: Spacer widget
+		shared<Spacer> CreateSpacer(float Width = 10.f, float Height = 10.f);
 
 		// Handle raw input events, returns true if consumed by GUI
 		bool HandleEvent(const sf::Event& Event);
