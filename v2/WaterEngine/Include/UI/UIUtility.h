@@ -52,6 +52,13 @@ namespace we
 		       Point.y < RectCenter.y + HalfSize.y;
 	}
 
+	// Check if point is inside a circle
+	inline bool PointInCircle(vec2f Point, vec2f CircleCenter, float Radius)
+	{
+		vec2f Delta = Point - CircleCenter;
+		return Delta.lengthSquared() <= Radius * Radius;
+	}
+
 	// -------------------------------------------------------------------------
 	// Window / Screen Helpers
 	// -------------------------------------------------------------------------

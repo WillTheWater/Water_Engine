@@ -16,6 +16,7 @@
 #include "UI/Widget/GridBox.h"
 #include "UI/Widget/AutoPanel.h"
 #include "UI/Widget/Spacer.h"
+#include "UI/Widget/CheckBox.h"
 #include "Framework/World/RenderTypes.h"
 #include "UI/UIUtility.h"
 #include "Utility/Log.h"
@@ -113,6 +114,26 @@ namespace we
 		auto NewSpacer = make_shared<Spacer>(Width, Height);
 		Widgets.push_back(NewSpacer);
 		return NewSpacer;
+	}
+
+	shared<CheckBox> GUISubsystem::CreateCheckBox(
+		bool bInitialState,
+		float BoxSize,
+		CheckBoxShape Shape)
+	{
+		auto NewCheckBox = make_shared<CheckBox>(bInitialState, BoxSize, Shape);
+		Widgets.push_back(NewCheckBox);
+		return NewCheckBox;
+	}
+
+	shared<CheckBox> GUISubsystem::CreateTextureCheckBox(
+		const string& TexturePath,
+		bool bInitialState,
+		float BoxSize)
+	{
+		auto NewCheckBox = make_shared<CheckBox>(TexturePath, bInitialState, BoxSize);
+		Widgets.push_back(NewCheckBox);
+		return NewCheckBox;
 	}
 
 	void GUISubsystem::Clear()

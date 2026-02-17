@@ -11,6 +11,7 @@
 #include "UI/Widget/GridBox.h"
 #include "UI/Widget/AutoPanel.h"
 #include "UI/Widget/Spacer.h"
+#include "UI/Widget/CheckBox.h"
 #include "Framework/EngineSubsystem.h"
 #include "Subsystem/GUISubsystem.h"
 #include "Utility/Log.h"
@@ -114,6 +115,24 @@ namespace we
 		auto AP4 = Subsystem.GUI->CreateButton("After Spacer", { 200.f, 40.f }, color{ 200, 200, 100 });
 		AP4->SetRenderDepth(75.f);
 		AutoP->AddChild(AP4, ChildAlignment::Center);
+
+		// Add checkboxes to AutoPanel (no labels)
+		auto Check1 = Subsystem.GUI->CreateCheckBox(false, 50.f, CheckBoxShape::Rectangle);
+		Check1->SetRenderDepth(75.f);
+		Check1->OnToggled.Bind([](bool bChecked) { LOG("Rect CheckBox: {}", bChecked); });
+		AutoP->AddChild(Check1, ChildAlignment::Left);
+
+		auto Check2 = Subsystem.GUI->CreateCheckBox(true, 50.f, CheckBoxShape::Circle);
+		Check2->SetRenderDepth(75.f);
+		Check2->OnToggled.Bind([](bool bChecked) { LOG("Circle CheckBox: {}", bChecked); });
+		AutoP->AddChild(Check2, ChildAlignment::Left);
+
+		auto Check3 = Subsystem.GUI->CreateCheckBox(false, 50.f, CheckBoxShape::Rectangle);
+		Check3->SetRenderDepth(75.f);
+		Check3->SetNormalColor(color{ 100, 100, 100 });
+		Check3->SetCheckedColor(color{ 100, 100, 200 });
+		Check3->OnToggled.Bind([](bool bChecked) { LOG("Custom Color CheckBox: {}", bChecked); });
+		AutoP->AddChild(Check3, ChildAlignment::Left);
 	}
 
 	void MainMenuUI::OnColorButtonClicked()

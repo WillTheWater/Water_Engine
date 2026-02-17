@@ -57,7 +57,7 @@ namespace we
 		void SetVisible(bool bInVisible) { bVisible = bInVisible; }
 		bool IsVisible() const { return bVisible; }
 
-		bool Contains(const vec2f& ScreenPoint) const;
+		virtual bool Contains(const vec2f& ScreenPoint) const;
 		shared<Widget> FindDeepestChildAt(const vec2f& ScreenPoint);
 
 		void SetFocusable(bool bFocusable) { bIsFocusable = bFocusable; }

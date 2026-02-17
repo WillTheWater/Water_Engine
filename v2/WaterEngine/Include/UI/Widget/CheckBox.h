@@ -1,74 +1,74 @@
-//// =============================================================================
-//// Water Engine v2.0.0
-//// Copyright(C) 2026 Will The Water
-//// =============================================================================
-//
-//#pragma once
-//
-//#include "Core/CoreMinimal.h"
-//#include "UI/Widget/Widget.h"
-//#include "Framework/EngineSubsystem.h"
-//#include <SFML/Graphics/RectangleShape.hpp>
-//#include <SFML/Graphics/Text.hpp>
-//
-//namespace we
-//{
-//    class Checkbox : public Widget
-//    {
-//    public:
-//        Checkbox(
-//            EngineSubsystem& Subsystem,
-//            const string& LabelText,
-//            bool bInitialState = false,
-//            float BoxSize = 24.f
-//        );
-//
-//        void Update(float DeltaTime) override;
-//        void Render(GameWindow& Window) override;
-//
-//        void OnMouseEnter() override;
-//        void OnMouseLeave() override;
-//        bool OnMouseButtonPressed() override;
-//        void OnMouseButtonReleased() override;
-//
-//        void SetChecked(bool bChecked);
-//        bool IsChecked() const { return bChecked; }
-//
-//        void Toggle();
-//
-//        void SetLabel(const string& NewLabel);
-//        const string& GetLabel() const { return LabelText; }
-//
-//        void SetBoxSize(float Size);
-//        float GetBoxSize() const { return BoxSize; }
-//
-//        void SetLabelOffset(float Offset);
-//        float GetLabelOffset() const { return LabelOffset; }
-//
-//        void SetUncheckedColor(color Color);
-//        void SetCheckedColor(color Color);
-//        void SetHoverColor(color Color);
-//
-//        Delegate<bool> OnToggled;
-//
-//    private:
-//        void UpdateVisualState();
-//        void UpdateSize();
-//
-//        string LabelText;
-//        bool bChecked{ false };
-//        bool bHovered{ false };
-//        bool bPressed{ false };
-//
-//        float BoxSize;
-//        float LabelOffset{ 10.f };
-//
-//        color UncheckedColor{ 80, 80, 80 };
-//        color CheckedColor{ 100, 200, 100 };
-//        color HoverColor{ 220, 220, 220 };
-//
-//        shared<font> TextFont;
-//        optional<sf::Text> LabelDrawable;
-//        optional<rectangle> BoxDrawable;
-//    };
-//}
+// =============================================================================
+// Water Engine v2.0.0
+// Copyright(C) 2026 Will The Water
+// =============================================================================
+
+#pragma once
+
+#include "Core/CoreMinimal.h"
+#include "UI/Widget/Widget.h"
+
+namespace we
+{
+	enum class CheckBoxShape
+	{
+		Rectangle,
+		Circle
+	};
+
+	class CheckBox : public Widget
+	{
+	public:
+		// Shape-based checkbox (rectangle or circle)
+		CheckBox(
+			bool bInitialState = false,
+			float BoxSize = 24.f,
+			CheckBoxShape Shape = CheckBoxShape::Rectangle);
+
+		// Texture-based checkbox
+		CheckBox(
+			const string& TexturePath,
+			bool bInitialState = false,
+			float BoxSize = 0.f);
+
+		void CollectRenderDepths(vector<RenderDepth>& OutDepths) const override;
+
+		void SetChecked(bool bNewChecked);
+		bool IsChecked() const { return bChecked; }
+		void Toggle();
+
+		void SetNormalColor(color InColor);
+		void SetCheckedColor(color InColor);
+		void SetHoverColor(color InColor);
+
+		void SetPressed(bool bInPressed) override;
+
+		bool Contains(const vec2f& ScreenPoint) const override;
+
+		Delegate<bool> OnToggled;
+
+	private:
+		void UpdateVisualState();
+		void OnFocusGainedHandler();
+		void OnFocusLostHandler();
+		void OnClickHandler();
+
+		bool bChecked = false;
+		bool bHovered = false;
+		bool bPressed = false;
+
+		float BoxSize = 24.f;
+
+		color NormalColor{ 80, 80, 80 };
+		color CheckedColor{ 100, 200, 100 };
+		color HoverColor{ 150, 150, 150 };
+
+		CheckBoxShape ShapeType = CheckBoxShape::Rectangle;
+		bool bUseTexture = false;
+
+		mutable optional<rectangle> BoxRect;
+		mutable optional<circle> BoxCircle;
+		mutable optional<sprite> BoxSprite;
+		shared<texture> BoxTexture;
+	};
+}

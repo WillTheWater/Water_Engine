@@ -6,6 +6,7 @@
 #pragma once
 
 #include "Core/CoreMinimal.h"
+#include "UI/Widget/CheckBox.h"
 
 namespace we
 {
@@ -17,6 +18,7 @@ namespace we
 	class HorizontalBox;
 	class GridBox;
 	class Spacer;
+	class CheckBox;
 	struct EngineSubsystem;
 
 	class GUISubsystem
@@ -82,6 +84,18 @@ namespace we
 
 		// Factory: Spacer widget
 		shared<Spacer> CreateSpacer(float Width = 10.f, float Height = 10.f);
+
+		// Factory: Shape-based checkbox
+		shared<CheckBox> CreateCheckBox(
+			bool bInitialState = false,
+			float BoxSize = 24.f,
+			CheckBoxShape Shape = CheckBoxShape::Rectangle);
+
+		// Factory: Texture-based checkbox
+		shared<CheckBox> CreateTextureCheckBox(
+			const string& TexturePath,
+			bool bInitialState = false,
+			float BoxSize = 0.f);
 
 		// Handle raw input events, returns true if consumed by GUI
 		bool HandleEvent(const sf::Event& Event);
