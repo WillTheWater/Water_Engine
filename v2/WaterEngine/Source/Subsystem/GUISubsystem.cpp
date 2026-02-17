@@ -17,6 +17,7 @@
 #include "UI/Widget/AutoPanel.h"
 #include "UI/Widget/Spacer.h"
 #include "UI/Widget/CheckBox.h"
+#include "UI/Widget/Slider.h"
 #include "Framework/World/RenderTypes.h"
 #include "UI/UIUtility.h"
 #include "Utility/Log.h"
@@ -136,6 +137,50 @@ namespace we
 		return NewCheckBox;
 	}
 
+	shared<Slider> GUISubsystem::CreateSlider(
+		float TrackWidth,
+		float TrackHeight,
+		float ThumbWidth,
+		float ThumbHeight,
+		SliderOrientation Orient)
+	{
+		auto NewSlider = make_shared<Slider>(TrackWidth, TrackHeight, ThumbWidth, ThumbHeight, Orient);
+		Widgets.push_back(NewSlider);
+		return NewSlider;
+	}
+
+	shared<Slider> GUISubsystem::CreateTextureTrackSlider(
+		const string& TrackTexturePath,
+		float ThumbWidth,
+		float ThumbHeight,
+		SliderOrientation Orient)
+	{
+		auto NewSlider = make_shared<Slider>(TrackTexturePath, ThumbWidth, ThumbHeight, Orient);
+		Widgets.push_back(NewSlider);
+		return NewSlider;
+	}
+
+	shared<Slider> GUISubsystem::CreateTextureThumbSlider(
+		float TrackWidth,
+		float TrackHeight,
+		const string& ThumbTexturePath,
+		SliderOrientation Orient)
+	{
+		auto NewSlider = make_shared<Slider>(TrackWidth, TrackHeight, ThumbTexturePath, Orient);
+		Widgets.push_back(NewSlider);
+		return NewSlider;
+	}
+
+	shared<Slider> GUISubsystem::CreateTextureSlider(
+		const string& TrackTexturePath,
+		const string& ThumbTexturePath,
+		SliderOrientation Orient)
+	{
+		auto NewSlider = make_shared<Slider>(TrackTexturePath, ThumbTexturePath, Orient);
+		Widgets.push_back(NewSlider);
+		return NewSlider;
+	}
+
 	void GUISubsystem::Clear()
 	{
 		Widgets.clear();
@@ -206,6 +251,17 @@ namespace we
 	{
 		vec2f MousePos = GetMousePosition();
 		UpdateHoverState(MousePos);
+
+		// Notify pressed widget of drag (for sliders and other draggable widgets)
+		if (auto Pressed = PressedWidget.lock())
+		{
+			// Try to cast to Slider and call OnDrag
+			// We use dynamic_pointer_cast since Slider derives from Widget
+			if (auto SliderWidget = std::dynamic_pointer_cast<Slider>(Pressed))
+			{
+				SliderWidget->OnDrag(MousePos);
+			}
+		}
 	}
 
 	void GUISubsystem::HandleMousePressed(const sf::Event::MouseButtonPressed& Btn)
@@ -225,6 +281,12 @@ namespace we
 
 			PressedWidget = Target;
 			Target->SetPressed(true);
+
+			// For sliders, immediately call OnDrag to jump to click position
+			if (auto SliderWidget = std::dynamic_pointer_cast<Slider>(Target))
+			{
+				SliderWidget->OnDrag(MousePos);
+			}
 
 			const string& PressedSound = Target->GetPressedSound();
 			if (Subsystem.Audio && !PressedSound.empty())

@@ -7,6 +7,7 @@
 
 #include "Core/CoreMinimal.h"
 #include "UI/Widget/CheckBox.h"
+#include "UI/Widget/Slider.h"
 
 namespace we
 {
@@ -19,6 +20,7 @@ namespace we
 	class GridBox;
 	class Spacer;
 	class CheckBox;
+	class Slider;
 	struct EngineSubsystem;
 
 	class GUISubsystem
@@ -96,6 +98,34 @@ namespace we
 			const string& TexturePath,
 			bool bInitialState = false,
 			float BoxSize = 0.f);
+
+		// Factory: Rectangle slider (horizontal or vertical)
+		shared<Slider> CreateSlider(
+			float TrackWidth = 200.f,
+			float TrackHeight = 10.f,
+			float ThumbWidth = 20.f,
+			float ThumbHeight = 30.f,
+			SliderOrientation Orient = SliderOrientation::Horizontal);
+
+		// Factory: Texture track + rectangle thumb slider
+		shared<Slider> CreateTextureTrackSlider(
+			const string& TrackTexturePath,
+			float ThumbWidth = 20.f,
+			float ThumbHeight = 30.f,
+			SliderOrientation Orient = SliderOrientation::Horizontal);
+
+		// Factory: Rectangle track + texture thumb slider
+		shared<Slider> CreateTextureThumbSlider(
+			float TrackWidth = 200.f,
+			float TrackHeight = 10.f,
+			const string& ThumbTexturePath = "",
+			SliderOrientation Orient = SliderOrientation::Horizontal);
+
+		// Factory: Texture track + texture thumb slider
+		shared<Slider> CreateTextureSlider(
+			const string& TrackTexturePath,
+			const string& ThumbTexturePath,
+			SliderOrientation Orient = SliderOrientation::Horizontal);
 
 		// Handle raw input events, returns true if consumed by GUI
 		bool HandleEvent(const sf::Event& Event);

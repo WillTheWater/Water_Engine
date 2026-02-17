@@ -12,6 +12,7 @@
 #include "UI/Widget/AutoPanel.h"
 #include "UI/Widget/Spacer.h"
 #include "UI/Widget/CheckBox.h"
+#include "UI/Widget/Slider.h"
 #include "Framework/EngineSubsystem.h"
 #include "Subsystem/GUISubsystem.h"
 #include "Utility/Log.h"
@@ -133,6 +134,28 @@ namespace we
 		Check3->SetCheckedColor(color{ 100, 100, 200 });
 		Check3->OnToggled.Bind([](bool bChecked) { LOG("Custom Color CheckBox: {}", bChecked); });
 		AutoP->AddChild(Check3, ChildAlignment::Left);
+
+		// Add spacer before sliders
+		auto Spacer2 = Subsystem.GUI->CreateSpacer(10.f, 15.f);
+		Spacer2->SetRenderDepth(175.f);
+		AutoP->AddChild(Spacer2, ChildAlignment::Left);
+
+		// Test Sliders
+		// Horizontal rectangle slider
+		auto Slider1 = Subsystem.GUI->CreateSlider(180.f, 10.f, 20.f, 30.f, SliderOrientation::Horizontal);
+		Slider1->SetRenderDepth(75.f);
+		Slider1->SetValue(0.3f);
+		Slider1->OnValueChanged.Bind([](float Value) { LOG("Slider1 (H): {:.2f}", Value); });
+		AutoP->AddChild(Slider1, ChildAlignment::Left);
+
+		// Vertical rectangle slider
+		auto Slider2 = Subsystem.GUI->CreateSlider(30.f, 150.f, 40.f, 20.f, SliderOrientation::Vertical);
+		Slider2->SetRenderDepth(75.f);
+		Slider2->SetValue(0.7f);
+		Slider2->SetTrackColor(color{ 200, 100, 100 });
+		Slider2->SetThumbColor(color{ 100, 200, 100 });
+		Slider2->OnValueChanged.Bind([](float Value) { LOG("Slider2 (V): {:.2f}", Value); });
+		AutoP->AddChild(Slider2, ChildAlignment::Left);
 	}
 
 	void MainMenuUI::OnColorButtonClicked()
