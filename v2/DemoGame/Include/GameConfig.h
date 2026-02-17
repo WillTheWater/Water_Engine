@@ -27,6 +27,7 @@ namespace we
 
 		string DefaultMusic;
 		string DefaultAmbient;
+		string DefaultButton;
 		string DefaultButtonHoverSound;
 		string DefaultButtonClickSound;
 		string Footstep1;

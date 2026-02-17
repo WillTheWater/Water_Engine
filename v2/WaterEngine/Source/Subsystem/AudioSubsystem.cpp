@@ -12,7 +12,7 @@ namespace we
 {
 	AudioSubsystem::AudioSubsystem()
 		: GlobalVolume{ EC.StartupGlobalVolume }
-		, ChannelVolumes{ 20, 70, 100 }
+		, ChannelVolumes{ 10, 20, 100 }
 		, ChannelMuted{ false, false, false }
 		, MaxSFXCount{ EC.MaxSFXStack }
 	{
@@ -29,7 +29,7 @@ namespace we
 		if (CurrentMusic)
 		{
 			CurrentMusic->setLooping(bLoop);
-			CurrentMusic->setVolume(GetChannelVolume(AudioChannel::Music));
+			CurrentMusic->setVolume(GetEffectiveVolume(AudioChannel::Music));
 			CurrentMusic->play();
 		}
 	}
@@ -42,7 +42,7 @@ namespace we
 		if (CurrentAmbient)
 		{
 			CurrentAmbient->setLooping(bLoop);
-			CurrentAmbient->setVolume(GetChannelVolume(AudioChannel::Ambient));
+			CurrentAmbient->setVolume(GetEffectiveVolume(AudioChannel::Ambient));
 			CurrentAmbient->play();
 		}
 	}
@@ -50,21 +50,15 @@ namespace we
 	void AudioSubsystem::PlaySFX(const string& Path, bool bLoop)
 	{
 		auto SoundBuffer = LoadAsset().LoadSoundSync(Path);
-		if (!SoundBuffer)
+		if (!SoundBuffer || SoundBuffer->getSampleCount() == 0)
 		{
-			ERROR("SoundBuffer is null: {}", Path);
-			return;
-		}
-
-		if (SoundBuffer->getSampleCount() == 0)
-		{
-			ERROR("SoundBuffer has no samples: {}", Path);
+			ERROR("Failed to load sound: {}", Path);
 			return;
 		}
 
 		CleanupStoppedSFX();
 
-		// Remove oldest if at limit
+		// Remove oldest SFX if at limit
 		while (ActiveSFX.size() >= MaxSFXCount && !ActiveSFX.empty())
 		{
 			ActiveSFX.erase(ActiveSFX.begin());
@@ -72,7 +66,7 @@ namespace we
 
 		SFXInstance Instance;
 		Instance.Buffer = SoundBuffer;
-		Instance.Sound.emplace(*SoundBuffer);
+		Instance.Sound = make_unique<sf::Sound>(*SoundBuffer);
 		Instance.Sound->setLooping(bLoop);
 		Instance.Sound->setVolume(GetEffectiveVolume(AudioChannel::SFX));
 		Instance.Sound->play();
@@ -102,7 +96,10 @@ namespace we
 	{
 		for (auto& Instance : ActiveSFX)
 		{
-			Instance.Sound->stop();
+			if (Instance.Sound)
+			{
+				Instance.Sound->stop();
+			}
 		}
 		ActiveSFX.clear();
 	}
@@ -127,46 +124,72 @@ namespace we
 
 	void AudioSubsystem::SetChannelVolume(AudioChannel Channel, float Volume)
 	{
-		int Index = static_cast<int>(Channel);
-		if (Index >= 0 && Index < static_cast<int>(AudioChannel::Count))
-		{
-			ChannelVolumes[Index] = std::clamp(Volume, 0.f, 100.f);
-			ApplyVolumes();
-		}
+		ChannelVolumes[static_cast<int>(Channel)] = std::clamp(Volume, 0.f, 100.f);
+		ApplyVolumes();
 	}
 
 	float AudioSubsystem::GetChannelVolume(AudioChannel Channel) const
 	{
-		int Index = static_cast<int>(Channel);
-		if (Index >= 0 && Index < static_cast<int>(AudioChannel::Count))
-		{
-			return ChannelVolumes[Index];
-		}
-		return 100.f;
+		return ChannelVolumes[static_cast<int>(Channel)];
 	}
 
 	void AudioSubsystem::MuteChannel(AudioChannel Channel, bool bMute)
 	{
-		int Index = static_cast<int>(Channel);
-		if (Index >= 0 && Index < static_cast<int>(AudioChannel::Count))
-		{
-			ChannelMuted[Index] = bMute;
-			ApplyVolumes();
-		}
+		ChannelMuted[static_cast<int>(Channel)] = bMute;
+		ApplyVolumes();
 	}
 
 	bool AudioSubsystem::IsChannelMuted(AudioChannel Channel) const
 	{
-		int Index = static_cast<int>(Channel);
-		if (Index >= 0 && Index < static_cast<int>(AudioChannel::Count))
-		{
-			return ChannelMuted[Index];
-		}
-		return false;
+		return ChannelMuted[static_cast<int>(Channel)];
+	}
+
+	float AudioSubsystem::GetEffectiveVolume(AudioChannel Channel) const
+	{
+		return CalculateEffectiveVolume(Channel);
+	}
+
+	void AudioSubsystem::SetListenerPosition(vec3f Position)
+	{
+		sf::Listener::setPosition({ Position.x, Position.y, Position.z });
+	}
+
+	vec3f AudioSubsystem::GetListenerPosition() const
+	{
+		auto Pos = sf::Listener::getPosition();
+		return { Pos.x, Pos.y, Pos.z };
+	}
+
+	void AudioSubsystem::SetListenerDirection(vec3f Direction)
+	{
+		sf::Listener::setDirection({ Direction.x, Direction.y, Direction.z });
+	}
+
+	vec3f AudioSubsystem::GetListenerDirection() const
+	{
+		auto Dir = sf::Listener::getDirection();
+		return { Dir.x, Dir.y, Dir.z };
+	}
+
+	void AudioSubsystem::SetMaxSFXCount(size_t Count)
+	{
+		MaxSFXCount = Count;
+	}
+
+	size_t AudioSubsystem::GetActiveSFXCount() const
+	{
+		return ActiveSFX.size();
+	}
+
+	void AudioSubsystem::Update()
+	{
+		CleanupStoppedSFX();
 	}
 
 	void AudioSubsystem::ApplyVolumes()
 	{
+		sf::Listener::setGlobalVolume(GlobalVolume);
+
 		if (CurrentMusic)
 		{
 			CurrentMusic->setVolume(GetEffectiveVolume(AudioChannel::Music));
@@ -179,16 +202,23 @@ namespace we
 		float SFXVolume = GetEffectiveVolume(AudioChannel::SFX);
 		for (auto& Instance : ActiveSFX)
 		{
-			if (Instance.Sound->getStatus() == sf::Sound::Status::Playing)
+			if (Instance.Sound && Instance.Sound->getStatus() == sf::Sound::Status::Playing)
 			{
 				Instance.Sound->setVolume(SFXVolume);
 			}
 		}
 	}
 
-	float AudioSubsystem::GetEffectiveVolume(AudioChannel Channel) const
+	void AudioSubsystem::CleanupStoppedSFX()
 	{
-		return CalculateEffectiveVolume(Channel);
+		ActiveSFX.erase(
+			std::remove_if(ActiveSFX.begin(), ActiveSFX.end(),
+				[](const SFXInstance& Instance)
+				{
+					return !Instance.Sound || Instance.Sound->getStatus() == sf::Sound::Status::Stopped;
+				}),
+			ActiveSFX.end()
+		);
 	}
 
 	float AudioSubsystem::CalculateEffectiveVolume(AudioChannel Channel) const
@@ -199,47 +229,5 @@ namespace we
 		float GlobalPct = GlobalVolume / 100.f;
 
 		return (ChannelPct * GlobalPct) * 100.f;
-	}
-
-	void AudioSubsystem::CleanupStoppedSFX()
-	{
-		ActiveSFX.erase(
-			std::remove_if(ActiveSFX.begin(), ActiveSFX.end(),
-				[](const SFXInstance& Instance)
-				{
-					return Instance.Sound->getStatus() == sf::Sound::Status::Stopped;
-				}),
-			ActiveSFX.end()
-		);
-	}
-
-	void AudioSubsystem::SetListenerPosition(vec3f Position)
-	{
-		sf::Listener::setPosition(Position);
-	}
-
-	vec3f AudioSubsystem::GetListenerPosition() const
-	{
-		return sf::Listener::getPosition();
-	}
-
-	void AudioSubsystem::SetListenerDirection(vec3f Direction)
-	{
-		sf::Listener::setDirection(Direction);
-	}
-
-	vec3f AudioSubsystem::GetListenerDirection() const
-	{
-		return sf::Listener::getDirection();
-	}
-
-	size_t AudioSubsystem::GetActiveSFXCount() const
-	{
-		return ActiveSFX.size();
-	}
-
-	void AudioSubsystem::SetMaxSFXCount(size_t Count)
-	{
-		MaxSFXCount = std::max(size_t(1), Count);
 	}
 }

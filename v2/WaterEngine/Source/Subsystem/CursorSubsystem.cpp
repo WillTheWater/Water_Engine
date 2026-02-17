@@ -16,6 +16,7 @@ namespace we
 		, CursorSize{EC.DefaultCursorSize}
 		, CursorSpeed(EC.DefaultCursorSpeed)
 		, bIsVisible(true)
+		, PixelPosition{0.f, 0.f}
 	{
 		ApplyCursorSize();
 	}

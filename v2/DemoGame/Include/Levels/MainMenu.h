@@ -9,11 +9,13 @@
 
 namespace we
 {
+	class MainMenuUI;
+
 	class MainMenu : public World
 	{
 	public:
 		explicit MainMenu(EngineSubsystem& Subsystem);
-		~MainMenu() = default;
+		~MainMenu();
 
 		virtual void Construct() override;
 		virtual void BeginPlay() override;
@@ -22,5 +24,6 @@ namespace we
 	private:
 		shared<texture> BgTexture;
 		optional<sprite> BgSprite;
+		unique<MainMenuUI> MenuUI;
 	};
 }

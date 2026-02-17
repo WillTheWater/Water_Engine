@@ -21,7 +21,7 @@ namespace we
 	struct SFXInstance
 	{
 		shared<soundBuffer> Buffer;
-		optional<sf::Sound> Sound;
+		unique<sf::Sound> Sound;
 	};
 
 	class AudioSubsystem
@@ -59,6 +59,8 @@ namespace we
 
 		void SetMaxSFXCount(size_t Count);
 		size_t GetActiveSFXCount() const;
+
+		void Update();
 
 	private:
 		void ApplyVolumes();

@@ -10,6 +10,7 @@
 namespace we
 {
 	class Widget;
+	class Button;
 	struct EngineSubsystem;
 
 	class GUISubsystem
@@ -29,8 +30,21 @@ namespace we
 		explicit GUISubsystem(EngineSubsystem& InSubsystem);
 		~GUISubsystem();
 
-		template<typename T, typename... Args>
-		shared<T> CreateWidget(Args&&... args);
+		// Factory: Rectangle button with text
+		shared<Button> CreateButton(
+			const string& Label = "",
+			const vec2f& Size = { 150.f, 50.f },
+			color FillColor = color{ 200, 200, 200 },
+			color OutlineColor = color::Black,
+			float OutlineThickness = 2.f);
+
+		// Factory: Texture button with text
+		// bUseColorTint: true = tint texture with colors, false = use texture rects (default atlas layout)
+		shared<Button> CreateTextureButton(
+			const string& Label = "",
+			const string& TexturePath = "",
+			const vec2f& Size = { 0.f, 0.f },
+			bool bUseColorTint = false);
 
 		// Handle raw input events, returns true if consumed by GUI
 		bool HandleEvent(const sf::Event& Event);
@@ -58,6 +72,7 @@ namespace we
 		shared<Widget> FindNextFocusable() const;
 		shared<Widget> FindPreviousFocusable() const;
 		void UpdateHoverState(const vec2f& MousePos);
+		vec2f GetMousePosition() const;
 
 	private:
 		EngineSubsystem& Subsystem;
@@ -69,13 +84,4 @@ namespace we
 
 		bool bHasMouseFocus = false;  // True if mouse is over any widget
 	};
-
-	template<typename T, typename... Args>
-	inline shared<T> GUISubsystem::CreateWidget(Args&&... args)
-	{
-		static_assert(std::is_base_of_v<Widget, T>, "T must derive from Widget");
-		auto NewWidget = make_shared<T>(Subsystem, std::forward<Args>(args)...);
-		Widgets.push_back(NewWidget);
-		return NewWidget;
-	}
 }

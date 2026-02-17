@@ -7,6 +7,8 @@
 #include "Framework/EngineSubsystem.h"
 #include "EngineConfig.h"
 #include "GameConfig.h"
+#include "UI/MainMenuUI.h"
+#include "Utility/Log.h"
 
 namespace we
 {
@@ -15,6 +17,8 @@ namespace we
 	{
 		Construct();
 	}
+
+	MainMenu::~MainMenu() = default;
 
 	void MainMenu::Construct()
 	{
@@ -30,6 +34,9 @@ namespace we
 		// Add to world rendering at back (depth -1000)
 		AddRenderDepth(&*BgSprite, -1000.0f);
 
+		// Create the UI
+		MenuUI = make_unique<MainMenuUI>(Subsystem);
+		LOG("MainMenu: UI created");
 	}
 
 	void MainMenu::BeginPlay()
@@ -39,11 +46,9 @@ namespace we
 			Subsystem.Audio->PlayMusic(GC.DefaultMusic, true);
 			Subsystem.Audio->PlayAmbient(GC.DefaultAmbient, true);
 		}
-		
 	}
 
 	void MainMenu::Tick(float DeltaTime)
 	{
-		
 	}
 }

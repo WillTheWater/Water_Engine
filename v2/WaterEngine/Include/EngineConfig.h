@@ -29,6 +29,7 @@ namespace we
 		string DefaultCursor;
 		vec2f DefaultCursorSize;
 		string DefaultFont;
+		string DefaultFont2;
 
 		bool VsyncEnabled;
 		float TargetFPS;

@@ -1,58 +1,76 @@
-//// =============================================================================
-//// Water Engine v2.0.0
-//// Copyright(C) 2026 Will The Water
-//// =============================================================================
-//
-//#pragma once
-//
-//#include "Core/CoreMinimal.h"
-//#include "UI/Widget/Widget.h"
-//#include "Utility/Delegate.h"
-//
-//namespace we
-//{
-//	class Button : public Widget
-//	{
-//	public:
-//		Button(EngineSubsystem& Subsystem, const string& Label, const string& TexturePath);
-//
-//		Button(EngineSubsystem& Subsystem, 
-//			const string& Label,
-//			const vec2f& InSize = { 150.f, 50.f },
-//			color FillColor = color{ 200, 200, 200 },
-//			color OutlineColor = color::Black,
-//			float OutlineThickness = 2.f);
-//
-//		Delegate<> OnClicked;
-//
-//		void Update(float DeltaTime) override;
-//		void Render(GameWindow& Window) override;
-//		void OnMouseEnter() override;
-//		void OnMouseLeave() override;
-//		bool OnMouseButtonPressed() override;
-//		void OnMouseButtonReleased() override;
-//
-//	private:
-//		void UpdateVisualState();
-//		void PlaySound(const string& Path);
-//
-//		string Label;
-//		shared<texture> BgTexture;
-//		optional<sprite> BgSprite;
-//		optional<rectangle> Background;
-//		shared<font> TextFont;
-//		optional<sf::Text> LabelText;
-//
-//		string HoverSoundPath;
-//		string UnhoverSoundPath;
-//		string PressedSoundPath;
-//		string ClickSoundPath;
-//
-//		color NormalColor{ 160, 160, 160 };
-//		color HoverColor{ 230, 230, 230 };
-//		color PressedColor{ 80, 80, 80 };
-//
-//		bool bHovered = false;
-//		bool bPressed = false;
-//	};
-//}
+// =============================================================================
+// Water Engine v2.0.0
+// Copyright(C) 2026 Will The Water
+// =============================================================================
+
+#pragma once
+
+#include "Core/CoreMinimal.h"
+#include "UI/Widget/Widget.h"
+#include "Utility/Delegate.h"
+
+namespace we
+{
+	class Button : public Widget
+	{
+	public:
+		// Rectangle-based button with text label
+		Button(
+			const string& InLabel,
+			const vec2f& InSize,
+			color FillColor = color{ 200, 200, 200 },
+			color OutlineColor = color::Black,
+			float OutlineThickness = 2.f);
+
+		// Texture-based button with optional color tinting or texture rect states
+		Button(
+			const string& InLabel,
+			const string& TexturePath,
+			const vec2f& InSize = { 0.f, 0.f },
+			bool bUseColorTint = false);
+
+		void CollectRenderDepths(vector<RenderDepth>& OutDepths) const override;
+
+		void SetNormalColor(color InColor);
+		void SetHoverColor(color InColor);
+		void SetPressedColor(color InColor);
+
+		void SetNormalTextureRect(const recti& Rect);
+		void SetHoverTextureRect(const recti& Rect);
+		void SetPressedTextureRect(const recti& Rect);
+
+		void SetPressed(bool bInPressed) override;
+		bool IsPressed() const { return bPressed; }
+
+	private:
+		void UpdateVisualState();
+		void OnButtonFocusGained();
+		void OnButtonFocusLost();
+		void LoadTexture(shared<texture>& OutTexture, const string& Path);
+
+		string Label;
+		mutable optional<text> LabelText;
+		shared<font> TextFont;
+
+		mutable rectangle BackgroundRect;
+
+		shared<texture> ButtonTexture;
+		mutable optional<sprite> BackgroundSprite;
+		bool bUseTexture = false;
+		bool bUseColorTint = false;
+
+		recti NormalTextureRect;
+		recti HoverTextureRect;
+		recti PressedTextureRect;
+		bool bHasTextureRects = false;
+
+		bool bHovered = false;
+		bool bPressed = false;
+
+		color NormalColor{ 200, 200, 200 };
+		color HoverColor{ 230, 230, 230 };
+		color PressedColor{ 150, 150, 150 };
+		color OutlineColor{ color::Black };
+		float OutlineThickness = 2.f;
+	};
+}

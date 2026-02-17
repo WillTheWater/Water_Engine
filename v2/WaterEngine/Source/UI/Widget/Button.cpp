@@ -1,147 +1,230 @@
-//// =============================================================================
-//// Water Engine v2.0.0
-//// Copyright(C) 2026 Will The Water
-//// =============================================================================
-//
-//#include "UI/Widget/Button.h"
-//#include "Framework/EngineSubsystem.h"
-//#include "Framework/GameWindow.h"
-//#include "Subsystem/ResourceSubsystem.h"
-//#include "UI/Cursor/CursorSubsystem.h"
-//#include "Utility/Log.h"
-//
-//namespace we
-//{
-//	Button::Button(EngineSubsystem& Subsystem, const string& Label, const string& TexturePath)
-//		: Widget{ Subsystem }, Label{ Label }
-//		, HoverSoundPath{ EC.DefaultButtonHoverSound }, ClickSoundPath{ EC.DefaultButtonClickSound }
-//	{
-//		BgTexture = Asset().LoadTexture(TexturePath);
-//		if (BgTexture)
-//		{
-//			vec2f TexSize = vec2f(BgTexture->getSize());
-//			SetSize(TexSize);
-//			BgSprite.emplace(*BgTexture);
-//			BgSprite->setColor(NormalColor);
-//		}
-//
-//		TextFont = Asset().LoadFont(EC.DefaultTitleFont);
-//		if (TextFont)
-//		{
-//			LabelText.emplace(*TextFont, Label, 24);
-//			LabelText->setFillColor(color::Black);
-//		}
-//	}
-//
-//	Button::Button(EngineSubsystem& Subsystem, const string& Label, const vec2f& InSize, color FillColor, color OutlineColor, float OutlineThickness)
-//		: Widget{ Subsystem }, Label{ Label }
-//		, HoverSoundPath{ EC.DefaultButtonHoverSound }, ClickSoundPath{ EC.DefaultButtonClickSound }
-//	{
-//		SetSize(InSize);
-//		NormalColor = FillColor;
-//
-//		Background.emplace();
-//		Background->setSize(InSize);
-//		Background->setFillColor(FillColor);
-//		Background->setOutlineColor(OutlineColor);
-//		Background->setOutlineThickness(OutlineThickness);
-//
-//		TextFont = Asset().LoadFont(EC.DefaultTitleFont);
-//		if (TextFont)
-//		{
-//			LabelText.emplace(*TextFont, Label, 24);
-//			LabelText->setFillColor(color::Black);
-//		}
-//	}
-//
-//	void Button::Update(float DeltaTime)
-//	{
-//
-//	}
-//
-//	void Button::Render(GameWindow& Window)
-//	{
-//		if (!IsVisible()) return;
-//
-//		// Draw background
-//		if (BgSprite)
-//		{
-//			BgSprite->setPosition(GetWorldPosition());
-//			BgSprite->setScale(GetWorldScale());
-//			Window.draw(*BgSprite);
-//		}
-//		else if (Background)
-//		{
-//			Background->setPosition(GetWorldPosition());
-//			Background->setScale(GetWorldScale());
-//			Window.draw(*Background);
-//		}
-//
-//		if (LabelText)
-//		{
-//			auto Bounds = LabelText->getLocalBounds();
-//			LabelText->setOrigin({ Bounds.position.x + Bounds.size.x * 0.5f,
-//								   Bounds.position.y + Bounds.size.y * 0.5f });
-//
-//			LabelText->setPosition(GetWorldPosition() + (Size.componentWiseMul(GetWorldScale()) * 0.5f));
-//			Window.draw(*LabelText);
-//		}
-//
-//		Widget::Render(Window);
-//	}
-//
-//	void Button::OnMouseEnter()
-//	{
-//		bHovered = true;
-//		PlaySound(HoverSoundPath);
-//		UpdateVisualState();
-//	}
-//
-//	void Button::OnMouseLeave()
-//	{
-//		bHovered = false;
-//		bPressed = false;
-//		PlaySound(UnhoverSoundPath);
-//		UpdateVisualState();
-//	}
-//
-//	bool Button::OnMouseButtonPressed()
-//	{
-//		bPressed = true;
-//		PlaySound(PressedSoundPath);
-//		UpdateVisualState();
-//		return true;
-//	}
-//
-//	void Button::OnMouseButtonReleased()
-//	{
-//		if (bPressed && bHovered)
-//		{
-//			PlaySound(ClickSoundPath);
-//			OnClicked.Broadcast();
-//		}
-//		bPressed = false;
-//		UpdateVisualState();
-//	}
-//
-//	void Button::UpdateVisualState()
-//	{
-//		color Target = bPressed && bHovered ? PressedColor : bHovered ? HoverColor : NormalColor;
-//
-//		if (BgSprite)
-//		{
-//			BgSprite->setColor(Target);
-//		}
-//
-//		// Support the rectangle background path
-//		if (Background)
-//		{
-//			Background->setFillColor(Target);
-//		}
-//	}
-//
-//	void Button::PlaySound(const string& Path)
-//	{
-//		if (!Path.empty()) Subsystem.Audio->PlaySFX(Path);
-//	}
-//}
+// =============================================================================
+// Water Engine v2.0.0
+// Copyright(C) 2026 Will The Water
+// =============================================================================
+
+#include "UI/Widget/Button.h"
+#include "Utility/Log.h"
+#include "EngineConfig.h"
+#include "Subsystem/ResourceSubsystem.h"
+
+namespace we
+{
+	Button::Button(
+		const string& InLabel,
+		const vec2f& InSize,
+		color FillColor,
+		color InOutlineColor,
+		float InOutlineThickness)
+		: Label(InLabel)
+		, NormalColor(FillColor)
+		, OutlineColor(InOutlineColor)
+		, OutlineThickness(InOutlineThickness)
+		, bUseTexture(false)
+		, bUseColorTint(false)
+		, bHasTextureRects(false)
+	{
+		SetSize(InSize);
+		SetFocusable(true);
+
+		BackgroundRect.setSize(InSize);
+		BackgroundRect.setFillColor(NormalColor);
+		BackgroundRect.setOutlineColor(OutlineColor);
+		BackgroundRect.setOutlineThickness(OutlineThickness);
+
+		TextFont = LoadAsset().LoadFontSync(EC.DefaultFont);
+		if (TextFont && !Label.empty())
+		{
+			LabelText.emplace(*TextFont, Label, 24);
+			LabelText->setFillColor(color::Black);
+		}
+
+		OnFocusGained.Bind(this, &Button::OnButtonFocusGained);
+		OnFocusLost.Bind(this, &Button::OnButtonFocusLost);
+	}
+
+	Button::Button(
+		const string& InLabel,
+		const string& TexturePath,
+		const vec2f& InSize,
+		bool bInUseColorTint)
+		: Label(InLabel)
+		, bUseTexture(true)
+		, bUseColorTint(bInUseColorTint)
+		, bHasTextureRects(false)
+	{
+		SetFocusable(true);
+
+		LoadTexture(ButtonTexture, TexturePath);
+		if (ButtonTexture)
+		{
+			vec2f TexSize = vec2f(ButtonTexture->getSize());
+
+			if (InSize.x == 0.f || InSize.y == 0.f)
+			{
+				SetSize({ TexSize.x, TexSize.y / 3.f });
+			}
+			else
+			{
+				SetSize(InSize);
+			}
+
+			NormalTextureRect = { {0, 0}, {static_cast<int>(TexSize.x), static_cast<int>(TexSize.y / 3)} };
+			HoverTextureRect = { {0, static_cast<int>(TexSize.y / 3)}, {static_cast<int>(TexSize.x), static_cast<int>(TexSize.y / 3)} };
+			PressedTextureRect = { {0, static_cast<int>(TexSize.y * 2 / 3)}, {static_cast<int>(TexSize.x), static_cast<int>(TexSize.y / 3)} };
+			bHasTextureRects = true;
+
+			BackgroundSprite.emplace(*ButtonTexture, NormalTextureRect);
+			BackgroundSprite->setColor(color::White);
+		}
+		else
+		{
+			SetSize({ 150.f, 50.f });
+		}
+
+		TextFont = LoadAsset().LoadFontSync(EC.DefaultFont);
+		if (TextFont && !Label.empty())
+		{
+			LabelText.emplace(*TextFont, Label, 24);
+			LabelText->setFillColor(color::Black);
+		}
+
+		OnFocusGained.Bind(this, &Button::OnButtonFocusGained);
+		OnFocusLost.Bind(this, &Button::OnButtonFocusLost);
+	}
+
+	void Button::CollectRenderDepths(vector<RenderDepth>& OutDepths) const
+	{
+		if (!IsVisible()) return;
+
+		vec2f Pos = GetWorldPosition();
+		vec2f Scl = GetWorldScale();
+
+		if (bUseTexture && BackgroundSprite)
+		{
+			BackgroundSprite->setPosition(Pos);
+			BackgroundSprite->setScale(Scl);
+			OutDepths.push_back({ &*BackgroundSprite, GetRenderDepth() });
+		}
+		else
+		{
+			BackgroundRect.setPosition(Pos);
+			BackgroundRect.setScale(Scl);
+			OutDepths.push_back({ &BackgroundRect, GetRenderDepth() });
+		}
+
+		if (LabelText)
+		{
+			vec2f Size = GetSize().componentWiseMul(Scl);
+			vec2f Center = Pos + Size.componentWiseDiv({ 2.f, 2.f });
+
+			auto Bounds = LabelText->getLocalBounds();
+			LabelText->setOrigin({ 
+				Bounds.position.x + Bounds.size.x / 2.f,
+				Bounds.position.y + Bounds.size.y / 2.f 
+			});
+			LabelText->setPosition(Center);
+
+			OutDepths.push_back({ &*LabelText, GetRenderDepth() + 1.f });
+		}
+	}
+
+	void Button::SetNormalColor(color InColor)
+	{
+		NormalColor = InColor;
+		UpdateVisualState();
+	}
+
+	void Button::SetHoverColor(color InColor)
+	{
+		HoverColor = InColor;
+		UpdateVisualState();
+	}
+
+	void Button::SetPressedColor(color InColor)
+	{
+		PressedColor = InColor;
+		UpdateVisualState();
+	}
+
+	void Button::SetNormalTextureRect(const recti& Rect)
+	{
+		NormalTextureRect = Rect;
+		bHasTextureRects = true;
+		UpdateVisualState();
+	}
+
+	void Button::SetHoverTextureRect(const recti& Rect)
+	{
+		HoverTextureRect = Rect;
+		bHasTextureRects = true;
+		UpdateVisualState();
+	}
+
+	void Button::SetPressedTextureRect(const recti& Rect)
+	{
+		PressedTextureRect = Rect;
+		bHasTextureRects = true;
+		UpdateVisualState();
+	}
+
+	void Button::UpdateVisualState()
+	{
+		if (bUseTexture && BackgroundSprite)
+		{
+			if (bHasTextureRects && !bUseColorTint)
+			{
+				if (bPressed)
+				{
+					BackgroundSprite->setTextureRect(PressedTextureRect);
+				}
+				else if (bHovered)
+				{
+					BackgroundSprite->setTextureRect(HoverTextureRect);
+				}
+				else
+				{
+					BackgroundSprite->setTextureRect(NormalTextureRect);
+				}
+				BackgroundSprite->setColor(color::White);
+			}
+			else
+			{
+				color TargetColor = bPressed ? PressedColor : (bHovered ? HoverColor : NormalColor);
+				BackgroundSprite->setColor(TargetColor);
+			}
+		}
+		else
+		{
+			color TargetColor = bPressed ? PressedColor : (bHovered ? HoverColor : NormalColor);
+			BackgroundRect.setFillColor(TargetColor);
+		}
+	}
+
+	void Button::SetPressed(bool bInPressed)
+	{
+		bPressed = bInPressed;
+		UpdateVisualState();
+	}
+
+	void Button::OnButtonFocusGained()
+	{
+		bHovered = true;
+		UpdateVisualState();
+	}
+
+	void Button::OnButtonFocusLost()
+	{
+		bHovered = false;
+		bPressed = false;
+		UpdateVisualState();
+	}
+
+	void Button::LoadTexture(shared<texture>& OutTexture, const string& Path)
+	{
+		if (!Path.empty())
+		{
+			OutTexture = LoadAsset().LoadTextureSync(Path);
+		}
+	}
+}

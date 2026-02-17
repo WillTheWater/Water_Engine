@@ -109,7 +109,7 @@ set(WATER_ENGINE_HEADERS
     Include/Interface/Component/AnimationComponent.h
     Include/Interface/Component/PhysicsComponent.h
     
-    Include/Utility/WindowUtility.h
+    Include/UI/UIUtility.h
     Include/Utility/Log.h
     Include/Utility/RandomGenerator.h
     Include/Utility/Assert.h

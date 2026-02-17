@@ -22,6 +22,7 @@ namespace we
 
         DefaultMusic = Config["DefaultMusic"];
         DefaultAmbient = Config["DefaultAmbient"];
+        DefaultButton = Config["DefaultButton"];
         DefaultButtonHoverSound = Config["DefaultButtonHoverSound"];
         DefaultButtonClickSound = Config["DefaultButtonClickSound"];
         Footstep1 = Config["Footstep1"];

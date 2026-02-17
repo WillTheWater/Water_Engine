@@ -121,12 +121,18 @@ namespace we
 
         if (Subsystem.Window->hasFocus())
         {
+            // Set mapped position for game/world rendering
             Subsystem.Cursor->SetPosition(Subsystem.Window->GetMousePosition());
+            // Set raw pixel position for UI hit testing
+            vec2i PixelPos = sf::Mouse::getPosition(*Subsystem.Window);
+            Subsystem.Cursor->SetPixelPosition(vec2f(static_cast<float>(PixelPos.x), static_cast<float>(PixelPos.y)));
         }
     }
    
     void WaterEngine::Update()
     {
+        Subsystem.Audio->Update();
+        
         Subsystem.Window->clear(color::Black);
 
         Subsystem.Render->StartRender();

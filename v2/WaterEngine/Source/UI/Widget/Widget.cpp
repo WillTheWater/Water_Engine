@@ -6,6 +6,8 @@
 #include "UI/Widget/Widget.h"
 #include "Utility/Log.h"
 #include "Framework/World/RenderTypes.h"
+#include "EngineConfig.h"
+#include "UI/UIUtility.h"
 
 namespace we
 {
@@ -152,15 +154,9 @@ namespace we
 		vec2f Pos = GetWorldPosition();
 		vec2f Scl = GetWorldScale();
 		vec2f RealSize = Size.componentWiseMul(Scl);
-		vec2f Ori = GetOrigin();
 
-		float Left = Pos.x - Ori.x;
-		float Top = Pos.y - Ori.y;
-		float Right = Left + RealSize.x;
-		float Bottom = Top + RealSize.y;
-
-		return ScreenPoint.x >= Left && ScreenPoint.x <= Right &&
-			ScreenPoint.y >= Top && ScreenPoint.y <= Bottom;
+		// GetWorldPosition() returns top-left position for anchored widgets
+		return PointInRect(ScreenPoint, Pos, RealSize);
 	}
 
 	shared<Widget> Widget::FindDeepestChildAt(const vec2f& ScreenPoint)
@@ -223,8 +219,7 @@ namespace we
 
 		if (bUseAnchors)
 		{
-			// TODO: Get actual screen size from Subsystem.Render
-			vec2f ParentSize = Parent ? Parent->GetSize() : vec2f{ 1920, 1080 };
+			vec2f ParentSize = Parent ? Parent->GetSize() : vec2f(EC.RenderResolution);
 			vec2f ParentPos = Parent ? Parent->GetWorldPosition() : vec2f{ 0, 0 };
 			vec2f ParentScale = Parent ? Parent->GetWorldScale() : vec2f{ 1, 1 };
 

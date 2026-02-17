@@ -31,6 +31,10 @@ namespace we
 
 		void SetPosition(vec2f Position);
 		vec2f GetPosition() const;
+		
+		// Raw pixel position for UI hit testing
+		void SetPixelPosition(vec2f PixelPos) { PixelPosition = PixelPos; }
+		vec2f GetPixelPosition() const { return PixelPosition; }
 
 	private:
 		void ApplyCursorSize();
@@ -41,5 +45,6 @@ namespace we
 		vec2f CursorSize;
 		float CursorSpeed;
 		bool bIsVisible;
+		vec2f PixelPosition;  // Raw pixel position for UI
 	};
 }

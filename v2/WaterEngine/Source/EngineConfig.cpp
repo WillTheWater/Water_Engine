@@ -26,6 +26,7 @@ namespace we
         DefaultCursor = Config["DefaultCursor"];
         DefaultCursorSize = { Config["DefaultCursorSize"][0], Config["DefaultCursorSize"][1] };
         DefaultFont = Config["DefaultFont"];
+        DefaultFont2 = Config["DefaultFont2"];
 
         VsyncEnabled = Config["VsyncEnabled"];
         TargetFPS = Config["TargetFPS"];
