@@ -19,15 +19,19 @@ namespace we
 	public:
 		void TogglePause();
 
+	protected:
+		virtual void Construct() override;
+		virtual void BeginPlay() override;
+		virtual void Tick(float) override;
+
 	private:
 		//unique<PauseUI> PauseMenu;
 		bool bPaused;
 
 	private:
-		void RegisterAllLevels();
+		void RegisterLevels();
 		void OnStateEnter(shared<IGameStateToken> NewState);
 		void OnStateExit(shared<IGameStateToken> OldState);
 		void BindInput();
-
 	};
 }

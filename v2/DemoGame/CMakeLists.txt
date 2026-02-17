@@ -21,6 +21,7 @@ set(PAK_OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/Contents.pak")
 set(GAME_HEADERS
     Include/Game.h
     Include/GameStateTokens.h
+    Include/GameConfig.h
 
     Include/Levels/MainMenu.h
     Include/Levels/LevelOne.h
@@ -37,6 +38,7 @@ set(GAME_HEADERS
 
 set(GAME_SOURCES
     Source/Game.cpp
+    Source/GameConfig.cpp
 
     Source/Levels/MainMenu.cpp 
     Source/Levels/LevelOne.cpp
@@ -74,8 +76,39 @@ if (WIN32)
     set_target_properties(${DEMO_GAME} PROPERTIES WIN32_EXECUTABLE $<CONFIG:Release>)
 endif()
 
+# =============================================================================
+# Generate Game Content Config
+# =============================================================================
+set(GAME_CONFIG_JSON "${CMAKE_CURRENT_SOURCE_DIR}/Config/GameConfig.json")
+set(GAME_GENERATED_DIR "${CMAKE_CURRENT_BINARY_DIR}/Generated")
+set(GAME_CONFIG_HEADER "${GAME_GENERATED_DIR}/GameConfigData.h")
+
+file(READ "${GAME_CONFIG_JSON}" GAME_CONFIG_RAW)
+string(REPLACE "\\" "\\\\" GAME_CONFIG_ESCAPED "${GAME_CONFIG_RAW}")
+string(REPLACE "\"" "\\\"" GAME_CONFIG_ESCAPED "${GAME_CONFIG_ESCAPED}")
+string(REPLACE "\n" "\\n\"\n\"" GAME_CONFIG_ESCAPED "${GAME_CONFIG_ESCAPED}")
+
+file(MAKE_DIRECTORY "${GAME_GENERATED_DIR}")
+# Create header file
+file(WRITE "${GAME_CONFIG_HEADER}" 
+"// =============================================================================
+// Water Engine v2.0.0
+// Copyright(C) 2026 Will The Water
+// =============================================================================
+
+#pragma once
+
+namespace we 
+{
+    constexpr char EMBEDDED_GAME_CONFIG[] = \"${GAME_CONFIG_ESCAPED}\\n\";
+}
+")
+
+target_include_directories(${DEMO_GAME} PUBLIC ${GAME_GENERATED_DIR})
+
 target_include_directories(${DEMO_GAME} PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/Include
+    ${GAME_GENERATED_DIR}
 )
 
 target_link_libraries(${DEMO_GAME} PUBLIC

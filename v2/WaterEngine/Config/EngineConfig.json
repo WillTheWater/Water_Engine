@@ -15,6 +15,7 @@
   "FullscreenMode": false,
   "SetRenderSmooth": true,
   "DisableSFMLLogs": true,
+  "StartupGlobalVolume": 50,
   "MaxSFXStack": 16,
   "JoystickDeadzone": 0.1,
   "DefaultCursorSpeed": 1000,

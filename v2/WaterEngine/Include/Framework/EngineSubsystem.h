@@ -12,13 +12,11 @@
 #include "Subsystem/RenderSubsystem.h"
 #include "Subsystem/TimeSubsystem.h"
 #include "Subsystem/CursorSubsystem.h"
-
-
-#include "Subsystem/SaveLoadSubsystem.h"
-#include "Subsystem/AudioSubsystem.h"
 #include "Subsystem/InputSubsystem.h"
+#include "Subsystem/SaveLoadSubsystem.h"
 #include "Subsystem/WorldSubsystem.h"
 #include "Subsystem/GameStateSubsystem.h"
+#include "Subsystem/AudioSubsystem.h"
 #include "Subsystem/GUISubsystem.h"
 
 namespace we
@@ -31,13 +29,10 @@ namespace we
 		unique<TimeSubsystem> Time;
 		unique<CursorSubsystem> Cursor;
 		unique<InputSubsystem> Input;
-
-
-
-		// unique<SaveLoadSubsystem> SaveLoad;
-		// unique<AudioSubsystem> Audio;
-		// unique<WorldSubsystem> World;
-		// unique<GameStateSubsystem> GameState;
-		// unique<GUISubsystem> GUI;
+		unique<SaveLoadSubsystem> SaveLoad;
+		unique<WorldSubsystem> World;
+		unique<GameStateSubsystem> GameState;
+		unique<AudioSubsystem> Audio;
+		unique<GUISubsystem> GUI;
 	};
 }

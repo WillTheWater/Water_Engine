@@ -31,7 +31,7 @@ namespace we
         Event.visit(Handler);
     }
 
-    view WindowSubsystem::GetConstrainedView() const
+    void WindowSubsystem::RecomputeView() const
     {
         float targetRatio = static_cast<float>(EC.AspectRatio.x) / static_cast<float>(EC.AspectRatio.y);
         vec2u WinSize = getSize();
@@ -48,18 +48,25 @@ namespace we
             vPosY = (1.0f - vHeight) / 2.0f;
         }
 
-        view ConstrainedView;
-        ConstrainedView.setSize(vec2f(EC.RenderResolution));
-        ConstrainedView.setCenter(vec2f(EC.RenderResolution) / 2.0f);
-        ConstrainedView.setViewport(rectf({ vPosX, vPosY }, { vWidth, vHeight }));
+        CachedView.setSize(vec2f(EC.RenderResolution));
+        CachedView.setCenter(vec2f(EC.RenderResolution) / 2.0f);
+        CachedView.setViewport(rectf({ vPosX, vPosY }, { vWidth, vHeight }));
 
-        return ConstrainedView;
+        bViewDirty = false;
+    }
+
+    view WindowSubsystem::GetConstrainedView() const
+    {
+        if (bViewDirty)
+        {
+            RecomputeView();
+        }
+        return CachedView;
     }
 
     vec2f WindowSubsystem::GetMousePosition() const
     {
         vec2i PixelPos = sf::Mouse::getPosition(*this);
-
         return mapPixelToCoords(PixelPos, GetConstrainedView());
     }
 
@@ -83,6 +90,8 @@ namespace we
         }
 
         if (NewSize != getSize()) { setSize(NewSize); }
+
+        bViewDirty = true;  // Mark view for recalculation
     }
 
     void WindowSubsystem::CreateGameWindow(const sf::VideoMode& Mode, uint Style, sf::State State)
@@ -97,7 +106,6 @@ namespace we
         setKeyRepeatEnabled(EC.EnableKeyRepeat);
         setMouseCursorVisible(false);
 
-        // VSync takes priority over FPS
         if (EC.VsyncEnabled) { setVerticalSyncEnabled(EC.VsyncEnabled); }
         else { setFramerateLimit(static_cast<uint>(EC.TargetFPS)); }
     }
@@ -112,6 +120,7 @@ namespace we
     void WindowSubsystem::EventToggleBorderlessFullscreen()
     {
         bIsFullscreen = !bIsFullscreen;
+        bViewDirty = true;  // Resolution changes, recalculate view
 
         if (bIsFullscreen)
         {

@@ -28,7 +28,11 @@ namespace we
         CurrentState = *PendingState;
         PendingState.reset();
 
-        OnStateExit.Broadcast(OldState);
+        if (OldState)
+        {
+            OnStateExit.Broadcast(OldState);
+        }
+
         OnStateEnter.Broadcast(CurrentState);
     }
 }

@@ -9,7 +9,6 @@
 #include <sfml/Graphics.hpp>
 #include "Framework/EventHandling/GameWindowEventHandler.h"
 
-
 namespace we
 {
 	class WindowSubsystem : public sf::RenderWindow
@@ -26,6 +25,8 @@ namespace we
 
 	private:
 		bool bIsFullscreen;
+		mutable bool bViewDirty = true;
+		mutable view CachedView; 
 
 	private:
 		friend GameWindowEventHandler;
@@ -35,20 +36,22 @@ namespace we
 		void CreateGameWindow(const sf::VideoMode& Mode, uint Style, sf::State State = sf::State::Windowed);
 		void SetWindowIcon();
 
+		void RecomputeView() const;
+
 		void EventWindowClose();
 		void EventWindowResized();
 		void EventToggleBorderlessFullscreen();
 		void EventWindowFocusLost();
 		void EventWindowFocusGained();
-		
+
 		void EventJoypadConnected();
 		void EventJoypadDisconnected();
 		void EventJoypadButtonPressed();
 		void EventJoypadButtonReleased();
-		
+
 		void EventKeyPressed();
 		void EventKeyReleased();
-		
+
 		void EventMouseButtonPressed();
 		void EventMouseButtonReleased();
 	};

@@ -1,0 +1,15 @@
+{
+  "StartupGlobalVolume": 50,
+  "DefaultBackground": "Assets/Textures/Default/defaultBackground.png",
+  "LevelOneBackground": "Assets/Textures/Default/level1.png",
+  "CharacterSheetIdle": "Assets/Textures/idle.png",
+  "CharacterSheetWalk": "Assets/Textures/walk.png",
+  "DefaultMusic": "Assets/Audio/Default/defaultMusic.ogg",
+  "DefaultAmbient": "Assets/Audio/Default/defaultAmbient.ogg",
+  "DefaultButtonHoverSound": "Assets/Audio/Default/defaultHover.ogg",
+  "DefaultButtonClickSound": "Assets/Audio/Default/defaultClick.ogg",
+  "Footstep1": "Assets/Audio/Default/footstep1.ogg",
+  "Footstep2": "Assets/Audio/Default/footstep2.ogg",
+  "Footstep3": "Assets/Audio/Default/footstep3.ogg",
+  "Footstep4": "Assets/Audio/Default/footstep4.ogg"
+}

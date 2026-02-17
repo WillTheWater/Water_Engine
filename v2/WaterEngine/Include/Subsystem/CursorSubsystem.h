@@ -6,6 +6,7 @@
 #pragma once
 
 #include "Core/CoreMinimal.h"
+#include "Subsystem/ResourceSubsystem.h"
 
 namespace we
 {
@@ -25,15 +26,19 @@ namespace we
 		void SetVisibility(bool Visible) { bIsVisible = Visible; }
 		bool IsVisible() const { return bIsVisible; }
 
+		void SetCursorSize(vec2f Size);
+		vec2f GetCursorSize() const { return CursorSize; }
+
 		void SetPosition(vec2f Position);
 		vec2f GetPosition() const;
 
 	private:
-		void InitializeCursor();
+		void ApplyCursorSize();
 
 	private:
-		rectangle CursorShape;
-		shared<texture> CursorTexture; // Reserved for later
+		texture CursorTexture;
+		sprite CursorSprite;
+		vec2f CursorSize;
 		float CursorSpeed;
 		bool bIsVisible;
 	};

@@ -62,6 +62,7 @@ set(WATER_ENGINE_HEADERS
     Include/Framework/World/World.h    
     Include/Framework/World/Object/Object.h
     Include/Framework/World/Actor/Actor.h
+    Include/Framework/World/RenderTypes.h
 
     Include/Subsystem/WindowSubsystem.h
     Include/Subsystem/ResourceSubsystem.h
@@ -91,7 +92,6 @@ set(WATER_ENGINE_HEADERS
     Include/UI/Widget/HorizontalBox.h
     Include/UI/Widget/VerticalBox.h
     Include/UI/Widget/GridBox.h
-    Include/UI/UILayerOrder.h
     Include/UI/Widget/Slider.h
     Include/UI/Widget/CheckBox.h
     Include/UI/Widget/ProgressBar.h
@@ -101,7 +101,6 @@ set(WATER_ENGINE_HEADERS
     Include/Input/InputEventHandler.h
 
     Include/AssetDirectory/PakDirectory.h
-    
 
     Include/Interface/IAssetDirector.h
     Include/Interface/IGameStateToken.h

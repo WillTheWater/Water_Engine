@@ -33,29 +33,12 @@ namespace we
         FullscreenMode = Config["FullscreenMode"];
         SetRenderSmooth = Config["SetRenderSmooth"];
         DisableSFMLLogs = Config["DisableSFMLLogs"];
+        StartupGlobalVolume = Config["StartupGlobalVolume"];
         MaxSFXStack = Config["MaxSFXStack"];
 
         JoystickDeadzone = Config["JoystickDeadzone"];
         DefaultCursorSpeed = Config["DefaultCursorSpeed"];
         
         DefaultGravity = { Config["DefaultGravity"][0], Config["DefaultGravity"][1] };
-        
-       /* DefaultBackground = Config["DefaultBackground"];
-        StartupGlobalVolume = Config["StartupGlobalVolume"];
-        DefaultTitleFont = Config["DefaultTitleFont"];
-        DefaultPanel = Config["DefaultPanel"];
-        DefaultButton = Config["DefaultButton"];
-        DefaultMusic = Config["DefaultMusic"];
-        DefaultAmbient = Config["DefaultAmbient"];
-        DefaultButtonHoverSound = Config["DefaultButtonHoverSound"];
-        DefaultButtonClickSound = Config["DefaultButtonClickSound"];
-        LevelOneBackground = Config["LevelOneBackground"];
-        CharacterSheetIdle = Config["CharacterSheetIdle"];
-        CharacterSheetWalk = Config["CharacterSheetWalk"];
-        Footstep1 = Config["Footstep1"];
-        Footstep2 = Config["Footstep2"];
-        Footstep3 = Config["Footstep3"];
-        Footstep4 = Config["Footstep4"];
-        */
     }
 }

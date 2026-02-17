@@ -8,7 +8,6 @@
 #include "Core/CoreMinimal.h"
 #include "Core/JsonTypes.h"
 
-
 namespace we
 {
 	class SaveLoadSubsystem
@@ -29,7 +28,11 @@ namespace we
 		void Clear();
 
 	private:
+		string GetSavePath() const;
+
+	private:
 		json SaveData;
+		string SavePath;
 	};
 
 	template <typename T>

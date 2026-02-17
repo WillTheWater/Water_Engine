@@ -36,30 +36,13 @@ namespace we
 		bool FullscreenMode;
 		bool SetRenderSmooth;
 		bool DisableSFMLLogs;
+		float StartupGlobalVolume;
 		ulong MaxSFXStack;
 
 		float JoystickDeadzone;
 		float DefaultCursorSpeed;
 
 		b2Vec2 DefaultGravity;
-
-		/*string DefaultBackground;
-		float StartupGlobalVolume;
-		string DefaultTitleFont;
-		string DefaultPanel;
-		string DefaultButton;
-		string DefaultMusic;
-		string DefaultAmbient;
-		string DefaultButtonHoverSound;
-		string DefaultButtonClickSound;
-		string LevelOneBackground;
-		string CharacterSheetIdle;
-		string CharacterSheetWalk;
-		string Footstep1;
-		string Footstep2;
-		string Footstep3;
-		string Footstep4;
-		*/
 	};
 
 	// Global Accessor

@@ -24,14 +24,19 @@ namespace we
 	public:
 		bool IsRunning() const;
 		bool HasFocus() const;
-		void Shutdown();
+
+	protected:
+		EngineSubsystem Subsystem;
+
+	protected:
+		virtual void Construct() {}
+		virtual void BeginPlay() {}
+		virtual void Tick(float) {}
 
 	private:
 		void PreConstruct();
 		void MountAssetDirectory();
 		void TickGame();
-
-	private:
-		EngineSubsystem Subsystem;
+		void WorldRender();
 	};
 }

@@ -5,6 +5,8 @@
 
 #include "Game.h"
 #include "Framework/World/World.h"
+#include "Subsystem/WorldSubsystem.h"
+#include "Subsystem/GameStateSubsystem.h"
 #include "Input/InputActions.h"
 #include "GameStateTokens.h"
 #include "Utility/Log.h"
@@ -22,71 +24,58 @@ namespace we
 
 	Game::Game()
 		: WaterEngine{}
-		, bPaused{false}
+		, bPaused{ false }
 	{
-		
-	}
-	
-	void Game::RegisterAllLevels()
-	{
-		//RegisterLevel(MainMenu);
-		//RegisterLevel(LevelOne);
+		Construct();
 	}
 
-	/*void Game::BeginPlay()
+	void Game::Construct()
 	{
-		RegisterAllLevels();
+		RegisterLevels();
 
 		Subsystem.GameState->OnStateEnter.Bind(this, &Game::OnStateEnter);
 		Subsystem.GameState->OnStateExit.Bind(this, &Game::OnStateExit);
+	}
 
+	void Game::BeginPlay()
+	{
 		Subsystem.GameState->RequestStateChange(MakeState(EGameState::MainMenu));
-
 		BindInput();
-
-		PauseMenu = make_unique<PauseUI>(Subsystem);
-		PauseMenu->OnResume.Bind(this, &Game::TogglePause);
 	}
 
 	void Game::Tick(float DeltaTime)
 	{
-	}*/
+		
+	}
+
+	void Game::RegisterLevels()
+	{
+		RegisterLevel(MainMenu);
+		// RegisterLevel(LevelOne);
+	}
 
 	void Game::OnStateEnter(shared<IGameStateToken> NewState)
 	{
-		//Subsystem.World->LoadWorldForState(NewState.get());
+		Subsystem.World->LoadWorldForState(NewState.get());
+		LOG("Entered state: {}", NewState->GetDebugName());
 	}
 
 	void Game::OnStateExit(shared<IGameStateToken> OldState)
 	{
-		auto GameState = OldState->As<GameStateToken>();
+		if (OldState)
+		{
+			LOG("Exited state: {}", OldState->GetDebugName());
+		}
 	}
 
 	void Game::BindInput()
 	{
-		/*Subsystem.Input->Bind(ACTION_TOGGLE_PAUSE, Input::Keyboard{ sf::Keyboard::Scan::Escape });
-		Subsystem.Input->Bind(ACTION_TOGGLE_PAUSE, Input::Gamepad{GamepadButton::Start});
-
-		Subsystem.Input->OnPressed(ACTION_TOGGLE_PAUSE, [this](){ TogglePause(); });*/
-	}
 	
+	}
+
 	void Game::TogglePause()
 	{
-		/*bPaused = !Subsystem.Time->IsPaused();
+		bPaused = !Subsystem.Time->IsPaused();
 		Subsystem.Time->SetPaused(bPaused);
-
-		if (bPaused)
-			PauseMenu->Show();
-		else
-			PauseMenu->Hide();
-
-		auto Current = Subsystem.GameState->GetCurrentState();
-		if (auto GameState = Current->As<GameStateToken>())
-		{
-			if (GameState->IsGameplay())
-			{
-				Subsystem.Cursor->SetVisibility(bPaused);
-			}
-		}*/
 	}
 }

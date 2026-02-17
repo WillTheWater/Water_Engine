@@ -6,6 +6,7 @@
 #pragma once
 
 #include <SFML/Audio.hpp>
+#include <SFML/Audio/Listener.hpp>
 
 namespace we
 {
