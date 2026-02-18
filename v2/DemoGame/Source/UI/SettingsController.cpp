@@ -7,6 +7,8 @@
 #include "UI/SettingsMenuUI.h"
 #include "Framework/EngineSubsystem.h"
 #include "Subsystem/AudioSubsystem.h"
+#include "Subsystem/WindowSubsystem.h"
+#include "Subsystem/CursorSubsystem.h"
 #include "Subsystem/SaveLoadSubsystem.h"
 #include "Utility/Log.h"
 
@@ -17,8 +19,8 @@ namespace we
 	constexpr stringView KEY_MUSIC_VOLUME = "Settings.MusicVolume";
 	constexpr stringView KEY_AMBIENT_VOLUME = "Settings.AmbientVolume";
 	constexpr stringView KEY_SFX_VOLUME = "Settings.SFXVolume";
-	constexpr stringView KEY_FULLSCREEN = "Settings.Fullscreen";
 	constexpr stringView KEY_VSYNC = "Settings.VSync";
+	// Note: KEY_FULLSCREEN removed - fullscreen is runtime toggle only, not saved
 	constexpr stringView KEY_SMOOTH_RENDER = "Settings.SmoothRender";
 	constexpr stringView KEY_DEADZONE = "Settings.Deadzone";
 	constexpr stringView KEY_CURSOR_SPEED = "Settings.CursorSpeed";
@@ -26,6 +28,7 @@ namespace we
 	// AudioSubsystem uses 0-100 range, sliders use 0-1 range
 	constexpr float SLIDER_TO_VOLUME(float Slider) { return Slider * 100.0f; }
 	constexpr float VOLUME_TO_SLIDER(float Volume) { return Volume / 100.0f; }
+	constexpr float DEFAULT_VOLUME = 40.0f;  // 40% default for new players
 
 	SettingsController::SettingsController(EngineSubsystem& InSubsystem, SettingsMenuUI& InUI)
 		: WidgetController(InSubsystem)
@@ -77,7 +80,7 @@ namespace we
 			Slider->OnValueChanged.Bind([this](float Value) { OnCursorSpeedChanged(Value); });
 		}
 
-		LOG("SettingsController: UI bindings created");
+		// UI bindings created
 	}
 
 	void SettingsController::SyncUIFromSettings()
@@ -120,40 +123,45 @@ namespace we
 				Text->SetText(ValueToPercentText(SliderValue));
 		}
 
-		// Video settings (from SaveLoad only - not yet hooked to subsystems)
+		// Video settings - read current values from WindowSubsystem
+		// Note: Fullscreen is NOT saved - it's runtime-only to avoid startup issues
 		if (auto Check = UI.GetFullscreenCheck())
 		{
-			Check->SetChecked(Save.Get<bool>(KEY_FULLSCREEN, false));
+			Check->SetChecked(Subsystem.Window->IsFullscreen());
 		}
 		if (auto Check = UI.GetVSyncCheck())
 		{
-			Check->SetChecked(Save.Get<bool>(KEY_VSYNC, true));
+			bool bVSync = Save.Has(KEY_VSYNC)
+				? Save.Get<bool>(KEY_VSYNC, true)
+				: Subsystem.Window->IsVSync();
+			Check->SetChecked(bVSync);
 		}
 		if (auto Check = UI.GetSmoothRenderCheck())
 		{
 			Check->SetChecked(Save.Get<bool>(KEY_SMOOTH_RENDER, true));
 		}
 
-		// Gameplay settings
+		// Gameplay settings - read from CursorSubsystem (already set by DemoGameInstance)
 		if (auto Slider = UI.GetDeadzoneSlider())
 		{
-			float Value = Save.Get<float>(KEY_DEADZONE, 0.33f);
-			Slider->SetValue(Value);
+			// Deadzone stored as 0-1 in CursorSubsystem, display as 0-100%
+			float Deadzone = Subsystem.Cursor->GetJoystickDeadzone();
+			float SliderValue = Deadzone; // Already 0-1
+			Slider->SetValue(SliderValue);
 			if (auto Text = UI.GetDeadzoneValue())
-				Text->SetText(ValueToPercentText(Value));
+				Text->SetText(ValueToPercentText(SliderValue));
 		}
 		if (auto Slider = UI.GetCursorSpeedSlider())
 		{
-			float Value = Save.Get<float>(KEY_CURSOR_SPEED, 0.5f);
-			Slider->SetValue(Value);
+			// Speed stored as 200-2000 in CursorSubsystem, convert to 0-1 slider
+			float Speed = Subsystem.Cursor->GetSpeed();
+			float SliderValue = (Speed - 200.0f) / 1800.0f;
+			Slider->SetValue(SliderValue);
 			if (auto Text = UI.GetCursorSpeedValue())
-			{
-				float Speed = 200.0f + Value * 1800.0f;
 				Text->SetText(std::to_string(static_cast<int>(Speed)));
-			}
 		}
 
-		LOG("SettingsController: Synced UI from AudioSubsystem");
+		// UI synced from AudioSubsystem
 	}
 
 	void SettingsController::Show()
@@ -221,18 +229,20 @@ namespace we
 	}
 
 	// =========================================================================
-	// Video Callbacks (save only, not yet hooked to subsystems)
+	// Video Callbacks - Immediate application to WindowSubsystem
 	// =========================================================================
 	void SettingsController::OnFullscreenToggled(bool bChecked)
 	{
-		Subsystem.SaveLoad->Set<bool>(KEY_FULLSCREEN, bChecked);
-		LOG("Fullscreen: {} (saved)", bChecked ? "ON" : "OFF");
+		// Note: Fullscreen is NOT saved - toggle is runtime-only to avoid startup issues
+		Subsystem.Window->SetFullscreen(bChecked);
+		LOG("Fullscreen: {} (applied, not saved)", bChecked ? "ON" : "OFF");
 	}
 
 	void SettingsController::OnVSyncToggled(bool bChecked)
 	{
 		Subsystem.SaveLoad->Set<bool>(KEY_VSYNC, bChecked);
-		LOG("VSync: {} (saved)", bChecked ? "ON" : "OFF");
+		Subsystem.Window->SetVSync(bChecked);
+		LOG("VSync: {} (saved & applied)", bChecked ? "ON" : "OFF");
 	}
 
 	void SettingsController::OnSmoothRenderToggled(bool bChecked)
@@ -242,25 +252,27 @@ namespace we
 	}
 
 	// =========================================================================
-	// Gameplay Callbacks (save only, not yet hooked to subsystems)
+	// Gameplay Callbacks - Immediate application to CursorSubsystem
 	// =========================================================================
-	void SettingsController::OnDeadzoneChanged(float Value)
+	void SettingsController::OnDeadzoneChanged(float SliderValue)
 	{
-		Subsystem.SaveLoad->Set<float>(KEY_DEADZONE, Value);
+		// Slider 0-1 maps directly to deadzone 0-1
+		Subsystem.SaveLoad->Set<float>(KEY_DEADZONE, SliderValue);
+		Subsystem.Cursor->SetJoystickDeadzone(SliderValue);
 		if (auto Text = UI.GetDeadzoneValue())
-			Text->SetText(ValueToPercentText(Value));
-		LOG("Deadzone: {:.0f}% (saved)", Value * 100.0f);
+			Text->SetText(ValueToPercentText(SliderValue));
+		LOG("Deadzone: {:.0f}% (saved & applied)", SliderValue * 100.0f);
 	}
 
-	void SettingsController::OnCursorSpeedChanged(float Value)
+	void SettingsController::OnCursorSpeedChanged(float SliderValue)
 	{
-		Subsystem.SaveLoad->Set<float>(KEY_CURSOR_SPEED, Value);
+		// Slider 0-1 -> Speed 200-2000
+		float Speed = 200.0f + SliderValue * 1800.0f;
+		Subsystem.SaveLoad->Set<float>(KEY_CURSOR_SPEED, Speed);
+		Subsystem.Cursor->SetSpeed(Speed);
 		if (auto Text = UI.GetCursorSpeedValue())
-		{
-			float Speed = 200.0f + Value * 1800.0f;
 			Text->SetText(std::to_string(static_cast<int>(Speed)));
-		}
-		LOG("Cursor Speed: {:.0f} (saved)", 200.0f + Value * 1800.0f);
+		LOG("Cursor Speed: {:.0f} (saved & applied)", Speed);
 	}
 
 	// =========================================================================

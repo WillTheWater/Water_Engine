@@ -135,5 +135,25 @@ namespace we
         close();
     }
 
+    void WindowSubsystem::SetFullscreen(bool bFullscreen)
+    {
+        if (bIsFullscreen == bFullscreen) return;
+        EventToggleBorderlessFullscreen();
+    }
+
+    void WindowSubsystem::SetVSync(bool bEnabled)
+    {
+        Config.VsyncEnabled = bEnabled;
+        setVerticalSyncEnabled(bEnabled);
+        if (!bEnabled)
+        {
+            setFramerateLimit(static_cast<uint>(Config.TargetFPS));
+        }
+        else
+        {
+            setFramerateLimit(0);
+        }
+    }
+
 
 }

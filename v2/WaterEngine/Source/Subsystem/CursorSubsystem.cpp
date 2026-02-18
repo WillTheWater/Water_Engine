@@ -1,12 +1,15 @@
 // =============================================================================
 // Water Engine v2.0.0
-// Copyright(C) 2026 Will The Water
+// Copyright (C) 2026 Will The Water
 // =============================================================================
 
 #include "Subsystem/CursorSubsystem.h"
 #include "Subsystem/RenderSubsystem.h"
 #include "Subsystem/ResourceSubsystem.h"
+#include "Subsystem/WindowSubsystem.h"
+#include "Utility/Math.h"
 #include "EngineConfig.h"
+#include "Utility/Log.h"
 
 namespace we
 {
@@ -22,21 +25,39 @@ namespace we
 		ApplyCursorSize();
 	}
 
-	void CursorSubsystem::Update(float DeltaTime)
+	void CursorSubsystem::Update(float DeltaTime, WindowSubsystem& Window)
 	{
-		const vec2f JoystickDirection(
-			sf::Joystick::getAxisPosition(0, sf::Joystick::Axis::X) / 100.0f,
-			sf::Joystick::getAxisPosition(0, sf::Joystick::Axis::Y) / 100.0f);
-
-		if (JoystickDirection.length() > Config.JoystickDeadzone)
+		// Joystick control for cursor movement
+		const float AxisX = sf::Joystick::getAxisPosition(0, sf::Joystick::Axis::X);
+		const float AxisY = sf::Joystick::getAxisPosition(0, sf::Joystick::Axis::Y);
+		
+		// Create joystick vector and calculate its length
+		vec2f JoystickDirection(AxisX / 100.0f, AxisY / 100.0f);
+		float InputLength = Length(JoystickDirection);
+		
+		// Only process if beyond deadzone
+		if (InputLength > Config.JoystickDeadzone)
 		{
-			CursorSprite.move(JoystickDirection * CursorSpeed * DeltaTime);
+			// Normalize the direction for consistent speed in all directions
+			vec2f NormalizedDir = Normalize(JoystickDirection);
+			
+			// Calculate output speed: map [deadzone, 1.0] to [0.0, 1.0]
+			float RawT = (InputLength - Config.JoystickDeadzone) / (1.0f - Config.JoystickDeadzone);
+			float ScaledT = Clamp01(RawT);
+			
+			// Move the cursor sprite
+			vec2f Delta = NormalizedDir * CursorSpeed * ScaledT * DeltaTime;
+			CursorSprite.move(Delta);
 
+			// Clamp to screen bounds
 			vec2f ClampedPos = {
-				std::clamp(CursorSprite.getPosition().x, 0.0f, Config.RenderResolution.x),
-				std::clamp(CursorSprite.getPosition().y, 0.0f, Config.RenderResolution.y)
+				Clamp(CursorSprite.getPosition().x, 0.0f, Config.RenderResolution.x),
+				Clamp(CursorSprite.getPosition().y, 0.0f, Config.RenderResolution.y)
 			};
 			CursorSprite.setPosition(ClampedPos);
+
+			// Sync system mouse cursor for UI hit-testing
+			sf::Mouse::setPosition(static_cast<sf::Vector2i>(ClampedPos), Window);
 		}
 	}
 

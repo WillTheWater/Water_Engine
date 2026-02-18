@@ -8,6 +8,7 @@
 #include "UI/SettingsController.h"
 #include "Framework/EngineSubsystem.h"
 #include "Subsystem/AudioSubsystem.h"
+#include "Subsystem/WindowSubsystem.h"
 #include "Subsystem/SaveLoadSubsystem.h"
 #include "GameConfig.h"
 #include "Utility/Log.h"
@@ -19,22 +20,32 @@ namespace we
 	constexpr stringView KEY_MUSIC_VOLUME = "Settings.MusicVolume";
 	constexpr stringView KEY_AMBIENT_VOLUME = "Settings.AmbientVolume";
 	constexpr stringView KEY_SFX_VOLUME = "Settings.SFXVolume";
+	constexpr stringView KEY_VSYNC = "Settings.VSync";
+	constexpr stringView KEY_DEADZONE = "Settings.Deadzone";
+	constexpr stringView KEY_CURSOR_SPEED = "Settings.CursorSpeed";
+	// Note: Fullscreen is NOT saved - runtime toggle only
 
 	DemoGameInstance::DemoGameInstance()
 	{
-		LOG("DemoGameInstance created");
+		// DemoGameInstance created
 	}
 
 	DemoGameInstance::~DemoGameInstance()
 	{
-		LOG("DemoGameInstance destroyed");
+		// DemoGameInstance destroyed
 	}
 
 	void DemoGameInstance::Init(EngineSubsystem& InSubsystem)
 	{
 		GameInstance::Init(InSubsystem);
 		
-		LOG("DemoGameInstance initializing persistent systems...");
+		// DemoGameInstance initializing...
+		
+		// Apply saved VSync setting (safe to do during init)
+		ApplySavedVSyncSetting();
+		
+		// Apply saved gameplay settings (cursor/deadzone)
+		ApplySavedGameplaySettings();
 		
 		// Apply saved audio settings BEFORE any music starts playing
 		ApplySavedAudioSettings();
@@ -53,7 +64,43 @@ namespace we
 		// Bind back button
 		SettingsUI->OnBackClicked.Bind(this, &DemoGameInstance::OnSettingsBackClicked);
 		
-		LOG("DemoGameInstance initialized");
+		// DemoGameInstance initialized
+	}
+
+	void DemoGameInstance::ApplySavedVSyncSetting()
+	{
+		auto& Save = *Subsystem->SaveLoad;
+		auto& Window = *Subsystem->Window;
+		
+		// Apply saved VSync setting if it exists
+		if (Save.Has(KEY_VSYNC))
+		{
+			bool bVSync = Save.Get<bool>(KEY_VSYNC, true);
+			Window.SetVSync(bVSync);
+			LOG("Applied saved VSync: {}", bVSync ? "ON" : "OFF");
+		}
+	}
+
+	void DemoGameInstance::ApplySavedGameplaySettings()
+	{
+		auto& Save = *Subsystem->SaveLoad;
+		auto& Cursor = *Subsystem->Cursor;
+		
+		// Apply saved deadzone if it exists (stored as 0-1)
+		if (Save.Has(KEY_DEADZONE))
+		{
+			float Deadzone = Save.Get<float>(KEY_DEADZONE, 0.33f);
+			Cursor.SetJoystickDeadzone(Deadzone);
+			LOG("Applied saved joystick deadzone: {:.0f}%", Deadzone * 100.0f);
+		}
+		
+		// Apply saved cursor speed if it exists (stored as 200-2000)
+		if (Save.Has(KEY_CURSOR_SPEED))
+		{
+			float Speed = Save.Get<float>(KEY_CURSOR_SPEED, 1000.0f);
+			Cursor.SetSpeed(Speed);
+			LOG("Applied saved cursor speed: {:.0f}", Speed);
+		}
 	}
 
 	void DemoGameInstance::ApplySavedAudioSettings()
@@ -61,37 +108,36 @@ namespace we
 		auto& Save = *Subsystem->SaveLoad;
 		auto& Audio = *Subsystem->Audio;
 		
-		// If we have saved audio settings, apply them to AudioSubsystem immediately
+		// Default volume for new players (40%)
+		constexpr float DEFAULT_VOL = 40.0f;
+		
+		// Apply saved audio settings, or set defaults for new players
 		// This ensures music/ambient that starts playing uses the correct volume
+		float MasterVol = Save.Get<float>(KEY_MASTER_VOLUME, DEFAULT_VOL);
+		Audio.SetGlobalVolume(MasterVol);
+		
+		float MusicVol = Save.Get<float>(KEY_MUSIC_VOLUME, DEFAULT_VOL);
+		Audio.SetChannelVolume(AudioChannel::Music, MusicVol);
+		
+		float AmbientVol = Save.Get<float>(KEY_AMBIENT_VOLUME, DEFAULT_VOL);
+		Audio.SetChannelVolume(AudioChannel::Ambient, AmbientVol);
+		
+		float SFXVol = Save.Get<float>(KEY_SFX_VOLUME, DEFAULT_VOL);
+		Audio.SetChannelVolume(AudioChannel::SFX, SFXVol);
+		
 		if (Save.Has(KEY_MASTER_VOLUME))
 		{
-			float MasterVol = Save.Get<float>(KEY_MASTER_VOLUME, 0.5f);
-			Audio.SetGlobalVolume(MasterVol);
-			LOG("Applied saved master volume: {:.0f}%", MasterVol * 100.0f);
+			LOG("Applied saved audio settings from SaveLoad");
 		}
-		if (Save.Has(KEY_MUSIC_VOLUME))
+		else
 		{
-			float MusicVol = Save.Get<float>(KEY_MUSIC_VOLUME, 0.5f);
-			Audio.SetChannelVolume(AudioChannel::Music, MusicVol);
-			LOG("Applied saved music volume: {:.0f}%", MusicVol * 100.0f);
-		}
-		if (Save.Has(KEY_AMBIENT_VOLUME))
-		{
-			float AmbientVol = Save.Get<float>(KEY_AMBIENT_VOLUME, 0.5f);
-			Audio.SetChannelVolume(AudioChannel::Ambient, AmbientVol);
-			LOG("Applied saved ambient volume: {:.0f}%", AmbientVol * 100.0f);
-		}
-		if (Save.Has(KEY_SFX_VOLUME))
-		{
-			float SFXVol = Save.Get<float>(KEY_SFX_VOLUME, 0.5f);
-			Audio.SetChannelVolume(AudioChannel::SFX, SFXVol);
-			LOG("Applied saved SFX volume: {:.0f}%", SFXVol * 100.0f);
+			LOG("No save file found - using default 40% volume for new player");
 		}
 	}
 
 	void DemoGameInstance::Shutdown()
 	{
-		LOG("DemoGameInstance shutting down");
+		// DemoGameInstance shutting down
 		
 		SettingsCtrl.reset();
 		SettingsUI.reset();
@@ -108,7 +154,7 @@ namespace we
 	{
 		if (SettingsCtrl)
 		{
-			LOG("DemoGameInstance: Showing settings menu");
+			// Showing settings menu
 			SettingsCtrl->Show();
 		}
 	}
@@ -117,7 +163,7 @@ namespace we
 	{
 		if (SettingsCtrl)
 		{
-			LOG("DemoGameInstance: Hiding settings menu");
+			// Hiding settings menu
 			SettingsCtrl->Hide();
 		}
 	}
@@ -129,7 +175,7 @@ namespace we
 
 	void DemoGameInstance::OnSettingsBackClicked()
 	{
-		LOG("DemoGameInstance: Settings back clicked");
+		// Settings back clicked
 		HideSettings();
 		OnSettingsClosed.Broadcast();
 	}

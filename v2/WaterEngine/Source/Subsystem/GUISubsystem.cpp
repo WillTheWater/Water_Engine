@@ -1,6 +1,6 @@
 // =============================================================================
 // Water Engine v2.0.0
-// Copyright(C) 2026 Will The Water
+// Copyright (C) 2026 Will The Water
 // =============================================================================
 
 #include "Subsystem/GUISubsystem.h"
@@ -279,7 +279,12 @@ namespace we
 		else if (auto JoystickPressed = Event.getIf<sf::Event::JoystickButtonPressed>())
 		{
 			HandleJoystickPressed(*JoystickPressed);
-			bConsumed = (FocusedWidget.lock() != nullptr);
+			bConsumed = (FocusedWidget.lock() != nullptr) || (PressedWidget.lock() != nullptr);
+		}
+		else if (auto JoystickReleased = Event.getIf<sf::Event::JoystickButtonReleased>())
+		{
+			HandleJoystickReleased(*JoystickReleased);
+			bConsumed = (PressedWidget.lock() != nullptr);
 		}
 		else if (auto TextEntered = Event.getIf<sf::Event::TextEntered>())
 		{
@@ -392,9 +397,39 @@ namespace we
 
 	void GUISubsystem::HandleJoystickPressed(const sf::Event::JoystickButtonPressed& Btn)
 	{
-		if (Btn.button == 0)
+		if (Btn.button == 0)  // South button (A on Xbox, X on PlayStation)
 		{
-			ActivateFocused();
+			// Check if cursor is hovering over a widget - emulate mouse press (for dragging)
+			vec2f MousePos = GetMousePosition();
+			if (auto Hovered = FindWidgetAt(MousePos))
+			{
+				if (Hovered->IsVisible())
+				{
+					// Set focus
+					if (auto OldFocus = FocusedWidget.lock())
+					{
+						OldFocus->OnFocusLost.Broadcast();
+					}
+					FocusedWidget = Hovered;
+					Hovered->OnFocusGained.Broadcast();
+
+					// Set pressed state (for dragging)
+					PressedWidget = Hovered;
+					Hovered->SetPressed(true);
+					Hovered->OnPressed(MousePos);
+					
+					const string& PressedSound = Hovered->GetPressedSound();
+					if (Subsystem.Audio && !PressedSound.empty())
+					{
+						Subsystem.Audio->PlaySFX(PressedSound);
+					}
+				}
+			}
+			else
+			{
+				// No widget under cursor, use focused widget (keyboard navigation)
+				ActivateFocused();
+			}
 		}
 		else if (Btn.button == 1)
 		{
@@ -410,6 +445,34 @@ namespace we
 		}
 	}
 
+	void GUISubsystem::HandleJoystickReleased(const sf::Event::JoystickButtonReleased& Btn)
+	{
+		if (Btn.button == 0)  // South button released
+		{
+			// Emulate mouse release (end drag)
+			if (auto Pressed = PressedWidget.lock())
+			{
+				Pressed->SetPressed(false);
+				
+				vec2f MousePos = GetMousePosition();
+				Pressed->OnReleased(MousePos);
+				
+				// Only trigger click if still over the widget
+				if (Pressed->Contains(MousePos))
+				{
+					Pressed->OnClicked.Broadcast();
+					
+					const string& ClickSound = Pressed->GetClickSound();
+					if (Subsystem.Audio && !ClickSound.empty())
+					{
+						Subsystem.Audio->PlaySFX(ClickSound);
+					}
+				}
+			}
+			PressedWidget.reset();
+		}
+	}
+
 	void GUISubsystem::HandleTextEntered(const sf::Event::TextEntered& Text)
 	{
 		if (auto Focused = FocusedWidget.lock())
@@ -420,13 +483,32 @@ namespace we
 
 	void GUISubsystem::NavigateNext()
 	{
-		if (auto Next = FindNextFocusable())
+		auto Focusable = GetFocusableWidgets();
+		if (Focusable.empty()) return;
+
+		auto Current = FocusedWidget.lock();
+		size_t CurrentIndex = 0;
+		
+		// Find current index
+		for (size_t i = 0; i < Focusable.size(); ++i)
 		{
-			if (auto Current = FocusedWidget.lock())
+			if (Focusable[i] == Current)
+			{
+				CurrentIndex = i;
+				break;
+			}
+		}
+
+		// Move to next (wrap around)
+		size_t NextIndex = (CurrentIndex + 1) % Focusable.size();
+		auto Next = Focusable[NextIndex];
+
+		if (Next && Next != Current)
+		{
+			if (Current)
 			{
 				Current->OnFocusLost.Broadcast();
 			}
-
 			FocusedWidget = Next;
 			Next->OnFocusGained.Broadcast();
 		}
@@ -434,13 +516,32 @@ namespace we
 
 	void GUISubsystem::NavigatePrevious()
 	{
-		if (auto Prev = FindPreviousFocusable())
+		auto Focusable = GetFocusableWidgets();
+		if (Focusable.empty()) return;
+
+		auto Current = FocusedWidget.lock();
+		size_t CurrentIndex = 0;
+		
+		// Find current index
+		for (size_t i = 0; i < Focusable.size(); ++i)
 		{
-			if (auto Current = FocusedWidget.lock())
+			if (Focusable[i] == Current)
+			{
+				CurrentIndex = i;
+				break;
+			}
+		}
+
+		// Move to previous (wrap around)
+		size_t PrevIndex = (CurrentIndex == 0) ? Focusable.size() - 1 : CurrentIndex - 1;
+		auto Prev = Focusable[PrevIndex];
+
+		if (Prev && Prev != Current)
+		{
+			if (Current)
 			{
 				Current->OnFocusLost.Broadcast();
 			}
-
 			FocusedWidget = Prev;
 			Prev->OnFocusGained.Broadcast();
 		}
@@ -541,85 +642,16 @@ namespace we
 		return nullptr;
 	}
 
-	shared<Widget> GUISubsystem::FindNextFocusable() const
+	vector<shared<Widget>> GUISubsystem::GetFocusableWidgets() const
 	{
-		auto Current = FocusedWidget.lock();
-		float CurrentDepth = Current ? Current->GetRenderDepth() : 0.f;
-
-		shared<Widget> BestCandidate;
-		float BestDepth = FLT_MAX;
-
+		vector<shared<Widget>> Focusable;
 		for (auto& Widget : Widgets)
 		{
 			if (Widget && Widget->IsVisible() && Widget->IsFocusable())
 			{
-				float WidgetDepth = Widget->GetRenderDepth();
-				if (WidgetDepth > CurrentDepth && WidgetDepth < BestDepth)
-				{
-					BestDepth = WidgetDepth;
-					BestCandidate = Widget;
-				}
+				Focusable.push_back(Widget);
 			}
 		}
-
-		if (!BestCandidate)
-		{
-			for (auto& Widget : Widgets)
-			{
-				if (Widget && Widget->IsVisible() && Widget->IsFocusable())
-				{
-					float WidgetDepth = Widget->GetRenderDepth();
-					if (WidgetDepth < BestDepth)
-					{
-						BestDepth = WidgetDepth;
-						BestCandidate = Widget;
-					}
-				}
-			}
-		}
-
-		return BestCandidate;
-	}
-
-	shared<Widget> GUISubsystem::FindPreviousFocusable() const
-	{
-		auto Current = FocusedWidget.lock();
-		float CurrentDepth = Current ? Current->GetRenderDepth() : FLT_MAX;
-
-		shared<Widget> BestCandidate;
-		float BestDepth = -FLT_MAX;
-		bool bFoundLower = false;
-
-		for (auto& Widget : Widgets)
-		{
-			if (Widget && Widget->IsVisible() && Widget->IsFocusable())
-			{
-				float WidgetDepth = Widget->GetRenderDepth();
-				if (WidgetDepth < CurrentDepth && WidgetDepth >= BestDepth)
-				{
-					BestDepth = WidgetDepth;
-					BestCandidate = Widget;
-					bFoundLower = true;
-				}
-			}
-		}
-
-		if (!bFoundLower)
-		{
-			for (auto& Widget : Widgets)
-			{
-				if (Widget && Widget->IsVisible() && Widget->IsFocusable())
-				{
-					float WidgetDepth = Widget->GetRenderDepth();
-					if (WidgetDepth >= BestDepth)
-					{
-						BestDepth = WidgetDepth;
-						BestCandidate = Widget;
-					}
-				}
-			}
-		}
-
-		return BestCandidate;
+		return Focusable;
 	}
 }

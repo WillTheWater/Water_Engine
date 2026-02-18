@@ -178,6 +178,7 @@ namespace we
 		void HandleMouseReleased(const sf::Event::MouseButtonReleased& Btn);
 		void HandleKeyPressed(const sf::Event::KeyPressed& Key);
 		void HandleJoystickPressed(const sf::Event::JoystickButtonPressed& Btn);
+		void HandleJoystickReleased(const sf::Event::JoystickButtonReleased& Btn);
 		void HandleTextEntered(const sf::Event::TextEntered& Text);
 
 		// Navigation
@@ -186,8 +187,7 @@ namespace we
 		void ActivateFocused();
 
 		shared<Widget> FindWidgetAt(const vec2f& ScreenPoint) const;
-		shared<Widget> FindNextFocusable() const;
-		shared<Widget> FindPreviousFocusable() const;
+		vector<shared<Widget>> GetFocusableWidgets() const;
 		void UpdateHoverState(const vec2f& MousePos);
 		vec2f GetMousePosition() const;
 

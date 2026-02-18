@@ -11,8 +11,8 @@
 namespace we
 {
 	AudioSubsystem::AudioSubsystem(const AudioConfig& InConfig)
-		: GlobalVolume{ InConfig.StartupGlobalVolume }  // 0-100 range
-		, ChannelVolumes{ 100.f, 100.f, 100.f }  // 0-100 range (Music, Ambient, SFX)
+		: GlobalVolume{ InConfig.StartupGlobalVolume }  // 0-100 range (default 50 from config)
+		, ChannelVolumes{ 80.f, 80.f, 80.f }  // 0-100 range (Music, Ambient, SFX) - 80 * 0.5 = 40% effective
 		, ChannelMuted{ false, false, false }
 		, MaxSFXCount{ InConfig.MaxSFXStack }
 		, Config{ InConfig }

@@ -41,6 +41,8 @@ namespace we
 		Delegate<> OnSettingsClosed;
 
 	private:
+		void ApplySavedVSyncSetting();
+		void ApplySavedGameplaySettings();
 		void ApplySavedAudioSettings();
 		void OnSettingsBackClicked();
 

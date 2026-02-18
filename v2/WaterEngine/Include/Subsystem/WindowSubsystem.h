@@ -34,6 +34,14 @@ namespace we
 		view GetConstrainedView() const;
 		vec2f GetMousePosition() const;
 
+		// Fullscreen
+		void SetFullscreen(bool bFullscreen);
+		bool IsFullscreen() const { return bIsFullscreen; }
+
+		// VSync
+		void SetVSync(bool bEnabled);
+		bool IsVSync() const { return Config.VsyncEnabled; }
+
 	protected:
 		void onResize() override;
 

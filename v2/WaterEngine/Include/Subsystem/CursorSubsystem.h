@@ -1,6 +1,6 @@
 // =============================================================================
 // Water Engine v2.0.0
-// Copyright(C) 2026 Will The Water
+// Copyright (C) 2026 Will The Water
 // =============================================================================
 
 #pragma once
@@ -11,6 +11,7 @@
 namespace we
 {
 	class RenderSubsystem;
+	class WindowSubsystem;
 
 	struct CursorConfig
 	{
@@ -26,7 +27,7 @@ namespace we
 	public:
 		explicit CursorSubsystem(const CursorConfig& Config);
 
-		void Update(float DeltaTime);
+		void Update(float DeltaTime, WindowSubsystem& Window);
 		void Render(RenderSubsystem& Renderer) const;
 
 		void SetSpeed(float Speed) { CursorSpeed = Speed; }
@@ -44,6 +45,9 @@ namespace we
 		// Raw pixel position for UI hit testing
 		void SetPixelPosition(vec2f PixelPos) { PixelPosition = PixelPos; }
 		vec2f GetPixelPosition() const { return PixelPosition; }
+
+		void SetJoystickDeadzone(float Deadzone) { Config.JoystickDeadzone = Deadzone; }
+		float GetJoystickDeadzone() const { return Config.JoystickDeadzone; }
 
 	private:
 		void ApplyCursorSize();

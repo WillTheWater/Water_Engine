@@ -100,6 +100,9 @@ namespace we
     {
         float DeltaTime = Subsystem.Time->GetDeltaTime();
 
+        // Update cursor (joystick control)
+        Subsystem.Cursor->Update(DeltaTime, *Subsystem.Window);
+
         // Poll gamepad axes (only if gamepad connected)
         Subsystem.Input->PollGamepadAxes();
 
@@ -153,7 +156,7 @@ namespace we
         }
         else
         {
-            Subsystem.Cursor->Update(Subsystem.Time->GetUnscaledDeltaTime());
+            Subsystem.Cursor->Update(Subsystem.Time->GetUnscaledDeltaTime(), *Subsystem.Window);
             Subsystem.Input->ProcessHeld();
             Subsystem.GUI->Update(Subsystem.Time->GetUnscaledDeltaTime());
         }
