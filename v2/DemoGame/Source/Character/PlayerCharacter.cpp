@@ -6,54 +6,51 @@
 #include "Character/PlayerCharacter.h"
 #include "Character/MovementComponent.h"
 #include "Interface/Component/AnimationComponent.h"
-#include "Interface/Component/PhysicsComponent.h"
 #include "Framework/World/World.h"
 #include "Framework/EngineSubsystem.h"
 #include "Utility/Math.h"
 #include "Utility/Log.h"
 #include "GameConfig.h"
 
-#include <box2d/b2_body.h>
-
 namespace we
 {
 	Player::Player(World* OwningWorld, const string& TexturePath)
-		: Actor(OwningWorld, TexturePath)
+		: Character(OwningWorld, TexturePath)
 	{
+		// Character base class creates Trigger and Blocking components
+		// We just need to set up the capsule size for our character sprite
+		SetCapsuleRadius(40.0f);      // Slightly smaller than the 128px half-sprite
+		SetCapsuleHalfHeight(50.0f);  // Tall enough for the character
+		SetCapsuleOffset({ 0,10 });
 	}
 
 	void Player::BeginPlay()
 	{
 		InitializeAnimations();
-		InitializePhysics();
-		Actor::BeginPlay();
+		Character::BeginPlay();
 	}
 
 	void Player::Tick(float DeltaTime)
 	{
-		// Tick components manually - THIS IS THE KEY FIX FOR DEBUG DRAW
+		// Tick components manually
 		if (MoveComp) MoveComp->Tick(DeltaTime);
 		if (AnimComp) AnimComp->Tick(DeltaTime);
-		if (PhysComp) PhysComp->Tick(DeltaTime);
 
 		UpdateAnimation();
 		UpdateFootsteps();
 
-		// Apply movement velocity to physics
-		if (MoveComp && PhysComp)
+		// Apply movement with collision blocking
+		if (MoveComp)
 		{
-			PhysComp->SetVelocity(MoveComp->GetVelocity());
+			vec2f Velocity = MoveComp->GetVelocity();
+			float DeltaTime = GetWorld()->GetSubsystem().Time->GetDeltaTime();
+			vec2f Delta = Velocity * DeltaTime;
+			
+			// TryMove respects blocking collision (prevents walking through walls)
+			TryMove(Delta);
 		}
 
-		// Sync position from physics body to actor
-		if (PhysComp && PhysComp->GetPhysicsBody())
-		{
-			float Scale = GetWorld()->GetSubsystem().Physics->GetPhysicsScale();
-			b2Vec2 Pos = PhysComp->GetPhysicsBody()->GetPosition();
-			SetPosition({ Pos.x / Scale, Pos.y / Scale });
-		}
-
-		Actor::Tick(DeltaTime);
+		Character::Tick(DeltaTime);
 	}
 
 	void Player::InitializeAnimations()
@@ -91,15 +88,6 @@ namespace we
 		AnimComp->AddAnimation({ (uint8)AnimState::RunDownLeft,    1, {7, 0}, {7, 7}, 0.10f, true });
 
 		AnimComp->Transition((uint8)AnimState::IdleDown);
-	}
-
-	void Player::InitializePhysics()
-	{
-		PhysComp = make_shared<PhysicsComponent>(this);
-		PhysComp->SetBodyType(BodyType::Dynamic);
-		PhysComp->SetCircleShape(80.0f);
-		PhysComp->SetSensor(true);
-		PhysComp->BeginPlay();
 	}
 
 	void Player::UpdateAnimation()
@@ -157,7 +145,6 @@ namespace we
 		LOG("Player destroyed");
 		if (MoveComp) MoveComp->EndPlay();
 		if (AnimComp) AnimComp->EndPlay();
-		if (PhysComp) PhysComp->EndPlay();
-		Actor::Destroy();
+		Character::Destroy();
 	}
 }

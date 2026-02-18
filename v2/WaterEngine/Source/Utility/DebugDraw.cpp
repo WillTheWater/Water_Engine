@@ -5,12 +5,14 @@
 
 #include "Utility/DebugDraw.h"
 #include "Subsystem/RenderSubsystem.h"
+#include <cmath>
 
 namespace we
 {
     vector<DebugLine> DebugDraw::Lines;
     vector<DebugCircle> DebugDraw::Circles;
     vector<DebugRect> DebugDraw::Rects;
+    vector<DebugCapsule> DebugDraw::Capsules;
     bool DebugDraw::bIsEnabled = true;
 
     void DebugDraw::Line(const vec2f& Start, const vec2f& End, const color& Color, float Thickness)
@@ -31,11 +33,34 @@ namespace we
         Rects.push_back({ Position, HalfExtents, Rotation, Color, Thickness });
     }
 
+    void DebugDraw::Capsule(const vec2f& Position, float HalfHeight, float Radius, const color& Color, float Thickness)
+    {
+        if (!bIsEnabled) return;
+        Capsules.push_back({ Position, HalfHeight, Radius, Color, Thickness });
+    }
+
     void DebugDraw::Render(RenderSubsystem& Render)
     {
         if (!bIsEnabled) {
             Clear();  // Discard any accumulated primitives when disabled
             return;
+        }
+
+        // Render lines (as thin rectangles)
+        for (const auto& L : Lines)
+        {
+            vec2f Delta = L.End - L.Start;
+            float Length = std::sqrt(Delta.x * Delta.x + Delta.y * Delta.y);
+            
+            if (Length < 0.001f) continue;
+            
+            // Create a rectangle for the line
+            rectangle LineRect({ Length, L.Thickness });
+            LineRect.setPosition((L.Start + L.End) * 0.5f);
+            LineRect.setOrigin({ Length * 0.5f, L.Thickness * 0.5f });
+            LineRect.setRotation(sf::radians(std::atan2(Delta.y, Delta.x)));
+            LineRect.setFillColor(L.Color);
+            Render.Draw(LineRect, ERenderLayer::Game);
         }
 
         // Render circles
@@ -63,6 +88,49 @@ namespace we
             Render.Draw(Shape, ERenderLayer::Game);
         }
 
+        // Render capsules (as two circles + connecting lines)
+        for (const auto& C : Capsules)
+        {
+            vec2f TopCenter = C.Position + vec2f{ 0.0f, -C.HalfHeight };
+            vec2f BottomCenter = C.Position + vec2f{ 0.0f, C.HalfHeight };
+
+            // Top cap (semicircle approximated with circle for now)
+            circle TopCap(C.Radius);
+            TopCap.setPosition(TopCenter);
+            TopCap.setOrigin({ C.Radius, C.Radius });
+            TopCap.setFillColor(color::Transparent);
+            TopCap.setOutlineColor(C.Color);
+            TopCap.setOutlineThickness(C.Thickness);
+            Render.Draw(TopCap, ERenderLayer::Game);
+
+            // Bottom cap
+            circle BottomCap(C.Radius);
+            BottomCap.setPosition(BottomCenter);
+            BottomCap.setOrigin({ C.Radius, C.Radius });
+            BottomCap.setFillColor(color::Transparent);
+            BottomCap.setOutlineColor(C.Color);
+            BottomCap.setOutlineThickness(C.Thickness);
+            Render.Draw(BottomCap, ERenderLayer::Game);
+
+            // Connecting lines (left and right sides)
+            // We'll draw these as thin rectangles
+            float LineLength = C.HalfHeight * 2.0f;
+            
+            // Left side - origin must be centered so line extends equally up/down
+            rectangle LeftLine({ C.Thickness, LineLength });
+            LeftLine.setOrigin({ C.Thickness / 2.0f, LineLength / 2.0f });
+            LeftLine.setPosition(C.Position + vec2f{ -C.Radius, 0.0f });
+            LeftLine.setFillColor(C.Color);
+            Render.Draw(LeftLine, ERenderLayer::Game);
+
+            // Right side
+            rectangle RightLine({ C.Thickness, LineLength });
+            RightLine.setOrigin({ C.Thickness / 2.0f, LineLength / 2.0f });
+            RightLine.setPosition(C.Position + vec2f{ C.Radius, 0.0f });
+            RightLine.setFillColor(C.Color);
+            Render.Draw(RightLine, ERenderLayer::Game);
+        }
+
         // Auto-clear after rendering (no manual Clear() needed)
         Clear();
     }
@@ -72,5 +140,6 @@ namespace we
         Lines.clear();
         Circles.clear();
         Rects.clear();
+        Capsules.clear();
     }
 }

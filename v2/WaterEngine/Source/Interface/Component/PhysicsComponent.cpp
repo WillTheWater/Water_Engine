@@ -135,13 +135,23 @@ namespace we
     void PhysicsComponent::OnBeginOverlap(IPhysicsComponent* Other)
     {
         // Override in derived classes to handle overlap begin
-        (void)Other;
+        if (Owner && Other && Other->GetOwner())
+        {
+            LOG("OVERLAP BEGIN: Actor@{:p} -> Actor@{:p}", 
+                reinterpret_cast<void*>(Owner), 
+                reinterpret_cast<void*>(Other->GetOwner()));
+        }
     }
 
     void PhysicsComponent::OnEndOverlap(IPhysicsComponent* Other)
     {
         // Override in derived classes to handle overlap end
-        (void)Other;
+        if (Owner && Other && Other->GetOwner())
+        {
+            LOG("OVERLAP END: Actor@{:p} -> Actor@{:p}", 
+                reinterpret_cast<void*>(Owner), 
+                reinterpret_cast<void*>(Other->GetOwner()));
+        }
     }
 
     void PhysicsComponent::SetBodyType(BodyType NewType)

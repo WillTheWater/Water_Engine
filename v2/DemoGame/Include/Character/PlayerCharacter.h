@@ -6,14 +6,13 @@
 #pragma once
 
 #include "Core/CoreMinimal.h"
-#include "Framework/World/Actor/Actor.h"
+#include "Framework/World/Actor/Character.h"
 #include "Interface/Component/IMovementComponent.h"
 #include "GameConfig.h"
 
 namespace we
 {
 	class AnimationComponent;
-	class PhysicsComponent;
 
 	enum class AnimState : uint8
 	{
@@ -38,7 +37,7 @@ namespace we
 		RunUpRight      // 16
 	};
 
-	class Player : public Actor
+	class Player : public Character
 	{
 	public:
 		Player(World* OwningWorld, const string& TexturePath = GC.CharacterSheetIdle);
@@ -49,7 +48,6 @@ namespace we
 
 	public:
 		void InitializeAnimations();
-		void InitializePhysics();
 		void UpdateAnimation();
 		void UpdateFootsteps();
 		void PlayFootstep();
@@ -57,7 +55,6 @@ namespace we
 	private:
 		shared<IMovementComponent> MoveComp;
 		shared<AnimationComponent> AnimComp;
-		shared<PhysicsComponent> PhysComp;
 		uint LastFootstepFrame = 255;
 	};
 }
