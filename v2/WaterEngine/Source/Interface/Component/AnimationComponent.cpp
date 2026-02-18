@@ -24,7 +24,7 @@ namespace we
 
     void AnimationComponent::BeginPlay()
     {
-        SyncOriginToFrame();
+        // Origin will be synced when first sprite sheet is added
     }
 
     void AnimationComponent::Tick(float DeltaTime)
@@ -86,6 +86,7 @@ namespace we
         if (SpriteSheets.size() == 1)
         {
             SetActiveSpriteSheet(SheetID);
+            SyncOriginToFrame();  // Sync origin now that we have a valid sheet
         }
     }
 
@@ -209,11 +210,11 @@ namespace we
         if (CurrentFrame.y < Anim.EndFrame.y ||
             (CurrentFrame.y == Anim.EndFrame.y && CurrentFrame.x < Anim.EndFrame.x))
         {
-            CurrentFrame.x++;
-            if (CurrentFrame.x >= SpriteSheets[ActiveSheetID].FramesPerRow)
+            CurrentFrame.y++;
+            if (CurrentFrame.y >= SpriteSheets[ActiveSheetID].FramesPerRow)
             {
-                CurrentFrame.x = 0;
-                CurrentFrame.y++;
+                CurrentFrame.y = 0;
+                CurrentFrame.x++;
             }
             return true;
         }

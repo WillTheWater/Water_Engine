@@ -285,6 +285,19 @@ namespace we
         return shader;
     }
 
+    shared<texture> ResourceSubsystem::GetPlaceholderTexture()
+    {
+        if (!PlaceholderTexture)
+        {
+            // Create a 1x1 white texture using Image
+            sf::Image img;
+            img.resize({ 1, 1 }, sf::Color::White);
+            PlaceholderTexture = make_shared<texture>();
+            PlaceholderTexture->loadFromImage(img);
+        }
+        return PlaceholderTexture;
+    }
+
     void ResourceSubsystem::GarbageCycle(float DeltaTime)
     {
         GarbageCycleTimer += DeltaTime;

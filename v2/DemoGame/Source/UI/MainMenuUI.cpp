@@ -24,7 +24,7 @@ namespace we
 	void MainMenuUI::CreateUI()
 	{
 		// Create main menu panel
-		MenuPanel = Subsystem.GUI->CreatePanel({ 400.f, 300.f }, color::White, color::Black, 4.f);
+		MenuPanel = Subsystem.GUI->CreatePanel({ 400.f, 400.f }, color::White, color::Black, 4.f);
 		MenuPanel->SetAnchorPosition(Anchor::Center, Anchor::Center);
 		MenuPanel->SetRenderDepth(50.f);
 
@@ -34,12 +34,56 @@ namespace we
 		PlayButton->SetHoverSound(GC.DefaultButtonHoverSound);
 		PlayButton->SetClickSound(GC.DefaultButtonClickSound);
 		PlayButton->OnClicked.Bind(this, &MainMenuUI::OnPlayButtonClicked);
-		MenuPanel->AddChild(PlayButton, Anchor::Center, Anchor::Center);
+		MenuPanel->AddChild(PlayButton, Anchor::TopCenter, Anchor::TopCenter, { 0.f, 20.f });
+
+		// Create Settings button
+		SettingsButton = Subsystem.GUI->CreateButton("Settings", vec2f{ 200.f, 50.f });
+		SettingsButton->SetRenderDepth(100.f);
+		SettingsButton->SetHoverSound(GC.DefaultButtonHoverSound);
+		SettingsButton->SetClickSound(GC.DefaultButtonClickSound);
+		SettingsButton->OnClicked.Bind(this, &MainMenuUI::OnSettingsButtonClicked);
+		MenuPanel->AddChild(SettingsButton, Anchor::TopCenter, Anchor::TopCenter, { 0.f, 90.f });
+
+		// Create Quit button
+		QuitButton = Subsystem.GUI->CreateButton("Quit", vec2f{ 200.f, 50.f });
+		QuitButton->SetRenderDepth(100.f);
+		QuitButton->SetHoverSound(GC.DefaultButtonHoverSound);
+		QuitButton->SetClickSound(GC.DefaultButtonClickSound);
+		QuitButton->OnClicked.Bind(this, &MainMenuUI::OnQuitButtonClicked);
+		MenuPanel->AddChild(QuitButton, Anchor::TopCenter, Anchor::TopCenter, { 0.f, 160.f });
+	}
+
+	void MainMenuUI::Hide()
+	{
+		if (MenuPanel)
+		{
+			MenuPanel->SetVisible(false);
+		}
+	}
+
+	void MainMenuUI::Show()
+	{
+		if (MenuPanel)
+		{
+			MenuPanel->SetVisible(true);
+		}
 	}
 
 	void MainMenuUI::OnPlayButtonClicked()
 	{
 		LOG("Play button clicked");
 		OnPlayClicked.Broadcast();
+	}
+
+	void MainMenuUI::OnSettingsButtonClicked()
+	{
+		LOG("Settings button clicked");
+		OnSettingsClicked.Broadcast();
+	}
+
+	void MainMenuUI::OnQuitButtonClicked()
+	{
+		LOG("Quit button clicked");
+		OnQuitClicked.Broadcast();
 	}
 }

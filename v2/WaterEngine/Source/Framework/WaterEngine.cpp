@@ -208,7 +208,7 @@ namespace we
 
     bool WaterEngine::IsRunning() const
     {
-        return Subsystem.Window->isOpen();
+        return Subsystem.Window->isOpen() && !Subsystem.GameState->IsShutdownRequested();
     }
 
     bool WaterEngine::HasFocus() const

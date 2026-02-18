@@ -13,7 +13,7 @@ namespace we
 	Actor::Actor(World* InWorld, const string& TexturePath)
 		: OwningWorld{ InWorld }
 		, ActorTexture{ LoadAsset().LoadTextureSync(TexturePath) }
-		, ActorSprite{ *ActorTexture }
+		, ActorSprite{ ActorTexture ? *ActorTexture : *LoadAsset().GetPlaceholderTexture() }
 		, ActorPosition{}
 		, ActorRotation{}
 		, ActorScale{ 1.0f, 1.0f }

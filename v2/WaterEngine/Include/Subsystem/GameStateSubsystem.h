@@ -16,9 +16,11 @@ namespace we
     public:
         void RequestStateChange(shared<IGameStateToken> NewState, bool bInForce = false);
         void ApplyPendingState();
+        void RequestShutdown();
 
         shared<IGameStateToken> GetCurrentState() const { return CurrentState; }
         bool IsTransitionPending() const { return PendingState.has_value(); }
+        bool IsShutdownRequested() const { return bShutdownRequested; }
 
         Delegate<shared<IGameStateToken>> OnStateEnter;
         Delegate<shared<IGameStateToken>> OnStateExit;
@@ -27,5 +29,6 @@ namespace we
     private:
         shared<IGameStateToken> CurrentState;
         optional<shared<IGameStateToken>> PendingState;
+        bool bShutdownRequested = false;
     };
 }

@@ -20,13 +20,25 @@ namespace we
 		~MainMenuUI();
 
 		Delegate<> OnPlayClicked;
+		Delegate<> OnSettingsClicked;
+		Delegate<> OnQuitClicked;
+
+		// Hide all UI elements
+		void Hide();
+
+		// Show all UI elements
+		void Show();
 
 	private:
 		void CreateUI();
 		void OnPlayButtonClicked();
+		void OnSettingsButtonClicked();
+		void OnQuitButtonClicked();
 
 		EngineSubsystem& Subsystem;
 		shared<Panel> MenuPanel;
 		shared<Button> PlayButton;
+		shared<Button> SettingsButton;
+		shared<Button> QuitButton;
 	};
 }

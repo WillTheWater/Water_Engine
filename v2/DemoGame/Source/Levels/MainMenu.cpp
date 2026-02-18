@@ -36,9 +36,11 @@ namespace we
 		// Add to world rendering at back (depth -1000)
 		AddRenderDepth(&*BgSprite, -1000.0f);
 
-		// Create the UI and bind play button
+		// Create the UI and bind all buttons
 		MenuUI = make_unique<MainMenuUI>(Subsystem);
 		MenuUI->OnPlayClicked.Bind(this, &MainMenu::OnPlayClicked);
+		MenuUI->OnSettingsClicked.Bind(this, &MainMenu::OnSettingsClicked);
+		MenuUI->OnQuitClicked.Bind(this, &MainMenu::OnQuitClicked);
 		LOG("MainMenu: UI created");
 	}
 
@@ -58,6 +60,22 @@ namespace we
 	void MainMenu::OnPlayClicked()
 	{
 		LOG("Transitioning to LevelOne");
+		
+		// Clear all GUI widgets - they'll be recreated in the new world if needed
+		Subsystem.GUI->Clear();
+		
 		Subsystem.GameState->RequestStateChange(MakeState(EGameState::LevelOne));
+	}
+
+	void MainMenu::OnSettingsClicked()
+	{
+		LOG("Settings clicked - placeholder for settings menu");
+		// TODO: Show settings panel or transition to settings world
+	}
+
+	void MainMenu::OnQuitClicked()
+	{
+		LOG("Quit clicked - requesting shutdown");
+		Subsystem.GameState->RequestShutdown();
 	}
 }

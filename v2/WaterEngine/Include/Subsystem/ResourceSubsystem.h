@@ -199,6 +199,13 @@ namespace we
          */
         shared<shader>  LoadShader(const string& Path, shader::Type Type);
 
+        /*
+         * Returns a 1x1 white placeholder texture for sprites that need
+         * to be constructed before their actual texture is loaded.
+         * The texture is created on first call and cached.
+         */
+        shared<texture> GetPlaceholderTexture();
+
         // -------------------------------------------------------------------------
         // ENGINE INTERFACE
         // -------------------------------------------------------------------------
@@ -379,6 +386,8 @@ namespace we
         dictionary<string, shared<MusicMemoryStream>> MusicStreamCache; // Active streams
 
         float GarbageCycleTimer = 0.0f;            // Accumulates delta time for cleanup
+
+        shared<texture> PlaceholderTexture;        // 1x1 white texture for default sprite construction
     };
 
     /* Global shorthand accessor: LoadAsset().LoadTextureAsync(...) */

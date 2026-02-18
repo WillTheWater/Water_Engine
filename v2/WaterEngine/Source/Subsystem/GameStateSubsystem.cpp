@@ -35,4 +35,13 @@ namespace we
 
         OnStateEnter.Broadcast(CurrentState);
     }
+
+    void GameStateSubsystem::RequestShutdown()
+    {
+        if (!bShutdownRequested)
+        {
+            bShutdownRequested = true;
+            OnQuitRequested.Broadcast();
+        }
+    }
 }

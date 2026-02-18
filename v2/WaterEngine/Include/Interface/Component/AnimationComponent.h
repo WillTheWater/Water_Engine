@@ -6,7 +6,7 @@
 #pragma once
 
 #include "Core/CoreMinimal.h"
-#include "Interface/Component/IActorComponent.h"
+#include "Interface/Component/IAnimationComponent.h"
 
 namespace we
 {
@@ -34,34 +34,37 @@ namespace we
         SpriteSheet(const string& Path, vec2u InFrameSize, uint InFramesPerRow = 8);
     };
 
-    class AnimationComponent : public IActorComponent
+    class AnimationComponent : public IAnimationComponent
     {
     public:
         explicit AnimationComponent(Actor* InOwner);
 
+        // IActorComponent
         virtual void BeginPlay() override;
         virtual void Tick(float DeltaTime) override;
         virtual void EndPlay() override;
         virtual Actor* GetOwner() const override;
 
+        // IAnimationComponent
+        virtual void Transition(uint8 StateID) override;
+        virtual uint8 GetCurrentState() const override { return CurrentState; }
+        virtual bool IsPlaying(uint8 StateID) const override;
+
+        virtual void SetGlobalPlaybackSpeed(float Multiplier) override;
+        virtual float GetGlobalPlaybackSpeed() const override { return GlobalPlaybackSpeed; }
+
+        virtual void SetFacing(bool bInFaceLeft) override;
+        virtual bool IsFacingLeft() const override { return bFaceLeft; }
+
+        virtual void SetActiveSpriteSheet(uint8 SheetID) override;
+        virtual uint8 GetActiveSpriteSheet() const override { return ActiveSheetID; }
+
+        // AnimationComponent specific
         void SetFrameSize(vec2u Size);
-
         void AddAnimation(const Animation& Anim);
-        void Transition(uint8 StateID);
-
         void AddSpriteSheet(uint8 SheetID, const SpriteSheet& Sheet);
-        void SetActiveSpriteSheet(uint8 SheetID);
-        uint8 GetActiveSpriteSheet() const { return ActiveSheetID; }
 
-        void SetGlobalPlaybackSpeed(float Multiplier);
-        float GetGlobalPlaybackSpeed() const { return GlobalPlaybackSpeed; }
-
-        void SetFacing(bool bInFaceLeft);
-        bool IsFacingLeft() const { return bFaceLeft; }
-
-        uint8 GetCurrentState() const { return CurrentState; }
         vec2u GetCurrentFrame() const { return CurrentFrame; }
-        bool IsPlaying(uint8 StateID) const;
 
     private:
         Actor* Owner;

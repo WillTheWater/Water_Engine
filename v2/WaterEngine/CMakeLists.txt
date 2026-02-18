@@ -108,6 +108,7 @@ set(WATER_ENGINE_HEADERS
     Include/Interface/IAssetDirector.h
     Include/Interface/IGameStateToken.h
     Include/Interface/Component/IActorComponent.h
+    Include/Interface/Component/IAnimationComponent.h
     Include/Interface/Component/IPhysicsComponent.h
     Include/Interface/Component/AnimationComponent.h
     Include/Interface/Component/PhysicsComponent.h

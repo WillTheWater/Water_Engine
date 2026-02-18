@@ -22,6 +22,8 @@ namespace we
 		virtual void Tick(float DeltaTime) override;
 
 		void OnPlayClicked();
+		void OnSettingsClicked();
+		void OnQuitClicked();
 
 	private:
 		shared<texture> BgTexture;
