@@ -29,6 +29,9 @@ namespace we
 		// Show all UI elements
 		void Show();
 
+		// Check if visible
+		bool IsVisible() const;
+
 	private:
 		void CreateUI();
 		void OnPlayButtonClicked();

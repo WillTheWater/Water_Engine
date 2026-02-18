@@ -66,12 +66,8 @@ namespace we
         switch (Type)
         {
         case BodyType::Kinematic:
-            // For kinematic: Box2D moves body based on velocity, sync back to actor
-            SyncBodyToActor();
-            break;
-
         case BodyType::Dynamic:
-            // For dynamic: physics moves body, sync back to actor
+            // Sync physics body position back to actor
             SyncBodyToActor();
             break;
 

@@ -59,7 +59,7 @@ namespace we
 		Widget* GetParent() const { return Parent; }
 		const vector<weak<Widget>>& GetChildren() const { return Children; }
 
-		void SetVisible(bool bInVisible) { bVisible = bInVisible; }
+		void SetVisible(bool bInVisible);
 		void Show() { SetVisible(true); }
 		void Hide() { SetVisible(false); }
 		bool IsVisible() const { return bVisible; }

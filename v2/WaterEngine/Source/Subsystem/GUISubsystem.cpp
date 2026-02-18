@@ -467,30 +467,21 @@ namespace we
 
 	void GUISubsystem::Render()
 	{
-		// Check for widget count changes that would require re-sort
-		if (Widgets.size() != LastWidgetCount)
-		{
-			bRenderOrderDirty = true;
-			LastWidgetCount = Widgets.size();
-		}
+		// Collect all visible widget drawables every frame
+		// (Caching was causing issues with visibility changes)
+		vector<RenderDepth> RenderDepths;
 
-		if (bRenderOrderDirty)
+		for (auto& Widget : Widgets)
 		{
-			CachedRenderDepths.clear();
-
-			for (auto& Widget : Widgets)
+			if (Widget && Widget->IsVisible())
 			{
-				if (Widget && Widget->IsVisible())
-				{
-					Widget->CollectRenderDepths(CachedRenderDepths);
-				}
+				Widget->CollectRenderDepths(RenderDepths);
 			}
-
-			std::sort(CachedRenderDepths.begin(), CachedRenderDepths.end());
-			bRenderOrderDirty = false;
 		}
 
-		for (const auto& Entry : CachedRenderDepths)
+		std::sort(RenderDepths.begin(), RenderDepths.end());
+
+		for (const auto& Entry : RenderDepths)
 		{
 			Subsystem.Render->Draw(*Entry.Drawable, ERenderLayer::UI);
 		}

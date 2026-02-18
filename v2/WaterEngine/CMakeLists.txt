@@ -52,6 +52,7 @@ set(WATER_ENGINE_HEADERS
 
     Include/Framework/WaterEngine.h
     Include/Framework/EngineSubsystem.h
+    Include/Framework/GameInstance.h
     
     Include/Framework/EventHandling/GameWindowEventHandler.h
     
@@ -85,6 +86,7 @@ set(WATER_ENGINE_HEADERS
     Include/PostProcess/PPE/TimePPETest.h
     Include/PostProcess/PPE/BloomPPE.h
     
+    Include/UI/WidgetController.h
     Include/UI/Clipboard/Clipboard.h
 
     Include/UI/Widget/Panel.h
@@ -97,7 +99,6 @@ set(WATER_ENGINE_HEADERS
     Include/UI/Widget/VerticalBox.h
     Include/UI/Widget/GridBox.h
     Include/UI/Widget/Slider.h
-    Include/UI/Widget/CheckBox.h
     Include/UI/Widget/ProgressBar.h
     Include/UI/Widget/TextBlock.h
 
@@ -128,6 +129,7 @@ set(WATER_ENGINE_SOURCES
     Source/EngineConfig.cpp
 	
     Source/Framework/WaterEngine.cpp
+    Source/Framework/GameInstance.cpp
     
     Source/Framework/EventHandling/GameWindowEventHandler.cpp
 
@@ -155,6 +157,7 @@ set(WATER_ENGINE_SOURCES
     Source/PostProcess/PPE/TimePPETest.cpp
     Source/PostProcess/PPE/BloomPPE.cpp
 
+    Source/UI/WidgetController.cpp
     Source/UI/Clipboard/Clipboard.cpp
 
     Source/UI/Widget/Panel.cpp
@@ -166,7 +169,6 @@ set(WATER_ENGINE_SOURCES
     Source/UI/Widget/VerticalBox.cpp
     Source/UI/Widget/GridBox.cpp
     Source/UI/Widget/Slider.cpp
-    Source/UI/Widget/CheckBox.cpp
     Source/UI/Widget/ProgressBar.cpp
     Source/UI/Widget/TextBlock.cpp
 

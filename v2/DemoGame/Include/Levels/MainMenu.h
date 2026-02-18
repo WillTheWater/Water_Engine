@@ -1,6 +1,6 @@
 // =============================================================================
 // Water Engine v2.0.0
-// Copyright(C) 2026 Will The Water
+// Copyright (C) 2026 Will The Water
 // =============================================================================
 
 #pragma once
@@ -23,6 +23,7 @@ namespace we
 
 		void OnPlayClicked();
 		void OnSettingsClicked();
+		void OnSettingsBackClicked();
 		void OnQuitClicked();
 
 	private:

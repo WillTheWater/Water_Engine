@@ -4,6 +4,7 @@
 // =============================================================================
 
 #include "Game.h"
+#include "GameInstance/DemoGameInstance.h"
 #include "Framework/World/World.h"
 #include "Subsystem/WorldSubsystem.h"
 #include "Subsystem/GameStateSubsystem.h"
@@ -20,6 +21,11 @@ namespace we
 	unique<WaterEngine> GetEngine()
 	{
 		return make_unique<Game>();
+	}
+	
+	unique<GameInstance> Game::CreateGameInstance()
+	{
+		return make_unique<DemoGameInstance>();
 	}
 
 	Game::Game()
@@ -39,7 +45,7 @@ namespace we
 
 	void Game::BeginPlay()
 	{
-		Subsystem.GameState->RequestStateChange(MakeState(EGameState::LevelOne));
+		Subsystem.GameState->RequestStateChange(MakeState(EGameState::MainMenu));
 		BindInput();
 	}
 

@@ -74,9 +74,6 @@ namespace we
         // Sensor for interaction/trigger detection (2x radius)
         PhysicsComp->SetSensorShape(true, CharacterRadius * 2.0f);
         PhysicsComp->SetSensorOffset(CollisionOffset);
-
-        // Apply damping and fixed rotation after body is created in BeginPlay
-        // (We'll do this in BeginPlay after PhysicsComp->BeginPlay())
     }
 
     void Character::SetCharacterRadius(float Radius)
@@ -131,8 +128,7 @@ namespace we
             return true;
         }
 
-        // For kinematic bodies, we set velocity to achieve movement
-        // Box2D will handle collision blocking automatically
+        // Set velocity to achieve movement. Box2D handles collision blocking.
         float Dt = GetWorld()->GetSubsystem().Time->GetDeltaTime();
         if (Dt > 0.0f)
         {
@@ -142,29 +138,5 @@ namespace we
 
         // Position will be synced from body in Tick via SyncBodyToActor
         return true;
-    }
-
-    void Character::OnCollision(Actor* Other)
-    {
-        if (Other)
-        {
-            LOG("Character collided with Actor@{:p}", reinterpret_cast<void*>(Other));
-        }
-    }
-
-    void Character::OnSensorBegin(Actor* Other)
-    {
-        if (Other)
-        {
-            LOG("Character sensor began overlap with Actor@{:p}", reinterpret_cast<void*>(Other));
-        }
-    }
-
-    void Character::OnSensorEnd(Actor* Other)
-    {
-        if (Other)
-        {
-            LOG("Character sensor ended overlap with Actor@{:p}", reinterpret_cast<void*>(Other));
-        }
     }
 }

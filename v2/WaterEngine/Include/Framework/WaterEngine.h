@@ -8,6 +8,8 @@
 #include "Core/CoreMinimal.h"
 #include "Framework/EngineSubsystem.h"
 
+#include "Framework/GameInstance.h"
+
 namespace we
 {
 	class WaterEngine
@@ -30,6 +32,9 @@ namespace we
 		EngineSubsystem Subsystem;
 
 	protected:
+		// Override to create your game-specific GameInstance
+		virtual unique<GameInstance> CreateGameInstance() { return make_unique<GameInstance>(); }
+		
 		virtual void Construct() {}
 		virtual void BeginPlay() {}
 		virtual void Tick(float) {}

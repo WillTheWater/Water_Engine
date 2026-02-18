@@ -29,7 +29,9 @@ namespace we
             {
                 LOG("PHYSICS CONTACT BEGIN: {:p} <-> {:p}", reinterpret_cast<void*>(CompA), reinterpret_cast<void*>(CompB));
             }
-            Physics.QueueContactEvent({ ContactEvent::Type::Begin, BodyA, BodyB });
+            // Only trigger overlap callbacks for sensor contacts
+            bool bIsSensorContact = Contact->GetFixtureA()->IsSensor() || Contact->GetFixtureB()->IsSensor();
+            Physics.QueueContactEvent({ ContactEvent::Type::Begin, BodyA, BodyB, bIsSensorContact });
         }
     }
 
@@ -40,7 +42,9 @@ namespace we
 
         if (BodyA && BodyB)
         {
-            Physics.QueueContactEvent({ ContactEvent::Type::End, BodyA, BodyB });
+            // Only trigger overlap callbacks for sensor contacts
+            bool bIsSensorContact = Contact->GetFixtureA()->IsSensor() || Contact->GetFixtureB()->IsSensor();
+            Physics.QueueContactEvent({ ContactEvent::Type::End, BodyA, BodyB, bIsSensorContact });
         }
     }
 
@@ -151,6 +155,12 @@ namespace we
             auto* CompB = reinterpret_cast<PhysicsComponent*>(Event.BodyB->GetUserData().pointer);
 
             if (!CompA || !CompB)
+            {
+                continue;
+            }
+
+            // Only trigger overlap callbacks for sensor contacts (not physical collisions)
+            if (!Event.bSensorContact)
             {
                 continue;
             }

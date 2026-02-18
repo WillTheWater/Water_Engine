@@ -25,7 +25,12 @@ namespace we
 
     WaterEngine::~WaterEngine()
     {
-
+        // GameInstance is destroyed last (declared first in EngineSubsystem)
+        // Shutdown is called automatically in GameInstance destructor
+        if (Subsystem.GameInst)
+        {
+            Subsystem.GameInst->Shutdown();
+        }
     }
 
     void WaterEngine::PreConstruct()
@@ -102,6 +107,11 @@ namespace we
         TimerManager::Get().Tick(DeltaTime);
 
         Tick(DeltaTime);
+        
+        if (Subsystem.GameInst)
+        {
+            Subsystem.GameInst->Tick(DeltaTime);
+        }
 
         if (Subsystem.GameState->IsTransitionPending())
         {
@@ -122,6 +132,13 @@ namespace we
 
     void WaterEngine::Initialize()
     {
+        // Create GameInstance via game-specific factory
+        Subsystem.GameInst = CreateGameInstance();
+        if (Subsystem.GameInst)
+        {
+            Subsystem.GameInst->Init(Subsystem);
+        }
+        
         BeginPlay();
     }
 

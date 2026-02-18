@@ -113,6 +113,16 @@ namespace we
 
 		Child->SetParent(this);
 		Child->SetAnchorPosition(InTargetAnchor, InWidgetAnchor, InOffset);
+		
+		// Inherit parent's visibility - if parent is hidden, child should be hidden too
+		if (!bVisible)
+		{
+			Child->SetVisible(false);
+		}
+		
+		// Inherit parent's render depth + 1 (render in front of parent)
+		Child->SetRenderDepth(GetRenderDepth() + 1.0f);
+		
 		Children.push_back(Child);
 
 		if (bAutoSize)
@@ -191,6 +201,19 @@ namespace we
 		}
 
 		return shared_from_this();
+	}
+
+	void Widget::SetVisible(bool bInVisible)
+	{
+		bVisible = bInVisible;
+		// Propagate visibility to all children
+		for (auto& WeakChild : Children)
+		{
+			if (auto Child = WeakChild.lock())
+			{
+				Child->SetVisible(bInVisible);
+			}
+		}
 	}
 
 	void Widget::MarkDirty()

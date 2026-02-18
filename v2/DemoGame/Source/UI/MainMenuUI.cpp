@@ -23,7 +23,7 @@ namespace we
 
 	void MainMenuUI::CreateUI()
 	{
-		// Create main menu panel
+		// Create main menu panel - buttons are children
 		MenuPanel = Subsystem.GUI->CreatePanel({ 400.f, 400.f }, color::White, color::Black, 4.f);
 		MenuPanel->SetAnchorPosition(Anchor::Center, Anchor::Center);
 		MenuPanel->SetRenderDepth(50.f);
@@ -55,18 +55,17 @@ namespace we
 
 	void MainMenuUI::Hide()
 	{
-		if (MenuPanel)
-		{
-			MenuPanel->SetVisible(false);
-		}
+		if (MenuPanel) MenuPanel->SetVisible(false);
 	}
 
 	void MainMenuUI::Show()
 	{
-		if (MenuPanel)
-		{
-			MenuPanel->SetVisible(true);
-		}
+		if (MenuPanel) MenuPanel->SetVisible(true);
+	}
+
+	bool MainMenuUI::IsVisible() const
+	{
+		return MenuPanel && MenuPanel->IsVisible();
 	}
 
 	void MainMenuUI::OnPlayButtonClicked()

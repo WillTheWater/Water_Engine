@@ -22,10 +22,15 @@
 
 namespace we
 {
+	class GameInstance;
+
 	struct EngineSubsystem
 	{
 		// Dependencies: Declare AFTER things they depend on
 		// (Destroyed in reverse order: things declared first are destroyed last)
+		
+		// GameInstance is destroyed LAST - all subsystems may reference it during cleanup
+		unique<GameInstance> GameInst;
 		
 		unique<ResourceSubsystem> AssetLoader;
 		unique<SaveLoadSubsystem> SaveLoad;
