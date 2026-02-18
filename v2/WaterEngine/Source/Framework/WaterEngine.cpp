@@ -8,6 +8,7 @@
 #include "Framework/World/World.h"
 #include "Utility/Log.h"
 #include "Utility/DebugDraw.h"
+#include "Utility/Timer.h"
 #include "Subsystem/WindowSubsystem.h"
 #include "Subsystem/RenderSubsystem.h"
 #include "Subsystem/CursorSubsystem.h"
@@ -96,6 +97,9 @@ namespace we
 
         // Poll gamepad axes (only if gamepad connected)
         Subsystem.Input->PollGamepadAxes();
+
+        // Update timers
+        TimerManager::Get().Tick(DeltaTime);
 
         Tick(DeltaTime);
 

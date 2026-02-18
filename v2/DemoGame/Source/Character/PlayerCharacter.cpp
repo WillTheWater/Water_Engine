@@ -9,7 +9,7 @@
 #include "Interface/Component/PhysicsComponent.h"
 #include "Framework/World/World.h"
 #include "Framework/EngineSubsystem.h"
-#include "Utility/RandomGenerator.h"
+#include "Utility/Math.h"
 #include "Utility/Log.h"
 #include "GameConfig.h"
 
@@ -148,7 +148,7 @@ namespace we
 		
 		if (GetWorld() && GetWorld()->GetSubsystem().Audio)
 		{
-			GetWorld()->GetSubsystem().Audio->PlaySFX(RNG().Random(Sounds));
+			GetWorld()->GetSubsystem().Audio->PlaySFX(RNG().RandomElement(Sounds));
 		}
 	}
 

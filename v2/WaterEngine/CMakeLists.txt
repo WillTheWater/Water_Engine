@@ -114,11 +114,11 @@ set(WATER_ENGINE_HEADERS
     
     Include/UI/UIUtility.h
     Include/Utility/Log.h
-    Include/Utility/RandomGenerator.h
     Include/Utility/Assert.h
     Include/Utility/Delegate.h
     Include/Utility/Timer.h
     Include/Utility/DebugDraw.h
+    Include/Utility/Math.h
 )
 
 set(WATER_ENGINE_SOURCES
@@ -176,9 +176,9 @@ set(WATER_ENGINE_SOURCES
     Source/Interface/Component/AnimationComponent.cpp
     Source/Interface/Component/PhysicsComponent.cpp
 
-    Source/Utility/RandomGenerator.cpp 
     Source/Utility/Timer.cpp
     Source/Utility/DebugDraw.cpp
+    Source/Utility/Math.cpp
 )
 
 add_library(${WATER_ENGINE} STATIC
