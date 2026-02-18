@@ -150,9 +150,8 @@ namespace we
             Subsystem.Render->Draw(*RenderCmd.Drawable, ERenderLayer::Game);
         }
 
-        // Render debug primitives on top of game world
+        // Render debug primitives on top of game world (auto-clears after render)
         DebugDraw::Render(*Subsystem.Render);
-        DebugDraw::Clear();
     }
 
     void WaterEngine::PostUpdate()

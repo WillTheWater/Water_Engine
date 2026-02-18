@@ -41,22 +41,31 @@ namespace we
 	void World::AddRenderDepth(const drawable* Drawable, float Depth)
 	{
 		ManualRenderDepths.push_back({ Drawable, Depth });
+		bRenderOrderDirty = true;
 	}
 
 	void World::ClearManualRenderDepths()
 	{
-		ManualRenderDepths.clear();
+		if (!ManualRenderDepths.empty())
+		{
+			ManualRenderDepths.clear();
+			bRenderOrderDirty = true;
+		}
 	}
 
 	void World::ManageActors(float DeltaTime)
 	{
 		// Spawn pending
-		for (auto& NewActor : PendingActors)
+		if (!PendingActors.empty())
 		{
-			Actors.push_back(NewActor);
-			NewActor->BeginPlay();
+			bRenderOrderDirty = true;
+			for (auto& NewActor : PendingActors)
+			{
+				Actors.push_back(NewActor);
+				NewActor->BeginPlay();
+			}
+			PendingActors.clear();
 		}
-		PendingActors.clear();
 
 		// Tick and cleanup destroyed
 		for (auto It = Actors.begin(); It != Actors.end();)
@@ -64,34 +73,52 @@ namespace we
 			if ((*It)->IsPendingDestroy())
 			{
 				It = Actors.erase(It);
+				bRenderOrderDirty = true;
 			}
 			else
 			{
+				vec2f OldPos = (*It)->GetPosition();
 				(*It)->Tick(DeltaTime);
+				// Mark dirty if actor moved in Y (affects depth sorting)
+				if ((*It)->GetPosition().y != OldPos.y)
+				{
+					bRenderOrderDirty = true;
+				}
 				++It;
 			}
 		}
 	}
 
-	void World::CollectRenderDepths(vector<RenderDepth>& OutDepths) const
+	void World::CollectRenderDepths(vector<RenderDepth>& OutDepths)
 	{
-		// Add manual drawables first (usually backgrounds)
-		for (const auto& RD : ManualRenderDepths)
+		if (bRenderOrderDirty)
 		{
-			OutDepths.push_back(RD);
-		}
+			CachedRenderDepths.clear();
 
-		// Add actors
-		for (const auto& Actor : Actors)
-		{
-			if (Actor && !Actor->IsPendingDestroy() && Actor->IsVisible())
+			// Add manual drawables first (usually backgrounds)
+			for (const auto& RD : ManualRenderDepths)
 			{
-				if (const auto* Drawable = Actor->GetDrawable())
+				CachedRenderDepths.push_back(RD);
+			}
+
+			// Add actors
+			for (const auto& Actor : Actors)
+			{
+				if (Actor && !Actor->IsPendingDestroy() && Actor->IsVisible())
 				{
-					OutDepths.push_back({ Drawable, Actor->GetRenderDepth() });
+					if (const auto* Drawable = Actor->GetDrawable())
+					{
+						CachedRenderDepths.push_back({ Drawable, Actor->GetRenderDepth() });
+					}
 				}
 			}
+
+			// Sort by depth (Y position) - back to front
+			std::sort(CachedRenderDepths.begin(), CachedRenderDepths.end());
+			bRenderOrderDirty = false;
 		}
+
+		OutDepths = CachedRenderDepths;
 	}
 
 	void World::Construct()

@@ -27,6 +27,11 @@ namespace we
 		virtual void Update(float DeltaTime) {}
 		virtual void CollectRenderDepths(vector<RenderDepth>& OutDepths) const {}
 
+		// Input handling - override in derived widgets
+		virtual void OnDrag(const vec2f& MousePosition) {}  // Called when mouse moves while pressed
+		virtual void OnPressed(const vec2f& MousePosition) {}  // Called when mouse is pressed on widget
+		virtual void OnReleased(const vec2f& MousePosition) {}  // Called when mouse is released
+
 		Delegate<> OnClicked;
 		Delegate<> OnFocusGained;
 		Delegate<> OnFocusLost;

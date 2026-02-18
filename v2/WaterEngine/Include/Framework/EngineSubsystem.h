@@ -24,17 +24,20 @@ namespace we
 {
 	struct EngineSubsystem
 	{
+		// Dependencies: Declare AFTER things they depend on
+		// (Destroyed in reverse order: things declared first are destroyed last)
+		
 		unique<ResourceSubsystem> AssetLoader;
-		unique<WindowSubsystem> Window;
-		unique<RenderSubsystem> Render;
-		unique<TimeSubsystem> Time;
-		unique<CursorSubsystem> Cursor;
-		unique<InputSubsystem> Input;
 		unique<SaveLoadSubsystem> SaveLoad;
-		unique<WorldSubsystem> World;
+		unique<TimeSubsystem> Time;
+		unique<InputSubsystem> Input;
+		unique<CursorSubsystem> Cursor;
 		unique<GameStateSubsystem> GameState;
 		unique<AudioSubsystem> Audio;
-		unique<GUISubsystem> GUI;
-		unique<PhysicsSubsystem> Physics;
+		unique<PhysicsSubsystem> Physics;  // Destroyed after World (World's actors need physics cleanup)
+		unique<WorldSubsystem> World;      // Destroyed after GUI
+		unique<GUISubsystem> GUI;          // Destroyed after Render/Audio
+		unique<RenderSubsystem> Render;    // Destroyed after Window
+		unique<WindowSubsystem> Window;    // Destroyed last (OS window must outlive everything)
 	};
 }

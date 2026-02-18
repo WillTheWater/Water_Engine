@@ -168,6 +168,9 @@ namespace we
 
 		void Clear();
 
+		// Dirty flag for render order optimization
+		void MarkRenderDirty() { bRenderOrderDirty = true; }
+
 	private:
 		// Event handlers
 		void HandleMouseMoved(const sf::Event::MouseMoved& Mouse);
@@ -197,5 +200,8 @@ namespace we
 		weak<Widget> FocusedWidget;
 
 		bool bHasMouseFocus = false;  // True if mouse is over any widget
+		bool bRenderOrderDirty = true;  // Force initial sort
+		vector<RenderDepth> CachedRenderDepths;  // Cached sorted drawables
+		size_t LastWidgetCount = 0;  // Track widget count changes
 	};
 }

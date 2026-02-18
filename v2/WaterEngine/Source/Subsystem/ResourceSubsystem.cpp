@@ -43,7 +43,7 @@ namespace we
         if (AssetThread.joinable())
             AssetThread.join();
 
-        PendingRequests.clear();
+        PendingRequests = {};
         CompletedRequests.clear();
         AssetDirector = nullptr;
     }
@@ -65,14 +65,9 @@ namespace we
 
                 if (!bIsRunning) return;
 
-                // Find highest priority request
-                auto it = std::max_element(PendingRequests.begin(), PendingRequests.end(),
-                    [](const unique<RequestBase>& a, const unique<RequestBase>& b) {
-                        return static_cast<uint8>(a->GetPriority()) < static_cast<uint8>(b->GetPriority());
-                    });
-
-                req = std::move(*it);
-                PendingRequests.erase(it);
+                // Pop highest priority request (O(log n) heap operation)
+                req = std::move(const_cast<unique<RequestBase>&>(PendingRequests.top()));
+                PendingRequests.pop();
             }
 
             if (req)
@@ -112,7 +107,7 @@ namespace we
 
         {
             std::lock_guard lock(PendingMutex);
-            PendingRequests.push_back(std::move(req));
+            PendingRequests.push(std::move(req));
         }
         CV.notify_one();
 

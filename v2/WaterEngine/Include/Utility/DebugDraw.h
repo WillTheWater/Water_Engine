@@ -38,27 +38,29 @@ namespace we
     };
 
     // Debug drawing system - renders wireframe primitives on top of game world
-    // HARDCODED ENABLE/DISABLE - change this to turn on/off
-    inline constexpr bool bEnablePhysicsDebug = true;
-
+    // Thread-safe accumulation, automatically cleared after rendering
     class DebugDraw
     {
     public:
+        // Enable/disable debug drawing (can be toggled at runtime)
+        static void SetEnabled(bool bEnabled) { bIsEnabled = bEnabled; }
+        static bool IsEnabled() { return bIsEnabled; }
+
         // Queue primitives for rendering this frame
         static void Line(const vec2f& Start, const vec2f& End, const color& Color = color::Red, float Thickness = 2.0f);
         static void Circle(const vec2f& Position, float Radius, const color& Color = color::Red, float Thickness = 2.0f);
         static void Rect(const vec2f& Position, const vec2f& HalfExtents, float Rotation, const color& Color = color::Red, float Thickness = 2.0f);
 
-        // Render all queued primitives to the current render target
-        // Called by engine after world rendering
+        // Render all queued primitives and clear them (single call, auto-clears)
         static void Render(RenderSubsystem& Render);
 
-        // Clear queued primitives (called after Render)
+        // Explicit clear (rarely needed since Render() auto-clears)
         static void Clear();
 
     private:
         static vector<DebugLine> Lines;
         static vector<DebugCircle> Circles;
         static vector<DebugRect> Rects;
+        static bool bIsEnabled;
     };
 }

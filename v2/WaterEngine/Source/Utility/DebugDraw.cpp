@@ -11,28 +11,32 @@ namespace we
     vector<DebugLine> DebugDraw::Lines;
     vector<DebugCircle> DebugDraw::Circles;
     vector<DebugRect> DebugDraw::Rects;
+    bool DebugDraw::bIsEnabled = true;
 
     void DebugDraw::Line(const vec2f& Start, const vec2f& End, const color& Color, float Thickness)
     {
-        if (!bEnablePhysicsDebug) return;
+        if (!bIsEnabled) return;
         Lines.push_back({ Start, End, Color, Thickness });
     }
 
     void DebugDraw::Circle(const vec2f& Position, float Radius, const color& Color, float Thickness)
     {
-        if (!bEnablePhysicsDebug) return;
+        if (!bIsEnabled) return;
         Circles.push_back({ Position, Radius, Color, Thickness });
     }
 
     void DebugDraw::Rect(const vec2f& Position, const vec2f& HalfExtents, float Rotation, const color& Color, float Thickness)
     {
-        if (!bEnablePhysicsDebug) return;
+        if (!bIsEnabled) return;
         Rects.push_back({ Position, HalfExtents, Rotation, Color, Thickness });
     }
 
     void DebugDraw::Render(RenderSubsystem& Render)
     {
-        if (!bEnablePhysicsDebug) return;
+        if (!bIsEnabled) {
+            Clear();  // Discard any accumulated primitives when disabled
+            return;
+        }
 
         // Render circles
         for (const auto& C : Circles)
@@ -58,6 +62,9 @@ namespace we
             Shape.setOutlineThickness(R.Thickness);
             Render.Draw(Shape, ERenderLayer::Game);
         }
+
+        // Auto-clear after rendering (no manual Clear() needed)
+        Clear();
     }
 
     void DebugDraw::Clear()

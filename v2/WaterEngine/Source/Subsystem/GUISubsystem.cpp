@@ -239,6 +239,9 @@ namespace we
 		PressedWidget.reset();
 		FocusedWidget.reset();
 		bHasMouseFocus = false;
+		bRenderOrderDirty = true;
+		CachedRenderDepths.clear();
+		LastWidgetCount = 0;
 	}
 
 	bool GUISubsystem::HandleEvent(const sf::Event& Event)
@@ -306,12 +309,7 @@ namespace we
 		// Notify pressed widget of drag (for sliders and other draggable widgets)
 		if (auto Pressed = PressedWidget.lock())
 		{
-			// Try to cast to Slider and call OnDrag
-			// We use dynamic_pointer_cast since Slider derives from Widget
-			if (auto SliderWidget = std::dynamic_pointer_cast<Slider>(Pressed))
-			{
-				SliderWidget->OnDrag(MousePos);
-			}
+			Pressed->OnDrag(MousePos);
 		}
 	}
 
@@ -332,12 +330,7 @@ namespace we
 
 			PressedWidget = Target;
 			Target->SetPressed(true);
-
-			// For sliders, immediately call OnDrag to jump to click position
-			if (auto SliderWidget = std::dynamic_pointer_cast<Slider>(Target))
-			{
-				SliderWidget->OnDrag(MousePos);
-			}
+			Target->OnPressed(MousePos);  // Virtual call for widgets that need position
 
 			const string& PressedSound = Target->GetPressedSound();
 			if (Subsystem.Audio && !PressedSound.empty())
@@ -362,6 +355,8 @@ namespace we
 			Pressed->SetPressed(false);
 
 			vec2f MousePos = GetMousePosition();
+			Pressed->OnReleased(MousePos);
+
 			if (Pressed->Contains(MousePos))
 			{
 				Pressed->OnClicked.Broadcast();
@@ -472,20 +467,30 @@ namespace we
 
 	void GUISubsystem::Render()
 	{
-		static vector<RenderDepth> GUIDepths;
-		GUIDepths.clear();
-
-		for (auto& Widget : Widgets)
+		// Check for widget count changes that would require re-sort
+		if (Widgets.size() != LastWidgetCount)
 		{
-			if (Widget && Widget->IsVisible())
-			{
-				Widget->CollectRenderDepths(GUIDepths);
-			}
+			bRenderOrderDirty = true;
+			LastWidgetCount = Widgets.size();
 		}
 
-		std::sort(GUIDepths.begin(), GUIDepths.end());
+		if (bRenderOrderDirty)
+		{
+			CachedRenderDepths.clear();
 
-		for (const auto& Entry : GUIDepths)
+			for (auto& Widget : Widgets)
+			{
+				if (Widget && Widget->IsVisible())
+				{
+					Widget->CollectRenderDepths(CachedRenderDepths);
+				}
+			}
+
+			std::sort(CachedRenderDepths.begin(), CachedRenderDepths.end());
+			bRenderOrderDirty = false;
+		}
+
+		for (const auto& Entry : CachedRenderDepths)
 		{
 			Subsystem.Render->Draw(*Entry.Drawable, ERenderLayer::UI);
 		}

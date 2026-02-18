@@ -12,6 +12,7 @@
 #include <thread>
 #include <mutex>
 #include <condition_variable>
+#include <queue>
 
 namespace we
 {
@@ -354,8 +355,17 @@ namespace we
         std::condition_variable CV;                // Wakes thread when work available
         bool bIsRunning = true;                    // Thread shutdown signal
 
+        // Priority comparator for the pending queue (higher priority = popped first)
+        struct PriorityCompare
+        {
+            bool operator()(const unique<RequestBase>& a, const unique<RequestBase>& b) const
+            {
+                return static_cast<uint8>(a->GetPriority()) < static_cast<uint8>(b->GetPriority());
+            }
+        };
+
         // Request queues
-        vector<unique<RequestBase>> PendingRequests;    // Waiting to be loaded
+        std::priority_queue<unique<RequestBase>, vector<unique<RequestBase>>, PriorityCompare> PendingRequests;
         vector<unique<RequestBase>> CompletedRequests;    // Loaded, awaiting finalization
 
         // Weak caches (assets kept alive by external shared_ptrs, not by cache)

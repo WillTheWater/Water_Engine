@@ -80,7 +80,7 @@ namespace we
         }
 
         // Debug draw the physics shape
-        if (bEnablePhysicsDebug)
+        if (DebugDraw::IsEnabled())
         {
             DrawDebugShape();
         }

@@ -60,8 +60,8 @@ namespace we
 		void SetPressed(bool bPressed) override;
 		bool Contains(const vec2f& ScreenPoint) const override;
 
-		// Called by GUISubsystem when mouse moves while this widget is pressed (for dragging)
-		void OnDrag(const vec2f& MousePos);
+		// Widget override - called when mouse moves while this widget is pressed (for dragging)
+		void OnDrag(const vec2f& MousePos) override;
 
 		// Visual customization
 		void SetTrackColor(color InColor);

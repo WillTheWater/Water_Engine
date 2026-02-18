@@ -22,7 +22,11 @@ namespace we
 
 		void BeginPlayGlobal();
 		void TickGlobal(float DeltaTime);
-		void CollectRenderDepths(vector<RenderDepth>& OutDepths) const;
+		void CollectRenderDepths(vector<RenderDepth>& OutDepths);
+
+		// Dirty flag - set to true when actors are added/removed/moved to trigger re-sort
+		void MarkRenderDirty() { bRenderOrderDirty = true; }
+		bool IsRenderDirty() const { return bRenderOrderDirty; }
 
 		virtual void Construct();
 		virtual void BeginPlay();
@@ -48,6 +52,8 @@ namespace we
 		vector<shared<Actor>> PendingActors;
 		bool bHasBegunPlay;
 		vector<RenderDepth> ManualRenderDepths;
+		vector<RenderDepth> CachedRenderDepths;  // Cached sorted drawables
+		bool bRenderOrderDirty = true;  // Force initial sort
 	};
 
 	template<typename ActorType, typename... Args>
