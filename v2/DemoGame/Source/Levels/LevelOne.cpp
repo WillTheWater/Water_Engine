@@ -7,8 +7,7 @@
 #include "Framework/EngineSubsystem.h"
 #include "Subsystem/ResourceSubsystem.h"
 #include "Character/PlayerCharacter.h"
-#include "Interface/Component/TriggerComponent.h"
-#include "Interface/Component/BlockingCollisionComponent.h"
+#include "Interface/Component/PhysicsComponent.h"
 #include "Utility/Log.h"
 #include "GameConfig.h"
 #include "EngineConfig.h"
@@ -17,149 +16,126 @@ namespace we
 {
     // =========================================================================
     // Trigger Test Actor - Detects overlaps but doesn't block movement
-    // Walk through it to see "TRIGGER BEGIN/END" logs
+    // Uses Box2D sensor fixture
     // =========================================================================
     class TriggerTestActor : public Actor
     {
     public:
-        TriggerTestActor(World* OwningWorld, const vec2f& Position, float Radius)
+        TriggerTestActor(World* OwningWorld, const vec2f& Position, float InRadius)
             : Actor(OwningWorld, EC.WindowIcon)
+            , Radius{ InRadius }
         {
             SetPosition(Position);
-            SetScale({ 0.5f, 0.5f });  // Visual only - smaller icon
+            SetScale({ 0.5f, 0.5f });
         }
 
         virtual void BeginPlay() override
         {
-            // Create trigger component for overlap detection
-            TriggerComp = make_shared<TriggerComponent>(this);
-            TriggerComp->SetCircleShape(60.0f);  // Trigger radius
-            TriggerComp->SetCollisionProfile(ECollisionProfile::Trigger);
-            TriggerComp->BeginPlay();
-            
+            PhysicsComp = make_shared<PhysicsComponent>(this);
+            PhysicsComp->SetBodyType(BodyType::Static);
+            PhysicsComp->SetCircleShape(Radius);
+            PhysicsComp->SetSensor(true);  // Sensor = no blocking, just overlap detection
+            PhysicsComp->BeginPlay();
             Actor::BeginPlay();
-            LOG("TriggerTestActor spawned at {:.0f}, {:.0f} - walk through to trigger!", 
-                GetPosition().x, GetPosition().y);
         }
 
         virtual void Tick(float DeltaTime) override
         {
-            if (TriggerComp)
-            {
-                TriggerComp->Tick(DeltaTime);
-            }
+            if (PhysicsComp) PhysicsComp->Tick(DeltaTime);
             Actor::Tick(DeltaTime);
         }
 
         virtual void Destroy() override
         {
-            if (TriggerComp)
-            {
-                TriggerComp->EndPlay();
-            }
+            if (PhysicsComp) PhysicsComp->EndPlay();
             Actor::Destroy();
         }
 
     protected:
-        shared<TriggerComponent> TriggerComp;
+        shared<PhysicsComponent> PhysicsComp;
+        float Radius = 60.0f;
     };
 
     // =========================================================================
-    // Blocking Test Actor - Blocks movement (can't walk through)
-    // Try to walk into it to see "BLOCKED" logs
+    // Blocking Test Actor - Circle that blocks movement
+    // Uses Box2D static body
     // =========================================================================
     class BlockingTestActor : public Actor
     {
     public:
-        BlockingTestActor(World* OwningWorld, const vec2f& Position, float Radius)
+        BlockingTestActor(World* OwningWorld, const vec2f& Position, float InRadius)
             : Actor(OwningWorld, EC.WindowIcon)
+            , Radius{ InRadius }
         {
             SetPosition(Position);
-            SetScale({ 0.8f, 0.8f });  // Visual indicator
+            SetScale({ 0.8f, 0.8f });
         }
 
         virtual void BeginPlay() override
         {
-            // Create blocking component - prevents movement through it
-            BlockComp = make_shared<BlockingCollisionComponent>(this);
-            BlockComp->SetCircleShape(70.0f);  // Collision radius
-            BlockComp->SetCollisionProfile(ECollisionProfile::WorldStatic);
-            BlockComp->BeginPlay();
-            
+            PhysicsComp = make_shared<PhysicsComponent>(this);
+            PhysicsComp->SetBodyType(BodyType::Static);
+            PhysicsComp->SetCircleShape(Radius);
+            PhysicsComp->SetFriction(0.5f);
+            PhysicsComp->BeginPlay();
             Actor::BeginPlay();
-            LOG("BlockingTestActor spawned at {:.0f}, {:.0f} - try to walk into it!", 
-                GetPosition().x, GetPosition().y);
         }
 
         virtual void Tick(float DeltaTime) override
         {
-            if (BlockComp)
-            {
-                BlockComp->Tick(DeltaTime);
-            }
+            if (PhysicsComp) PhysicsComp->Tick(DeltaTime);
             Actor::Tick(DeltaTime);
         }
 
         virtual void Destroy() override
         {
-            if (BlockComp)
-            {
-                BlockComp->EndPlay();
-            }
+            if (PhysicsComp) PhysicsComp->EndPlay();
             Actor::Destroy();
         }
 
     protected:
-        shared<BlockingCollisionComponent> BlockComp;
+        shared<PhysicsComponent> PhysicsComp;
+        float Radius = 70.0f;
     };
 
     // =========================================================================
-    // Capsule Test Actor - Demonstrates capsule collision shape
+    // Rectangle Blocking Actor - Box that blocks movement
+    // Uses Box2D static body with box shape
     // =========================================================================
-    class CapsuleTestActor : public Actor
+    class RectangleBlockingActor : public Actor
     {
     public:
-        CapsuleTestActor(World* OwningWorld, const vec2f& Position)
+        RectangleBlockingActor(World* OwningWorld, const vec2f& Position)
             : Actor(OwningWorld, EC.WindowIcon)
         {
             SetPosition(Position);
-            SetScale({ 0.6f, 0.6f });
+            SetScale({ 0.8f, 0.8f });
         }
 
         virtual void BeginPlay() override
         {
-            // Create a capsule-shaped trigger
-            TriggerComp = make_shared<TriggerComponent>(this);
-            CapsuleShape Capsule(50.0f, 30.0f);  // HalfHeight=50, Radius=30
-            TriggerComp->SetCapsuleShape(Capsule);
-            TriggerComp->SetCollisionProfile(ECollisionProfile::Trigger);
-            TriggerComp->BeginPlay();
-            
+            PhysicsComp = make_shared<PhysicsComponent>(this);
+            PhysicsComp->SetBodyType(BodyType::Static);
+            PhysicsComp->SetBoxShape({ 90.0f, 40.0f });
+            PhysicsComp->SetFriction(0.5f);
+            PhysicsComp->BeginPlay();
             Actor::BeginPlay();
-            LOG("CapsuleTestActor spawned at {:.0f}, {:.0f} - capsule shape demo!", 
-                GetPosition().x, GetPosition().y);
         }
 
         virtual void Tick(float DeltaTime) override
         {
-            if (TriggerComp)
-            {
-                TriggerComp->Tick(DeltaTime);
-            }
+            if (PhysicsComp) PhysicsComp->Tick(DeltaTime);
             Actor::Tick(DeltaTime);
         }
 
         virtual void Destroy() override
         {
-            if (TriggerComp)
-            {
-                TriggerComp->EndPlay();
-            }
+            if (PhysicsComp) PhysicsComp->EndPlay();
             Actor::Destroy();
         }
 
     protected:
-        shared<TriggerComponent> TriggerComp;
+        shared<PhysicsComponent> PhysicsComp;
     };
 
     LevelOne::LevelOne(EngineSubsystem& Subsystem)
@@ -178,45 +154,19 @@ namespace we
 
     void LevelOne::BeginPlay()
     {
-        // Setup level boundaries
-        // Box around the screen edges (inset by 50px)
-        GetBoundaries().AddBox({ 50, 50 }, { EC.RenderResolution.x - 50, EC.RenderResolution.y - 50 }, 20.0f);
-        
-        // Angled fence/barrier in the middle
-        GetBoundaries().AddSegment({ 300, 400 }, { 500, 600 }, 15.0f);
-        
-        // Chain of barriers
-        GetBoundaries().AddChain({
-            { 700, 200 },
-            { 800, 300 },
-            { 900, 250 },
-            { 1000, 350 }
-        }, 10.0f);
-
-        // Spawn player in center
         auto PlayerRef = SpawnActor<Player>();
         if (auto P = PlayerRef.lock())
         {
             P->SetPosition(EC.RenderResolution / 2.f);
         }
 
-        // Test 1: Trigger zone (walk through it, see overlap logs)
         SpawnActor<TriggerTestActor>(vec2f{ 200, 300 }, 60.0f);
-
-        // Test 2: Blocking collision (can't walk through, see block logs)
         SpawnActor<BlockingTestActor>(vec2f{ 600, 300 }, 70.0f);
-
-        // Test 3: Capsule shape demo (trigger, shows capsule debug draw)
-        SpawnActor<CapsuleTestActor>(vec2f{ 400, 500 });
+        SpawnActor<RectangleBlockingActor>(vec2f{ 1200, 400 });
 
         World::BeginPlay();
-        
         Subsystem.Cursor->SetVisibility(false);
         LOG("LevelOne: Started");
-        LOG("Controls: WASD to move");
-        LOG("- Walk through cyan circle (left) to trigger overlap");
-        LOG("- Walk into orange circle (right) to test blocking");
-        LOG("- Walk through cyan capsule (bottom) to see capsule shape");
     }
 
     void LevelOne::Tick(float DeltaTime)

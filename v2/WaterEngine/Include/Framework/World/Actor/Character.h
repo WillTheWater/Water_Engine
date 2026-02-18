@@ -7,28 +7,19 @@
 
 #include "Core/CoreMinimal.h"
 #include "Framework/World/Actor/Actor.h"
-#include "Framework/World/CollisionTypes.h"
 
 namespace we
 {
-    class TriggerComponent;
-    class BlockingCollisionComponent;
-    class MovementComponent;
-    class AnimationComponent;
+    class PhysicsComponent;
 
     // =========================================================================
     // Character - Base class for all player and AI characters
     // 
-    // Comes with built-in components:
-    // - TriggerComponent: For interaction/proximity detection
-    // - BlockingCollisionComponent: Prevents walking through walls (no physics bounce)
-    // - MovementComponent: Optional (can be added by derived class)
-    // - AnimationComponent: Optional (can be added by derived class)
+    // Uses Box2D PhysicsComponent for collision:
+    // - Main fixture: Physical body that blocks movement
+    // - Sensor fixture: Larger area for interaction/trigger detection
     //
-    // Unlike regular Actors:
-    // - Uses swept capsule collision (prevents tunneling)
-    // - Position drives collision (not physics-driven)
-    // - Designed for top-down/side-scroller character movement
+    // Movement is kinematic (direct velocity control) or scripted
     // =========================================================================
     class Character : public Actor
     {
@@ -42,37 +33,39 @@ namespace we
         virtual void Destroy() override;
 
         // Collision setup
-        void SetCapsuleRadius(float Radius);
-        void SetCapsuleHalfHeight(float HalfHeight);
-        void SetCapsuleOffset(const vec2f& Offset);  // Offset from actor position
-        const CapsuleShape& GetCapsule() const { return CapsuleConfig; }
-        vec2f GetCapsuleOffset() const { return CapsuleOffset; }
+        void SetCharacterRadius(float Radius);
+        void SetCollisionOffset(const vec2f& Offset);
+        float GetCharacterRadius() const { return CharacterRadius; }
+        vec2f GetCollisionOffset() const { return CollisionOffset; }
 
-        // Component access
-        TriggerComponent* GetTriggerComponent() const { return TriggerComp.get(); }
-        BlockingCollisionComponent* GetBlockingComponent() const { return BlockingComp.get(); }
+        // Access the physics component
+        PhysicsComponent* GetPhysicsComponent() const { return PhysicsComp.get(); }
 
-        // Movement helper
-        // Attempts to move by Delta, respects blocking collision
+        // Movement with collision blocking (uses Box2D)
+        void SetVelocity(const vec2f& Velocity);
+        vec2f GetVelocity() const;
+        void ApplyImpulse(const vec2f& Impulse);
+
+        // Direct movement that respects collision
         bool TryMove(vec2f Delta);
+
+    protected:
+        // Called when character collides with something
+        virtual void OnCollision(Actor* Other);
         
-        // Set position with collision check
-        void SetPositionWithCollision(const vec2f& NewPosition);
+        // Called when sensor overlaps with something  
+        virtual void OnSensorBegin(Actor* Other);
+        virtual void OnSensorEnd(Actor* Other);
+
+        // Override to customize collision setup
+        virtual void InitializePhysics();
 
     protected:
-        // Called when character is blocked by collision
-        virtual void OnBlocked(const SweepResult& Hit);
-
-        // Override to customize collision profile
-        virtual void InitializeCollision();
-
-    protected:
-        shared<TriggerComponent> TriggerComp;
-        shared<BlockingCollisionComponent> BlockingComp;
+        shared<PhysicsComponent> PhysicsComp;
 
     private:
-        CapsuleShape CapsuleConfig;
-        vec2f CapsuleOffset = { 0.0f, 0.0f };  // Offset from actor position
-        bool bCollisionInitialized = false;
+        float CharacterRadius = 35.0f;
+        vec2f CollisionOffset = { 0.0f, 0.0f };
+        bool bPhysicsInitialized = false;
     };
 } // namespace we

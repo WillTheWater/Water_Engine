@@ -8,7 +8,7 @@
 #include "Core/CoreMinimal.h"
 #include "Framework/World/Object/Object.h"
 #include "Framework/World/RenderTypes.h"
-#include "Framework/World/BoundarySystem.h"
+
 
 namespace we
 {
@@ -38,9 +38,6 @@ namespace we
 
 		EngineSubsystem& GetSubsystem() const { return Subsystem; }
 
-		// Boundaries
-		BoundarySystem& GetBoundaries() { return Boundaries; }
-		const BoundarySystem& GetBoundaries() const { return Boundaries; }
 
 	protected:
 		EngineSubsystem& Subsystem;
@@ -59,7 +56,6 @@ namespace we
 		vector<RenderDepth> ManualRenderDepths;
 		vector<RenderDepth> CachedRenderDepths;  // Cached sorted drawables
 		bool bRenderOrderDirty = true;  // Force initial sort
-		BoundarySystem Boundaries;
 	};
 
 	template<typename ActorType, typename... Args>

@@ -4,9 +4,9 @@
 // =============================================================================
 
 #include "Framework/World/Actor/Character.h"
-#include "Interface/Component/TriggerComponent.h"
-#include "Interface/Component/BlockingCollisionComponent.h"
+#include "Interface/Component/PhysicsComponent.h"
 #include "Framework/World/World.h"
+#include "Framework/EngineSubsystem.h"
 #include "Utility/Log.h"
 #include "Utility/Math.h"
 
@@ -14,7 +14,7 @@ namespace we
 {
     Character::Character(World* OwningWorld, const string& TexturePath)
         : Actor(OwningWorld, TexturePath)
-        , CapsuleConfig{ 40.0f, 35.0f }  // Default: 80px tall, 35px radius
+        , CharacterRadius{ 35.0f }
     {
     }
 
@@ -24,163 +24,147 @@ namespace we
 
     void Character::BeginPlay()
     {
-        if (!bCollisionInitialized)
+        if (!bPhysicsInitialized)
         {
-            InitializeCollision();
+            InitializePhysics();
         }
 
-        // Initialize components if they exist
-        if (TriggerComp) TriggerComp->BeginPlay();
-        if (BlockingComp) BlockingComp->BeginPlay();
+        if (PhysicsComp) 
+        {
+            PhysicsComp->BeginPlay();
+            // High damping = stops quickly when not moving (no sliding)
+            PhysicsComp->SetLinearDamping(20.0f);
+            // Fixed rotation = sprite stays upright
+            PhysicsComp->SetFixedRotation(true);
+        }
 
         Actor::BeginPlay();
     }
 
     void Character::Tick(float DeltaTime)
     {
-        // Tick components
-        if (TriggerComp) TriggerComp->Tick(DeltaTime);
-        if (BlockingComp) BlockingComp->Tick(DeltaTime);
+        if (PhysicsComp) PhysicsComp->Tick(DeltaTime);
 
         Actor::Tick(DeltaTime);
     }
 
     void Character::Destroy()
     {
-        if (TriggerComp) TriggerComp->EndPlay();
-        if (BlockingComp) BlockingComp->EndPlay();
+        if (PhysicsComp) PhysicsComp->EndPlay();
 
         Actor::Destroy();
     }
 
-    void Character::InitializeCollision()
+    void Character::InitializePhysics()
     {
-        bCollisionInitialized = true;
+        bPhysicsInitialized = true;
 
-        // Create trigger component for interactions (CIRCLE - larger interaction radius)
-        TriggerComp = make_shared<TriggerComponent>(this);
-        TriggerComp->SetCircleShape(CapsuleConfig.Radius * 2.0f);  // 2x radius for interaction
-        TriggerComp->SetCollisionProfile(ECollisionProfile::Trigger);
-        TriggerComp->SetOffset(CapsuleOffset);
+        PhysicsComp = make_shared<PhysicsComponent>(this);
+        
+        // Dynamic body - gets collision response from static bodies (walls)
+        // High damping prevents sliding, fixed rotation keeps sprite upright
+        PhysicsComp->SetBodyType(BodyType::Dynamic);
+        PhysicsComp->SetDensity(1.0f);
+        PhysicsComp->SetFriction(0.0f);
+        PhysicsComp->SetRestitution(0.0f);
+        
+        // Main collision shape (physical body)
+        PhysicsComp->SetCircleShape(CharacterRadius);
 
-        // Create blocking component for collision (CAPSULE - physical body)
-        BlockingComp = make_shared<BlockingCollisionComponent>(this);
-        BlockingComp->SetCapsuleShape(CapsuleConfig);
-        BlockingComp->SetCollisionProfile(ECollisionProfile::Pawn);
-        BlockingComp->SetOffset(CapsuleOffset);
+        // Sensor for interaction/trigger detection (2x radius)
+        PhysicsComp->SetSensorShape(true, CharacterRadius * 2.0f);
+        PhysicsComp->SetSensorOffset(CollisionOffset);
+
+        // Apply damping and fixed rotation after body is created in BeginPlay
+        // (We'll do this in BeginPlay after PhysicsComp->BeginPlay())
     }
 
-    void Character::SetCapsuleRadius(float Radius)
+    void Character::SetCharacterRadius(float Radius)
     {
-        CapsuleConfig.Radius = Radius;
-        // Trigger = larger circle for interaction
-        if (TriggerComp) TriggerComp->SetCircleShape(Radius * 2.0f);
-        // Blocking = capsule for physical collision
-        if (BlockingComp) BlockingComp->SetCapsuleShape(CapsuleConfig);
+        CharacterRadius = Radius;
+        if (PhysicsComp)
+        {
+            PhysicsComp->SetCircleShape(Radius);
+            PhysicsComp->SetSensorShape(true, Radius * 2.0f);
+        }
     }
 
-    void Character::SetCapsuleHalfHeight(float HalfHeight)
+    void Character::SetCollisionOffset(const vec2f& Offset)
     {
-        CapsuleConfig.HalfHeight = HalfHeight;
-        // Only blocking component uses capsule shape
-        if (BlockingComp) BlockingComp->SetCapsuleShape(CapsuleConfig);
+        CollisionOffset = Offset;
+        if (PhysicsComp)
+        {
+            PhysicsComp->SetSensorOffset(Offset);
+        }
     }
 
-    void Character::SetCapsuleOffset(const vec2f& Offset)
+    void Character::SetVelocity(const vec2f& Velocity)
     {
-        CapsuleOffset = Offset;
-        if (BlockingComp) BlockingComp->SetOffset(Offset);
-        if (TriggerComp) TriggerComp->SetOffset(Offset);
+        if (PhysicsComp)
+        {
+            PhysicsComp->SetVelocity(Velocity);
+        }
+    }
+
+    vec2f Character::GetVelocity() const
+    {
+        if (PhysicsComp)
+        {
+            return PhysicsComp->GetVelocity();
+        }
+        return vec2f{};
+    }
+
+    void Character::ApplyImpulse(const vec2f& Impulse)
+    {
+        if (PhysicsComp)
+        {
+            PhysicsComp->ApplyImpulse(Impulse);
+        }
     }
 
     bool Character::TryMove(vec2f Delta)
     {
-        if (!BlockingComp || LengthSquared(Delta) < 0.001f)
+        if (!PhysicsComp || LengthSquared(Delta) < 0.001f)
         {
-            // No blocking component or no movement - just move
             SetPosition(GetPosition() + Delta);
             return true;
         }
 
-        // Sweep from component's position (which includes offset)
-        vec2f SweepStart = BlockingComp->GetPosition();
-        SweepResult Hit = BlockingComp->SweepFrom(SweepStart, Delta);
-
-        // Also check against world boundaries
-        if (GetWorld())
+        // For kinematic bodies, we set velocity to achieve movement
+        // Box2D will handle collision blocking automatically
+        float Dt = GetWorld()->GetSubsystem().Time->GetDeltaTime();
+        if (Dt > 0.0f)
         {
-            SweepResult BoundaryHit = GetWorld()->GetBoundaries().SweepCapsule(
-                SweepStart, Delta, CapsuleConfig);
-            
-            if (BoundaryHit.bBlockingHit && BoundaryHit.Time < Hit.Time)
-            {
-                Hit = BoundaryHit;
-            }
+            vec2f TargetVelocity = Delta / Dt;
+            PhysicsComp->SetVelocity(TargetVelocity);
         }
 
-        if (Hit.bBlockingHit)
-        {
-            // SLIDING: Remove normal component, keep tangent component
-            vec2f Normal = Hit.ImpactNormal;
-            
-            // Decompose remaining movement into normal and tangent
-            float NormalDot = Dot(Delta * (1.0f - Hit.Time), Normal);
-            vec2f Remaining = Delta * (1.0f - Hit.Time);
-            
-            // Slide: keep only the tangent (perpendicular) component
-            vec2f SlideDelta = Remaining - Normal * NormalDot;
-            
-            // Move up to the hit point + small push away from wall
-            const float SkinDepth = 0.5f;
-            vec2f AllowedDelta = Delta * Hit.Time;
-            
-            if (Hit.Time > 0.001f)
-            {
-                // Move back slightly from the hit to avoid penetration
-                AllowedDelta = AllowedDelta - Normalize(Delta) * SkinDepth;
-            }
-            else
-            {
-                AllowedDelta = { 0.0f, 0.0f };
-            }
-
-            SetPosition(GetPosition() + AllowedDelta);
-            
-            // Optionally: do a second sweep with the slide delta for corner cases
-            // For now, just allow the slide
-            if (LengthSquared(SlideDelta) > 1.0f)
-            {
-                // Small slide - apply it
-                SetPosition(GetPosition() + SlideDelta * 0.5f);
-            }
-            
-            OnBlocked(Hit);
-            return false; // Movement was blocked (but we slid)
-        }
-        else
-        {
-            // No collision - full movement allowed
-            SetPosition(GetPosition() + Delta);
-            return true;
-        }
+        // Position will be synced from body in Tick via SyncBodyToActor
+        return true;
     }
 
-    void Character::SetPositionWithCollision(const vec2f& NewPosition)
+    void Character::OnCollision(Actor* Other)
     {
-        if (!BlockingComp)
+        if (Other)
         {
-            SetPosition(NewPosition);
-            return;
+            LOG("Character collided with Actor@{:p}", reinterpret_cast<void*>(Other));
         }
-
-        vec2f Delta = NewPosition - GetPosition();
-        TryMove(Delta);
     }
 
-    void Character::OnBlocked(const SweepResult& Hit)
+    void Character::OnSensorBegin(Actor* Other)
     {
-        // Log the collision
-        LOG("COLLISION: Character blocked at {:.1f}, {:.1f}", 
-            Hit.ImpactPoint.x, Hit.ImpactPoint.y);
+        if (Other)
+        {
+            LOG("Character sensor began overlap with Actor@{:p}", reinterpret_cast<void*>(Other));
+        }
     }
-} // namespace we
+
+    void Character::OnSensorEnd(Actor* Other)
+    {
+        if (Other)
+        {
+            LOG("Character sensor ended overlap with Actor@{:p}", reinterpret_cast<void*>(Other));
+        }
+    }
+}

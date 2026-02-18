@@ -63,8 +63,6 @@ set(WATER_ENGINE_HEADERS
     Include/Framework/World/Object/Object.h
     Include/Framework/World/Actor/Actor.h
     Include/Framework/World/Actor/Character.h
-    Include/Framework/World/CollisionTypes.h
-    Include/Framework/World/BoundarySystem.h
     Include/Framework/World/RenderTypes.h
 
     Include/Subsystem/WindowSubsystem.h
@@ -77,7 +75,6 @@ set(WATER_ENGINE_HEADERS
     Include/Subsystem/PhysicsSubsystem.h
     Include/Subsystem/WorldSubsystem.h
     Include/Subsystem/GameStateSubsystem.h
-    Include/Subsystem/CollisionSubsystem.h
     Include/Subsystem/GUISubsystem.h
     Include/Subsystem/CursorSubsystem.h
     
@@ -116,9 +113,7 @@ set(WATER_ENGINE_HEADERS
     Include/Interface/Component/IPhysicsComponent.h
     Include/Interface/Component/AnimationComponent.h
     Include/Interface/Component/PhysicsComponent.h
-    Include/Interface/Component/TriggerComponent.h
-    Include/Interface/Component/BlockingCollisionComponent.h
-    
+
     Include/UI/UIUtility.h
     Include/Utility/Log.h
     Include/Utility/Assert.h
@@ -137,7 +132,6 @@ set(WATER_ENGINE_SOURCES
     Source/Framework/EventHandling/GameWindowEventHandler.cpp
 
     Source/Framework/World/World.cpp
-    Source/Framework/World/BoundarySystem.cpp
     Source/Framework/World/Object/Object.cpp
     Source/Framework/World/Actor/Actor.cpp
     Source/Framework/World/Actor/Character.cpp
@@ -154,7 +148,6 @@ set(WATER_ENGINE_SOURCES
     Source/Subsystem/WorldSubsystem.cpp
     Source/Subsystem/GameStateSubsystem.cpp
     Source/Subsystem/GUISubsystem.cpp
-    Source/Subsystem/CollisionSubsystem.cpp
     Source/Subsystem/CursorSubsystem.cpp
 
     Source/PostProcess/PPE/TestPPE.cpp
@@ -184,9 +177,6 @@ set(WATER_ENGINE_SOURCES
 
     Source/Interface/Component/AnimationComponent.cpp
     Source/Interface/Component/PhysicsComponent.cpp
-    Source/Interface/Component/TriggerComponent.cpp
-    Source/Interface/Component/BlockingCollisionComponent.cpp
-    Source/Interface/Component/LineCollisionComponent.cpp
 
     Source/Utility/Timer.cpp
     Source/Utility/DebugDraw.cpp

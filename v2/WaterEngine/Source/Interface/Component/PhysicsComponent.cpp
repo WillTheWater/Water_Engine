@@ -22,6 +22,7 @@ namespace we
         : Owner{ InOwner }
         , Body{ nullptr }
         , Fixture{ nullptr }
+        , SensorFixture{ nullptr }
         , Type{ BodyType::Dynamic }
         , ShapeHalfExtents{ 50.0f, 50.0f }
         , ShapeRadius{ 50.0f }
@@ -52,6 +53,10 @@ namespace we
 
         Body = GetPhysics().CreateBody(this, Type, Pos, Rot);
         RecreateFixture();
+        
+        LOG("PHYSICS BODY CREATED: {:p} at ({:.1f}, {:.1f}) type={} circle={} radius={:.1f}", 
+            reinterpret_cast<void*>(this), Pos.x, Pos.y, 
+            static_cast<int>(Type), bIsCircle, ShapeRadius);
     }
 
     void PhysicsComponent::Tick(float DeltaTime)
@@ -61,15 +66,18 @@ namespace we
         switch (Type)
         {
         case BodyType::Kinematic:
-            SyncActorToBody();
+            // For kinematic: Box2D moves body based on velocity, sync back to actor
+            SyncBodyToActor();
             break;
 
         case BodyType::Dynamic:
+            // For dynamic: physics moves body, sync back to actor
             SyncBodyToActor();
             break;
 
         case BodyType::Static:
         default:
+            // Static bodies don't move
             break;
         }
 
@@ -77,6 +85,12 @@ namespace we
         {
             RecreateFixture();
             bNeedsFixtureUpdate = false;
+        }
+
+        if (bNeedsSensorUpdate)
+        {
+            RecreateSensorFixture();
+            bNeedsSensorUpdate = false;
         }
 
         // Debug draw the physics shape
@@ -115,6 +129,22 @@ namespace we
         else
         {
             DebugDraw::Rect(Pos, ShapeHalfExtents, Rot, DebugColor, 2.0f);
+        }
+
+        // Draw sensor if present (dashed outline or different color)
+        if (SensorFixture)
+        {
+            color SensorColor = color{ 0, 255, 255, 128 };  // Cyan transparent for sensor
+            vec2f SensorPos = Pos + SensorOffset;
+            
+            if (bSensorIsCircle)
+            {
+                DebugDraw::Circle(SensorPos, SensorRadius, SensorColor, 1.0f);
+            }
+            else
+            {
+                DebugDraw::Rect(SensorPos, SensorHalfExtents, Rot, SensorColor, 1.0f);
+            }
         }
     }
 
@@ -208,6 +238,22 @@ namespace we
         bNeedsFixtureUpdate = true;
     }
 
+    void PhysicsComponent::SetLinearDamping(float Damping)
+    {
+        if (Body)
+        {
+            Body->SetLinearDamping(Damping);
+        }
+    }
+
+    void PhysicsComponent::SetFixedRotation(bool bFixed)
+    {
+        if (Body)
+        {
+            Body->SetFixedRotation(bFixed);
+        }
+    }
+
     vec2f PhysicsComponent::GetVelocity() const
     {
         if (!Body) return vec2f{};
@@ -297,6 +343,75 @@ namespace we
             Def.isSensor = bSensor;
 
             Fixture = Body->CreateFixture(&Def);
+        }
+    }
+
+    void PhysicsComponent::SetSensorShape(bool bCircle, float RadiusOrHalfExtent)
+    {
+        bSensorIsCircle = bCircle;
+        if (bCircle)
+        {
+            SensorRadius = RadiusOrHalfExtent;
+        }
+        else
+        {
+            SensorHalfExtents = { RadiusOrHalfExtent, RadiusOrHalfExtent };
+        }
+        bNeedsSensorUpdate = true;
+    }
+
+    void PhysicsComponent::SetSensorBoxShape(const vec2f& HalfExtents)
+    {
+        bSensorIsCircle = false;
+        SensorHalfExtents = HalfExtents;
+        bNeedsSensorUpdate = true;
+    }
+
+    void PhysicsComponent::SetSensorOffset(const vec2f& Offset)
+    {
+        SensorOffset = Offset;
+        bNeedsSensorUpdate = true;
+    }
+
+    void PhysicsComponent::RecreateSensorFixture()
+    {
+        if (!Body) return;
+
+        if (SensorFixture)
+        {
+            Body->DestroyFixture(SensorFixture);
+            SensorFixture = nullptr;
+        }
+
+        // Only create sensor if it has a valid size
+        if (SensorRadius <= 0.0f && SensorHalfExtents.x <= 0.0f)
+        {
+            return;
+        }
+
+        float Scale = GetPhysics().GetPhysicsScale();
+
+        b2FixtureDef Def;
+        Def.density = 0.0f;
+        Def.friction = 0.0f;
+        Def.restitution = 0.0f;
+        Def.isSensor = true;
+
+        if (bSensorIsCircle)
+        {
+            b2CircleShape Shape;
+            Shape.m_radius = SensorRadius * Scale;
+            Shape.m_p.Set(SensorOffset.x * Scale, SensorOffset.y * Scale);
+            Def.shape = &Shape;
+            SensorFixture = Body->CreateFixture(&Def);
+        }
+        else
+        {
+            b2PolygonShape Shape;
+            Shape.SetAsBox(SensorHalfExtents.x * Scale, SensorHalfExtents.y * Scale, 
+                b2Vec2{ SensorOffset.x * Scale, SensorOffset.y * Scale }, 0.0f);
+            Def.shape = &Shape;
+            SensorFixture = Body->CreateFixture(&Def);
         }
     }
 

@@ -186,9 +186,6 @@ namespace we
         if (auto World = Subsystem.World->GetCurrentWorld())
         {
             World->CollectRenderDepths(WorldRenderDepths);
-            
-            // Debug draw boundaries
-            World->GetBoundaries().DebugDraw();
         }
 
         // Sort by depth (Y position) - back to front

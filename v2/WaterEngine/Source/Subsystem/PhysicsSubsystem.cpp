@@ -23,6 +23,12 @@ namespace we
 
         if (BodyA && BodyB)
         {
+            auto* CompA = reinterpret_cast<PhysicsComponent*>(BodyA->GetUserData().pointer);
+            auto* CompB = reinterpret_cast<PhysicsComponent*>(BodyB->GetUserData().pointer);
+            if (CompA && CompB)
+            {
+                LOG("PHYSICS CONTACT BEGIN: {:p} <-> {:p}", reinterpret_cast<void*>(CompA), reinterpret_cast<void*>(CompB));
+            }
             Physics.QueueContactEvent({ ContactEvent::Type::Begin, BodyA, BodyB });
         }
     }

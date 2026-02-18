@@ -43,6 +43,8 @@ namespace we
         void SetFriction(float Friction);
         void SetRestitution(float Restitution);
         void SetSensor(bool bInSensor);
+        void SetLinearDamping(float Damping);
+        void SetFixedRotation(bool bFixed);
 
         // Physics queries
         vec2f GetVelocity() const;
@@ -50,10 +52,17 @@ namespace we
         void ApplyForce(const vec2f& Force);
         void ApplyImpulse(const vec2f& Impulse);
 
+        // Sensor (trigger) support - for overlap detection without blocking
+        void SetSensorShape(bool bCircle, float RadiusOrHalfExtent);
+        void SetSensorBoxShape(const vec2f& HalfExtents);
+        void SetSensorOffset(const vec2f& Offset);
+        bool HasSensor() const { return SensorFixture != nullptr; }
+
     private:
         void SyncActorToBody();   // Kinematic: actor -> body
         void SyncBodyToActor();   // Dynamic: body -> actor
         void RecreateFixture();
+        void RecreateSensorFixture();
         void DrawDebugShape();    // Draw debug visualization
 
         PhysicsSubsystem& GetPhysics() const;
@@ -62,6 +71,7 @@ namespace we
         Actor* Owner;
         b2Body* Body;
         b2Fixture* Fixture;
+        b2Fixture* SensorFixture;
 
         BodyType Type;
         vec2f ShapeHalfExtents;
@@ -72,5 +82,12 @@ namespace we
         float Restitution;
         bool bSensor;
         bool bNeedsFixtureUpdate;
+
+        // Sensor data
+        bool bSensorIsCircle = true;
+        float SensorRadius = 0.0f;
+        vec2f SensorHalfExtents = { 0.0f, 0.0f };
+        vec2f SensorOffset = { 0.0f, 0.0f };
+        bool bNeedsSensorUpdate = false;
     };
 }

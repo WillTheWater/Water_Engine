@@ -6,6 +6,7 @@
 #include "Character/PlayerCharacter.h"
 #include "Character/MovementComponent.h"
 #include "Interface/Component/AnimationComponent.h"
+#include "Interface/Component/PhysicsComponent.h"
 #include "Framework/World/World.h"
 #include "Framework/EngineSubsystem.h"
 #include "Utility/Math.h"
@@ -17,11 +18,9 @@ namespace we
 	Player::Player(World* OwningWorld, const string& TexturePath)
 		: Character(OwningWorld, TexturePath)
 	{
-		// Character base class creates Trigger and Blocking components
-		// We just need to set up the capsule size for our character sprite
-		SetCapsuleRadius(40.0f);      // Slightly smaller than the 128px half-sprite
-		SetCapsuleHalfHeight(50.0f);  // Tall enough for the character
-		SetCapsuleOffset({ 0,10 });
+		// Set up the collision radius for our character sprite
+		SetCharacterRadius(40.0f);
+		SetCollisionOffset({ 0, 10 });
 	}
 
 	void Player::BeginPlay()
@@ -39,15 +38,10 @@ namespace we
 		UpdateAnimation();
 		UpdateFootsteps();
 
-		// Apply movement with collision blocking
+		// Apply movement via physics component
 		if (MoveComp)
 		{
-			vec2f Velocity = MoveComp->GetVelocity();
-			float DeltaTime = GetWorld()->GetSubsystem().Time->GetDeltaTime();
-			vec2f Delta = Velocity * DeltaTime;
-			
-			// TryMove respects blocking collision (prevents walking through walls)
-			TryMove(Delta);
+			SetVelocity(MoveComp->GetVelocity());
 		}
 
 		Character::Tick(DeltaTime);

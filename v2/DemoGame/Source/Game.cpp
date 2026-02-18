@@ -39,7 +39,7 @@ namespace we
 
 	void Game::BeginPlay()
 	{
-		Subsystem.GameState->RequestStateChange(MakeState(EGameState::MainMenu));
+		Subsystem.GameState->RequestStateChange(MakeState(EGameState::LevelOne));
 		BindInput();
 	}
 
