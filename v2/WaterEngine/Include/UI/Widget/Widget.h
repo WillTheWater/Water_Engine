@@ -46,7 +46,7 @@ namespace we
 
 		void SetSize(const vec2f& InSize);
 		vec2f GetSize() const { return Size; }
-		void SetAutoSize(bool bEnabled, float Padding = 0.f);
+		void SetAutoSize(bool bInEnabled, float Padding = 0.f);
 		void CalculateAutoSize();
 
 		vec2f GetWorldPosition() const;
@@ -60,6 +60,8 @@ namespace we
 		const vector<weak<Widget>>& GetChildren() const { return Children; }
 
 		void SetVisible(bool bInVisible) { bVisible = bInVisible; }
+		void Show() { SetVisible(true); }
+		void Hide() { SetVisible(false); }
 		bool IsVisible() const { return bVisible; }
 
 		virtual bool Contains(const vec2f& ScreenPoint) const;

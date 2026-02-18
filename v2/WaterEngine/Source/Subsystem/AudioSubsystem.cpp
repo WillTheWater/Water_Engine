@@ -10,44 +10,45 @@
 
 namespace we
 {
-	AudioSubsystem::AudioSubsystem()
-		: GlobalVolume{ EC.StartupGlobalVolume }
+	AudioSubsystem::AudioSubsystem(const AudioConfig& InConfig)
+		: GlobalVolume{ InConfig.StartupGlobalVolume }
 		, ChannelVolumes{ 10, 20, 100 }
 		, ChannelMuted{ false, false, false }
-		, MaxSFXCount{ EC.MaxSFXStack }
+		, MaxSFXCount{ InConfig.MaxSFXStack }
+		, Config{ InConfig }
 	{
-		sf::Listener::setGlobalVolume(EC.StartupGlobalVolume);
+		sf::Listener::setGlobalVolume(Config.StartupGlobalVolume);
 		sf::Listener::setPosition({ 0.f, 0.f, 0.f });
 		sf::Listener::setDirection({ 0.f, 0.f, -1.f });
 	}
 
-	void AudioSubsystem::PlayMusic(const string& Path, bool bLoop)
+	void AudioSubsystem::PlayMusic(const string& Path, bool bInLoop)
 	{
 		StopMusic();
 
 		CurrentMusic = LoadAsset().LoadMusic(Path);
 		if (CurrentMusic)
 		{
-			CurrentMusic->setLooping(bLoop);
+			CurrentMusic->setLooping(bInLoop);
 			CurrentMusic->setVolume(GetEffectiveVolume(AudioChannel::Music));
 			CurrentMusic->play();
 		}
 	}
 
-	void AudioSubsystem::PlayAmbient(const string& Path, bool bLoop)
+	void AudioSubsystem::PlayAmbient(const string& Path, bool bInLoop)
 	{
 		StopAmbient();
 
 		CurrentAmbient = LoadAsset().LoadMusic(Path);
 		if (CurrentAmbient)
 		{
-			CurrentAmbient->setLooping(bLoop);
+			CurrentAmbient->setLooping(bInLoop);
 			CurrentAmbient->setVolume(GetEffectiveVolume(AudioChannel::Ambient));
 			CurrentAmbient->play();
 		}
 	}
 
-	void AudioSubsystem::PlaySFX(const string& Path, bool bLoop)
+	void AudioSubsystem::PlaySFX(const string& Path, bool bInLoop)
 	{
 		auto SoundBuffer = LoadAsset().LoadSoundSync(Path);
 		if (!SoundBuffer || SoundBuffer->getSampleCount() == 0)
@@ -67,7 +68,7 @@ namespace we
 		SFXInstance Instance;
 		Instance.Buffer = SoundBuffer;
 		Instance.Sound = make_unique<sf::Sound>(*SoundBuffer);
-		Instance.Sound->setLooping(bLoop);
+		Instance.Sound->setLooping(bInLoop);
 		Instance.Sound->setVolume(GetEffectiveVolume(AudioChannel::SFX));
 		Instance.Sound->play();
 
@@ -133,9 +134,9 @@ namespace we
 		return ChannelVolumes[static_cast<int>(Channel)];
 	}
 
-	void AudioSubsystem::MuteChannel(AudioChannel Channel, bool bMute)
+	void AudioSubsystem::MuteChannel(AudioChannel Channel, bool bInMute)
 	{
-		ChannelMuted[static_cast<int>(Channel)] = bMute;
+		ChannelMuted[static_cast<int>(Channel)] = bInMute;
 		ApplyVolumes();
 	}
 

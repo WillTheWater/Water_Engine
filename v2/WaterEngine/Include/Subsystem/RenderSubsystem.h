@@ -10,6 +10,12 @@
 
 namespace we
 {
+    struct RenderConfig
+    {
+        vec2f RenderResolution;
+        bool SetRenderSmooth;
+    };
+
     enum class ERenderLayer : uint8
     {
         Game,
@@ -20,12 +26,12 @@ namespace we
     class RenderSubsystem
     {
     public:
-        RenderSubsystem();
+        explicit RenderSubsystem(const RenderConfig& Config);
 
         void Draw(const drawable& RenderObject, ERenderLayer Layer = ERenderLayer::Game);
 
         // Returns the final composite sprite
-        const sprite FinishRender();
+        sprite FinishRender();
 
     private:
         // Game Render
@@ -59,5 +65,6 @@ namespace we
 
     private:
         vec2u RenderResolution;
+        RenderConfig Config;
     };
 }

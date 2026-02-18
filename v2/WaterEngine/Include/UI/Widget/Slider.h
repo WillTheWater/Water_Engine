@@ -57,7 +57,7 @@ namespace we
 
 		// Widget overrides
 		void CollectRenderDepths(vector<RenderDepth>& OutDepths) const override;
-		void SetPressed(bool bPressed) override;
+		void SetPressed(bool bInPressed) override;
 		bool Contains(const vec2f& ScreenPoint) const override;
 
 		// Widget override - called when mouse moves while this widget is pressed (for dragging)

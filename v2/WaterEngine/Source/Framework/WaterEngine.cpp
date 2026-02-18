@@ -8,8 +8,11 @@
 #include "Framework/World/World.h"
 #include "Utility/Log.h"
 #include "Utility/DebugDraw.h"
-#include "Subsystem/PhysicsSubsystem.h"
+#include "Subsystem/WindowSubsystem.h"
 #include "Subsystem/RenderSubsystem.h"
+#include "Subsystem/CursorSubsystem.h"
+#include "Subsystem/AudioSubsystem.h"
+#include "Subsystem/PhysicsSubsystem.h"
 
 namespace we
 {
@@ -27,18 +30,55 @@ namespace we
     void WaterEngine::PreConstruct()
     {
         MountAssetDirectory();
-        // Build All Subsystems
-        Subsystem.Window     = make_unique<WindowSubsystem>();
-        Subsystem.Render     = make_unique<RenderSubsystem>();
-        Subsystem.Time       = make_unique<TimeSubsystem>();
-        Subsystem.Cursor     = make_unique<CursorSubsystem>();
-        Subsystem.Input      = make_unique<InputSubsystem>();
-        Subsystem.SaveLoad   = make_unique<SaveLoadSubsystem>();
-        Subsystem.GameState  = make_unique<GameStateSubsystem>();
-        Subsystem.World      = make_unique<WorldSubsystem>(Subsystem);
-        Subsystem.Audio      = make_unique<AudioSubsystem>();
-        Subsystem.GUI        = make_unique<GUISubsystem>(Subsystem);
-        Subsystem.Physics    = make_unique<PhysicsSubsystem>(Subsystem);
+
+        // Build All Subsystems with explicit configuration
+        Subsystem.Window = make_unique<WindowSubsystem>(WindowConfig{
+            .WindowName = EC.WindowName,
+            .RenderResolution = EC.RenderResolution,
+            .AspectRatio = EC.AspectRatio,
+            .WindowMinimumSize = EC.WindowMinimumSize,
+            .WindowIcon = EC.WindowIcon,
+            .FullscreenMode = EC.FullscreenMode,
+            .VsyncEnabled = EC.VsyncEnabled,
+            .TargetFPS = EC.TargetFPS,
+            .EnableKeyRepeat = EC.EnableKeyRepeat,
+            .DisableSFMLLogs = EC.DisableSFMLLogs
+        });
+
+        Subsystem.Render = make_unique<RenderSubsystem>(RenderConfig{
+            .RenderResolution = EC.RenderResolution,
+            .SetRenderSmooth = EC.SetRenderSmooth
+        });
+
+        Subsystem.Time = make_unique<TimeSubsystem>();
+        Subsystem.Input = make_unique<InputSubsystem>();
+        Subsystem.SaveLoad = make_unique<SaveLoadSubsystem>();
+        Subsystem.GameState = make_unique<GameStateSubsystem>();
+
+        Subsystem.Cursor = make_unique<CursorSubsystem>(CursorConfig{
+            .DefaultCursor = EC.DefaultCursor,
+            .DefaultCursorSize = EC.DefaultCursorSize,
+            .DefaultCursorSpeed = EC.DefaultCursorSpeed,
+            .JoystickDeadzone = EC.JoystickDeadzone,
+            .RenderResolution = EC.RenderResolution
+        });
+
+        Subsystem.Audio = make_unique<AudioSubsystem>(AudioConfig{
+            .StartupGlobalVolume = EC.StartupGlobalVolume,
+            .MaxSFXStack = EC.MaxSFXStack
+        });
+
+        Subsystem.Physics = make_unique<PhysicsSubsystem>(PhysicsConfig{
+            .DefaultGravity = vec2f{EC.DefaultGravity.x, EC.DefaultGravity.y},
+            .PhysicsScale = 0.01f,
+            .FixedTimeStep = 1.0f / 60.0f,
+            .VelocityIterations = 8,
+            .PositionIterations = 3
+        });
+
+        // These subsystems need access to other subsystems
+        Subsystem.World = make_unique<WorldSubsystem>(Subsystem);
+        Subsystem.GUI = make_unique<GUISubsystem>(Subsystem);
     }
 
     void WaterEngine::MountAssetDirectory()
@@ -53,6 +93,9 @@ namespace we
     void WaterEngine::TickGame()
     {
         float DeltaTime = Subsystem.Time->GetDeltaTime();
+
+        // Poll gamepad axes (only if gamepad connected)
+        Subsystem.Input->PollGamepadAxes();
 
         Tick(DeltaTime);
 

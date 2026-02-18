@@ -12,47 +12,31 @@
 
 namespace we
 {
-    RenderSubsystem::RenderSubsystem()
-        : RenderResolution(EC.RenderResolution)
-    {
-        Initialize();
-    }
-
-    void RenderSubsystem::Initialize()
+    RenderSubsystem::RenderSubsystem(const RenderConfig& InConfig)
+        : RenderResolution(static_cast<vec2u>(InConfig.RenderResolution))
+        , Config{ InConfig }
     {
         // Set Render Targets Pixel Size
-        VERIFY(GameRenderTarget.resize(vec2u(RenderResolution)));
-        VERIFY(UIRenderTarget.resize(vec2u(RenderResolution)));
-        VERIFY(CursorRenderTarget.resize(vec2u(RenderResolution)));
-        VERIFY(CompositeTarget.resize(vec2u(RenderResolution)));
+        VERIFY(GameRenderTarget.resize(RenderResolution));
+        VERIFY(UIRenderTarget.resize(RenderResolution));
+        VERIFY(CursorRenderTarget.resize(RenderResolution));
+        VERIFY(CompositeTarget.resize(RenderResolution));
 
         // Set Smoothing for Render Targets
-        GameRenderTarget.setSmooth(EC.SetRenderSmooth);
+        GameRenderTarget.setSmooth(Config.SetRenderSmooth);
         UIRenderTarget.setSmooth(false);
         CursorRenderTarget.setSmooth(false);
         CompositeTarget.setSmooth(false);
 
-        // *********************************************************
-         //
-         //				TODO: Make this Editable-Dynamic
-         //
-         // *********************************************************
-
-         // Apply Shaders to Render Targets
+        // Apply Shaders to Render Targets
         if (sf::Shader::isAvailable())
         {
-            VERIFY(GamePostProcessTarget.resize(vec2u(RenderResolution)));
-            VERIFY(UIPostProcessTarget.resize(vec2u(RenderResolution)));
-            VERIFY(CursorPostProcessTarget.resize(vec2u(RenderResolution)));
+            VERIFY(GamePostProcessTarget.resize(RenderResolution));
+            VERIFY(UIPostProcessTarget.resize(RenderResolution));
+            VERIFY(CursorPostProcessTarget.resize(RenderResolution));
 
             //PPE Applied to Game
             GamePostProcessEffects.emplace_back(make_unique<BloomPPE>());
-
-            //PPE Applied to UI
-            // UIPostEffects.emplace_back(make_unique<PPETest>()); Example
-
-            //PPE Applied to Cursor (Rare)
-            // CursorPostProcessEffects.emplace_back(make_unique<TimePPETest>()); Example
         }
     }
 
@@ -150,7 +134,7 @@ namespace we
         CompositeTarget.display();
     }
 
-    const sprite RenderSubsystem::FinishRender()
+    sprite RenderSubsystem::FinishRender()
     {
         CompositeLayers();
         return sprite(CompositeTarget.getTexture());

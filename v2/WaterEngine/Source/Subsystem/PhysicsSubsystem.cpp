@@ -5,9 +5,7 @@
 
 #include "Subsystem/PhysicsSubsystem.h"
 #include "Interface/Component/PhysicsComponent.h"
-#include "Framework/EngineSubsystem.h"
 #include "Utility/Log.h"
-#include "EngineConfig.h"
 #include <box2d/b2_fixture.h>
 #include <box2d/b2_contact.h>
 
@@ -40,15 +38,15 @@ namespace we
         }
     }
 
-    PhysicsSubsystem::PhysicsSubsystem(EngineSubsystem& InSubsystem)
-        : Subsystem{ InSubsystem }
-        , World{ b2Vec2{ 0.0f, EC.DefaultGravity.y } }
-        , PhysicsScale{ 0.01f }
-        , FixedTimeStep{ 1.0f / 60.0f }
+    PhysicsSubsystem::PhysicsSubsystem(const PhysicsConfig& InConfig)
+        : World{ b2Vec2{ InConfig.DefaultGravity.x, InConfig.DefaultGravity.y } }
+        , PhysicsScale{ InConfig.PhysicsScale }
+        , FixedTimeStep{ InConfig.FixedTimeStep }
         , Accumulator{ 0.0f }
-        , VelocityIterations{ 8 }
-        , PositionIterations{ 3 }
+        , VelocityIterations{ InConfig.VelocityIterations }
+        , PositionIterations{ InConfig.PositionIterations }
         , ContactListener{ *this }
+        , Config{ InConfig }
     {
         World.SetContactListener(&ContactListener);
     }

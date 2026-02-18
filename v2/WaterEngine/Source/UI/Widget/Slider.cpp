@@ -279,19 +279,19 @@ namespace we
 		       ScreenPoint.y <= ThumbPos.y + HalfThumb.y;
 	}
 
-	void Slider::SetPressed(bool bPressed)
+	void Slider::SetPressed(bool bInPressed)
 	{
 		bool WasPressed = bGrabbed;
-		bGrabbed = bPressed;
+		bGrabbed = bInPressed;
 
-		if (bPressed && !WasPressed)
+		if (bInPressed && !WasPressed)
 		{
 			// Just pressed - jump to click position immediately
 			// This matches the old behavior where clicking anywhere on the track jumps the thumb
 			// Note: Mouse position needs to be retrieved from Cursor subsystem
 			// We'll handle this in OnDrag which gets called immediately after by GUISubsystem
 		}
-		else if (!bPressed && WasPressed)
+		else if (!bInPressed && WasPressed)
 		{
 			// Released
 		}

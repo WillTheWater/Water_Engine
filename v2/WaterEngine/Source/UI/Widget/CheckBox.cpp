@@ -11,10 +11,10 @@
 namespace we
 {
 	CheckBox::CheckBox(
-		bool bInitialState,
+		bool bInChecked,
 		float InBoxSize,
 		CheckBoxShape Shape)
-		: bChecked(bInitialState)
+		: bChecked(bInChecked)
 		, BoxSize(InBoxSize)
 		, ShapeType(Shape)
 		, bUseTexture(false)
@@ -48,9 +48,9 @@ namespace we
 
 	CheckBox::CheckBox(
 		const string& TexturePath,
-		bool bInitialState,
+		bool bInChecked,
 		float InBoxSize)
-		: bChecked(bInitialState)
+		: bChecked(bInChecked)
 		, bUseTexture(true)
 	{
 		SetFocusable(true);
@@ -133,11 +133,11 @@ namespace we
 		}
 	}
 
-	void CheckBox::SetChecked(bool bNewChecked)
+	void CheckBox::SetChecked(bool bInChecked)
 	{
-		if (bChecked != bNewChecked)
+		if (bChecked != bInChecked)
 		{
-			bChecked = bNewChecked;
+			bChecked = bInChecked;
 			UpdateVisualState();
 			OnToggled.Broadcast(bChecked);
 		}

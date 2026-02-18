@@ -56,7 +56,7 @@ namespace we
         void SetGlobalPlaybackSpeed(float Multiplier);
         float GetGlobalPlaybackSpeed() const { return GlobalPlaybackSpeed; }
 
-        void SetFacing(bool bFaceLeft);
+        void SetFacing(bool bInFaceLeft);
         bool IsFacingLeft() const { return bFaceLeft; }
 
         uint8 GetCurrentState() const { return CurrentState; }

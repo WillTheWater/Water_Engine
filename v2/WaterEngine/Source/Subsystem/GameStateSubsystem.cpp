@@ -7,13 +7,13 @@
 
 namespace we
 {
-    void GameStateSubsystem::RequestStateChange(shared<IGameStateToken> NewState, bool bForce)
+    void GameStateSubsystem::RequestStateChange(shared<IGameStateToken> NewState, bool bInForce)
     {
         if (!NewState) return;
 
         bool bIsDifferent = !CurrentState || (NewState->GetStateID() != CurrentState->GetStateID());
 
-        if ((bIsDifferent || bForce) &&
+        if ((bIsDifferent || bInForce) &&
             (!PendingState.has_value() || (*PendingState)->GetStateID() != NewState->GetStateID()))
         {
             PendingState = NewState;

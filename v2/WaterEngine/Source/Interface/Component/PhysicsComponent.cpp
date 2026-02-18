@@ -192,9 +192,9 @@ namespace we
         bNeedsFixtureUpdate = true;
     }
 
-    void PhysicsComponent::SetSensor(bool bIsSensor)
+    void PhysicsComponent::SetSensor(bool bInSensor)
     {
-        bSensor = bIsSensor;
+        bSensor = bInSensor;
         bNeedsFixtureUpdate = true;
     }
 

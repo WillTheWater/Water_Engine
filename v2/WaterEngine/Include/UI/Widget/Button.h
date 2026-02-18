@@ -27,7 +27,7 @@ namespace we
 			const string& InLabel,
 			const string& TexturePath,
 			const vec2f& InSize = { 0.f, 0.f },
-			bool bUseColorTint = false);
+			bool bInUseColorTint = false);
 
 		void CollectRenderDepths(vector<RenderDepth>& OutDepths) const override;
 
@@ -41,6 +41,7 @@ namespace we
 
 		void SetPressed(bool bInPressed) override;
 		bool IsPressed() const { return bPressed; }
+		bool IsHovered() const { return bHovered; }
 
 	private:
 		void UpdateVisualState();

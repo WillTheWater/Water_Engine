@@ -21,19 +21,19 @@ namespace we
 	public:
 		// Shape-based checkbox (rectangle or circle)
 		CheckBox(
-			bool bInitialState = false,
+			bool bInChecked = false,
 			float BoxSize = 24.f,
 			CheckBoxShape Shape = CheckBoxShape::Rectangle);
 
 		// Texture-based checkbox
 		CheckBox(
 			const string& TexturePath,
-			bool bInitialState = false,
+			bool bInChecked = false,
 			float BoxSize = 0.f);
 
 		void CollectRenderDepths(vector<RenderDepth>& OutDepths) const override;
 
-		void SetChecked(bool bNewChecked);
+		void SetChecked(bool bInChecked);
 		bool IsChecked() const { return bChecked; }
 		void Toggle();
 

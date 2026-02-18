@@ -53,9 +53,9 @@ namespace we
 		const string& Label,
 		const string& TexturePath,
 		const vec2f& Size,
-		bool bUseColorTint)
+		bool bInUseColorTint)
 	{
-		auto NewButton = make_shared<Button>(Label, TexturePath, Size, bUseColorTint);
+		auto NewButton = make_shared<Button>(Label, TexturePath, Size, bInUseColorTint);
 		Widgets.push_back(NewButton);
 		return NewButton;
 	}

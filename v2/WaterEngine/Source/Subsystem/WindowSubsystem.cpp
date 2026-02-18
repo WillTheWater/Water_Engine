@@ -10,17 +10,13 @@
 
 namespace we
 {
-    WindowSubsystem::WindowSubsystem()
-        : bIsFullscreen{ EC.FullscreenMode }
+    WindowSubsystem::WindowSubsystem(const WindowConfig& InConfig)
+        : bIsFullscreen{ InConfig.FullscreenMode }
+        , Config{ InConfig }
     {
-        Init();
-    }
-
-    void WindowSubsystem::Init()
-    {
-        const sf::VideoMode mode(static_cast<vec2u>(EC.RenderResolution));
-        const auto style = EC.FullscreenMode ? sf::Style::None : sf::Style::Default;
-        const auto state = EC.FullscreenMode ? sf::State::Fullscreen : sf::State::Windowed;
+        const sf::VideoMode mode(static_cast<vec2u>(Config.RenderResolution));
+        const auto style = Config.FullscreenMode ? sf::Style::None : sf::Style::Default;
+        const auto state = Config.FullscreenMode ? sf::State::Fullscreen : sf::State::Windowed;
         CreateGameWindow(mode, style, state);
         SetWindowIcon();
     }
@@ -33,7 +29,7 @@ namespace we
 
     void WindowSubsystem::RecomputeView() const
     {
-        float targetRatio = static_cast<float>(EC.AspectRatio.x) / static_cast<float>(EC.AspectRatio.y);
+        float targetRatio = static_cast<float>(Config.AspectRatio.x) / static_cast<float>(Config.AspectRatio.y);
         vec2u WinSize = getSize();
         float windowRatio = static_cast<float>(WinSize.x) / static_cast<float>(WinSize.y);
 
@@ -48,8 +44,8 @@ namespace we
             vPosY = (1.0f - vHeight) / 2.0f;
         }
 
-        CachedView.setSize(vec2f(EC.RenderResolution));
-        CachedView.setCenter(vec2f(EC.RenderResolution) / 2.0f);
+        CachedView.setSize(vec2f(Config.RenderResolution));
+        CachedView.setCenter(vec2f(Config.RenderResolution) / 2.0f);
         CachedView.setViewport(rectf({ vPosX, vPosY }, { vWidth, vHeight }));
 
         bViewDirty = false;
@@ -72,12 +68,12 @@ namespace we
 
     void WindowSubsystem::onResize()
     {
-        const vec2f TargetRes = vec2f(EC.AspectRatio);
+        const vec2f TargetRes = vec2f(Config.AspectRatio);
         const float TargetRatio = TargetRes.x / TargetRes.y;
 
         vec2u NewSize = getSize();
-        NewSize.x = std::max(NewSize.x, static_cast<uint>(EC.WindowMinimumSize.x));
-        NewSize.y = std::max(NewSize.y, static_cast<uint>(EC.WindowMinimumSize.y));
+        NewSize.x = std::max(NewSize.x, static_cast<uint>(Config.WindowMinimumSize.x));
+        NewSize.y = std::max(NewSize.y, static_cast<uint>(Config.WindowMinimumSize.y));
 
         float currentRatio = static_cast<float>(NewSize.x) / NewSize.y;
 
@@ -96,23 +92,23 @@ namespace we
 
     void WindowSubsystem::CreateGameWindow(const sf::VideoMode& Mode, uint Style, sf::State State)
     {
-        create(Mode, EC.WindowName, Style, State);
+        create(Mode, std::string(Config.WindowName), Style, State);
         ApplyWindowSettings();
     }
 
     void WindowSubsystem::ApplyWindowSettings()
     {
         SetWindowIcon();
-        setKeyRepeatEnabled(EC.EnableKeyRepeat);
+        setKeyRepeatEnabled(Config.EnableKeyRepeat);
         setMouseCursorVisible(false);
 
-        if (EC.VsyncEnabled) { setVerticalSyncEnabled(EC.VsyncEnabled); }
-        else { setFramerateLimit(static_cast<uint>(EC.TargetFPS)); }
+        if (Config.VsyncEnabled) { setVerticalSyncEnabled(Config.VsyncEnabled); }
+        else { setFramerateLimit(static_cast<uint>(Config.TargetFPS)); }
     }
 
     void WindowSubsystem::SetWindowIcon()
     {
-        auto IconHandle = LoadAsset().LoadTextureSync(EC.WindowIcon);
+        auto IconHandle = LoadAsset().LoadTextureSync(std::string(Config.WindowIcon));
         const auto& Image = IconHandle->copyToImage();
         setIcon(Image);
     }
@@ -128,9 +124,9 @@ namespace we
         }
         else
         {
-            CreateGameWindow(sf::VideoMode(static_cast<sf::Vector2u>(EC.RenderResolution)), sf::Style::Default, sf::State::Windowed);
+            CreateGameWindow(sf::VideoMode(static_cast<sf::Vector2u>(Config.RenderResolution)), sf::Style::Default, sf::State::Windowed);
             const auto desktop = sf::VideoMode::getDesktopMode().size;
-            setPosition(vec2i((desktop.x - EC.RenderResolution.x) / 2, (desktop.y - EC.RenderResolution.y) / 2));
+            setPosition(vec2i((desktop.x - Config.RenderResolution.x) / 2, (desktop.y - Config.RenderResolution.y) / 2));
         }
     }
 
@@ -139,47 +135,5 @@ namespace we
         close();
     }
 
-    void WindowSubsystem::EventWindowResized()
-    {
-    }
 
-    void WindowSubsystem::EventWindowFocusLost()
-    {
-    }
-
-    void WindowSubsystem::EventWindowFocusGained()
-    {
-    }
-
-    void WindowSubsystem::EventJoypadConnected()
-    {
-    }
-
-    void WindowSubsystem::EventJoypadDisconnected()
-    {
-    }
-
-    void WindowSubsystem::EventJoypadButtonPressed()
-    {
-    }
-
-    void WindowSubsystem::EventJoypadButtonReleased()
-    {
-    }
-
-    void WindowSubsystem::EventKeyPressed()
-    {
-    }
-
-    void WindowSubsystem::EventKeyReleased()
-    {
-    }
-
-    void WindowSubsystem::EventMouseButtonPressed()
-    {
-    }
-
-    void WindowSubsystem::EventMouseButtonReleased()
-    {
-    }
 }

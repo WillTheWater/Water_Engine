@@ -11,10 +11,24 @@
 
 namespace we
 {
+	struct WindowConfig
+	{
+		stringView WindowName;
+		vec2f RenderResolution;
+		vec2f AspectRatio;
+		vec2f WindowMinimumSize;
+		stringView WindowIcon;
+		bool FullscreenMode;
+		bool VsyncEnabled;
+		float TargetFPS;
+		bool EnableKeyRepeat;
+		bool DisableSFMLLogs;
+	};
+
 	class WindowSubsystem : public sf::RenderWindow
 	{
 	public:
-		WindowSubsystem();
+		explicit WindowSubsystem(const WindowConfig& Config);
 
 		void HandleEvent(const sf::Event& Event);
 		view GetConstrainedView() const;
@@ -26,7 +40,8 @@ namespace we
 	private:
 		bool bIsFullscreen;
 		mutable bool bViewDirty = true;
-		mutable view CachedView; 
+		mutable view CachedView;
+		WindowConfig Config; 
 
 	private:
 		friend GameWindowEventHandler;
@@ -39,20 +54,6 @@ namespace we
 		void RecomputeView() const;
 
 		void EventWindowClose();
-		void EventWindowResized();
 		void EventToggleBorderlessFullscreen();
-		void EventWindowFocusLost();
-		void EventWindowFocusGained();
-
-		void EventJoypadConnected();
-		void EventJoypadDisconnected();
-		void EventJoypadButtonPressed();
-		void EventJoypadButtonReleased();
-
-		void EventKeyPressed();
-		void EventKeyReleased();
-
-		void EventMouseButtonPressed();
-		void EventMouseButtonReleased();
 	};
 }

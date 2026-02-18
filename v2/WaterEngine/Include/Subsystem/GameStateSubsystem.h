@@ -14,7 +14,7 @@ namespace we
     class GameStateSubsystem
     {
     public:
-        void RequestStateChange(shared<IGameStateToken> NewState, bool bForce = false);
+        void RequestStateChange(shared<IGameStateToken> NewState, bool bInForce = false);
         void ApplyPendingState();
 
         shared<IGameStateToken> GetCurrentState() const { return CurrentState; }

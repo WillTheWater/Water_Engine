@@ -16,37 +16,37 @@ namespace we
 
 	void GameWindowEventHandler::operator()(const sf::Event::Resized&)
 	{
-		Window.EventWindowResized();
+		// Window.EventWindowResized(); //
 	}
 
 	void GameWindowEventHandler::operator()(const sf::Event::FocusLost&)
 	{
-		Window.EventWindowFocusLost();
+		// Window.EventWindowFocusLost(); //
 	}
 
 	void GameWindowEventHandler::operator()(const sf::Event::FocusGained&)
 	{
-		Window.EventWindowFocusGained();
+		// Window.EventWindowFocusGained(); //
 	}
 
 	void GameWindowEventHandler::operator()(const sf::Event::JoystickConnected&)
 	{
-		Window.EventJoypadConnected();
+		LOG("Gamepad Connected");
 	}
 
 	void GameWindowEventHandler::operator()(const sf::Event::JoystickDisconnected&)
 	{
-		Window.EventJoypadDisconnected();
+		LOG("Gamepad Disconnected");
 	}
 
 	void GameWindowEventHandler::operator()(const sf::Event::JoystickButtonPressed&)
 	{
-		Window.EventJoypadButtonPressed();
+		// Window.EventJoypadButtonPressed(); //
 	}
 
 	void GameWindowEventHandler::operator()(const sf::Event::JoystickButtonReleased&)
 	{
-		Window.EventJoypadButtonReleased();
+		// Window.EventJoypadButtonReleased(); //
 	}
 
 	void GameWindowEventHandler::operator()(const sf::Event::KeyPressed& Key)
@@ -55,26 +55,26 @@ namespace we
 		{
 			Window.EventToggleBorderlessFullscreen();
 		}
-		Window.EventKeyPressed();
+		// Window.EventKeyPressed(); //
 	}
 
 	void GameWindowEventHandler::operator()(const sf::Event::KeyReleased&)
 	{
-		Window.EventKeyReleased();
+		// Window.EventKeyReleased(); //
 	}
 
 	void GameWindowEventHandler::operator()(const sf::Event::MouseMoved&)
 	{
-
+		// Handled by cursor subsystem
 	}
 
 	void GameWindowEventHandler::operator()(const sf::Event::MouseButtonPressed&)
 	{
-		Window.EventMouseButtonPressed();
+		// Window.EventMouseButtonPressed(); //
 	}
 
 	void GameWindowEventHandler::operator()(const sf::Event::MouseButtonReleased&)
 	{
-		Window.EventMouseButtonReleased();
+		// Window.EventMouseButtonReleased(); //
 	}
 }

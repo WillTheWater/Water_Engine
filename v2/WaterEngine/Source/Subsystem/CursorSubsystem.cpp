@@ -10,13 +10,14 @@
 
 namespace we
 {
-	CursorSubsystem::CursorSubsystem()
-		: CursorTexture{ *LoadAsset().LoadTextureSync(EC.DefaultCursor) }
+	CursorSubsystem::CursorSubsystem(const CursorConfig& InConfig)
+		: CursorTexture{ *LoadAsset().LoadTextureSync(std::string(InConfig.DefaultCursor)) }
 		, CursorSprite(CursorTexture)
-		, CursorSize{EC.DefaultCursorSize}
-		, CursorSpeed(EC.DefaultCursorSpeed)
-		, bIsVisible(true)
-		, PixelPosition{0.f, 0.f}
+		, CursorSize{ InConfig.DefaultCursorSize }
+		, CursorSpeed{ InConfig.DefaultCursorSpeed }
+		, bIsVisible{ true }
+		, PixelPosition{ 0.f, 0.f }
+		, Config{ InConfig }
 	{
 		ApplyCursorSize();
 	}
@@ -27,13 +28,13 @@ namespace we
 			sf::Joystick::getAxisPosition(0, sf::Joystick::Axis::X) / 100.0f,
 			sf::Joystick::getAxisPosition(0, sf::Joystick::Axis::Y) / 100.0f);
 
-		if (JoystickDirection.length() > EC.JoystickDeadzone)
+		if (JoystickDirection.length() > Config.JoystickDeadzone)
 		{
 			CursorSprite.move(JoystickDirection * CursorSpeed * DeltaTime);
 
 			vec2f ClampedPos = {
-				std::clamp(CursorSprite.getPosition().x, 0.0f, (float)EC.RenderResolution.x),
-				std::clamp(CursorSprite.getPosition().y, 0.0f, (float)EC.RenderResolution.y)
+				std::clamp(CursorSprite.getPosition().x, 0.0f, Config.RenderResolution.x),
+				std::clamp(CursorSprite.getPosition().y, 0.0f, Config.RenderResolution.y)
 			};
 			CursorSprite.setPosition(ClampedPos);
 		}

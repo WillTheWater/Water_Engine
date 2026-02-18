@@ -10,6 +10,12 @@
 
 namespace we
 {
+	struct AudioConfig
+	{
+		float StartupGlobalVolume;
+		ulong MaxSFXStack;
+	};
+
 	enum class AudioChannel
 	{
 		Music,
@@ -27,11 +33,11 @@ namespace we
 	class AudioSubsystem
 	{
 	public:
-		AudioSubsystem();
+		explicit AudioSubsystem(const AudioConfig& Config);
 
-		void PlayMusic(const string& Path, bool bLoop = true);
-		void PlayAmbient(const string& Path, bool bLoop = true);
-		void PlaySFX(const string& Path, bool bLoop = false);
+		void PlayMusic(const string& Path, bool bInLoop = true);
+		void PlayAmbient(const string& Path, bool bInLoop = true);
+		void PlaySFX(const string& Path, bool bInLoop = false);
 
 		void StopMusic();
 		void StopAmbient();
@@ -45,7 +51,7 @@ namespace we
 		// Channels
 		void SetChannelVolume(AudioChannel Channel, float Volume);
 		float GetChannelVolume(AudioChannel Channel) const;
-		void MuteChannel(AudioChannel Channel, bool bMute);
+		void MuteChannel(AudioChannel Channel, bool bInMute);
 		bool IsChannelMuted(AudioChannel Channel) const;
 
 		float GetEffectiveVolume(AudioChannel Channel) const;
@@ -75,5 +81,6 @@ namespace we
 		shared<music> CurrentAmbient;
 		vector<SFXInstance> ActiveSFX;
 		size_t MaxSFXCount;
+		AudioConfig Config;
 	};
 }

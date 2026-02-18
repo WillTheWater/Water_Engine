@@ -93,7 +93,7 @@ namespace we
 
 		// Factory: Shape-based checkbox
 		shared<CheckBox> CreateCheckBox(
-			bool bInitialState = false,
+			bool bInChecked = false,
 			float BoxSize = 24.f,
 			CheckBoxShape Shape = CheckBoxShape::Rectangle);
 

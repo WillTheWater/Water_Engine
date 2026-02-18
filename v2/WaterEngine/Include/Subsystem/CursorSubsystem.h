@@ -12,10 +12,19 @@ namespace we
 {
 	class RenderSubsystem;
 
+	struct CursorConfig
+	{
+		stringView DefaultCursor;
+		vec2f DefaultCursorSize;
+		float DefaultCursorSpeed;
+		float JoystickDeadzone;
+		vec2f RenderResolution;
+	};
+
 	class CursorSubsystem
 	{
 	public:
-		CursorSubsystem();
+		explicit CursorSubsystem(const CursorConfig& Config);
 
 		void Update(float DeltaTime);
 		void Render(RenderSubsystem& Renderer) const;
@@ -45,6 +54,7 @@ namespace we
 		vec2f CursorSize;
 		float CursorSpeed;
 		bool bIsVisible;
-		vec2f PixelPosition;  // Raw pixel position for UI
+		vec2f PixelPosition;
+		CursorConfig Config;
 	};
 }

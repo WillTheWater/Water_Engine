@@ -13,8 +13,16 @@
 namespace we
 {
     class PhysicsComponent;
-    class EngineSubsystem;
     class PhysicsSubsystem;
+
+    struct PhysicsConfig
+    {
+        vec2f DefaultGravity;
+        float PhysicsScale = 0.01f;
+        float FixedTimeStep = 1.0f / 60.0f;
+        int32 VelocityIterations = 8;
+        int32 PositionIterations = 3;
+    };
 
     struct ContactEvent
     {
@@ -38,7 +46,7 @@ namespace we
     class PhysicsSubsystem
     {
     public:
-        PhysicsSubsystem(EngineSubsystem& InSubsystem);
+        explicit PhysicsSubsystem(const PhysicsConfig& Config);
         ~PhysicsSubsystem();
 
         void Initialize();
@@ -61,8 +69,8 @@ namespace we
         void ProcessPendingRemovals();
 
     private:
-        EngineSubsystem& Subsystem;
         b2World World;
+        PhysicsConfig Config;
         float PhysicsScale;
         float FixedTimeStep;
         float Accumulator;

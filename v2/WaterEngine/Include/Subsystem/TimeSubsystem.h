@@ -17,6 +17,8 @@ namespace we
 		float GetElapsedTime() const;
 
 		void SetPaused(bool bInPaused);
+		void Pause() { SetPaused(true); }
+		void Resume() { SetPaused(false); }
 		bool IsPaused() const { return bPaused; }
 
 		void SetTimeScale(float Scale);

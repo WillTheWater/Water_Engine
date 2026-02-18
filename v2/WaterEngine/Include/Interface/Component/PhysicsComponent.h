@@ -42,7 +42,7 @@ namespace we
         void SetDensity(float Density);
         void SetFriction(float Friction);
         void SetRestitution(float Restitution);
-        void SetSensor(bool bIsSensor);
+        void SetSensor(bool bInSensor);
 
         // Physics queries
         vec2f GetVelocity() const;
