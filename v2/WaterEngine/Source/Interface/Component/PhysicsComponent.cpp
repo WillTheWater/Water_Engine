@@ -7,6 +7,7 @@
 #include "Framework/World/Actor/Actor.h"
 #include "Framework/World/World.h"
 #include "Framework/EngineSubsystem.h"
+#include "Utility/Assert.h"
 #include "Utility/Log.h"
 #include "Utility/DebugDraw.h"
 #include "Subsystem/PhysicsSubsystem.h"
@@ -291,19 +292,8 @@ namespace we
 
     PhysicsSubsystem& PhysicsComponent::GetPhysics() const
     {
-        // Access physics subsystem through the owner actor's world
-        if (Owner && Owner->GetWorld())
-        {
-            return *Owner->GetWorld()->GetSubsystem().Physics;
-        }
-        // Fallback - this shouldn't happen in normal usage
-        static PhysicsSubsystem* Fallback = nullptr;
-        if (!Fallback)
-        {
-            struct DummySubsystem : EngineSubsystem {};
-            static DummySubsystem Dummy;
-            Fallback = new PhysicsSubsystem(Dummy);
-        }
-        return *Fallback;
+        VERIFY(Owner && "PhysicsComponent has no owner - component may have been destroyed");
+        VERIFY(Owner->GetWorld() && "Actor has no world - actor may have been removed from world");
+        return *Owner->GetWorld()->GetSubsystem().Physics;
     }
 }

@@ -39,7 +39,7 @@ namespace we
          // *********************************************************
 
          // Apply Shaders to Render Targets
-        if (sf::Shader::isAvailable)
+        if (sf::Shader::isAvailable())
         {
             VERIFY(GamePostProcessTarget.resize(vec2u(RenderResolution)));
             VERIFY(UIPostProcessTarget.resize(vec2u(RenderResolution)));
