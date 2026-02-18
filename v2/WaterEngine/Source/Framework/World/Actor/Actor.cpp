@@ -59,6 +59,25 @@ namespace we
 		ActorSprite.setOrigin({ bounds.size.x / 2.0f, bounds.size.y / 2.0f });
 	}
 
+	void Actor::SetSpriteTexture(shared<texture> NewTexture)
+	{
+		if (NewTexture)
+		{
+			ActorTexture = NewTexture;
+			ActorSprite.setTexture(*ActorTexture);
+		}
+	}
+
+	void Actor::SetSpriteTextureRect(const recti& TexRect)
+	{
+		ActorSprite.setTextureRect(TexRect);
+	}
+
+	void Actor::SetOrigin(const vec2f& Origin)
+	{
+		ActorSprite.setOrigin(Origin);
+	}
+
 	void Actor::UpdateSpriteTransform()
 	{
 		ActorSprite.setPosition(ActorPosition);

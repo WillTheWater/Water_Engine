@@ -51,7 +51,7 @@ namespace we
 	void Game::RegisterLevels()
 	{
 		RegisterLevel(MainMenu);
-		// RegisterLevel(LevelOne);
+		RegisterLevel(LevelOne);
 	}
 
 	void Game::OnStateEnter(shared<IGameStateToken> NewState)

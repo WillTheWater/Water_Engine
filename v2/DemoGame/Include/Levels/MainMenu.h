@@ -21,6 +21,8 @@ namespace we
 		virtual void BeginPlay() override;
 		virtual void Tick(float DeltaTime) override;
 
+		void OnPlayClicked();
+
 	private:
 		shared<texture> BgTexture;
 		optional<sprite> BgSprite;

@@ -38,8 +38,14 @@ namespace we
 		void SetVisible(bool bVisible) { bIsVisible = bVisible; }
 		bool IsVisible() const { return bIsVisible; }
 
-	protected:
+		// Animation support
+		void SetSpriteTexture(shared<texture> NewTexture);
+		void SetSpriteTextureRect(const recti& TexRect);
+		void SetOrigin(const vec2f& Origin);
+
 		World* GetWorld() const { return OwningWorld; }
+
+	protected:
 		void UpdateSpriteTransform();
 		sprite& GetSprite() { return ActorSprite; }
 

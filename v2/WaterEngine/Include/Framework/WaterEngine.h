@@ -16,10 +16,11 @@ namespace we
 		WaterEngine();
 		~WaterEngine();
 
-		void Run();
-		void ProcessEvents();
-		void Update();
+		void Initialize();
+		void Tick();
+		void Render();
 		void PostUpdate();
+		void ProcessEvents();
 
 	public:
 		bool IsRunning() const;
@@ -38,5 +39,6 @@ namespace we
 		void MountAssetDirectory();
 		void TickGame();
 		void WorldRender();
+		void Run() = delete;
 	};
 }

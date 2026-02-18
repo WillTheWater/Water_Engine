@@ -11,11 +11,6 @@ namespace we
 {
 	class Button;
 	class Panel;
-	class VerticalBox;
-	class HorizontalBox;
-	class GridBox;
-	class AutoPanel;
-	class Spacer;
 	struct EngineSubsystem;
 
 	class MainMenuUI
@@ -24,17 +19,14 @@ namespace we
 		explicit MainMenuUI(EngineSubsystem& Subsystem);
 		~MainMenuUI();
 
-		Delegate<> OnPlayButtonClicked;
-		Delegate<> OnSettingsButtonClicked;
+		Delegate<> OnPlayClicked;
 
 	private:
 		void CreateUI();
-		void OnColorButtonClicked();
-		void OnTextureButtonClicked();
+		void OnPlayButtonClicked();
 
 		EngineSubsystem& Subsystem;
 		shared<Panel> MenuPanel;
-		shared<Button> ColorButton;
-		shared<Button> TextureButton;
+		shared<Button> PlayButton;
 	};
 }

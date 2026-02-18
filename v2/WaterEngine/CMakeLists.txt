@@ -118,6 +118,7 @@ set(WATER_ENGINE_HEADERS
     Include/Utility/Assert.h
     Include/Utility/Delegate.h
     Include/Utility/Timer.h
+    Include/Utility/DebugDraw.h
 )
 
 set(WATER_ENGINE_SOURCES
@@ -177,6 +178,7 @@ set(WATER_ENGINE_SOURCES
 
     Source/Utility/RandomGenerator.cpp 
     Source/Utility/Timer.cpp
+    Source/Utility/DebugDraw.cpp
 )
 
 add_library(${WATER_ENGINE} STATIC

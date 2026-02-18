@@ -7,9 +7,9 @@
 #include "AssetDirectory/PakDirectory.h"
 #include "Framework/World/World.h"
 #include "Utility/Log.h"
-
-//#include "Subsystem/PhysicsSubsystem.h"
-//#include "Utility/Timer.h"
+#include "Utility/DebugDraw.h"
+#include "Subsystem/PhysicsSubsystem.h"
+#include "Subsystem/RenderSubsystem.h"
 
 namespace we
 {
@@ -38,8 +38,7 @@ namespace we
         Subsystem.World      = make_unique<WorldSubsystem>(Subsystem);
         Subsystem.Audio      = make_unique<AudioSubsystem>();
         Subsystem.GUI        = make_unique<GUISubsystem>(Subsystem);
-
-        //Physics().Initialize();
+        Subsystem.Physics    = make_unique<PhysicsSubsystem>(Subsystem);
     }
 
     void WaterEngine::MountAssetDirectory()
@@ -62,10 +61,7 @@ namespace we
             Subsystem.GameState->ApplyPendingState();
         }
 
-        //TimerManager::Get().Tick(DeltaTime);
-        
         Subsystem.Input->ProcessHeld();
-
         Subsystem.AssetLoader->GarbageCycle(DeltaTime);
 
         if (auto World = Subsystem.World->GetCurrentWorld())
@@ -74,40 +70,44 @@ namespace we
             World->TickGlobal(DeltaTime);
         }
 
-        //Physics().Step(DeltaTime);
-
-        PostUpdate();
+        Subsystem.Physics->Step(DeltaTime);
     }
 
-    void WaterEngine::Run()
+    void WaterEngine::Initialize()
     {
         BeginPlay();
+    }
 
-        while (IsRunning())
+    void WaterEngine::Tick()
+    {
+        Subsystem.Time->Tick();
+        Subsystem.AssetLoader->PollCompletedRequests();
+
+        if (!Subsystem.Time->IsPaused())
         {
-            ProcessEvents();
-
-            Subsystem.Time->Tick(); // Always tick time
-
-            Subsystem.AssetLoader->PollCompletedRequests();
-
-            if (!Subsystem.Time->IsPaused())
-            {
-                TickGame(); // World ticks only when not paused
-            }
-            else
-            {
-                Subsystem.Cursor->Update(Subsystem.Time->GetUnscaledDeltaTime());
-
-                Subsystem.Input->ProcessHeld();
-
-                Subsystem.GUI->Update(Subsystem.Time->GetUnscaledDeltaTime());
-
-                PostUpdate();
-            }
-
-            Update();
+            TickGame();
         }
+        else
+        {
+            Subsystem.Cursor->Update(Subsystem.Time->GetUnscaledDeltaTime());
+            Subsystem.Input->ProcessHeld();
+            Subsystem.GUI->Update(Subsystem.Time->GetUnscaledDeltaTime());
+        }
+    }
+
+    void WaterEngine::Render()
+    {
+        Subsystem.Audio->Update();
+        Subsystem.Window->clear(color::Black);
+        Subsystem.Render->StartRender();
+
+        WorldRender();
+        Subsystem.GUI->Render();
+        Subsystem.Cursor->Render(*Subsystem.Render);
+
+        Subsystem.Window->setView(Subsystem.Window->GetConstrainedView());
+        Subsystem.Window->draw(Subsystem.Render->FinishRender());
+        Subsystem.Window->display();
     }
 
     void WaterEngine::ProcessEvents()
@@ -129,28 +129,7 @@ namespace we
         }
     }
    
-    void WaterEngine::Update()
-    {
-        Subsystem.Audio->Update();
-        
-        Subsystem.Window->clear(color::Black);
 
-        Subsystem.Render->StartRender();
-
-        WorldRender();
-
-        //Physics().DebugDraw(Subsystem.Render.get());
-
-        Subsystem.GUI->Render();
-
-        Subsystem.Cursor->Render(*Subsystem.Render);
-
-        Subsystem.Window->setView(Subsystem.Window->GetConstrainedView());
-
-        Subsystem.Window->draw(Subsystem.Render->FinishRender());
-
-        Subsystem.Window->display();
-    }
 
     void WaterEngine::WorldRender()
     {
@@ -170,6 +149,10 @@ namespace we
         {
             Subsystem.Render->Draw(*RenderCmd.Drawable, ERenderLayer::Game);
         }
+
+        // Render debug primitives on top of game world
+        DebugDraw::Render(*Subsystem.Render);
+        DebugDraw::Clear();
     }
 
     void WaterEngine::PostUpdate()

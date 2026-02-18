@@ -5,10 +5,12 @@
 
 #include "Levels/MainMenu.h"
 #include "Framework/EngineSubsystem.h"
+#include "Subsystem/GameStateSubsystem.h"
 #include "EngineConfig.h"
 #include "GameConfig.h"
 #include "UI/MainMenuUI.h"
 #include "Utility/Log.h"
+#include "GameStateTokens.h"
 
 namespace we
 {
@@ -22,7 +24,7 @@ namespace we
 
 	void MainMenu::Construct()
 	{
-		// Load and setup background directly (no Actor overhead)
+		// Load and setup background
 		BgTexture = LoadAsset().LoadTextureSync(GC.DefaultBackground);
 		BgSprite.emplace(*BgTexture);
 
@@ -34,8 +36,9 @@ namespace we
 		// Add to world rendering at back (depth -1000)
 		AddRenderDepth(&*BgSprite, -1000.0f);
 
-		// Create the UI
+		// Create the UI and bind play button
 		MenuUI = make_unique<MainMenuUI>(Subsystem);
+		MenuUI->OnPlayClicked.Bind(this, &MainMenu::OnPlayClicked);
 		LOG("MainMenu: UI created");
 	}
 
@@ -50,5 +53,11 @@ namespace we
 
 	void MainMenu::Tick(float DeltaTime)
 	{
+	}
+
+	void MainMenu::OnPlayClicked()
+	{
+		LOG("Transitioning to LevelOne");
+		Subsystem.GameState->RequestStateChange(MakeState(EGameState::LevelOne));
 	}
 }

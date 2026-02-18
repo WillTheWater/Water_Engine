@@ -13,16 +13,23 @@ class b2Fixture;
 
 namespace we
 {
-    class PhysicsComponent;
+    enum class BodyType
+    {
+        Static,
+        Kinematic,
+        Dynamic
+    };
 
     class IPhysicsComponent : public IActorComponent
     {
     public:
         virtual ~IPhysicsComponent() = default;
 
-        virtual void OnBeginOverlap(PhysicsComponent* Other) = 0;
-        virtual void OnEndOverlap(PhysicsComponent* Other) = 0;
+        // Overlap callbacks
+        virtual void OnBeginOverlap(IPhysicsComponent* Other) = 0;
+        virtual void OnEndOverlap(IPhysicsComponent* Other) = 0;
 
+        // Physics body access
         virtual b2Body* GetPhysicsBody() const = 0;
     };
 }

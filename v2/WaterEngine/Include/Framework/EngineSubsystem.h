@@ -18,6 +18,7 @@
 #include "Subsystem/GameStateSubsystem.h"
 #include "Subsystem/AudioSubsystem.h"
 #include "Subsystem/GUISubsystem.h"
+#include "Subsystem/PhysicsSubsystem.h"
 
 namespace we
 {
@@ -34,5 +35,6 @@ namespace we
 		unique<GameStateSubsystem> GameState;
 		unique<AudioSubsystem> Audio;
 		unique<GUISubsystem> GUI;
+		unique<PhysicsSubsystem> Physics;
 	};
 }
