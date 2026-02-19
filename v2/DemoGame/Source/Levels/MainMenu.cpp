@@ -1,9 +1,10 @@
 // =============================================================================
 // Water Engine v2.0.0
-// Copyright(C) 2026 Will The Water
+// Copyright (C) 2026 Will The Water
 // =============================================================================
 
 #include "Levels/MainMenu.h"
+#include "GameInstance/DemoGameInstance.h"
 #include "Framework/EngineSubsystem.h"
 #include "Subsystem/GameStateSubsystem.h"
 #include "EngineConfig.h"
@@ -36,21 +37,18 @@ namespace we
 		// Add to world rendering at back (depth -1000)
 		AddRenderDepth(&*BgSprite, -1000.0f);
 
-		// Create the UI and bind all buttons
+		// Create the main menu UI and bind all buttons
 		MenuUI = make_unique<MainMenuUI>(Subsystem);
 		MenuUI->OnPlayClicked.Bind(this, &MainMenu::OnPlayClicked);
 		MenuUI->OnSettingsClicked.Bind(this, &MainMenu::OnSettingsClicked);
 		MenuUI->OnQuitClicked.Bind(this, &MainMenu::OnQuitClicked);
-		LOG("MainMenu: UI created");
+
+		// Note: Settings closed binding happens in OnSettingsClicked to ensure fresh binding
 	}
 
 	void MainMenu::BeginPlay()
 	{
-		if (Subsystem.Audio)
-		{
-			Subsystem.Audio->PlayMusic(GC.DefaultMusic, true);
-			Subsystem.Audio->PlayAmbient(GC.DefaultAmbient, true);
-		}
+		// Nothing needed here - MainMenuUI handles its own visibility
 	}
 
 	void MainMenu::Tick(float DeltaTime)
@@ -61,21 +59,38 @@ namespace we
 	{
 		LOG("Transitioning to LevelOne");
 		
-		// Clear all GUI widgets - they'll be recreated in the new world if needed
-		Subsystem.GUI->Clear();
+		// Hide main menu UI (don't clear - that would remove persistent UI like settings)
+		MenuUI->Hide();
 		
 		Subsystem.GameState->RequestStateChange(MakeState(EGameState::LevelOne));
 	}
 
 	void MainMenu::OnSettingsClicked()
 	{
-		LOG("Settings clicked - placeholder for settings menu");
-		// TODO: Show settings panel or transition to settings world
+		LOG("Opening settings menu via GameInstance");
+		
+		// Hide main menu and show settings via GameInstance (persists across worlds)
+		MenuUI->Hide();
+		
+		if (auto* GI = static_cast<DemoGameInstance*>(Subsystem.GameInst.get()))
+		{
+			// Clear any stale bindings and bind fresh
+			GI->OnSettingsClosed.Clear();
+			GI->OnSettingsClosed.Bind(this, &MainMenu::OnSettingsBackClicked);
+			GI->ShowSettings();
+		}
+	}
+
+	void MainMenu::OnSettingsBackClicked()
+	{
+		LOG("Settings closed - returning to main menu");
+		
+		// Show main menu again
+		MenuUI->Show();
 	}
 
 	void MainMenu::OnQuitClicked()
 	{
-		LOG("Quit clicked - requesting shutdown");
 		Subsystem.GameState->RequestShutdown();
 	}
 }

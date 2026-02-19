@@ -284,19 +284,20 @@ namespace we
 		bool WasPressed = bGrabbed;
 		bGrabbed = bInPressed;
 
-		if (bInPressed && !WasPressed)
+		if (!bInPressed && WasPressed)
 		{
-			// Just pressed - jump to click position immediately
-			// This matches the old behavior where clicking anywhere on the track jumps the thumb
-			// Note: Mouse position needs to be retrieved from Cursor subsystem
-			// We'll handle this in OnDrag which gets called immediately after by GUISubsystem
-		}
-		else if (!bInPressed && WasPressed)
-		{
-			// Released
+			// Released - nothing special needed
 		}
 
 		UpdateVisualState();
+	}
+
+	void Slider::OnPressed(const vec2f& MousePos)
+	{
+		// When pressing anywhere on the slider (track or thumb),
+		// immediately snap the thumb to that position
+		float NewValue = CalculateValueFromMouse(MousePos);
+		SetValue(NewValue);
 	}
 
 	void Slider::OnDrag(const vec2f& MousePos)

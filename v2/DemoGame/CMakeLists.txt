@@ -22,6 +22,8 @@ set(GAME_HEADERS
     Include/Game.h
     Include/GameStateTokens.h
     Include/GameConfig.h
+    
+    Include/GameInstance/DemoGameInstance.h
 
     Include/Levels/MainMenu.h
     Include/Levels/LevelOne.h
@@ -29,6 +31,7 @@ set(GAME_HEADERS
     Include/UI/MainMenuUI.h
     Include/UI/PauseUI.h
     Include/UI/SettingsMenuUI.h
+    Include/UI/SettingsController.h
     
     Include/Input/InputActions.h
 
@@ -39,6 +42,8 @@ set(GAME_HEADERS
 set(GAME_SOURCES
     Source/Game.cpp
     Source/GameConfig.cpp
+    
+    Source/GameInstance/DemoGameInstance.cpp
 
     Source/Levels/MainMenu.cpp 
     Source/Levels/LevelOne.cpp
@@ -46,6 +51,7 @@ set(GAME_SOURCES
     Source/UI/MainMenuUI.cpp
     Source/UI/PauseUI.cpp
     Source/UI/SettingsMenuUI.cpp
+    Source/UI/SettingsController.cpp
     
     Source/Character/PlayerCharacter.cpp
     Source/Character/MovementComponent.cpp

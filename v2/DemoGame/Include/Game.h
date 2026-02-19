@@ -20,6 +20,8 @@ namespace we
 		void TogglePause();
 
 	protected:
+		unique<GameInstance> CreateGameInstance() override;
+		
 		virtual void Construct() override;
 		virtual void BeginPlay() override;
 		virtual void Tick(float) override;

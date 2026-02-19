@@ -50,13 +50,6 @@ namespace we
         bool TryMove(vec2f Delta);
 
     protected:
-        // Called when character collides with something
-        virtual void OnCollision(Actor* Other);
-        
-        // Called when sensor overlaps with something  
-        virtual void OnSensorBegin(Actor* Other);
-        virtual void OnSensorEnd(Actor* Other);
-
         // Override to customize collision setup
         virtual void InitializePhysics();
 
