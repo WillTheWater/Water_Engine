@@ -195,7 +195,6 @@ namespace we
 		Subsystem.Audio->SetGlobalVolume(Volume);
 		if (auto Text = UI.GetMasterValue())
 			Text->SetText(ValueToPercentText(SliderValue));
-		LOG("Master volume: {:.0f}% (saved & applied)", Volume);
 	}
 
 	void SettingsController::OnMusicVolumeChanged(float SliderValue)
@@ -205,7 +204,6 @@ namespace we
 		Subsystem.Audio->SetChannelVolume(AudioChannel::Music, Volume);
 		if (auto Text = UI.GetMusicValue())
 			Text->SetText(ValueToPercentText(SliderValue));
-		LOG("Music volume: {:.0f}% (saved & applied)", Volume);
 	}
 
 	void SettingsController::OnAmbientVolumeChanged(float SliderValue)
@@ -215,7 +213,6 @@ namespace we
 		Subsystem.Audio->SetChannelVolume(AudioChannel::Ambient, Volume);
 		if (auto Text = UI.GetAmbientValue())
 			Text->SetText(ValueToPercentText(SliderValue));
-		LOG("Ambient volume: {:.0f}% (saved & applied)", Volume);
 	}
 
 	void SettingsController::OnSFXVolumeChanged(float SliderValue)
@@ -225,7 +222,6 @@ namespace we
 		Subsystem.Audio->SetChannelVolume(AudioChannel::SFX, Volume);
 		if (auto Text = UI.GetSFXValue())
 			Text->SetText(ValueToPercentText(SliderValue));
-		LOG("SFX volume: {:.0f}% (saved & applied)", Volume);
 	}
 
 	// =========================================================================
@@ -235,20 +231,17 @@ namespace we
 	{
 		// Note: Fullscreen is NOT saved - toggle is runtime-only to avoid startup issues
 		Subsystem.Window->SetFullscreen(bChecked);
-		LOG("Fullscreen: {} (applied, not saved)", bChecked ? "ON" : "OFF");
 	}
 
 	void SettingsController::OnVSyncToggled(bool bChecked)
 	{
 		Subsystem.SaveLoad->Set<bool>(KEY_VSYNC, bChecked);
 		Subsystem.Window->SetVSync(bChecked);
-		LOG("VSync: {} (saved & applied)", bChecked ? "ON" : "OFF");
 	}
 
 	void SettingsController::OnSmoothRenderToggled(bool bChecked)
 	{
 		Subsystem.SaveLoad->Set<bool>(KEY_SMOOTH_RENDER, bChecked);
-		LOG("Smooth Render: {} (saved)", bChecked ? "ON" : "OFF");
 	}
 
 	// =========================================================================
@@ -261,7 +254,6 @@ namespace we
 		Subsystem.Cursor->SetJoystickDeadzone(SliderValue);
 		if (auto Text = UI.GetDeadzoneValue())
 			Text->SetText(ValueToPercentText(SliderValue));
-		LOG("Deadzone: {:.0f}% (saved & applied)", SliderValue * 100.0f);
 	}
 
 	void SettingsController::OnCursorSpeedChanged(float SliderValue)
@@ -272,7 +264,6 @@ namespace we
 		Subsystem.Cursor->SetSpeed(Speed);
 		if (auto Text = UI.GetCursorSpeedValue())
 			Text->SetText(std::to_string(static_cast<int>(Speed)));
-		LOG("Cursor Speed: {:.0f} (saved & applied)", Speed);
 	}
 
 	// =========================================================================

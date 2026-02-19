@@ -5,6 +5,7 @@
 
 #include "Levels/LevelOne.h"
 #include "Framework/EngineSubsystem.h"
+#include "Framework/World/Actor/Border.h"
 #include "Subsystem/ResourceSubsystem.h"
 #include "Subsystem/InputSubsystem.h"
 #include "Subsystem/GameStateSubsystem.h"
@@ -183,6 +184,30 @@ namespace we
 		SpawnActor<TriggerTestActor>(vec2f{ 200, 300 }, 60.0f);
 		SpawnActor<BlockingTestActor>(vec2f{ 600, 300 }, 70.0f);
 		SpawnActor<RectangleBlockingActor>(vec2f{ 1200, 400 });
+
+		// Test Borders - Room walls (closed loop)
+		auto RoomBorder = SpawnActor<Border>(vector<vec2f>{
+			{ 50, 50 },
+			{ 1870, 50 },
+			{ 1870, 1030 },
+			{ 50, 1030 }
+		});
+		if (auto RB = RoomBorder.lock())
+		{
+			RB->SetClosedLoop(true);
+			RB->SetDebugColor(color{ 255, 255, 0 });  // Yellow
+		}
+
+		// Test Border - Center divider wall (open chain)
+		auto DividerWall = SpawnActor<Border>(vector<vec2f>{
+			{ 960, 200 },
+			{ 960, 500 },
+			{ 960, 800 }
+		});
+		if (auto DW = DividerWall.lock())
+		{
+			DW->SetDebugColor(color{ 0, 255, 255 });  // Cyan
+		}
 
 		// Bind input for pause toggle (ESC and Gamepad Start)
 		SetupInputBindings();
