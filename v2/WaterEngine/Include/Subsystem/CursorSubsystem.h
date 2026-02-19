@@ -40,12 +40,13 @@ namespace we
 		void SetCursorSize(vec2f Size);
 		vec2f GetCursorSize() const { return CursorSize; }
 
+		// Cursor position in render resolution coordinates (0 to RenderResolution)
 		void SetPosition(vec2f Position);
 		vec2f GetPosition() const;
 		
-		// Raw pixel position for UI hit testing
-		void SetPixelPosition(vec2f PixelPos) { PixelPosition = PixelPos; }
-		vec2f GetPixelPosition() const { return PixelPosition; }
+		// Convert position to/from window pixel coordinates
+		vec2f GetPixelPosition() const;  // Render coords -> Window pixels
+		void SetPixelPosition(vec2f PixelPos);  // Window pixels -> Render coords
 
 		void SetJoystickDeadzone(float Deadzone) { Config.JoystickDeadzone = Deadzone; }
 		float GetJoystickDeadzone() const { return Config.JoystickDeadzone; }
@@ -60,7 +61,6 @@ namespace we
 		vec2f CursorSize;
 		float CursorSpeed;
 		bool bIsVisible;
-		vec2f PixelPosition;
 		CursorConfig Config;
 	};
 }

@@ -49,8 +49,8 @@ namespace we
 
 	private:
 		void UpdateVisualState();
-		void OnFocusGainedHandler();
-		void OnFocusLostHandler();
+		void OnHoverGainedHandler();
+		void OnHoverLostHandler();
 		void OnClickHandler();
 
 		bool bChecked = false;

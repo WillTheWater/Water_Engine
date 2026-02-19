@@ -19,7 +19,6 @@ namespace we
 		, CursorSize{ InConfig.DefaultCursorSize }
 		, CursorSpeed{ InConfig.DefaultCursorSpeed }
 		, bIsVisible{ true }
-		, PixelPosition{ 0.f, 0.f }
 		, Config{ InConfig }
 	{
 		ApplyCursorSize();
@@ -49,19 +48,16 @@ namespace we
 			float RawT = (InputLength - Config.JoystickDeadzone) / (1.0f - Config.JoystickDeadzone);
 			float ScaledT = Clamp01(RawT);
 			
-			// Move the cursor sprite
+			// Move the cursor sprite (in render coordinates)
 			vec2f Delta = NormalizedDir * CursorSpeed * ScaledT * DeltaTime;
 			CursorSprite.move(Delta);
 
-			// Clamp to screen bounds
+			// Clamp to render resolution bounds
 			vec2f ClampedPos = {
 				Clamp(CursorSprite.getPosition().x, 0.0f, Config.RenderResolution.x),
 				Clamp(CursorSprite.getPosition().y, 0.0f, Config.RenderResolution.y)
 			};
 			CursorSprite.setPosition(ClampedPos);
-
-			// Update pixel position for UI hit-testing
-			SetPixelPosition(ClampedPos);
 		}
 	}
 
@@ -83,7 +79,6 @@ namespace we
 	{
 		vec2f Center = Config.RenderResolution / 2.0f;
 		CursorSprite.setPosition(Center);
-		SetPixelPosition(Center);
 	}
 
 	void CursorSubsystem::SetVisibility(bool Visible)
@@ -114,5 +109,29 @@ namespace we
 	vec2f CursorSubsystem::GetPosition() const
 	{
 		return CursorSprite.getPosition();
+	}
+
+	vec2f CursorSubsystem::GetPixelPosition() const
+	{
+		// Convert from render coordinates to window pixel coordinates
+		vec2f Pos = CursorSprite.getPosition();
+		vec2u WindowSize = Config.Window.getSize();
+		
+		float ScaleX = static_cast<float>(WindowSize.x) / Config.RenderResolution.x;
+		float ScaleY = static_cast<float>(WindowSize.y) / Config.RenderResolution.y;
+		
+		return vec2f(Pos.x * ScaleX, Pos.y * ScaleY);
+	}
+
+	void CursorSubsystem::SetPixelPosition(vec2f PixelPos)
+	{
+		// Convert from window pixel coordinates to render coordinates
+		vec2u WindowSize = Config.Window.getSize();
+		
+		float ScaleX = static_cast<float>(Config.RenderResolution.x) / WindowSize.x;
+		float ScaleY = static_cast<float>(Config.RenderResolution.y) / WindowSize.y;
+		
+		vec2f RenderPos = vec2f(PixelPos.x * ScaleX, PixelPos.y * ScaleY);
+		CursorSprite.setPosition(RenderPos);
 	}
 }

@@ -45,8 +45,8 @@ namespace we
 
 	private:
 		void UpdateVisualState();
-		void OnButtonFocusGained();
-		void OnButtonFocusLost();
+		void OnButtonHoverGained();
+		void OnButtonHoverLost();
 		void LoadTexture(shared<texture>& OutTexture, const string& Path);
 
 		string Label;

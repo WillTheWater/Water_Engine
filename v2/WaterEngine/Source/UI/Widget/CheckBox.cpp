@@ -41,8 +41,8 @@ namespace we
 
 		UpdateVisualState();
 
-		OnFocusGained.Bind(this, &CheckBox::OnFocusGainedHandler);
-		OnFocusLost.Bind(this, &CheckBox::OnFocusLostHandler);
+		OnHoverGained.Bind(this, &CheckBox::OnHoverGainedHandler);
+		OnHoverLost.Bind(this, &CheckBox::OnHoverLostHandler);
 		OnClicked.Bind(this, &CheckBox::OnClickHandler);
 	}
 
@@ -77,8 +77,8 @@ namespace we
 			SetSize({ BoxSize, BoxSize });
 		}
 
-		OnFocusGained.Bind(this, &CheckBox::OnFocusGainedHandler);
-		OnFocusLost.Bind(this, &CheckBox::OnFocusLostHandler);
+		OnHoverGained.Bind(this, &CheckBox::OnHoverGainedHandler);
+		OnHoverLost.Bind(this, &CheckBox::OnHoverLostHandler);
 		OnClicked.Bind(this, &CheckBox::OnClickHandler);
 	}
 
@@ -200,13 +200,13 @@ namespace we
 		}
 	}
 
-	void CheckBox::OnFocusGainedHandler()
+	void CheckBox::OnHoverGainedHandler()
 	{
 		bHovered = true;
 		UpdateVisualState();
 	}
 
-	void CheckBox::OnFocusLostHandler()
+	void CheckBox::OnHoverLostHandler()
 	{
 		bHovered = false;
 		bPressed = false;

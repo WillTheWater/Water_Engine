@@ -122,11 +122,11 @@ namespace we
 		SetSize(TrackSize);
 
 		// Connect hover events
-		OnFocusGained.Bind([this]() {
+		OnHoverGained.Bind([this]() {
 			bHovered = true;
 			UpdateVisualState();
 		});
-		OnFocusLost.Bind([this]() {
+		OnHoverLost.Bind([this]() {
 			bHovered = false;
 			UpdateVisualState();
 		});

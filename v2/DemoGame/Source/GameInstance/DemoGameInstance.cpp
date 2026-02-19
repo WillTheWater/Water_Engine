@@ -10,7 +10,10 @@
 #include "Subsystem/AudioSubsystem.h"
 #include "Subsystem/WindowSubsystem.h"
 #include "Subsystem/SaveLoadSubsystem.h"
+#include "Subsystem/InputSubsystem.h"
+#include "Subsystem/GUISubsystem.h"
 #include "GameConfig.h"
+#include "Input/InputActions.h"
 #include "Utility/Log.h"
 
 namespace we
@@ -63,6 +66,9 @@ namespace we
 		
 		// Bind back button
 		SettingsUI->OnBackClicked.Bind(this, &DemoGameInstance::OnSettingsBackClicked);
+		
+		// Bind GUI navigation input (gamepad)
+		BindGUINavigationInput();
 		
 		// DemoGameInstance initialized
 	}
@@ -181,5 +187,27 @@ namespace we
 		// Notify listeners and clear the delegate to prevent stale bindings
 		OnSettingsClosed.Broadcast();
 		OnSettingsClosed.Clear();
+	}
+
+	void DemoGameInstance::BindGUINavigationInput()
+	{
+		using enum GamepadButton;
+		auto& Input = *Subsystem->Input;
+		auto& GUI = *Subsystem->GUI;
+
+		// Bind hardware inputs to GUI actions
+		Input.Bind(GUI_CONFIRM, Input::Gamepad{ South, 0 });
+		Input.Bind(GUI_CANCEL, Input::Gamepad{ East, 0 });
+		Input.Bind(GUI_NAV_NEXT, Input::Gamepad{ R1, 0 });
+		Input.Bind(GUI_NAV_PREVIOUS, Input::Gamepad{ L1, 0 });
+
+		// Bind actions to GUI subsystem methods
+		Input.OnPressed(GUI_CONFIRM, [&GUI]() { GUI.OnGamepadConfirmPressed(); });
+		Input.OnReleased(GUI_CONFIRM, [&GUI]() { GUI.OnGamepadConfirmReleased(); });
+		Input.OnPressed(GUI_CANCEL, [&GUI]() { GUI.OnGamepadCancel(); });
+		Input.OnPressed(GUI_NAV_NEXT, [&GUI]() { GUI.OnGamepadNavigateNext(); });
+		Input.OnPressed(GUI_NAV_PREVIOUS, [&GUI]() { GUI.OnGamepadNavigatePrevious(); });
+
+		LOG("GUI navigation input bound");
 	}
 }

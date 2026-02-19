@@ -39,8 +39,8 @@ namespace we
 			LabelText->setFillColor(color::Black);
 		}
 
-		OnFocusGained.Bind(this, &Button::OnButtonFocusGained);
-		OnFocusLost.Bind(this, &Button::OnButtonFocusLost);
+		OnHoverGained.Bind(this, &Button::OnButtonHoverGained);
+		OnHoverLost.Bind(this, &Button::OnButtonHoverLost);
 	}
 
 	Button::Button(
@@ -89,8 +89,8 @@ namespace we
 			LabelText->setFillColor(color::Black);
 		}
 
-		OnFocusGained.Bind(this, &Button::OnButtonFocusGained);
-		OnFocusLost.Bind(this, &Button::OnButtonFocusLost);
+		OnHoverGained.Bind(this, &Button::OnButtonHoverGained);
+		OnHoverLost.Bind(this, &Button::OnButtonHoverLost);
 	}
 
 	void Button::CollectRenderDepths(vector<RenderDepth>& OutDepths) const
@@ -207,13 +207,13 @@ namespace we
 		UpdateVisualState();
 	}
 
-	void Button::OnButtonFocusGained()
+	void Button::OnButtonHoverGained()
 	{
 		bHovered = true;
 		UpdateVisualState();
 	}
 
-	void Button::OnButtonFocusLost()
+	void Button::OnButtonHoverLost()
 	{
 		bHovered = false;
 		bPressed = false;
