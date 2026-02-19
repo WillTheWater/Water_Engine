@@ -23,12 +23,6 @@ namespace we
 
         if (BodyA && BodyB)
         {
-            auto* CompA = reinterpret_cast<PhysicsComponent*>(BodyA->GetUserData().pointer);
-            auto* CompB = reinterpret_cast<PhysicsComponent*>(BodyB->GetUserData().pointer);
-            if (CompA && CompB)
-            {
-                LOG("PHYSICS CONTACT BEGIN: {:p} <-> {:p}", reinterpret_cast<void*>(CompA), reinterpret_cast<void*>(CompB));
-            }
             // Only trigger overlap callbacks for sensor contacts
             bool bIsSensorContact = Contact->GetFixtureA()->IsSensor() || Contact->GetFixtureB()->IsSensor();
             Physics.QueueContactEvent({ ContactEvent::Type::Begin, BodyA, BodyB, bIsSensorContact });
@@ -68,13 +62,11 @@ namespace we
 
     void PhysicsSubsystem::Initialize()
     {
-        LOG("Physics initialized");
     }
 
     void PhysicsSubsystem::Shutdown()
     {
         ProcessPendingRemovals();
-        LOG("Physics shutdown");
     }
 
     void PhysicsSubsystem::Step(float DeltaTime)

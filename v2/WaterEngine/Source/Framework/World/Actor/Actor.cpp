@@ -12,7 +12,7 @@ namespace we
 {
 	Actor::Actor(World* InWorld, const string& TexturePath)
 		: OwningWorld{ InWorld }
-		, ActorTexture{ LoadAsset().LoadTextureSync(TexturePath) }
+		, ActorTexture{ TexturePath.empty() ? nullptr : LoadAsset().LoadTextureSync(TexturePath) }
 		, ActorSprite{ ActorTexture ? *ActorTexture : *LoadAsset().GetPlaceholderTexture() }
 		, ActorPosition{}
 		, ActorRotation{}

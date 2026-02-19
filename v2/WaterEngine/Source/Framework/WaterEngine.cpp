@@ -3,6 +3,8 @@
 // Copyright(C) 2026 Will The Water
 // =============================================================================
 
+#include <filesystem>
+
 #include "Framework/WaterEngine.h"
 #include "AssetDirectory/PakDirectory.h"
 #include "Framework/World/World.h"
@@ -91,8 +93,8 @@ namespace we
     void WaterEngine::MountAssetDirectory()
     {
         // Mount .pak For Resources
-        auto PD = make_shared<PakDirectory>(EC.AssetDirectory);
         Subsystem.AssetLoader = make_unique<ResourceSubsystem>();
+        auto PD = make_shared<PakDirectory>(EC.AssetDirectory);
         Subsystem.AssetLoader->SetAssetDirectory(PD);
         if (EC.DisableSFMLLogs) { sf::err().rdbuf(nullptr); }
     }

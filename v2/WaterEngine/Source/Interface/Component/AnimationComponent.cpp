@@ -97,7 +97,7 @@ namespace we
         auto it = SpriteSheets.find(SheetID);
         if (it == SpriteSheets.end())
         {
-            LOG("SpriteSheet ID {} not found", SheetID);
+            // SpriteSheet not found - silent fail
             return;
         }
 
@@ -124,7 +124,7 @@ namespace we
         auto it = Animations.find(StateID);
         if (it == Animations.end())
         {
-            LOG("Animation state not found: {}", StateID);
+            // Animation state not found - silent fail
             return;
         }
 

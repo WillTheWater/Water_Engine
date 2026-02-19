@@ -130,8 +130,6 @@ namespace we
             Body->CreateFixture(&Def);
         }
         bPhysicsCreated = true;
-
-        LOG("Border created with {} points (closed={})", Points.size(), bIsClosedLoop);
     }
 
     void Border::DestroyPhysics()

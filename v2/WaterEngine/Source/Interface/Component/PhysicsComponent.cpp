@@ -53,10 +53,6 @@ namespace we
 
         Body = GetPhysics().CreateBody(this, Type, Pos, Rot);
         RecreateFixture();
-        
-        LOG("PHYSICS BODY CREATED: {:p} at ({:.1f}, {:.1f}) type={} circle={} radius={:.1f}", 
-            reinterpret_cast<void*>(this), Pos.x, Pos.y, 
-            static_cast<int>(Type), bIsCircle, ShapeRadius);
     }
 
     void PhysicsComponent::Tick(float DeltaTime)
@@ -161,23 +157,13 @@ namespace we
     void PhysicsComponent::OnBeginOverlap(IPhysicsComponent* Other)
     {
         // Override in derived classes to handle overlap begin
-        if (Owner && Other && Other->GetOwner())
-        {
-            LOG("OVERLAP BEGIN: Actor@{:p} -> Actor@{:p}", 
-                reinterpret_cast<void*>(Owner), 
-                reinterpret_cast<void*>(Other->GetOwner()));
-        }
+        (void)Other;
     }
 
     void PhysicsComponent::OnEndOverlap(IPhysicsComponent* Other)
     {
         // Override in derived classes to handle overlap end
-        if (Owner && Other && Other->GetOwner())
-        {
-            LOG("OVERLAP END: Actor@{:p} -> Actor@{:p}", 
-                reinterpret_cast<void*>(Owner), 
-                reinterpret_cast<void*>(Other->GetOwner()));
-        }
+        (void)Other;
     }
 
     void PhysicsComponent::SetBodyType(BodyType NewType)

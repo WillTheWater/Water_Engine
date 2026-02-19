@@ -83,20 +83,17 @@ namespace we
 
 	void PauseUI::OnContinueButtonClicked()
 	{
-		LOG("Continue button clicked");
 		OnContinueClicked.Broadcast();
 		Hide();
 	}
 
 	void PauseUI::OnSettingsButtonClicked()
 	{
-		LOG("Settings button clicked from pause menu");
 		OnSettingsClicked.Broadcast();
 	}
 
 	void PauseUI::OnQuitButtonClicked()
 	{
-		LOG("Quit button clicked from pause menu");
 		OnQuitClicked.Broadcast();
 	}
 }

@@ -214,7 +214,6 @@ namespace we
 
 		World::BeginPlay();
 		Subsystem.Cursor->SetVisibility(false);
-		LOG("LevelOne: Started");
 	}
 
 	void LevelOne::SetupInputBindings()
@@ -263,7 +262,7 @@ namespace we
 			Subsystem.Time->SetPaused(true);
 		}
 		
-		LOG("Pause menu opened");
+
 	}
 
 	void LevelOne::HidePauseMenu()
@@ -280,7 +279,7 @@ namespace we
 			Subsystem.Time->SetPaused(false);
 		}
 		
-		LOG("Pause menu closed");
+
 	}
 
 	void LevelOne::OnPauseContinue()

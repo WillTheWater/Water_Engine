@@ -10,7 +10,6 @@
 #include "Framework/World/World.h"
 #include "Framework/EngineSubsystem.h"
 #include "Utility/Math.h"
-#include "Utility/Log.h"
 #include "GameConfig.h"
 
 namespace we
@@ -136,7 +135,6 @@ namespace we
 
 	void Player::Destroy()
 	{
-		LOG("Player destroyed");
 		if (MoveComp) MoveComp->EndPlay();
 		if (AnimComp) AnimComp->EndPlay();
 		Character::Destroy();

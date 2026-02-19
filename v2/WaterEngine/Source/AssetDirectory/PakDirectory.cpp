@@ -3,6 +3,8 @@
 // Copyright(C) 2026 Will The Water
 // =============================================================================
 
+#include <filesystem>
+
 #include <physfs.h>
 
 #include "AssetDirectory/PakDirectory.h"
@@ -25,7 +27,15 @@ namespace we
 		// The final parameter enables higher mount priority over existing mounts.
 		PHYSFS_mount(PHYSFS_getBaseDir(), "/", 1);
 
-		if (!PHYSFS_mount(PakFilePath.c_str(), "/", 1))
+		// Resolve relative paths against the executable directory
+		std::string ResolvedPath = PakFilePath;
+		if (!std::filesystem::path(PakFilePath).is_absolute())
+		{
+			ResolvedPath = (std::filesystem::path(PHYSFS_getBaseDir()) / PakFilePath).string();
+		}
+		MountedPakPath = ResolvedPath;
+
+		if (!PHYSFS_mount(MountedPakPath.c_str(), "/", 1))
 		{
 			LOG("Failed to find .pak")
 		}
