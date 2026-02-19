@@ -6,6 +6,7 @@
 #include "Framework/World/Actor/Camera.h"
 #include "Framework/World/World.h"
 #include "Framework/EngineSubsystem.h"
+#include "Utility/Math.h"
 
 namespace we
 {
@@ -19,6 +20,17 @@ namespace we
     void Camera::BeginPlay()
     {
         Actor::BeginPlay();
+    }
+
+    void Camera::Tick(float DeltaTime)
+    {
+        Actor::Tick(DeltaTime);
+        
+        // Base class Tick() guards against ticking before BeginPlay
+        // Only update position if we've begun play
+        if (!HasBegunPlay()) return;
+        
+        UpdatePosition(DeltaTime);
     }
 
     void Camera::Destroy()
@@ -46,6 +58,40 @@ namespace we
         Zoom = NewZoom;
     }
 
+    void Camera::AttachTo(Actor* Target, vec2f LocalOffset)
+    {
+        TargetActor = Target;
+        TargetOffset = LocalOffset;
+        Velocity = {0, 0};
+    }
+
+    void Camera::Detach()
+    {
+        TargetActor = nullptr;
+        Velocity = {0, 0};
+    }
+
+    void Camera::UpdatePosition(float DeltaTime)
+    {
+        if (!TargetActor) return;
+
+        vec2f TargetPos = TargetActor->GetPosition() + TargetOffset;
+        vec2f CurrentPos = GetPosition();
+
+        if (SmoothTime <= 0.0f)
+        {
+            // Instant follow (no lag)
+            SetPosition(TargetPos);
+        }
+        else
+        {
+            // Lerp towards target - higher SmoothTime = more lag
+            float t = Clamp(DeltaTime / SmoothTime, 0.0f, 1.0f);
+            vec2f NewPos = LerpVector(CurrentPos, TargetPos, t);
+            SetPosition(NewPos);
+        }
+    }
+
     CameraView Camera::CalculateView() const
     {
         CameraView View;
@@ -53,7 +99,6 @@ namespace we
         View.Rotation = GetRotation().asRadians();
         View.OrthographicSize = ViewHeight;
         View.Zoom = Zoom;
-        
         return View;
     }
 }

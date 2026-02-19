@@ -24,10 +24,15 @@ namespace we
 
 	void Actor::BeginPlay()
 	{
+		// Prevent double BeginPlay
+		if (bHasBegunPlay) return;
+		bHasBegunPlay = true;
 	}
 
 	void Actor::Tick(float DeltaTime)
 	{
+		// Don't tick until BeginPlay has been called
+		if (!bHasBegunPlay) return;
 	}
 
 	const sf::Drawable* Actor::GetDrawable() const

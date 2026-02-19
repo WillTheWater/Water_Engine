@@ -21,6 +21,7 @@ namespace we
 		// Lifecycle
 		virtual void BeginPlay();
 		virtual void Tick(float DeltaTime);
+		bool HasBegunPlay() const { return bHasBegunPlay; }
 
 		// Transform
 		void SetPosition(const vec2f& Position);
@@ -60,5 +61,6 @@ namespace we
 		angle ActorRotation;
 		vec2f ActorScale;
 		bool bIsVisible = true;
+		bool bHasBegunPlay = false;
 	};
 }

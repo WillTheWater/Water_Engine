@@ -5,9 +5,7 @@
 
 #include "Levels/LevelOne.h"
 #include "Framework/EngineSubsystem.h"
-#include "Framework/World/Actor/Camera.h"
 #include "Framework/World/Actor/Border.h"
-#include "Utility/Timer.h"
 #include "Subsystem/ResourceSubsystem.h"
 #include "Subsystem/InputSubsystem.h"
 #include "Subsystem/GameStateSubsystem.h"
@@ -177,31 +175,11 @@ namespace we
 
 	void LevelOne::BeginPlay()
 	{
-		// Spawn player at center
+		// Spawn player at center - player spawns its own camera
 		auto PlayerRef = SpawnActor<Player>();
 		if (auto P = PlayerRef.lock())
 		{
 			P->SetPosition(EC.RenderResolution / 2.f);
-		}
-		
-		// Spawn camera - offset from player and ZOOMED to prove it's working
-		auto CamRef = SpawnActor<Camera>();
-		
-		if (auto Cam = CamRef.lock())
-		{
-			// Position camera at player position but offset a bit
-			Cam->SetPosition(EC.RenderResolution / 2.f + vec2f{100, 0});
-			
-			// ZOOM IN 2x - this should make everything look twice as big!
-			Cam->SetZoom(2.0f);
-			
-			// Set as active camera
-			GetSubsystem().Camera->SetActiveCamera(Cam.get());
-			
-			// Destroy camera after 3 seconds to test fallback to default view
-			SetTimer([Cam]() {
-				Cam->Destroy();
-			}, 3.0f);
 		}
 
 		SpawnActor<TriggerTestActor>(vec2f{ 200, 300 }, 60.0f);

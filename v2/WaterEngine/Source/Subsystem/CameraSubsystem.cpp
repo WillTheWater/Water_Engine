@@ -4,16 +4,15 @@
 // =============================================================================
 
 #include "Subsystem/CameraSubsystem.h"
-#include "Framework/World/Actor/Camera.h"
 
 namespace we
 {
-    void CameraSubsystem::SetActiveCamera(Camera* Cam)
+    void CameraSubsystem::SetActiveCamera(ICamera* Cam)
     {
         ActiveCamera = Cam;
     }
 
-    Camera* CameraSubsystem::GetActiveCamera() const
+    ICamera* CameraSubsystem::GetActiveCamera() const
     {
         return ActiveCamera;
     }

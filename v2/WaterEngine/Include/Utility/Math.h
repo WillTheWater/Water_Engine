@@ -188,6 +188,51 @@ namespace we
         return Current + (Delta / Dist) * MaxDistance;
     }
 
+    // Smooth damping - gradually moves Current to Target with smoothing
+    // SmoothTime is the approximate time to reach target
+    // MaxSpeed limits the maximum movement speed (0 = unlimited)
+    // Velocity is the current velocity (modified by function, persists between calls)
+    inline float SmoothDamp(float Current, float Target, float& Velocity, float SmoothTime, float MaxSpeed, float DeltaTime)
+    {
+        if (SmoothTime < EPSILON) return Target;
+        
+        float Omega = 2.0f / SmoothTime;
+        float X = Omega * DeltaTime;
+        float Exp = 1.0f / (1.0f + X + 0.48f * X * X + 0.235f * X * X * X);
+        
+        float Change = Current - Target;
+        float OriginalChange = Change;
+        
+        if (MaxSpeed > EPSILON)
+        {
+            float MaxChange = MaxSpeed * SmoothTime;
+            Change = Clamp(Change, -MaxChange, MaxChange);
+        }
+        
+        float NewTarget = Current - Change;
+        float Temp = (Velocity + Omega * Change) * DeltaTime;
+        Velocity = (Velocity - Omega * Temp) * Exp;
+        float Output = NewTarget + (Change + Temp) * Exp;
+        
+        // Prevent overshooting
+        if ((Target - Current > 0.0f) == (Output > Target))
+        {
+            Output = Target;
+            Velocity = (Output - Target) / DeltaTime;
+        }
+        
+        return Output;
+    }
+
+    // Smooth damping for 2D vectors
+    inline vec2f SmoothDamp(const vec2f& Current, const vec2f& Target, vec2f& Velocity, float SmoothTime, float MaxSpeed, float DeltaTime)
+    {
+        vec2f Result;
+        Result.x = SmoothDamp(Current.x, Target.x, Velocity.x, SmoothTime, MaxSpeed, DeltaTime);
+        Result.y = SmoothDamp(Current.y, Target.y, Velocity.y, SmoothTime, MaxSpeed, DeltaTime);
+        return Result;
+    }
+
     // =============================================================================
     // Angle Math
     // =============================================================================

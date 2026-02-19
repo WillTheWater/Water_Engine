@@ -6,46 +6,53 @@
 #pragma once
 
 #include "Core/CoreMinimal.h"
-#include "Framework/World/Actor/Actor.h"
 #include "Subsystem/CameraSubsystem.h"
 
 namespace we
 {
+    class Actor;
+
     // =========================================================================
-    // Camera - An actor that provides a view for rendering
+    // CameraComponent - Camera behavior as a component (not an Actor)
+    // Owned by an Actor, updated by that Actor's Tick()
     // =========================================================================
-    class Camera : public Actor, public ICamera
+    class CameraComponent : public ICamera
     {
     public:
-        explicit Camera(World* OwningWorld);
-        virtual ~Camera();
+        explicit CameraComponent(Actor* Owner);
+        ~CameraComponent();
 
-        // Lifecycle
-        virtual void BeginPlay() override;
-        virtual void Tick(float DeltaTime) override;
-        virtual void Destroy() override;
+        // Called by owning actor's Tick()
+        void Update(float DeltaTime);
 
-        // Calculate the current view from this camera
+        // Calculate view from this camera
         CameraView CalculateView() const;
 
-        // Settings
-        void SetViewHeight(float Height);  // Half-height in world units (default 540)
-        void SetZoom(float NewZoom);       // 1.0 = normal, 2.0 = 2x zoomed in
-        float GetZoom() const { return Zoom; }
+        // Set as active camera
+        void SetActive();
+        bool IsActive() const;
 
-        // Attachment - camera follows target actor
+        // Attachment - follows target actor (can be owner or different actor)
         void AttachTo(Actor* Target, vec2f LocalOffset = {0, 0});
         void Detach();
         bool IsAttached() const { return TargetActor != nullptr; }
 
-        // Follow settings
-        void SetSmoothTime(float Time) { SmoothTime = Time; }  // 0 = instant, >0 = smooth
+        // Settings
+        void SetViewHeight(float Height) { ViewHeight = Height; }
+        void SetZoom(float NewZoom) { Zoom = NewZoom; }
+        float GetZoom() const { return Zoom; }
+        void SetSmoothTime(float Time) { SmoothTime = Time; }
         float GetSmoothTime() const { return SmoothTime; }
 
     private:
         void UpdatePosition(float DeltaTime);
 
     private:
+        Actor* Owner;
+
+        // Camera position (separate from owner - allows offset)
+        vec2f CameraPosition;
+
         // View settings
         float ViewHeight = 540.0f;
         float Zoom = 1.0f;
@@ -53,7 +60,6 @@ namespace we
         // Attachment
         Actor* TargetActor = nullptr;
         vec2f TargetOffset;
-        float SmoothTime = 0.0f;  // 0 = instant follow
-        vec2f Velocity;           // For smooth damp
+        float SmoothTime = 0.0f;
     };
 }

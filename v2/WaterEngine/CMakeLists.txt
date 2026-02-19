@@ -116,6 +116,7 @@ set(WATER_ENGINE_HEADERS
     Include/Interface/Component/IPhysicsComponent.h
     Include/Interface/Component/AnimationComponent.h
     Include/Interface/Component/PhysicsComponent.h
+    Include/Interface/Component/CameraComponent.h
 
     Include/UI/UIUtility.h
     Include/Utility/Log.h
@@ -184,6 +185,7 @@ set(WATER_ENGINE_SOURCES
 
     Source/Interface/Component/AnimationComponent.cpp
     Source/Interface/Component/PhysicsComponent.cpp
+    Source/Interface/Component/CameraComponent.cpp
 
     Source/Utility/Timer.cpp
     Source/Utility/DebugDraw.cpp

@@ -29,10 +29,25 @@ namespace we
     };
 
     // =========================================================================
-    // CameraSubsystem - Manages cameras and provides view to renderer
+    // ICamera - Interface for anything that can provide a camera view
+    // Implemented by Camera (Actor) and CameraComponent
+    // =========================================================================
+    class ICamera
+    {
+    public:
+        virtual ~ICamera() = default;
+        virtual CameraView CalculateView() const = 0;
+    };
+
+    // =========================================================================
+    // Forward declarations
     // =========================================================================
     class Camera;
+    class CameraComponent;
 
+    // =========================================================================
+    // CameraSubsystem - Manages cameras and provides view to renderer
+    // =========================================================================
     class CameraSubsystem
     {
     public:
@@ -40,8 +55,8 @@ namespace we
         ~CameraSubsystem() = default;
 
         // Set which camera is active (nullptr = none)
-        void SetActiveCamera(Camera* Cam);
-        Camera* GetActiveCamera() const;
+        void SetActiveCamera(ICamera* Cam);
+        ICamera* GetActiveCamera() const;
 
         // Get the current view (for renderer)
         // Returns true if a valid view exists, false otherwise
@@ -51,7 +66,7 @@ namespace we
         bool HasActiveCamera() const;
 
     private:
-        // Currently active camera
-        Camera* ActiveCamera = nullptr;
+        // Currently active camera (can be Camera Actor or CameraComponent)
+        ICamera* ActiveCamera = nullptr;
     };
 }

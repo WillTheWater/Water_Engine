@@ -10,6 +10,7 @@
 #include "Framework/World/World.h"
 #include "Framework/EngineSubsystem.h"
 #include "Utility/Math.h"
+#include "Utility/Log.h"
 #include "GameConfig.h"
 
 namespace we
@@ -26,6 +27,17 @@ namespace we
 	{
 		InitializeAnimations();
 		Character::BeginPlay();
+		
+		// Create camera component (not an Actor - owned by player)
+		//LOG("[Player] Spawning at ({:.1f}, {:.1f})", GetPosition().x, GetPosition().y);
+		//
+		//CamComp = make_shared<CameraComponent>(this);
+		//CamComp->AttachTo(this, {0, 0});  // EXACTLY at player position (test)
+		//CamComp->SetSmoothTime(0.0f);     // No lag - exact follow
+		//CamComp->SetZoom(1.0f);
+		//CamComp->SetActive();  // Set as active camera
+		//
+		//LOG("[Player] Camera initialized at ({:.1f}, {:.1f})", CamComp->CalculateView().Position.x, CamComp->CalculateView().Position.y);
 	}
 
 	void Player::Tick(float DeltaTime)
@@ -33,6 +45,7 @@ namespace we
 		// Tick components manually
 		if (MoveComp) MoveComp->Tick(DeltaTime);
 		if (AnimComp) AnimComp->Tick(DeltaTime);
+		//if (CamComp) CamComp->Update(DeltaTime);  // Update camera follow
 
 		UpdateAnimation();
 		UpdateFootsteps();

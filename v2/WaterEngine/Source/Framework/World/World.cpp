@@ -63,7 +63,10 @@ namespace we
 			for (auto& NewActor : PendingActors)
 			{
 				Actors.push_back(NewActor);
-				NewActor->BeginPlay();
+				if (!NewActor->HasBegunPlay())
+				{
+					NewActor->BeginPlay();
+				}
 			}
 			PendingActors.clear();
 		}
@@ -78,6 +81,13 @@ namespace we
 			}
 			else
 			{
+				// Only tick actors that have begun play
+				if (!(*It)->HasBegunPlay())
+				{
+					++It;
+					continue;
+				}
+				
 				vec2f OldPos = (*It)->GetPosition();
 				(*It)->Tick(DeltaTime);
 				// Mark dirty if actor moved in Y (affects depth sorting)
