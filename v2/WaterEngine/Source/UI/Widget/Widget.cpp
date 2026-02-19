@@ -176,30 +176,37 @@ namespace we
 			return nullptr;
 		}
 
-		// Check children front-to-back (highest render depth first)
-		vector<shared<Widget>> ValidChildren;
+		// Find the topmost child (highest render depth) that contains the point
+		// WITHOUT allocating a vector or sorting - O(n) with O(1) memory
+		shared<Widget> TopChild = nullptr;
+		float MaxDepth = -FLT_MAX;
+
 		for (auto& WeakChild : Children)
 		{
 			if (auto Child = WeakChild.lock())
 			{
-				ValidChildren.push_back(Child);
+				if (!Child->IsVisible())
+					continue;
+
+				// Check if child contains point and has higher depth than current max
+				if (Child->Contains(ScreenPoint) && Child->GetRenderDepth() > MaxDepth)
+				{
+					MaxDepth = Child->GetRenderDepth();
+					TopChild = Child;
+				}
 			}
 		}
 
-		std::sort(ValidChildren.begin(), ValidChildren.end(),
-			[](const shared<Widget>& A, const shared<Widget>& B)
-			{
-				return A->GetRenderDepth() > B->GetRenderDepth();
-			});
-
-		for (auto& Child : ValidChildren)
+		// If we found a containing child, recurse into it
+		if (TopChild)
 		{
-			if (auto Hit = Child->FindDeepestChildAt(ScreenPoint))
+			if (auto Hit = TopChild->FindDeepestChildAt(ScreenPoint))
 			{
 				return Hit;
 			}
 		}
 
+		// No child contains the point, return self
 		return shared_from_this();
 	}
 
