@@ -88,6 +88,7 @@ namespace we
         // These subsystems need access to other subsystems
         Subsystem.World = make_unique<WorldSubsystem>(Subsystem);
         Subsystem.GUI = make_unique<GUISubsystem>(Subsystem);
+        Subsystem.Camera = make_unique<CameraSubsystem>();
     }
 
     void WaterEngine::MountAssetDirectory()
@@ -173,6 +174,18 @@ namespace we
         Subsystem.Audio->Update();
         Subsystem.Window->clear(color::Black);
         Subsystem.Render->StartRender();
+
+        // Get camera view if available
+        optional<CameraView> CamView;
+        if (Subsystem.Camera->HasActiveCamera())
+        {
+            CameraView View;
+            if (Subsystem.Camera->GetCurrentView(View))
+            {
+                CamView = View;
+            }
+        }
+        Subsystem.Render->ApplyCameraView(CamView);
 
         WorldRender();
         Subsystem.GUI->Render();

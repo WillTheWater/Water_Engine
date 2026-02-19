@@ -65,6 +65,7 @@ set(WATER_ENGINE_HEADERS
     Include/Framework/World/Actor/Actor.h
     Include/Framework/World/Actor/Character.h
     Include/Framework/World/Actor/Border.h
+    "Include/Framework/World/Actor/Camera.h"
     Include/Framework/World/RenderTypes.h
 
     Include/Subsystem/WindowSubsystem.h
@@ -139,10 +140,12 @@ set(WATER_ENGINE_SOURCES
     Source/Framework/World/Actor/Actor.cpp
     Source/Framework/World/Actor/Character.cpp
     Source/Framework/World/Actor/Border.cpp
+    "Source/Framework/World/Actor/Camera.cpp"
 
     Source/Subsystem/WindowSubsystem.cpp
     Source/Subsystem/ResourceSubsystem.cpp
     Source/Subsystem/TimeSubsystem.cpp
+    Source/Subsystem/CameraSubsystem.cpp
     Source/Subsystem/RenderSubsystem.cpp
     Source/Subsystem/SaveLoadSubsystem.cpp
     

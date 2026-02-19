@@ -69,6 +69,44 @@ namespace we
         CursorPostProcessTarget.setView(DefaultView);
     }
 
+    void RenderSubsystem::ApplyCameraView(const optional<CameraView>& View)
+    {
+        // Use camera view if provided, otherwise use default
+        if (View)
+        {
+            // Calculate view from camera
+            float AspectRatio = static_cast<float>(RenderResolution.x) / static_cast<float>(RenderResolution.y);
+            vec2f ViewSize = View->GetViewSize(AspectRatio);
+            
+            view SFMLView;
+            SFMLView.setCenter(View->Position);
+            SFMLView.setSize(ViewSize);
+            SFMLView.setRotation(sf::radians(View->Rotation));
+            SFMLView.setViewport(rectf({0.f, 0.f}, {1.f, 1.f}));
+            
+            // Apply to game render targets only (UI and Cursor stay screen-space)
+            GameRenderTarget.setView(SFMLView);
+            GamePostProcessTarget.setView(SFMLView);
+        }
+        else
+        {
+            // No camera - use default view (existing behavior)
+            view DefaultView = GameRenderTarget.getDefaultView();
+            DefaultView.setViewport(rectf({ 0.f, 0.f }, { 1.f, 1.f }));
+            
+            GameRenderTarget.setView(DefaultView);
+            GamePostProcessTarget.setView(DefaultView);
+        }
+        
+        // UI and Cursor always use default (screen-space)
+        view DefaultView = GameRenderTarget.getDefaultView();
+        DefaultView.setViewport(rectf({ 0.f, 0.f }, { 1.f, 1.f }));
+        UIRenderTarget.setView(DefaultView);
+        UIPostProcessTarget.setView(DefaultView);
+        CursorRenderTarget.setView(DefaultView);
+        CursorPostProcessTarget.setView(DefaultView);
+    }
+
     void RenderSubsystem::StartRender()
     {
         // Clear all layer targets
