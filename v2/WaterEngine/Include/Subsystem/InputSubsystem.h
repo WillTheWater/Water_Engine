@@ -187,15 +187,8 @@ namespace we
 
 		float GetAxisValue(int JoystickID, sf::Joystick::Axis Axis) const;
 
-		// Polls connected gamepads for axis values (call once per frame)
-		void PollGamepadAxes();
-
 	private:
 		library<int, Input::Binding> InputBindings;
-
-		// Cached axis values for connected gamepads [JoystickID][Axis]
-		dictionary<int, dictionary<sf::Joystick::Axis, float>> CachedAxisValues;
-		float LastPollTime = 0.0f;
 
 		uint64_t CurrentFrame = 0;
 		dictionary<int, uint64_t> PressedOnFrame;

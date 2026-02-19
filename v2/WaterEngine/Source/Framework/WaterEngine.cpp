@@ -104,8 +104,8 @@ namespace we
         // Update cursor (joystick control)
         Subsystem.Cursor->Update(DeltaTime);
 
-        // Poll gamepad axes (only if gamepad connected)
-        Subsystem.Input->PollGamepadAxes();
+        
+        // Joystick axes polled on-demand via GetAxisValue(), no bulk polling needed
 
         // Update timers
         TimerManager::Get().Tick(DeltaTime);

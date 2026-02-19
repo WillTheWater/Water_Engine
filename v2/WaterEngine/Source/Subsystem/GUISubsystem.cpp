@@ -630,28 +630,31 @@ namespace we
 
 	shared<Widget> GUISubsystem::FindWidgetAt(const vec2f& ScreenPoint) const
 	{
-		vector<shared<Widget>> Visible;
+		// Find the visible widget with maximum render depth that contains the point
+		// WITHOUT allocating a vector or sorting - O(n) with O(1) memory
+		shared<Widget> TopWidget = nullptr;
+		float MaxDepth = -FLT_MAX;
+
 		for (auto& Widget : Widgets)
 		{
-			if (Widget && Widget->IsVisible())
+			if (!Widget || !Widget->IsVisible())
+				continue;
+
+			// Check if widget contains point and has higher depth than current max
+			// Note: We check Contains() first as a cheap filter before considering depth
+			if (Widget->Contains(ScreenPoint) && Widget->GetRenderDepth() > MaxDepth)
 			{
-				Visible.push_back(Widget);
+				MaxDepth = Widget->GetRenderDepth();
+				TopWidget = Widget;
 			}
 		}
 
-		std::sort(Visible.begin(), Visible.end(),
-			[](const shared<Widget>& A, const shared<Widget>& B)
-			{
-				return A->GetRenderDepth() > B->GetRenderDepth();
-			});
-
-		for (auto& Widget : Visible)
+		// If we found a containing widget, let it find the deepest child
+		if (TopWidget)
 		{
-			if (auto Hit = Widget->FindDeepestChildAt(ScreenPoint))
-			{
-				return Hit;
-			}
+			return TopWidget->FindDeepestChildAt(ScreenPoint);
 		}
+
 		return nullptr;
 	}
 

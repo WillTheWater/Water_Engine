@@ -94,59 +94,8 @@ namespace we
 
 	float InputSubsystem::GetAxisValue(int JoystickID, sf::Joystick::Axis Axis) const
 	{
-		// Use cached value if available, otherwise poll directly
-		auto JoystickIt = CachedAxisValues.find(JoystickID);
-		if (JoystickIt != CachedAxisValues.end())
-		{
-			auto AxisIt = JoystickIt->second.find(Axis);
-			if (AxisIt != JoystickIt->second.end())
-			{
-				return AxisIt->second;
-			}
-		}
+		// Poll directly on demand - no caching overhead
 		return sf::Joystick::getAxisPosition(JoystickID, Axis) / 100.0f;
-	}
-
-	void InputSubsystem::PollGamepadAxes()
-	{
-		// Only poll if at least one gamepad is connected
-		bool bAnyConnected = false;
-		for (unsigned int i = 0; i < sf::Joystick::Count; ++i)
-		{
-			if (sf::Joystick::isConnected(i))
-			{
-				bAnyConnected = true;
-				break;
-			}
-		}
-
-		if (!bAnyConnected)
-		{
-			CachedAxisValues.clear();
-			return;
-		}
-
-		// Poll all axes for all connected gamepads
-		for (unsigned int i = 0; i < sf::Joystick::Count; ++i)
-		{
-			if (!sf::Joystick::isConnected(i))
-			{
-				CachedAxisValues.erase(static_cast<int>(i));
-				continue;
-			}
-
-			auto& AxisMap = CachedAxisValues[static_cast<int>(i)];
-			
-			// Poll standard axes
-			AxisMap[sf::Joystick::Axis::X] = sf::Joystick::getAxisPosition(i, sf::Joystick::Axis::X) / 100.0f;
-			AxisMap[sf::Joystick::Axis::Y] = sf::Joystick::getAxisPosition(i, sf::Joystick::Axis::Y) / 100.0f;
-			AxisMap[sf::Joystick::Axis::Z] = sf::Joystick::getAxisPosition(i, sf::Joystick::Axis::Z) / 100.0f;
-			AxisMap[sf::Joystick::Axis::R] = sf::Joystick::getAxisPosition(i, sf::Joystick::Axis::R) / 100.0f;
-			AxisMap[sf::Joystick::Axis::U] = sf::Joystick::getAxisPosition(i, sf::Joystick::Axis::U) / 100.0f;
-			AxisMap[sf::Joystick::Axis::V] = sf::Joystick::getAxisPosition(i, sf::Joystick::Axis::V) / 100.0f;
-			AxisMap[sf::Joystick::Axis::PovX] = sf::Joystick::getAxisPosition(i, sf::Joystick::Axis::PovX) / 100.0f;
-			AxisMap[sf::Joystick::Axis::PovY] = sf::Joystick::getAxisPosition(i, sf::Joystick::Axis::PovY) / 100.0f;
-		}
 	}
 
 	bool InputSubsystem::IsJustPressed(int InputAction) const
@@ -203,26 +152,8 @@ namespace we
 
 	bool InputSubsystem::IsPressed(const Input::JoystickAxis& Binding) const
 	{
-		// Use cached axis value if available
-		float AxisValue = 0.0f;
-		auto JoystickIt = CachedAxisValues.find(Binding.JoystickID);
-		if (JoystickIt != CachedAxisValues.end())
-		{
-			auto AxisIt = JoystickIt->second.find(Binding.Axis);
-			if (AxisIt != JoystickIt->second.end())
-			{
-				AxisValue = AxisIt->second;
-			}
-			else
-			{
-				AxisValue = sf::Joystick::getAxisPosition(Binding.JoystickID, Binding.Axis) / 100.f;
-			}
-		}
-		else
-		{
-			AxisValue = sf::Joystick::getAxisPosition(Binding.JoystickID, Binding.Axis) / 100.f;
-		}
-		
+		// Poll axis directly on demand - no caching overhead
+		float AxisValue = sf::Joystick::getAxisPosition(Binding.JoystickID, Binding.Axis) / 100.f;
 		return (Binding.AxisThreshold >= 0) ? AxisValue > Binding.AxisThreshold : AxisValue < Binding.AxisThreshold;
 	}
 }
