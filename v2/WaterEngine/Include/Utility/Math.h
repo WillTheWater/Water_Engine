@@ -21,6 +21,22 @@ namespace we
     inline constexpr float EPSILON = 1e-6f;
 
     // =============================================================================
+    // Float Comparison
+    // =============================================================================
+    
+    // Check if two floats are approximately equal (within Epsilon)
+    inline bool FloatEquals(float A, float B, float Epsilon = EPSILON)
+    {
+        return std::abs(A - B) < Epsilon;
+    }
+
+    // Check if float is approximately zero
+    inline bool FloatIsZero(float Value, float Epsilon = EPSILON)
+    {
+        return std::abs(Value) < Epsilon;
+    }
+
+    // =============================================================================
     // Basic Math
     // =============================================================================
     template<typename T>

@@ -7,6 +7,7 @@
 #include "Framework/World/Actor/Actor.h"
 #include "Framework/EngineSubsystem.h"
 #include "Utility/Log.h"
+#include "Utility/Math.h"
 
 namespace we
 {
@@ -80,7 +81,8 @@ namespace we
 				vec2f OldPos = (*It)->GetPosition();
 				(*It)->Tick(DeltaTime);
 				// Mark dirty if actor moved in Y (affects depth sorting)
-				if ((*It)->GetPosition().y != OldPos.y)
+				// Use epsilon comparison for float equality
+				if (!FloatEquals((*It)->GetPosition().y, OldPos.y))
 				{
 					bRenderOrderDirty = true;
 				}
