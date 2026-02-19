@@ -20,6 +20,7 @@ namespace we
 		float DefaultCursorSpeed;
 		float JoystickDeadzone;
 		vec2f RenderResolution;
+		class WindowSubsystem& Window;
 	};
 
 	class CursorSubsystem
@@ -27,13 +28,13 @@ namespace we
 	public:
 		explicit CursorSubsystem(const CursorConfig& Config);
 
-		void Update(float DeltaTime, WindowSubsystem& Window);
+		void Update(float DeltaTime);
 		void Render(RenderSubsystem& Renderer) const;
 
 		void SetSpeed(float Speed) { CursorSpeed = Speed; }
 		float GetSpeed() const { return CursorSpeed; }
 
-		void SetVisibility(bool Visible) { bIsVisible = Visible; }
+		void SetVisibility(bool Visible);
 		bool IsVisible() const { return bIsVisible; }
 
 		void SetCursorSize(vec2f Size);
@@ -51,6 +52,7 @@ namespace we
 
 	private:
 		void ApplyCursorSize();
+		void CenterCursor();
 
 	private:
 		texture CursorTexture;

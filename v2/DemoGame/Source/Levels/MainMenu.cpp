@@ -43,11 +43,7 @@ namespace we
 		MenuUI->OnSettingsClicked.Bind(this, &MainMenu::OnSettingsClicked);
 		MenuUI->OnQuitClicked.Bind(this, &MainMenu::OnQuitClicked);
 
-		// Bind to GameInstance's settings closed event
-		if (Subsystem.GameInst)
-		{
-			static_cast<DemoGameInstance*>(Subsystem.GameInst.get())->OnSettingsClosed.Bind(this, &MainMenu::OnSettingsBackClicked);
-		}
+		// Note: Settings closed binding happens in OnSettingsClicked to ensure fresh binding
 	}
 
 	void MainMenu::BeginPlay()
@@ -63,8 +59,8 @@ namespace we
 	{
 		LOG("Transitioning to LevelOne");
 		
-		// Clear all GUI widgets - they'll be recreated in the new world if needed
-		Subsystem.GUI->Clear();
+		// Hide main menu UI (don't clear - that would remove persistent UI like settings)
+		MenuUI->Hide();
 		
 		Subsystem.GameState->RequestStateChange(MakeState(EGameState::LevelOne));
 	}
@@ -78,6 +74,9 @@ namespace we
 		
 		if (auto* GI = static_cast<DemoGameInstance*>(Subsystem.GameInst.get()))
 		{
+			// Clear any stale bindings and bind fresh
+			GI->OnSettingsClosed.Clear();
+			GI->OnSettingsClosed.Bind(this, &MainMenu::OnSettingsBackClicked);
 			GI->ShowSettings();
 		}
 	}

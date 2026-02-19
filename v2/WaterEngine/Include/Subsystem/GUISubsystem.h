@@ -190,6 +190,7 @@ namespace we
 		vector<shared<Widget>> GetFocusableWidgets() const;
 		void UpdateHoverState(const vec2f& MousePos);
 		vec2f GetMousePosition() const;
+		void SnapCursorToWidget(shared<Widget> TargetWidget);
 
 	private:
 		EngineSubsystem& Subsystem;

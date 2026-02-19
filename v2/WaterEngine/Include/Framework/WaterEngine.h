@@ -45,5 +45,7 @@ namespace we
 		void TickGame();
 		void WorldRender();
 		void Run() = delete;
+
+		vec2i LastMousePosition{ -1, -1 };  // Track to detect actual mouse movement
 	};
 }

@@ -66,7 +66,8 @@ namespace we
             .DefaultCursorSize = EC.DefaultCursorSize,
             .DefaultCursorSpeed = EC.DefaultCursorSpeed,
             .JoystickDeadzone = EC.JoystickDeadzone,
-            .RenderResolution = EC.RenderResolution
+            .RenderResolution = EC.RenderResolution,
+            .Window = *Subsystem.Window
         });
 
         Subsystem.Audio = make_unique<AudioSubsystem>(AudioConfig{
@@ -101,7 +102,7 @@ namespace we
         float DeltaTime = Subsystem.Time->GetDeltaTime();
 
         // Update cursor (joystick control)
-        Subsystem.Cursor->Update(DeltaTime, *Subsystem.Window);
+        Subsystem.Cursor->Update(DeltaTime);
 
         // Poll gamepad axes (only if gamepad connected)
         Subsystem.Input->PollGamepadAxes();
@@ -156,7 +157,7 @@ namespace we
         }
         else
         {
-            Subsystem.Cursor->Update(Subsystem.Time->GetUnscaledDeltaTime(), *Subsystem.Window);
+            Subsystem.Cursor->Update(Subsystem.Time->GetUnscaledDeltaTime());
             Subsystem.Input->ProcessHeld();
             Subsystem.GUI->Update(Subsystem.Time->GetUnscaledDeltaTime());
         }
@@ -188,11 +189,17 @@ namespace we
 
         if (Subsystem.Window->hasFocus())
         {
-            // Set mapped position for game/world rendering
-            Subsystem.Cursor->SetPosition(Subsystem.Window->GetMousePosition());
-            // Set raw pixel position for UI hit testing
-            vec2i PixelPos = sf::Mouse::getPosition(*Subsystem.Window);
-            Subsystem.Cursor->SetPixelPosition(vec2f(static_cast<float>(PixelPos.x), static_cast<float>(PixelPos.y)));
+            // Only update cursor from mouse if mouse actually moved
+            // (Prevents gamepad cursor from being overwritten every frame)
+            vec2i CurrentMousePos = sf::Mouse::getPosition(*Subsystem.Window);
+            if (CurrentMousePos != LastMousePosition)
+            {
+                LastMousePosition = CurrentMousePos;
+                // Set mapped position for game/world rendering
+                Subsystem.Cursor->SetPosition(Subsystem.Window->GetMousePosition());
+                // Set raw pixel position for UI hit testing
+                Subsystem.Cursor->SetPixelPosition(vec2f(static_cast<float>(CurrentMousePos.x), static_cast<float>(CurrentMousePos.y)));
+            }
         }
     }
    

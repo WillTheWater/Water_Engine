@@ -175,8 +175,11 @@ namespace we
 
 	void DemoGameInstance::OnSettingsBackClicked()
 	{
-		// Settings back clicked
+		// Settings closed (back button clicked)
 		HideSettings();
+		
+		// Notify listeners and clear the delegate to prevent stale bindings
 		OnSettingsClosed.Broadcast();
+		OnSettingsClosed.Clear();
 	}
 }

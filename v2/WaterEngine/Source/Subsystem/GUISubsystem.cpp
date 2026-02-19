@@ -511,6 +511,7 @@ namespace we
 			}
 			FocusedWidget = Next;
 			Next->OnFocusGained.Broadcast();
+			SnapCursorToWidget(Next);
 		}
 	}
 
@@ -544,6 +545,7 @@ namespace we
 			}
 			FocusedWidget = Prev;
 			Prev->OnFocusGained.Broadcast();
+			SnapCursorToWidget(Prev);
 		}
 	}
 
@@ -653,5 +655,21 @@ namespace we
 			}
 		}
 		return Focusable;
+	}
+
+	void GUISubsystem::SnapCursorToWidget(shared<Widget> TargetWidget)
+	{
+		if (!TargetWidget) return;
+
+		// Get widget center position
+		vec2f WidgetPos = TargetWidget->GetWorldPosition();
+		vec2f WidgetSize = TargetWidget->GetSize();
+		vec2f Center = WidgetPos + WidgetSize / 2.0f;
+
+		// Move cursor to widget center
+		Subsystem.Cursor->SetPosition(Center);
+		
+		// Update hovered widget based on new cursor position
+		UpdateHoverState(Center);
 	}
 }

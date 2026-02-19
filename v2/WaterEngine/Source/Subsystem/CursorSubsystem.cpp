@@ -25,8 +25,12 @@ namespace we
 		ApplyCursorSize();
 	}
 
-	void CursorSubsystem::Update(float DeltaTime, WindowSubsystem& Window)
+	void CursorSubsystem::Update(float DeltaTime)
 	{
+		// Don't update position when cursor is not visible
+		if (!bIsVisible)
+			return;
+
 		// Joystick control for cursor movement
 		const float AxisX = sf::Joystick::getAxisPosition(0, sf::Joystick::Axis::X);
 		const float AxisY = sf::Joystick::getAxisPosition(0, sf::Joystick::Axis::Y);
@@ -56,8 +60,8 @@ namespace we
 			};
 			CursorSprite.setPosition(ClampedPos);
 
-			// Sync system mouse cursor for UI hit-testing
-			sf::Mouse::setPosition(static_cast<sf::Vector2i>(ClampedPos), Window);
+			// Update pixel position for UI hit-testing
+			SetPixelPosition(ClampedPos);
 		}
 	}
 
@@ -73,6 +77,27 @@ namespace we
 	{
 		vec2f textureSize = vec2f(CursorTexture.getSize());
 		CursorSprite.setScale(CursorSize.componentWiseDiv(textureSize));
+	}
+
+	void CursorSubsystem::CenterCursor()
+	{
+		vec2f Center = Config.RenderResolution / 2.0f;
+		CursorSprite.setPosition(Center);
+		SetPixelPosition(Center);
+	}
+
+	void CursorSubsystem::SetVisibility(bool Visible)
+	{
+		if (bIsVisible == Visible)
+			return;
+
+		bIsVisible = Visible;
+
+		// When becoming visible, center the cursor on screen
+		if (bIsVisible)
+		{
+			CenterCursor();
+		}
 	}
 
 	void CursorSubsystem::SetCursorSize(vec2f Size)
