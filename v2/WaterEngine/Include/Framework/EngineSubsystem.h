@@ -19,6 +19,7 @@
 #include "Subsystem/AudioSubsystem.h"
 #include "Subsystem/GUISubsystem.h"
 #include "Subsystem/PhysicsSubsystem.h"
+#include "Subsystem/CameraSubsystem.h"
 
 namespace we
 {
@@ -43,6 +44,7 @@ namespace we
 		unique<WorldSubsystem> World;      // Destroyed after GUI
 		unique<GUISubsystem> GUI;          // Destroyed after Render/Audio
 		unique<RenderSubsystem> Render;    // Destroyed after Window
+		unique<CameraSubsystem> Camera;    // Destroyed after Render (render may query camera during cleanup)
 		unique<WindowSubsystem> Window;    // Destroyed last (OS window must outlive everything)
 	};
 }

@@ -122,11 +122,11 @@ namespace we
 		SetSize(TrackSize);
 
 		// Connect hover events
-		OnFocusGained.Bind([this]() {
+		OnHoverGained.Bind([this]() {
 			bHovered = true;
 			UpdateVisualState();
 		});
-		OnFocusLost.Bind([this]() {
+		OnHoverLost.Bind([this]() {
 			bHovered = false;
 			UpdateVisualState();
 		});
@@ -309,11 +309,41 @@ namespace we
 	}
 
 	// =========================================================================
+	// Focus Point
+	// =========================================================================
+
+	vec2f Slider::GetFocusPoint() const
+	{
+		vec2f Pos = GetWorldPosition();
+
+		if (Orientation == SliderOrientation::Horizontal)
+		{
+			float AvailableSpace = TrackSize.x - ThumbSize.x;
+			float ThumbCenterX = Pos.x + ThumbSize.x * 0.5f + Value * AvailableSpace;
+			float ThumbCenterY = Pos.y + TrackSize.y * 0.5f;
+			return { ThumbCenterX, ThumbCenterY };
+		}
+		else
+		{
+			float AvailableSpace = TrackSize.y - ThumbSize.y;
+			float ThumbCenterX = Pos.x + TrackSize.x * 0.5f;
+			float ThumbCenterY = Pos.y + TrackSize.y - (ThumbSize.y * 0.5f + Value * AvailableSpace);
+			return { ThumbCenterX, ThumbCenterY };
+		}
+	}
+
+	// =========================================================================
 	// Visual State
 	// =========================================================================
 
 	void Slider::UpdateVisualState()
 	{
+		// Track color never changes - only thumb has hover/pressed states
+		if (TrackRect)
+		{
+			TrackRect->setFillColor(TrackColor);
+		}
+
 		// Update thumb color/texture rect based on state
 		if (bThumbUsesTexture && ThumbSprite)
 		{

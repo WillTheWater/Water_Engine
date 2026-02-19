@@ -6,7 +6,7 @@
 #pragma once
 
 #include "Core/CoreMinimal.h"
-#include <sfml/Graphics.hpp>
+#include <SFML/Graphics.hpp>
 #include "Framework/EventHandling/GameWindowEventHandler.h"
 
 namespace we

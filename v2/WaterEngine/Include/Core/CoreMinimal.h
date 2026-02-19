@@ -26,7 +26,7 @@
 // =============================================================================
 // Third Party - SFML
 // =============================================================================
-#include <sfml/Graphics.hpp>
+#include <SFML/Graphics.hpp>
 #include <SFML/Graphics/Shader.hpp>
 #include <SFML/System/Angle.hpp>
 #include <SFML/System/Clock.hpp>

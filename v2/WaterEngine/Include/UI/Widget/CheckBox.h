@@ -33,6 +33,9 @@ namespace we
 
 		void CollectRenderDepths(vector<RenderDepth>& OutDepths) const override;
 
+		// Focus point is the center of the checkbox
+		vec2f GetFocusPoint() const override { return GetWorldPosition() + vec2f{ BoxSize * 0.5f, BoxSize * 0.5f }; }
+
 		void SetChecked(bool bInChecked);
 		bool IsChecked() const { return bChecked; }
 		void Toggle();
@@ -49,8 +52,8 @@ namespace we
 
 	private:
 		void UpdateVisualState();
-		void OnFocusGainedHandler();
-		void OnFocusLostHandler();
+		void OnHoverGainedHandler();
+		void OnHoverLostHandler();
 		void OnClickHandler();
 
 		bool bChecked = false;

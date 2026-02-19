@@ -8,6 +8,8 @@
 #include "Core/CoreMinimal.h"
 #include "PostProcess/IPostProcess.h"
 
+#include "Subsystem/CameraSubsystem.h"  // For CameraView
+
 namespace we
 {
     struct RenderConfig
@@ -57,6 +59,7 @@ namespace we
         friend class WaterEngine;
 
         void ApplyRenderView();
+        void ApplyCameraView(const optional<CameraView>& View);  // Optional camera view
         void CompositeLayers();
         void Initialize();
         void StartRender();

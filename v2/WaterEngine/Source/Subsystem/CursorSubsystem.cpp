@@ -7,6 +7,7 @@
 #include "Subsystem/RenderSubsystem.h"
 #include "Subsystem/ResourceSubsystem.h"
 #include "Subsystem/WindowSubsystem.h"
+#include "Subsystem/InputSubsystem.h"
 #include "Utility/Math.h"
 #include "EngineConfig.h"
 #include "Utility/Log.h"

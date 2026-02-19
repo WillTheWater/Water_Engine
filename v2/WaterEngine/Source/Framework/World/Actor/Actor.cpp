@@ -12,7 +12,7 @@ namespace we
 {
 	Actor::Actor(World* InWorld, const string& TexturePath)
 		: OwningWorld{ InWorld }
-		, ActorTexture{ LoadAsset().LoadTextureSync(TexturePath) }
+		, ActorTexture{ TexturePath.empty() ? nullptr : LoadAsset().LoadTextureSync(TexturePath) }
 		, ActorSprite{ ActorTexture ? *ActorTexture : *LoadAsset().GetPlaceholderTexture() }
 		, ActorPosition{}
 		, ActorRotation{}
@@ -24,10 +24,15 @@ namespace we
 
 	void Actor::BeginPlay()
 	{
+		// Prevent double BeginPlay
+		if (bHasBegunPlay) return;
+		bHasBegunPlay = true;
 	}
 
 	void Actor::Tick(float DeltaTime)
 	{
+		// Don't tick until BeginPlay has been called
+		if (!bHasBegunPlay) return;
 	}
 
 	const sf::Drawable* Actor::GetDrawable() const

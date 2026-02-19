@@ -61,6 +61,9 @@ namespace we
 		void OnPressed(const vec2f& MousePos) override;
 		bool Contains(const vec2f& ScreenPoint) const override;
 
+		// Focus point is the center of the thumb (moves with value)
+		vec2f GetFocusPoint() const override;
+
 		// Widget override - called when mouse moves while this widget is pressed (for dragging)
 		void OnDrag(const vec2f& MousePos) override;
 

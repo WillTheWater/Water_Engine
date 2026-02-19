@@ -3,6 +3,8 @@
 // Copyright(C) 2026 Will The Water
 // =============================================================================
 
+#include <filesystem>
+
 #include "Framework/WaterEngine.h"
 #include "AssetDirectory/PakDirectory.h"
 #include "Framework/World/World.h"
@@ -86,13 +88,14 @@ namespace we
         // These subsystems need access to other subsystems
         Subsystem.World = make_unique<WorldSubsystem>(Subsystem);
         Subsystem.GUI = make_unique<GUISubsystem>(Subsystem);
+        Subsystem.Camera = make_unique<CameraSubsystem>();
     }
 
     void WaterEngine::MountAssetDirectory()
     {
         // Mount .pak For Resources
-        auto PD = make_shared<PakDirectory>(EC.AssetDirectory);
         Subsystem.AssetLoader = make_unique<ResourceSubsystem>();
+        auto PD = make_shared<PakDirectory>(EC.AssetDirectory);
         Subsystem.AssetLoader->SetAssetDirectory(PD);
         if (EC.DisableSFMLLogs) { sf::err().rdbuf(nullptr); }
     }
@@ -104,11 +107,14 @@ namespace we
         // Update cursor (joystick control)
         Subsystem.Cursor->Update(DeltaTime);
 
-        // Poll gamepad axes (only if gamepad connected)
-        Subsystem.Input->PollGamepadAxes();
+        
+        // Joystick axes polled on-demand via GetAxisValue(), no bulk polling needed
 
         // Update timers
         TimerManager::Get().Tick(DeltaTime);
+
+        // Update GUI (for hover state and dragging)
+        Subsystem.GUI->Update(DeltaTime);
 
         Tick(DeltaTime);
         
@@ -168,6 +174,18 @@ namespace we
         Subsystem.Audio->Update();
         Subsystem.Window->clear(color::Black);
         Subsystem.Render->StartRender();
+
+        // Get camera view if available
+        optional<CameraView> CamView;
+        if (Subsystem.Camera->HasActiveCamera())
+        {
+            CameraView View;
+            if (Subsystem.Camera->GetCurrentView(View))
+            {
+                CamView = View;
+            }
+        }
+        Subsystem.Render->ApplyCameraView(CamView);
 
         WorldRender();
         Subsystem.GUI->Render();

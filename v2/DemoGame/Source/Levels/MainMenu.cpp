@@ -10,7 +10,6 @@
 #include "EngineConfig.h"
 #include "GameConfig.h"
 #include "UI/MainMenuUI.h"
-#include "Utility/Log.h"
 #include "GameStateTokens.h"
 
 namespace we
@@ -57,8 +56,6 @@ namespace we
 
 	void MainMenu::OnPlayClicked()
 	{
-		LOG("Transitioning to LevelOne");
-		
 		// Hide main menu UI (don't clear - that would remove persistent UI like settings)
 		MenuUI->Hide();
 		
@@ -67,8 +64,6 @@ namespace we
 
 	void MainMenu::OnSettingsClicked()
 	{
-		LOG("Opening settings menu via GameInstance");
-		
 		// Hide main menu and show settings via GameInstance (persists across worlds)
 		MenuUI->Hide();
 		
@@ -83,8 +78,6 @@ namespace we
 
 	void MainMenu::OnSettingsBackClicked()
 	{
-		LOG("Settings closed - returning to main menu");
-		
 		// Show main menu again
 		MenuUI->Show();
 	}

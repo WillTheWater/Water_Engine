@@ -276,16 +276,8 @@ namespace we
 				 KeyPressed->scancode == sf::Keyboard::Scan::Enter ||
 				 KeyPressed->scancode == sf::Keyboard::Scan::Escape);
 		}
-		else if (auto JoystickPressed = Event.getIf<sf::Event::JoystickButtonPressed>())
-		{
-			HandleJoystickPressed(*JoystickPressed);
-			bConsumed = (FocusedWidget.lock() != nullptr) || (PressedWidget.lock() != nullptr);
-		}
-		else if (auto JoystickReleased = Event.getIf<sf::Event::JoystickButtonReleased>())
-		{
-			HandleJoystickReleased(*JoystickReleased);
-			bConsumed = (PressedWidget.lock() != nullptr);
-		}
+		// Joystick/Gamepad input is handled via Input subsystem callbacks, not raw events
+		// This prevents race conditions between mouse and gamepad input
 		else if (auto TextEntered = Event.getIf<sf::Event::TextEntered>())
 		{
 			HandleTextEntered(*TextEntered);
@@ -390,82 +382,101 @@ namespace we
 		}
 	}
 
-	void GUISubsystem::HandleJoystickPressed(const sf::Event::JoystickButtonPressed& Btn)
-	{
-		if (Btn.button == 0)  // South button (A on Xbox, X on PlayStation)
-		{
-			// Check if cursor is hovering over a widget - emulate mouse press (for dragging)
-			vec2f MousePos = GetMousePosition();
-			if (auto Hovered = FindWidgetAt(MousePos))
-			{
-				if (Hovered->IsVisible())
-				{
-					// Set focus
-					if (auto OldFocus = FocusedWidget.lock())
-					{
-						OldFocus->OnFocusLost.Broadcast();
-					}
-					FocusedWidget = Hovered;
-					Hovered->OnFocusGained.Broadcast();
+	// =========================================================================
+	// Gamepad Input (via Input subsystem - NOT raw SFML events)
+	// Hybrid approach: Gamepad cursor can hover, and South button activates hovered widget
+	// Shoulder buttons (L1/R1) snap cursor for keyboard-style navigation
+	// =========================================================================
 
-					// Set pressed state (for dragging)
-					PressedWidget = Hovered;
-					Hovered->SetPressed(true);
-					Hovered->OnPressed(MousePos);
+	void GUISubsystem::OnGamepadConfirmPressed()
+	{
+		// Check if cursor is hovering over a widget (cursor moved by joystick or mouse)
+		vec2f CursorPos = GetMousePosition();
+		if (auto Hovered = FindWidgetAt(CursorPos))
+		{
+			if (Hovered->IsVisible())
+			{
+				// Move focus to hovered widget
+				if (auto OldFocus = FocusedWidget.lock())
+				{
+					OldFocus->OnFocusLost.Broadcast();
+				}
+				FocusedWidget = Hovered;
+				Hovered->OnFocusGained.Broadcast();
+
+				// Set pressed state (for visual feedback and dragging)
+				PressedWidget = Hovered;
+				Hovered->SetPressed(true);
+				Hovered->OnPressed(CursorPos);
+				
+				const string& PressedSound = Hovered->GetPressedSound();
+				if (Subsystem.Audio && !PressedSound.empty())
+				{
+					Subsystem.Audio->PlaySFX(PressedSound);
+				}
+			}
+		}
+		else
+		{
+			// No widget under cursor, fall back to focused widget (keyboard navigation mode)
+			if (auto Focused = FocusedWidget.lock())
+			{
+				if (Focused->IsVisible())
+				{
+					PressedWidget = Focused;
+					Focused->SetPressed(true);
 					
-					const string& PressedSound = Hovered->GetPressedSound();
+					vec2f Center = Focused->GetWorldPosition() + Focused->GetSize() / 2.0f;
+					Focused->OnPressed(Center);
+					
+					const string& PressedSound = Focused->GetPressedSound();
 					if (Subsystem.Audio && !PressedSound.empty())
 					{
 						Subsystem.Audio->PlaySFX(PressedSound);
 					}
 				}
 			}
-			else
-			{
-				// No widget under cursor, use focused widget (keyboard navigation)
-				ActivateFocused();
-			}
-		}
-		else if (Btn.button == 1)
-		{
-			// Cancel
-		}
-		else if (Btn.button == 4)
-		{
-			NavigatePrevious();
-		}
-		else if (Btn.button == 5)
-		{
-			NavigateNext();
 		}
 	}
 
-	void GUISubsystem::HandleJoystickReleased(const sf::Event::JoystickButtonReleased& Btn)
+	void GUISubsystem::OnGamepadConfirmReleased()
 	{
-		if (Btn.button == 0)  // South button released
+		if (auto Pressed = PressedWidget.lock())
 		{
-			// Emulate mouse release (end drag)
-			if (auto Pressed = PressedWidget.lock())
+			Pressed->SetPressed(false);
+			
+			vec2f CursorPos = GetMousePosition();
+			Pressed->OnReleased(CursorPos);
+			
+			// Check if cursor is still over the pressed widget (for cursor-based interaction)
+			// OR if we're in keyboard navigation mode (no cursor movement since press)
+			if (Pressed->Contains(CursorPos))
 			{
-				Pressed->SetPressed(false);
+				Pressed->OnClicked.Broadcast();
 				
-				vec2f MousePos = GetMousePosition();
-				Pressed->OnReleased(MousePos);
-				
-				// Only trigger click if still over the widget
-				if (Pressed->Contains(MousePos))
+				const string& ClickSound = Pressed->GetClickSound();
+				if (Subsystem.Audio && !ClickSound.empty())
 				{
-					Pressed->OnClicked.Broadcast();
-					
-					const string& ClickSound = Pressed->GetClickSound();
-					if (Subsystem.Audio && !ClickSound.empty())
-					{
-						Subsystem.Audio->PlaySFX(ClickSound);
-					}
+					Subsystem.Audio->PlaySFX(ClickSound);
 				}
 			}
-			PressedWidget.reset();
 		}
+		PressedWidget.reset();
+	}
+
+	void GUISubsystem::OnGamepadCancel()
+	{
+		// Cancel/Back action - can be bound by game (e.g., close menu, go back)
+	}
+
+	void GUISubsystem::OnGamepadNavigateNext()
+	{
+		NavigateNext();
+	}
+
+	void GUISubsystem::OnGamepadNavigatePrevious()
+	{
+		NavigatePrevious();
 	}
 
 	void GUISubsystem::HandleTextEntered(const sf::Event::TextEntered& Text)
@@ -561,6 +572,18 @@ namespace we
 				Widget->Update(DeltaTime);
 			}
 		}
+
+		// Update hover state every frame (for gamepad cursor movement)
+		// This ensures hover visual feedback works when moving cursor with joystick
+		vec2f CursorPos = GetMousePosition();
+		UpdateHoverState(CursorPos);
+
+		// Handle dragging for pressed widget (gamepad cursor movement)
+		// This mirrors HandleMouseMoved behavior for joystick cursor
+		if (auto Pressed = PressedWidget.lock())
+		{
+			Pressed->OnDrag(CursorPos);
+		}
 	}
 
 	void GUISubsystem::Render()
@@ -594,11 +617,11 @@ namespace we
 		{
 			if (OldHovered)
 			{
-				OldHovered->OnFocusLost.Broadcast();
+				OldHovered->OnHoverLost.Broadcast();
 			}
 			if (NewHovered)
 			{
-				NewHovered->OnFocusGained.Broadcast();
+				NewHovered->OnHoverGained.Broadcast();
 				
 				const string& HoverSound = NewHovered->GetHoverSound();
 				if (Subsystem.Audio && !HoverSound.empty())
@@ -614,28 +637,31 @@ namespace we
 
 	shared<Widget> GUISubsystem::FindWidgetAt(const vec2f& ScreenPoint) const
 	{
-		vector<shared<Widget>> Visible;
+		// Find the visible widget with maximum render depth that contains the point
+		// WITHOUT allocating a vector or sorting - O(n) with O(1) memory
+		shared<Widget> TopWidget = nullptr;
+		float MaxDepth = -FLT_MAX;
+
 		for (auto& Widget : Widgets)
 		{
-			if (Widget && Widget->IsVisible())
+			if (!Widget || !Widget->IsVisible())
+				continue;
+
+			// Check if widget contains point and has higher depth than current max
+			// Note: We check Contains() first as a cheap filter before considering depth
+			if (Widget->Contains(ScreenPoint) && Widget->GetRenderDepth() > MaxDepth)
 			{
-				Visible.push_back(Widget);
+				MaxDepth = Widget->GetRenderDepth();
+				TopWidget = Widget;
 			}
 		}
 
-		std::sort(Visible.begin(), Visible.end(),
-			[](const shared<Widget>& A, const shared<Widget>& B)
-			{
-				return A->GetRenderDepth() > B->GetRenderDepth();
-			});
-
-		for (auto& Widget : Visible)
+		// If we found a containing widget, let it find the deepest child
+		if (TopWidget)
 		{
-			if (auto Hit = Widget->FindDeepestChildAt(ScreenPoint))
-			{
-				return Hit;
-			}
+			return TopWidget->FindDeepestChildAt(ScreenPoint);
 		}
+
 		return nullptr;
 	}
 
@@ -656,15 +682,16 @@ namespace we
 	{
 		if (!TargetWidget) return;
 
-		// Get widget center position
-		vec2f WidgetPos = TargetWidget->GetWorldPosition();
-		vec2f WidgetSize = TargetWidget->GetSize();
-		vec2f Center = WidgetPos + WidgetSize / 2.0f;
+		// Ask the widget where the cursor should snap to
+		// - Buttons: default (center of widget)
+		// - CheckBox: center of the checkbox
+		// - Slider: center of the thumb (follows current value)
+		vec2f CursorPos = TargetWidget->GetFocusPoint();
 
-		// Move cursor to widget center
-		Subsystem.Cursor->SetPosition(Center);
+		// Move cursor to calculated position
+		Subsystem.Cursor->SetPosition(CursorPos);
 		
 		// Update hovered widget based on new cursor position
-		UpdateHoverState(Center);
+		UpdateHoverState(CursorPos);
 	}
 }

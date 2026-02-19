@@ -45,6 +45,7 @@ namespace we
 		void ApplySavedGameplaySettings();
 		void ApplySavedAudioSettings();
 		void OnSettingsBackClicked();
+		void BindGUINavigationInput();
 
 	private:
 		// Persistent UI - created once, shown/hidden as needed

@@ -419,33 +419,33 @@ namespace we
         }
 
         /* Read bytes from current position, returns bytes actually read */
-        std::optional<uint64_t> read(void* data, uint64_t size) override
+        std::optional<std::size_t> read(void* data, std::size_t size) override
         {
-            uint64_t available = MusicMemoryData->size() - MusicMemoryPosition;
-            uint64_t toRead = (size < available) ? size : available;
+            std::size_t available = MusicMemoryData->size() - MusicMemoryPosition;
+            std::size_t toRead = (size < available) ? size : available;
             if (toRead > 0)
             {
-                std::memcpy(data, MusicMemoryData->data() + MusicMemoryPosition, static_cast<size_t>(toRead));
+                std::memcpy(data, MusicMemoryData->data() + MusicMemoryPosition, toRead);
                 MusicMemoryPosition += toRead;
             }
             return toRead;
         }
 
         /* Seek to absolute position, clamped to data bounds */
-        std::optional<uint64_t> seek(uint64_t position) override
+        std::optional<std::size_t> seek(std::size_t position) override
         {
             MusicMemoryPosition = (position > MusicMemoryData->size()) ? MusicMemoryData->size() : position;
             return MusicMemoryPosition;
         }
 
         /* Returns current read position */
-        std::optional<uint64_t> tell() override { return MusicMemoryPosition; }
+        std::optional<std::size_t> tell() override { return MusicMemoryPosition; }
 
         /* Returns total size of the music data */
-        std::optional<uint64_t> getSize() override { return MusicMemoryData->size(); }
+        std::optional<std::size_t> getSize() override { return MusicMemoryData->size(); }
 
     private:
         shared<vector<uint8>> MusicMemoryData;
-        uint64_t MusicMemoryPosition;
+        std::size_t MusicMemoryPosition;
     };
 }

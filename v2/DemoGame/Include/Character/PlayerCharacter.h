@@ -7,6 +7,7 @@
 
 #include "Core/CoreMinimal.h"
 #include "Framework/World/Actor/Character.h"
+#include "Interface/Component/CameraComponent.h"
 #include "Interface/Component/IMovementComponent.h"
 #include "GameConfig.h"
 
@@ -55,6 +56,7 @@ namespace we
 	private:
 		shared<IMovementComponent> MoveComp;
 		shared<AnimationComponent> AnimComp;
+		//shared<CameraComponent> CamComp;  // Camera component (not an Actor)
 		uint LastFootstepFrame = 255;
 	};
 }

@@ -31,6 +31,12 @@ namespace we
 
 		void CollectRenderDepths(vector<RenderDepth>& OutDepths) const override;
 
+		// Focus point is 90% across (left side) and centered vertically
+		// This prevents cursor from covering button text
+		vec2f GetFocusPoint() const override { 
+			return GetWorldPosition() + vec2f(GetSize().x * 0.9f, GetSize().y * 0.5f); 
+		}
+
 		void SetNormalColor(color InColor);
 		void SetHoverColor(color InColor);
 		void SetPressedColor(color InColor);
@@ -45,8 +51,8 @@ namespace we
 
 	private:
 		void UpdateVisualState();
-		void OnButtonFocusGained();
-		void OnButtonFocusLost();
+		void OnButtonHoverGained();
+		void OnButtonHoverLost();
 		void LoadTexture(shared<texture>& OutTexture, const string& Path);
 
 		string Label;

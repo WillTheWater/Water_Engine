@@ -33,8 +33,10 @@ namespace we
 		virtual void OnReleased(const vec2f& MousePosition) {}  // Called when mouse is released
 
 		Delegate<> OnClicked;
-		Delegate<> OnFocusGained;
+		Delegate<> OnFocusGained;  // Keyboard/gamepad navigation focus
 		Delegate<> OnFocusLost;
+		Delegate<> OnHoverGained;  // Mouse hover
+		Delegate<> OnHoverLost;
 
 		void SetAnchorPosition(Anchor ScreenAnchor, Anchor WidgetAnchor, vec2f Offset = vec2f{ 0.f, 0.f });
 		void SetLocalOffset(const vec2f& Offset);
@@ -69,6 +71,10 @@ namespace we
 
 		void SetFocusable(bool bFocusable) { bIsFocusable = bFocusable; }
 		bool IsFocusable() const { return bIsFocusable; }
+
+		// Override to define where the cursor should snap when navigating to this widget
+		// Default is center of widget. CheckBox overrides to center, Slider to thumb position.
+		virtual vec2f GetFocusPoint() const { return GetWorldPosition() + GetSize().componentWiseMul(GetWorldScale()) * 0.5f; }
 
 		virtual float GetRenderDepth() const { return RenderDepthValue.Depth; }
 		void SetRenderDepth(float Depth) { RenderDepthValue.Depth = Depth; }

@@ -171,14 +171,19 @@ namespace we
 		// Dirty flag for render order optimization
 		void MarkRenderDirty() { bRenderOrderDirty = true; }
 
+		// Input system integration (called via Input subsystem callbacks)
+		void OnGamepadConfirmPressed();   // South button (A on Xbox)
+		void OnGamepadConfirmReleased();  // South button released
+		void OnGamepadCancel();           // East button (B on Xbox)
+		void OnGamepadNavigateNext();     // Right shoulder
+		void OnGamepadNavigatePrevious(); // Left shoulder
+
 	private:
-		// Event handlers
+		// Event handlers (SFML events - for mouse/keyboard only)
 		void HandleMouseMoved(const sf::Event::MouseMoved& Mouse);
 		void HandleMousePressed(const sf::Event::MouseButtonPressed& Btn);
 		void HandleMouseReleased(const sf::Event::MouseButtonReleased& Btn);
 		void HandleKeyPressed(const sf::Event::KeyPressed& Key);
-		void HandleJoystickPressed(const sf::Event::JoystickButtonPressed& Btn);
-		void HandleJoystickReleased(const sf::Event::JoystickButtonReleased& Btn);
 		void HandleTextEntered(const sf::Event::TextEntered& Text);
 
 		// Navigation

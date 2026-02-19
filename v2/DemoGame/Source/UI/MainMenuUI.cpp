@@ -70,19 +70,16 @@ namespace we
 
 	void MainMenuUI::OnPlayButtonClicked()
 	{
-		LOG("Play button clicked");
 		OnPlayClicked.Broadcast();
 	}
 
 	void MainMenuUI::OnSettingsButtonClicked()
 	{
-		LOG("Settings button clicked");
 		OnSettingsClicked.Broadcast();
 	}
 
 	void MainMenuUI::OnQuitButtonClicked()
 	{
-		LOG("Quit button clicked");
 		OnQuitClicked.Broadcast();
 	}
 }
