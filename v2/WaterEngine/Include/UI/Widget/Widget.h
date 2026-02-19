@@ -72,6 +72,10 @@ namespace we
 		void SetFocusable(bool bFocusable) { bIsFocusable = bFocusable; }
 		bool IsFocusable() const { return bIsFocusable; }
 
+		// Override to define where the cursor should snap when navigating to this widget
+		// Default is center of widget. CheckBox overrides to center, Slider to thumb position.
+		virtual vec2f GetFocusPoint() const { return GetWorldPosition() + GetSize().componentWiseMul(GetWorldScale()) * 0.5f; }
+
 		virtual float GetRenderDepth() const { return RenderDepthValue.Depth; }
 		void SetRenderDepth(float Depth) { RenderDepthValue.Depth = Depth; }
 

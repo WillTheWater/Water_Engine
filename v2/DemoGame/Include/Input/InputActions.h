@@ -11,9 +11,9 @@ enum InputActions
 {
 	ACTION_TOGGLE_PAUSE,
 	
-	// GUI Navigation Actions (start at 100 to avoid collision with game actions)
-	GUI_CONFIRM = 100,      // South button (A on Xbox) - press/click
-	GUI_CANCEL,             // East button (B on Xbox) - back/cancel
-	GUI_NAV_NEXT,           // Right shoulder - next widget
-	GUI_NAV_PREVIOUS,       // Left shoulder - previous widget
+	// GUI Navigation Actions
+	GUI_CONFIRM,      // South button (A on Xbox) - press/click
+	GUI_CANCEL,       // East button (B on Xbox) - back/cancel
+	GUI_NAV_NEXT,     // Right shoulder - next widget
+	GUI_NAV_PREVIOUS, // Left shoulder - previous widget
 };

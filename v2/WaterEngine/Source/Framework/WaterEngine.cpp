@@ -110,6 +110,9 @@ namespace we
         // Update timers
         TimerManager::Get().Tick(DeltaTime);
 
+        // Update GUI (for hover state and dragging)
+        Subsystem.GUI->Update(DeltaTime);
+
         Tick(DeltaTime);
         
         if (Subsystem.GameInst)

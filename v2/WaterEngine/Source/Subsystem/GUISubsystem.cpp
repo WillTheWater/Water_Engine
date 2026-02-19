@@ -577,6 +577,13 @@ namespace we
 		// This ensures hover visual feedback works when moving cursor with joystick
 		vec2f CursorPos = GetMousePosition();
 		UpdateHoverState(CursorPos);
+
+		// Handle dragging for pressed widget (gamepad cursor movement)
+		// This mirrors HandleMouseMoved behavior for joystick cursor
+		if (auto Pressed = PressedWidget.lock())
+		{
+			Pressed->OnDrag(CursorPos);
+		}
 	}
 
 	void GUISubsystem::Render()
@@ -675,15 +682,16 @@ namespace we
 	{
 		if (!TargetWidget) return;
 
-		// Get widget center position
-		vec2f WidgetPos = TargetWidget->GetWorldPosition();
-		vec2f WidgetSize = TargetWidget->GetSize();
-		vec2f Center = WidgetPos + WidgetSize / 2.0f;
+		// Ask the widget where the cursor should snap to
+		// - Buttons: default (center of widget)
+		// - CheckBox: center of the checkbox
+		// - Slider: center of the thumb (follows current value)
+		vec2f CursorPos = TargetWidget->GetFocusPoint();
 
-		// Move cursor to widget center
-		Subsystem.Cursor->SetPosition(Center);
+		// Move cursor to calculated position
+		Subsystem.Cursor->SetPosition(CursorPos);
 		
 		// Update hovered widget based on new cursor position
-		UpdateHoverState(Center);
+		UpdateHoverState(CursorPos);
 	}
 }
