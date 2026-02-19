@@ -195,9 +195,7 @@ namespace we
             if (CurrentMousePos != LastMousePosition)
             {
                 LastMousePosition = CurrentMousePos;
-                // Set mapped position for game/world rendering
-                Subsystem.Cursor->SetPosition(Subsystem.Window->GetMousePosition());
-                // Set raw pixel position for UI hit testing
+                // SetPixelPosition converts window pixels to render coords and updates sprite position
                 Subsystem.Cursor->SetPixelPosition(vec2f(static_cast<float>(CurrentMousePos.x), static_cast<float>(CurrentMousePos.y)));
             }
         }

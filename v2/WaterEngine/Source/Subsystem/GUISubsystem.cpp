@@ -297,13 +297,8 @@ namespace we
 
 	vec2f GUISubsystem::GetMousePosition() const
 	{
-		vec2f PixelPos = Subsystem.Cursor->GetPixelPosition();
-		
-		vec2u WindowSize = Subsystem.Window->getSize();
-		float ScaleX = static_cast<float>(EC.RenderResolution.x) / WindowSize.x;
-		float ScaleY = static_cast<float>(EC.RenderResolution.y) / WindowSize.y;
-		
-		return vec2f(PixelPos.x * ScaleX, PixelPos.y * ScaleY);
+		// Cursor is always in render coordinates - single source of truth
+		return Subsystem.Cursor->GetPosition();
 	}
 
 	void GUISubsystem::HandleMouseMoved(const sf::Event::MouseMoved& Mouse)
