@@ -80,6 +80,7 @@ namespace we
             vec2f ViewSize = View->GetViewSize(AspectRatio);
             
             view SFMLView;
+            // No offset - camera position is view center
             SFMLView.setCenter(View->Position);
             SFMLView.setSize(ViewSize);
             SFMLView.setRotation(sf::radians(View->Rotation));
@@ -88,7 +89,20 @@ namespace we
             // Apply to game render targets only (UI and Cursor stay screen-space)
             GameRenderTarget.setView(SFMLView);
             GamePostProcessTarget.setView(SFMLView);
-            LOG("Using Camera");
+            
+            // DEBUG: Where would world (0,0) appear on the render target?
+            static int frame = 0;
+            if (++frame % 60 == 0)
+            {
+                // Transform world (0,0) to render target coordinates
+                vec2f worldOrigin = {0, 0};
+                vec2f toCenter = worldOrigin - SFMLView.getCenter();
+                vec2f normalized = {toCenter.x / SFMLView.getSize().x, toCenter.y / SFMLView.getSize().y};
+                vec2f screenPos = {normalized.x * RenderResolution.x + RenderResolution.x/2, 
+                                   normalized.y * RenderResolution.y + RenderResolution.y/2};
+                LOG("[CAMERA] ViewCenter: ({:.1f},{:.1f}), World(0,0) at screen: ({:.1f},{:.1f})",
+                    SFMLView.getCenter().x, SFMLView.getCenter().y, screenPos.x, screenPos.y);
+            }
         }
         else
         {
@@ -98,6 +112,15 @@ namespace we
             
             GameRenderTarget.setView(DefaultView);
             GamePostProcessTarget.setView(DefaultView);
+            
+            // DEBUG
+            static int noCamFrame = 0;
+            if (++noCamFrame % 60 == 0)
+            {
+                LOG("[NO CAMERA] ViewCenter: ({:.1f},{:.1f}), Size: ({:.1f},{:.1f})",
+                    DefaultView.getCenter().x, DefaultView.getCenter().y,
+                    DefaultView.getSize().x, DefaultView.getSize().y);
+            }
         }
         
         // UI and Cursor always use default (screen-space)

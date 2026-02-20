@@ -186,14 +186,44 @@ namespace we
             }
         }
         Subsystem.Render->ApplyCameraView(CamView);
+        
+        // DEBUG: Verify camera view was applied
+        static int g = 0;
+        if (++g % 30 == 0 && CamView)
+        {
+            LOG("[APPLY] CameraPos: ({:.1f},{:.1f}), ViewCenter: ({:.1f},{:.1f})",
+                CamView->Position.x, CamView->Position.y,
+                Subsystem.Render->GetGameView().getCenter().x, 
+                Subsystem.Render->GetGameView().getCenter().y);
+        }
 
         WorldRender();
         Subsystem.GUI->Render();
         Subsystem.Cursor->Render(*Subsystem.Render);
 
-        Subsystem.Window->setView(Subsystem.Window->GetConstrainedView());
-        Subsystem.Window->draw(Subsystem.Render->FinishRender());
+        sprite Compos = Subsystem.Render->FinishRender();
+        auto TextureSize = vec2f(Compos.getLocalBounds().size);
+        Compos.setOrigin(TextureSize.componentWiseMul({ 0.5f, 0.5f }));
+        Compos.setPosition(vec2f(EC.RenderResolution).componentWiseMul({ 0.5f, 0.5f }));
+
+        auto FinalView = Subsystem.Window->GetConstrainedView();
+        vec2f ViewSize = vec2f(EC.RenderResolution);
+        FinalView.setSize(ViewSize);
+        FinalView.setCenter(ViewSize.componentWiseMul({ 0.5f, 0.5f }));
+
+        Subsystem.Window->setView(FinalView);
+        Subsystem.Window->draw(Compos);
         Subsystem.Window->display();
+        
+        // DEBUG: Check what view was actually applied
+        static int f = 0;
+        if (++f % 30 == 0)
+        {
+            auto AppliedView = Subsystem.Window->getView();
+            LOG("[FINAL] WindowView: ({:.1f},{:.1f}), SpritePos: ({:.1f},{:.1f})",
+                AppliedView.getCenter().x, AppliedView.getCenter().y,
+                Compos.getPosition().x, Compos.getPosition().y);
+        }
     }
 
     void WaterEngine::ProcessEvents()

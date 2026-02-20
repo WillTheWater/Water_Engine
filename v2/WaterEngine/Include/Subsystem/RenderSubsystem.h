@@ -34,6 +34,9 @@ namespace we
 
         // Returns the final composite sprite
         sprite FinishRender();
+        
+        // Get current view for debug
+        view GetGameView() const { return GameRenderTarget.getView(); }
 
     private:
         // Game Render
