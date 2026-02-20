@@ -12,6 +12,9 @@ namespace we
 {
 	class PauseUI;
 
+	class Player;
+	class Camera;
+
 	class LevelOne : public World
 	{
 	public:
@@ -39,5 +42,10 @@ namespace we
 		unique<PauseUI> PauseMenuUI;
 		bool bPauseMenuOpen = false;
 		bool bSettingsOpen = false;
+
+		// Store a weak reference to the player for debugging
+		std::weak_ptr<Player> PlayerRef;
+		std::weak_ptr<Camera> CameraRef;
+		sf::VertexArray OriginMarker;
 	};
 }

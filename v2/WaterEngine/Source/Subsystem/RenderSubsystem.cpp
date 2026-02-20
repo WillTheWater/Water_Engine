@@ -6,6 +6,7 @@
 #include "Subsystem/RenderSubsystem.h"
 #include "Utility/Assert.h"
 #include "EngineConfig.h"
+#include "Utility/Log.h"
 
 // Post-process includes
 #include "PostProcess/PPE/BloomPPE.h"
@@ -87,6 +88,7 @@ namespace we
             // Apply to game render targets only (UI and Cursor stay screen-space)
             GameRenderTarget.setView(SFMLView);
             GamePostProcessTarget.setView(SFMLView);
+            LOG("Using Camera");
         }
         else
         {

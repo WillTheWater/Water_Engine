@@ -21,6 +21,7 @@ namespace we
 		string DefaultBackground;
 		
 		string LevelOneBackground;
+		string GridBackground;
 		
 		string CharacterSheetIdle;
 		string CharacterSheetWalk;
