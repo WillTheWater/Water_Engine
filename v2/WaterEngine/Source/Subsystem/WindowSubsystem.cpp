@@ -45,7 +45,7 @@ namespace we
         }
 
         CachedView.setSize(vec2f(Config.RenderResolution));
-        CachedView.setCenter({0,0});//vec2f(Config.RenderResolution) / 2.0f);
+        CachedView.setCenter(vec2f(Config.RenderResolution) / 2.0f);
         CachedView.setViewport(rectf({ vPosX, vPosY }, { vWidth, vHeight }));
 
         bViewDirty = false;

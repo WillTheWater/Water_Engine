@@ -173,16 +173,16 @@ namespace we
 		PauseMenuUI->OnSettingsClicked.Bind(this, &LevelOne::OnPauseSettings);
 		PauseMenuUI->OnQuitClicked.Bind(this, &LevelOne::OnPauseQuit);
 
-		// Initialize Red X at (0,0)
+		// Initialize Red X at WORLD ORIGIN (0,0)
 		OriginMarker = sf::VertexArray(sf::PrimitiveType::Lines, 4);
 		float size = 50.f; // Size of the X
 
-		// Line 1
+		// Line 1 - at world (0,0)
 		OriginMarker[0].position = { -size, -size };
-		OriginMarker[1].position = { size,  size };
+		OriginMarker[1].position = {  size,  size };
 		// Line 2
 		OriginMarker[2].position = { -size,  size };
-		OriginMarker[3].position = { size, -size };
+		OriginMarker[3].position = {  size, -size };
 
 		for (int i = 0; i < 4; ++i) OriginMarker[i].color = sf::Color::Red;
 
@@ -195,7 +195,7 @@ namespace we
 		PlayerRef = SpawnActor<Player>();
 		if (auto P = PlayerRef.lock())
 		{
-			// Start the player in the middle of the "area"
+			// Place player at world origin
 			P->SetPosition({ 0.f, 0.f });
 
 			auto SpawnedCam = SpawnActor<Camera>();
@@ -369,5 +369,21 @@ namespace we
 	void LevelOne::Tick(float DeltaTime)
 	{
 		World::Tick(DeltaTime);
+        
+        // DEBUG: Player vs Camera position
+        static int f = 0;
+        if (++f % 30 == 0)
+        {
+            if (auto P = PlayerRef.lock())
+            {
+                vec2f ppos = P->GetPosition();
+                LOG("[TICK] Player: ({:.1f}, {:.1f})", ppos.x, ppos.y);
+            }
+            if (auto C = CameraRef.lock())
+            {
+                vec2f cpos = C->GetPosition();
+                LOG("[TICK] Camera: ({:.1f}, {:.1f})", cpos.x, cpos.y);
+            }
+        }
 	}
 }
