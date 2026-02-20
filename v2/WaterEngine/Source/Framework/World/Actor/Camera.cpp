@@ -7,6 +7,7 @@
 #include "Framework/World/World.h"
 #include "Framework/EngineSubsystem.h"
 #include "Utility/Math.h"
+#include "Utility/Log.h"
 
 namespace we
 {
@@ -20,6 +21,7 @@ namespace we
     void Camera::BeginPlay()
     {
         Actor::BeginPlay();
+        LOG("Camera Begin Play")
     }
 
     void Camera::Tick(float DeltaTime)

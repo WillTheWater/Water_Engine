@@ -16,6 +16,7 @@ namespace we
         DefaultBackground = Config["DefaultBackground"];
 
         LevelOneBackground = Config["LevelOneBackground"];
+        GridBackground = Config["GridBackground"];
 
         CharacterSheetIdle = Config["CharacterSheetIdle"];
         CharacterSheetWalk = Config["CharacterSheetWalk"];

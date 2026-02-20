@@ -9,6 +9,7 @@
 #include "Subsystem/ResourceSubsystem.h"
 #include "Subsystem/InputSubsystem.h"
 #include "Subsystem/GameStateSubsystem.h"
+#include "Framework/World/Actor/Camera.h"
 #include "Subsystem/TimeSubsystem.h"
 #include "GameInstance/DemoGameInstance.h"
 #include "Input/InputActions.h"
@@ -156,13 +157,13 @@ namespace we
 
 	void LevelOne::Construct()
 	{
-		BgTexture = LoadAsset().LoadTextureSync(GC.LevelOneBackground);
+		BgTexture = LoadAsset().LoadTextureSync(GC.GridBackground);
 		if (BgTexture)
 		{
 			Background.emplace(*BgTexture);
 			auto bounds = Background->getLocalBounds();
 			Background->setOrigin({ bounds.size.x / 2.0f, bounds.size.y / 2.0f });
-			Background->setPosition(vec2f(EC.RenderResolution) / 2.0f);
+			Background->setPosition({ 0.f, 0.f });
 			AddRenderDepth(&*Background, -1000.0f);
 		}
 
@@ -171,44 +172,75 @@ namespace we
 		PauseMenuUI->OnContinueClicked.Bind(this, &LevelOne::OnPauseContinue);
 		PauseMenuUI->OnSettingsClicked.Bind(this, &LevelOne::OnPauseSettings);
 		PauseMenuUI->OnQuitClicked.Bind(this, &LevelOne::OnPauseQuit);
+
+		// Initialize Red X at (0,0)
+		OriginMarker = sf::VertexArray(sf::PrimitiveType::Lines, 4);
+		float size = 50.f; // Size of the X
+
+		// Line 1
+		OriginMarker[0].position = { -size, -size };
+		OriginMarker[1].position = { size,  size };
+		// Line 2
+		OriginMarker[2].position = { -size,  size };
+		OriginMarker[3].position = { size, -size };
+
+		for (int i = 0; i < 4; ++i) OriginMarker[i].color = sf::Color::Red;
+
+		// Add to render depth so it shows on top of the background
+		AddRenderDepth(&OriginMarker, 999.f);
 	}
 
 	void LevelOne::BeginPlay()
 	{
-		// Spawn player at center - player spawns its own camera
-		auto PlayerRef = SpawnActor<Player>();
+		PlayerRef = SpawnActor<Player>();
 		if (auto P = PlayerRef.lock())
 		{
-			P->SetPosition(EC.RenderResolution / 2.f);
+			// Start the player in the middle of the "area"
+			P->SetPosition({ 0.f, 0.f });
+
+			auto SpawnedCam = SpawnActor<Camera>();
+			if (auto C = SpawnedCam.lock())
+			{
+				// 1. Attach the camera to the player actor
+				C->SetPosition(P->GetPosition());
+				C->AttachTo(P.get(), { 0.f, 0.f });
+
+				// 2. Set the "Lag" to 0 for a hard lock (character stays perfectly still in center)
+				C->SetSmoothTime(0.0f);
+
+				// 3. Register this as the LIVE camera in the subsystem
+				if (auto* CamSys = Subsystem.Camera.get())
+				{
+					CamSys->SetActiveCamera(C.get());
+				}
+
+				CameraRef = SpawnedCam;
+			}
 		}
 
-		SpawnActor<TriggerTestActor>(vec2f{ 200, 300 }, 60.0f);
-		SpawnActor<BlockingTestActor>(vec2f{ 600, 300 }, 70.0f);
-		SpawnActor<RectangleBlockingActor>(vec2f{ 1200, 400 });
+		//// Test Borders - Room walls (closed loop)
+		//auto RoomBorder = SpawnActor<Border>(vector<vec2f>{
+		//	{ 50, 50 },
+		//	{ 1870, 50 },
+		//	{ 1870, 1030 },
+		//	{ 50, 1030 }
+		//});
+		//if (auto RB = RoomBorder.lock())
+		//{
+		//	RB->SetClosedLoop(true);
+		//	RB->SetDebugColor(color{ 255, 255, 0 });  // Yellow
+		//}
 
-		// Test Borders - Room walls (closed loop)
-		auto RoomBorder = SpawnActor<Border>(vector<vec2f>{
-			{ 50, 50 },
-			{ 1870, 50 },
-			{ 1870, 1030 },
-			{ 50, 1030 }
-		});
-		if (auto RB = RoomBorder.lock())
-		{
-			RB->SetClosedLoop(true);
-			RB->SetDebugColor(color{ 255, 255, 0 });  // Yellow
-		}
-
-		// Test Border - Center divider wall (open chain)
-		auto DividerWall = SpawnActor<Border>(vector<vec2f>{
-			{ 960, 200 },
-			{ 960, 500 },
-			{ 960, 800 }
-		});
-		if (auto DW = DividerWall.lock())
-		{
-			DW->SetDebugColor(color{ 0, 255, 255 });  // Cyan
-		}
+		//// Test Border - Center divider wall (open chain)
+		//auto DividerWall = SpawnActor<Border>(vector<vec2f>{
+		//	{ 960, 200 },
+		//	{ 960, 500 },
+		//	{ 960, 800 }
+		//});
+		//if (auto DW = DividerWall.lock())
+		//{
+		//	DW->SetDebugColor(color{ 0, 255, 255 });  // Cyan
+		//}
 
 		// Bind input for pause toggle (ESC and Gamepad Start)
 		SetupInputBindings();

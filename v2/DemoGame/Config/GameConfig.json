@@ -2,6 +2,7 @@
   "StartupGlobalVolume": 50,
   "DefaultBackground": "Assets/Textures/Default/defaultBackground.png",
   "LevelOneBackground": "Assets/Textures/Default/level1.png",
+  "GridBackground": "Assets/Textures/Default/grid.png",
   "CharacterSheetIdle": "Assets/Textures/Default/idle.png",
   "CharacterSheetWalk": "Assets/Textures/Default/walk.png",
   "DefaultMusic": "Assets/Audio/Default/defaultMusic.ogg",

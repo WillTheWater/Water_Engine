@@ -14,7 +14,7 @@ namespace we
     // =========================================================================
     struct CameraView
     {
-        vec2f Position = {0.0f, 0.0f};        // Center of view in world space
+        vec2f Position = { 0.0f, 0.0f };        // Center of view in world space
         float Rotation = 0.0f;                 // Rotation in radians
         float OrthographicSize = 540.0f;       // Half-height in world units (1080p/2 default)
         float Zoom = 1.0f;                     // 1.0 = normal, 2.0 = 2x zoomed in
@@ -24,7 +24,7 @@ namespace we
         {
             float Height = (OrthographicSize * 2.0f) / Zoom;
             float Width = Height * AspectRatio;
-            return {Width, Height};
+            return { Width, Height };
         }
     };
 
