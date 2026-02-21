@@ -68,7 +68,6 @@ namespace we
             .DefaultCursorSize = EC.DefaultCursorSize,
             .DefaultCursorSpeed = EC.DefaultCursorSpeed,
             .JoystickDeadzone = EC.JoystickDeadzone,
-            .RenderResolution = EC.RenderResolution,
             .Window = *Subsystem.Window
         });
 
@@ -173,57 +172,47 @@ namespace we
     {
         Subsystem.Audio->Update();
         Subsystem.Window->clear(color::Black);
-        Subsystem.Render->StartRender();
+        
+        // 1. Begin frame - clear all targets, reset all views to default
+        Subsystem.Render->BeginFrame();
 
-        // Get camera view if available
-        optional<CameraView> CamView;
+        // 2. Set up world view from camera (if available)
         if (Subsystem.Camera->HasActiveCamera())
         {
             CameraView View;
             if (Subsystem.Camera->GetCurrentView(View))
             {
-                CamView = View;
+                Subsystem.Render->SetWorldView(View);
             }
         }
-        Subsystem.Render->ApplyCameraView(CamView);
-        
-        // DEBUG: Verify camera view was applied
-        static int g = 0;
-        if (++g % 30 == 0 && CamView)
-        {
-            LOG("[APPLY] CameraPos: ({:.1f},{:.1f}), ViewCenter: ({:.1f},{:.1f})",
-                CamView->Position.x, CamView->Position.y,
-                Subsystem.Render->GetGameView().getCenter().x, 
-                Subsystem.Render->GetGameView().getCenter().y);
-        }
+        // If no camera, world view stays at default (set by BeginFrame)
 
+        // 3. Render world (uses camera view or default)
         WorldRender();
+
+        // 4. Reset to default views for screen-space rendering
+        Subsystem.Render->ResetToDefaultViews();
+
+        // 5. Render UI (widgets route to ScreenUI or WorldUI based on their space)
         Subsystem.GUI->Render();
+
+        // 6. Render cursor (screen space)
         Subsystem.Cursor->Render(*Subsystem.Render);
 
-        sprite Compos = Subsystem.Render->FinishRender();
-        auto TextureSize = vec2f(Compos.getLocalBounds().size);
-        Compos.setOrigin(TextureSize.componentWiseMul({ 0.5f, 0.5f }));
-        Compos.setPosition(vec2f(EC.RenderResolution).componentWiseMul({ 0.5f, 0.5f }));
-
-        auto FinalView = Subsystem.Window->GetConstrainedView();
-        vec2f ViewSize = vec2f(EC.RenderResolution);
-        FinalView.setSize(ViewSize);
-        FinalView.setCenter(ViewSize.componentWiseMul({ 0.5f, 0.5f }));
-
-        Subsystem.Window->setView(FinalView);
-        Subsystem.Window->draw(Compos);
-        Subsystem.Window->display();
+        // 7. Composite and present
+        sprite Composite = Subsystem.Render->FinishRender();
         
-        // DEBUG: Check what view was actually applied
-        static int f = 0;
-        if (++f % 30 == 0)
-        {
-            auto AppliedView = Subsystem.Window->getView();
-            LOG("[FINAL] WindowView: ({:.1f},{:.1f}), SpritePos: ({:.1f},{:.1f})",
-                AppliedView.getCenter().x, AppliedView.getCenter().y,
-                Compos.getPosition().x, Compos.getPosition().y);
-        }
+        // Scale composite to fill the window without changing view
+        // This keeps mouse coordinates accurate (1:1 with window pixels)
+        vec2u WindowSize = Subsystem.Window->getSize();
+        vec2f Scale(
+            static_cast<float>(WindowSize.x) / EC.RenderResolution.x,
+            static_cast<float>(WindowSize.y) / EC.RenderResolution.y
+        );
+        Composite.setScale(Scale);
+        
+        Subsystem.Window->draw(Composite);
+        Subsystem.Window->display();
     }
 
     void WaterEngine::ProcessEvents()
@@ -238,13 +227,12 @@ namespace we
         if (Subsystem.Window->hasFocus())
         {
             // Only update cursor from mouse if mouse actually moved
-            // (Prevents gamepad cursor from being overwritten every frame)
             vec2i CurrentMousePos = sf::Mouse::getPosition(*Subsystem.Window);
             if (CurrentMousePos != LastMousePosition)
             {
                 LastMousePosition = CurrentMousePos;
-                // SetPixelPosition converts window pixels to render coords and updates sprite position
-                Subsystem.Cursor->SetPixelPosition(vec2f(static_cast<float>(CurrentMousePos.x), static_cast<float>(CurrentMousePos.y)));
+                // Cursor uses window pixel coordinates directly
+                Subsystem.Cursor->SetPosition(vec2f(CurrentMousePos));
             }
         }
     }
@@ -267,7 +255,7 @@ namespace we
         // Draw sorted
         for (const auto& RenderCmd : WorldRenderDepths)
         {
-            Subsystem.Render->Draw(*RenderCmd.Drawable, ERenderLayer::Game);
+            Subsystem.Render->Draw(*RenderCmd.Drawable, ERenderLayer::World);
         }
 
         // Render debug primitives on top of game world (auto-clears after render)

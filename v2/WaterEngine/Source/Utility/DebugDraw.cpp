@@ -60,7 +60,7 @@ namespace we
             LineRect.setOrigin({ Length * 0.5f, L.Thickness * 0.5f });
             LineRect.setRotation(sf::radians(std::atan2(Delta.y, Delta.x)));
             LineRect.setFillColor(L.Color);
-            Render.Draw(LineRect, ERenderLayer::Game);
+            Render.Draw(LineRect, ERenderLayer::World);
         }
 
         // Render circles
@@ -72,7 +72,7 @@ namespace we
             Shape.setFillColor(color::Transparent);
             Shape.setOutlineColor(C.Color);
             Shape.setOutlineThickness(C.Thickness);
-            Render.Draw(Shape, ERenderLayer::Game);
+            Render.Draw(Shape, ERenderLayer::World);
         }
 
         // Render rects
@@ -85,7 +85,7 @@ namespace we
             Shape.setFillColor(color::Transparent);
             Shape.setOutlineColor(R.Color);
             Shape.setOutlineThickness(R.Thickness);
-            Render.Draw(Shape, ERenderLayer::Game);
+            Render.Draw(Shape, ERenderLayer::World);
         }
 
         // Render capsules (as two circles + connecting lines)
@@ -101,7 +101,7 @@ namespace we
             TopCap.setFillColor(color::Transparent);
             TopCap.setOutlineColor(C.Color);
             TopCap.setOutlineThickness(C.Thickness);
-            Render.Draw(TopCap, ERenderLayer::Game);
+            Render.Draw(TopCap, ERenderLayer::World);
 
             // Bottom cap
             circle BottomCap(C.Radius);
@@ -110,7 +110,7 @@ namespace we
             BottomCap.setFillColor(color::Transparent);
             BottomCap.setOutlineColor(C.Color);
             BottomCap.setOutlineThickness(C.Thickness);
-            Render.Draw(BottomCap, ERenderLayer::Game);
+            Render.Draw(BottomCap, ERenderLayer::World);
 
             // Connecting lines (left and right sides)
             // We'll draw these as thin rectangles
@@ -121,14 +121,14 @@ namespace we
             LeftLine.setOrigin({ C.Thickness / 2.0f, LineLength / 2.0f });
             LeftLine.setPosition(C.Position + vec2f{ -C.Radius, 0.0f });
             LeftLine.setFillColor(C.Color);
-            Render.Draw(LeftLine, ERenderLayer::Game);
+            Render.Draw(LeftLine, ERenderLayer::World);
 
             // Right side
             rectangle RightLine({ C.Thickness, LineLength });
             RightLine.setOrigin({ C.Thickness / 2.0f, LineLength / 2.0f });
             RightLine.setPosition(C.Position + vec2f{ C.Radius, 0.0f });
             RightLine.setFillColor(C.Color);
-            Render.Draw(RightLine, ERenderLayer::Game);
+            Render.Draw(RightLine, ERenderLayer::World);
         }
 
         // Auto-clear after rendering (no manual Clear() needed)

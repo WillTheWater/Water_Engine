@@ -7,6 +7,7 @@
 #include "Subsystem/RenderSubsystem.h"
 #include "Subsystem/ResourceSubsystem.h"
 #include "Subsystem/WindowSubsystem.h"
+#include "Subsystem/CameraSubsystem.h"
 #include "Subsystem/InputSubsystem.h"
 #include "Utility/Math.h"
 #include "EngineConfig.h"
@@ -49,14 +50,15 @@ namespace we
 			float RawT = (InputLength - Config.JoystickDeadzone) / (1.0f - Config.JoystickDeadzone);
 			float ScaledT = Clamp01(RawT);
 			
-			// Move the cursor sprite (in render coordinates)
+			// Move the cursor sprite (in window pixel coordinates)
 			vec2f Delta = NormalizedDir * CursorSpeed * ScaledT * DeltaTime;
 			CursorSprite.move(Delta);
 
-			// Clamp to render resolution bounds
+			// Clamp to window bounds
+			vec2f WindowSize = GetWindowSize();
 			vec2f ClampedPos = {
-				Clamp(CursorSprite.getPosition().x, 0.0f, Config.RenderResolution.x),
-				Clamp(CursorSprite.getPosition().y, 0.0f, Config.RenderResolution.y)
+				Clamp(CursorSprite.getPosition().x, 0.0f, WindowSize.x),
+				Clamp(CursorSprite.getPosition().y, 0.0f, WindowSize.y)
 			};
 			CursorSprite.setPosition(ClampedPos);
 		}
@@ -76,9 +78,14 @@ namespace we
 		CursorSprite.setScale(CursorSize.componentWiseDiv(textureSize));
 	}
 
+	vec2f CursorSubsystem::GetWindowSize() const
+	{
+		return vec2f(Config.Window.getSize());
+	}
+
 	void CursorSubsystem::CenterCursor()
 	{
-		vec2f Center = Config.RenderResolution / 2.0f;
+		vec2f Center = GetWindowSize() / 2.0f;
 		CursorSprite.setPosition(Center);
 	}
 
@@ -112,27 +119,33 @@ namespace we
 		return CursorSprite.getPosition();
 	}
 
-	vec2f CursorSubsystem::GetPixelPosition() const
+	vec2f CursorSubsystem::GetWorldPosition(const CameraSubsystem& Camera) const
 	{
-		// Convert from render coordinates to window pixel coordinates
-		vec2f Pos = CursorSprite.getPosition();
-		vec2u WindowSize = Config.Window.getSize();
-		
-		float ScaleX = static_cast<float>(WindowSize.x) / Config.RenderResolution.x;
-		float ScaleY = static_cast<float>(WindowSize.y) / Config.RenderResolution.y;
-		
-		return vec2f(Pos.x * ScaleX, Pos.y * ScaleY);
-	}
+		// Get current camera view
+		CameraView View;
+		if (!Camera.GetCurrentView(View))
+		{
+			// No active camera, return cursor position as-is
+			return CursorSprite.getPosition();
+		}
 
-	void CursorSubsystem::SetPixelPosition(vec2f PixelPos)
-	{
-		// Convert from window pixel coordinates to render coordinates
-		vec2u WindowSize = Config.Window.getSize();
-		
-		float ScaleX = static_cast<float>(Config.RenderResolution.x) / WindowSize.x;
-		float ScaleY = static_cast<float>(Config.RenderResolution.y) / WindowSize.y;
-		
-		vec2f RenderPos = vec2f(PixelPos.x * ScaleX, PixelPos.y * ScaleY);
-		CursorSprite.setPosition(RenderPos);
+		// Calculate aspect ratio
+		float AspectRatio = EC.AspectRatio.x / EC.AspectRatio.y;
+		vec2f ViewSize = View.GetViewSize(AspectRatio);
+
+		// Get cursor position in window pixels
+		vec2f PixelPos = CursorSprite.getPosition();
+		vec2f WindowSize = GetWindowSize();
+
+		// Convert to normalized device coordinates (-1 to 1)
+		float NormalizedX = (PixelPos.x / WindowSize.x) * 2.0f - 1.0f;
+		float NormalizedY = (PixelPos.y / WindowSize.y) * 2.0f - 1.0f;
+
+		// Convert to world coordinates
+		vec2f WorldPos;
+		WorldPos.x = View.Position.x + NormalizedX * ViewSize.x * 0.5f;
+		WorldPos.y = View.Position.y + NormalizedY * ViewSize.y * 0.5f;
+
+		return WorldPos;
 	}
 }

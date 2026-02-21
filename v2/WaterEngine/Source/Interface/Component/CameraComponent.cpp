@@ -87,16 +87,7 @@ namespace we
             CameraPosition = LerpVector(CameraPosition, TargetPos, t);
         }
         
-        // DEBUG: Log every frame when moving
-        static vec2f lastLoggedPos = {0, 0};
-        if (DistanceSquared(CameraPosition, lastLoggedPos) > 1.0f)
-        {
-            vec2f playerPos = TargetActor->GetPosition();
-            LOG("[Camera FRAME] Player: ({:.1f}, {:.1f}), Camera: ({:.1f}, {:.1f}), Diff: ({:.1f}, {:.1f})",
-                playerPos.x, playerPos.y, CameraPosition.x, CameraPosition.y,
-                CameraPosition.x - playerPos.x, CameraPosition.y - playerPos.y);
-            lastLoggedPos = CameraPosition;
-        }
+
     }
 
     CameraView CameraComponent::CalculateView() const
@@ -107,13 +98,7 @@ namespace we
         View.OrthographicSize = ViewHeight;
         View.Zoom = Zoom;
         
-        // DEBUG
-        static int frameCount = 0;
-        if (++frameCount % 60 == 0)
-        {
-            LOG("[Camera CalculateView] Pos: ({:.1f}, {:.1f})", View.Position.x, View.Position.y);
-        }
-        
+
         return View;
     }
 }

@@ -26,6 +26,7 @@ namespace we
 	class ProgressBar;
 	class TextBlock;
 	struct EngineSubsystem;
+	enum class EWidgetSpace;
 
 	class GUISubsystem
 	{
@@ -50,7 +51,8 @@ namespace we
 			const vec2f& Size = { 150.f, 50.f },
 			color FillColor = color{ 200, 200, 200 },
 			color OutlineColor = color::Black,
-			float OutlineThickness = 2.f);
+			float OutlineThickness = 2.f,
+			EWidgetSpace Space = EWidgetSpace::Screen);
 
 		// Factory: Texture button with text
 		// bUseColorTint: true = tint texture with colors, false = use texture rects (default atlas layout)
@@ -58,50 +60,56 @@ namespace we
 			const string& Label = "",
 			const string& TexturePath = "",
 			const vec2f& Size = { 0.f, 0.f },
-			bool bUseColorTint = false);
+			bool bUseColorTint = false,
+			EWidgetSpace Space = EWidgetSpace::Screen);
 
 		// Factory: Rectangle panel
 		shared<Panel> CreatePanel(
 			const vec2f& Size = { 300.f, 200.f },
 			color FillColor = color{ 50, 50, 50, 200 },
 			color OutlineColor = color{ 100, 100, 100 },
-			float OutlineThickness = 1.f);
+			float OutlineThickness = 1.f,
+			EWidgetSpace Space = EWidgetSpace::Screen);
 
 		// Factory: Texture panel
 		shared<Panel> CreateTexturePanel(
 			const string& TexturePath,
-			const vec2f& Size = { 0.f, 0.f });
+			const vec2f& Size = { 0.f, 0.f },
+			EWidgetSpace Space = EWidgetSpace::Screen);
 
 		// Factory: Vertical layout box
-		shared<VerticalBox> CreateVerticalBox(float Padding = 10.f);
+		shared<VerticalBox> CreateVerticalBox(float Padding = 10.f, EWidgetSpace Space = EWidgetSpace::Screen);
 
 		// Factory: Horizontal layout box
-		shared<HorizontalBox> CreateHorizontalBox(float Padding = 10.f);
+		shared<HorizontalBox> CreateHorizontalBox(float Padding = 10.f, EWidgetSpace Space = EWidgetSpace::Screen);
 
 		// Factory: Grid layout box
-		shared<GridBox> CreateGridBox(uint Columns = 2, float Padding = 10.f);
+		shared<GridBox> CreateGridBox(uint Columns = 2, float Padding = 10.f, EWidgetSpace Space = EWidgetSpace::Screen);
 
 		// Factory: Auto-sizing panel with child alignment
 		shared<AutoPanel> CreateAutoPanel(
 			color FillColor = color{ 50, 50, 50, 200 },
 			color OutlineColor = color{ 100, 100, 100 },
 			float OutlineThickness = 1.f,
-			float Spacing = 10.f);
+			float Spacing = 10.f,
+			EWidgetSpace Space = EWidgetSpace::Screen);
 
 		// Factory: Spacer widget
-		shared<Spacer> CreateSpacer(float Width = 10.f, float Height = 10.f);
+		shared<Spacer> CreateSpacer(float Width = 10.f, float Height = 10.f, EWidgetSpace Space = EWidgetSpace::Screen);
 
 		// Factory: Shape-based checkbox
 		shared<CheckBox> CreateCheckBox(
 			bool bInChecked = false,
 			float BoxSize = 24.f,
-			CheckBoxShape Shape = CheckBoxShape::Rectangle);
+			CheckBoxShape Shape = CheckBoxShape::Rectangle,
+			EWidgetSpace Space = EWidgetSpace::Screen);
 
 		// Factory: Texture-based checkbox
 		shared<CheckBox> CreateTextureCheckBox(
 			const string& TexturePath,
 			bool bInitialState = false,
-			float BoxSize = 0.f);
+			float BoxSize = 0.f,
+			EWidgetSpace Space = EWidgetSpace::Screen);
 
 		// Factory: Rectangle slider (horizontal or vertical)
 		shared<Slider> CreateSlider(
@@ -109,62 +117,71 @@ namespace we
 			float TrackHeight = 10.f,
 			float ThumbWidth = 20.f,
 			float ThumbHeight = 30.f,
-			SliderOrientation Orient = SliderOrientation::Horizontal);
+			SliderOrientation Orient = SliderOrientation::Horizontal,
+			EWidgetSpace Space = EWidgetSpace::Screen);
 
 		// Factory: Texture track + rectangle thumb slider
 		shared<Slider> CreateTextureTrackSlider(
 			const string& TrackTexturePath,
 			float ThumbWidth = 20.f,
 			float ThumbHeight = 30.f,
-			SliderOrientation Orient = SliderOrientation::Horizontal);
+			SliderOrientation Orient = SliderOrientation::Horizontal,
+			EWidgetSpace Space = EWidgetSpace::Screen);
 
 		// Factory: Rectangle track + texture thumb slider
 		shared<Slider> CreateTextureThumbSlider(
 			float TrackWidth = 200.f,
 			float TrackHeight = 10.f,
 			const string& ThumbTexturePath = "",
-			SliderOrientation Orient = SliderOrientation::Horizontal);
+			SliderOrientation Orient = SliderOrientation::Horizontal,
+			EWidgetSpace Space = EWidgetSpace::Screen);
 
 		// Factory: Texture track + texture thumb slider
 		shared<Slider> CreateTextureSlider(
 			const string& TrackTexturePath,
 			const string& ThumbTexturePath,
-			SliderOrientation Orient = SliderOrientation::Horizontal);
+			SliderOrientation Orient = SliderOrientation::Horizontal,
+			EWidgetSpace Space = EWidgetSpace::Screen);
 
 		// Factory: Rectangle progress bar
 		shared<ProgressBar> CreateProgressBar(
 			const vec2f& Size = { 200.f, 24.f },
-			float InitialValue = 0.f);
+			float InitialValue = 0.f,
+			EWidgetSpace Space = EWidgetSpace::Screen);
 
 		// Factory: Texture background + rectangle fill progress bar
 		shared<ProgressBar> CreateTextureBackgroundProgressBar(
 			const string& BackgroundTexturePath,
 			const vec2f& Size = { 200.f, 24.f },
-			float InitialValue = 0.f);
+			float InitialValue = 0.f,
+			EWidgetSpace Space = EWidgetSpace::Screen);
 
 		// Factory: Rectangle background + texture fill progress bar
 		shared<ProgressBar> CreateTextureFillProgressBar(
 			const vec2f& Size,
 			const string& FillTexturePath,
-			float InitialValue = 0.f);
+			float InitialValue = 0.f,
+			EWidgetSpace Space = EWidgetSpace::Screen);
 
 		// Factory: Texture background + texture fill progress bar
 		shared<ProgressBar> CreateTextureProgressBar(
 			const string& BackgroundTexturePath,
 			const string& FillTexturePath,
-			float InitialValue = 0.f);
+			float InitialValue = 0.f,
+			EWidgetSpace Space = EWidgetSpace::Screen);
 
 		// Factory: TextBlock with auto-wrap
 		shared<TextBlock> CreateTextBlock(
 			const string& Text = "",
 			float WrapWidth = 0.f,
-			uint CharSize = 24);
+			uint CharSize = 24,
+			EWidgetSpace Space = EWidgetSpace::Screen);
 
 		// Handle raw input events, returns true if consumed by GUI
 		bool HandleEvent(const sf::Event& Event);
 
 		void Update(float DeltaTime);
-		void Render();  // Uses Subsystem.Render internally
+		void Render();  // Routes to ScreenUI or WorldUI layer based on widget space
 
 		void Clear();
 
@@ -191,7 +208,13 @@ namespace we
 		void NavigatePrevious();
 		void ActivateFocused();
 
+		// Hit testing - finds widget at cursor position
+		// Automatically handles coordinate conversion for world-space widgets
 		shared<Widget> FindWidgetAt(const vec2f& ScreenPoint) const;
+		
+		// Convert screen point to appropriate coordinate space for widget
+		vec2f TransformPointForWidget(const vec2f& ScreenPoint, shared<Widget> Widget) const;
+		
 		vector<shared<Widget>> GetFocusableWidgets() const;
 		void UpdateHoverState(const vec2f& MousePos);
 		vec2f GetMousePosition() const;

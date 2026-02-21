@@ -1,6 +1,6 @@
 // =============================================================================
 // Water Engine v2.0.0
-// Copyright (C) 2026 Will The Water
+// Copyright(C) 2026 Will The Water
 // =============================================================================
 
 #pragma once
@@ -12,6 +12,7 @@ namespace we
 {
 	class RenderSubsystem;
 	class WindowSubsystem;
+	class CameraSubsystem;
 
 	struct CursorConfig
 	{
@@ -19,7 +20,6 @@ namespace we
 		vec2f DefaultCursorSize;
 		float DefaultCursorSpeed;
 		float JoystickDeadzone;
-		vec2f RenderResolution;
 		class WindowSubsystem& Window;
 	};
 
@@ -40,13 +40,12 @@ namespace we
 		void SetCursorSize(vec2f Size);
 		vec2f GetCursorSize() const { return CursorSize; }
 
-		// Cursor position in render resolution coordinates (0 to RenderResolution)
+		// Cursor position in window pixel coordinates
 		void SetPosition(vec2f Position);
 		vec2f GetPosition() const;
-		
-		// Convert position to/from window pixel coordinates
-		vec2f GetPixelPosition() const;  // Render coords -> Window pixels
-		void SetPixelPosition(vec2f PixelPos);  // Window pixels -> Render coords
+
+		// Convert window pixel position to world coordinates using camera
+		vec2f GetWorldPosition(const CameraSubsystem& Camera) const;
 
 		void SetJoystickDeadzone(float Deadzone) { Config.JoystickDeadzone = Deadzone; }
 		float GetJoystickDeadzone() const { return Config.JoystickDeadzone; }
@@ -54,6 +53,7 @@ namespace we
 	private:
 		void ApplyCursorSize();
 		void CenterCursor();
+		vec2f GetWindowSize() const;
 
 	private:
 		texture CursorTexture;
