@@ -369,21 +369,5 @@ namespace we
 	void LevelOne::Tick(float DeltaTime)
 	{
 		World::Tick(DeltaTime);
-        
-        // DEBUG: Player vs Camera position
-        static int f = 0;
-        if (++f % 30 == 0)
-        {
-            if (auto P = PlayerRef.lock())
-            {
-                vec2f ppos = P->GetPosition();
-                LOG("[TICK] Player: ({:.1f}, {:.1f})", ppos.x, ppos.y);
-            }
-            if (auto C = CameraRef.lock())
-            {
-                vec2f cpos = C->GetPosition();
-                LOG("[TICK] Camera: ({:.1f}, {:.1f})", cpos.x, cpos.y);
-            }
-        }
 	}
 }

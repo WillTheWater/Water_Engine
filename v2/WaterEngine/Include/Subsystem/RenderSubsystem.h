@@ -49,6 +49,7 @@ namespace we
         void BeginFrame();
         void SetWorldView(const CameraView& Camera);
         void ResetToDefaultViews();
+        void ResetWorldViewToDefault();  // Reset world targets to default view
 
         // Returns the final composite sprite
         sprite FinishRender();

@@ -111,8 +111,23 @@ namespace we
             CursorPostProcessTarget.clear(color::Transparent);
         }
 
-        // Reset to default views initially
+        // Reset ALL targets to default views
+        ResetWorldViewToDefault();
         ResetToDefaultViews();
+    }
+
+    void RenderSubsystem::ResetWorldViewToDefault()
+    {
+        // Reset world targets to default view (when no camera is active)
+        view DefaultView = WorldRenderTarget.getDefaultView();
+        DefaultView.setViewport(rectf({ 0.f, 0.f }, { 1.f, 1.f }));
+        
+        WorldRenderTarget.setView(DefaultView);
+        WorldPostProcessTarget.setView(DefaultView);
+        WorldUIRenderTarget.setView(DefaultView);
+        WorldUIPostProcessTarget.setView(DefaultView);
+        
+        CurrentWorldView = DefaultView;
     }
 
     void RenderSubsystem::SetWorldView(const CameraView& Camera)

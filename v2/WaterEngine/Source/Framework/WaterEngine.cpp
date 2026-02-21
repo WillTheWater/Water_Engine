@@ -173,7 +173,7 @@ namespace we
         Subsystem.Audio->Update();
         Subsystem.Window->clear(color::Black);
         
-        // 1. Begin frame - clear all targets
+        // 1. Begin frame - clear all targets, reset all views to default
         Subsystem.Render->BeginFrame();
 
         // 2. Set up world view from camera (if available)
@@ -185,8 +185,9 @@ namespace we
                 Subsystem.Render->SetWorldView(View);
             }
         }
+        // If no camera, world view stays at default (set by BeginFrame)
 
-        // 3. Render world (uses camera view)
+        // 3. Render world (uses camera view or default)
         WorldRender();
 
         // 4. Reset to default views for screen-space rendering
@@ -200,6 +201,16 @@ namespace we
 
         // 7. Composite and present
         sprite Composite = Subsystem.Render->FinishRender();
+        
+        // Scale composite to fill the window without changing view
+        // This keeps mouse coordinates accurate (1:1 with window pixels)
+        vec2u WindowSize = Subsystem.Window->getSize();
+        vec2f Scale(
+            static_cast<float>(WindowSize.x) / EC.RenderResolution.x,
+            static_cast<float>(WindowSize.y) / EC.RenderResolution.y
+        );
+        Composite.setScale(Scale);
+        
         Subsystem.Window->draw(Composite);
         Subsystem.Window->display();
     }
