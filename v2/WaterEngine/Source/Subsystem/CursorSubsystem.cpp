@@ -55,10 +55,10 @@ namespace we
 			CursorSprite.move(Delta);
 
 			// Clamp to window bounds
-			vec2u WindowSize = GetWindowSize();
+			vec2f WindowSize = GetWindowSize();
 			vec2f ClampedPos = {
-				Clamp(CursorSprite.getPosition().x, 0.0f, static_cast<float>(WindowSize.x)),
-				Clamp(CursorSprite.getPosition().y, 0.0f, static_cast<float>(WindowSize.y))
+				Clamp(CursorSprite.getPosition().x, 0.0f, WindowSize.x),
+				Clamp(CursorSprite.getPosition().y, 0.0f, WindowSize.y)
 			};
 			CursorSprite.setPosition(ClampedPos);
 		}

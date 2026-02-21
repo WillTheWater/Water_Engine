@@ -249,7 +249,24 @@ namespace we
 
 		if (bUseAnchors)
 		{
-			vec2f ParentSize = Parent ? Parent->GetSize() : vec2f(EC.RenderResolution);
+			// Determine reference size based on widget space
+			vec2f ReferenceSize;
+			if (Parent)
+			{
+				ReferenceSize = Parent->GetSize();
+			}
+			else if (WidgetSpace == EWidgetSpace::Screen)
+			{
+				// Screen widgets use render resolution as reference
+				ReferenceSize = vec2f(EC.RenderResolution);
+			}
+			else
+			{
+				// World widgets use render resolution as the world coordinate reference
+				ReferenceSize = vec2f(EC.RenderResolution);
+			}
+
+			vec2f ParentSize = Parent ? Parent->GetSize() : ReferenceSize;
 			vec2f ParentPos = Parent ? Parent->GetWorldPosition() : vec2f{ 0, 0 };
 			vec2f ParentScale = Parent ? Parent->GetWorldScale() : vec2f{ 1, 1 };
 

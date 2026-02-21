@@ -103,7 +103,7 @@ namespace we
         CursorRenderTarget.clear(color::Transparent);
         CompositeTarget.clear(color::Transparent);
 
-        if (sf::Shader::isAvailable)
+        if (sf::Shader::isAvailable())
         {
             WorldPostProcessTarget.clear(color::Transparent);
             ScreenUIPostProcessTarget.clear(color::Transparent);
@@ -178,7 +178,7 @@ namespace we
     {
         // Render Post Processing for each layer
         auto RenderLayer = [&](renderTexture& main, renderTexture& pp, vector<unique<IPostProcess>>& effects) -> const texture& {
-            if (sf::Shader::isAvailable && !effects.empty()) {
+            if (sf::Shader::isAvailable() && !effects.empty()) {
                 return ProcessPostEffects(&main, &pp, effects)->getTexture();
             }
             main.display();
