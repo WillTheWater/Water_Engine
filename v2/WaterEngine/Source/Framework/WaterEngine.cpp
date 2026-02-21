@@ -53,7 +53,7 @@ namespace we
             .DisableSFMLLogs = EC.DisableSFMLLogs
         });
 
-        Subsystem.Render = make_unique<RenderSubsystem>(RenderConfig{
+        Subsystem.Render = make_unique<RenderSubsystem>(*Subsystem.Window, RenderConfig{
             .RenderResolution = EC.RenderResolution,
             .SetRenderSmooth = EC.SetRenderSmooth
         });
@@ -172,11 +172,11 @@ namespace we
     {
         Subsystem.Audio->Update();
         Subsystem.Window->clear(color::Black);
-        
-        // 1. Begin frame - clear all targets, reset all views to default
+
+        // 1. Begin frame - clear all targets, reset all views
         Subsystem.Render->BeginFrame();
 
-        // 2. Set up world view from camera (if available)
+        // 2. Set up world view from camera
         if (Subsystem.Camera->HasActiveCamera())
         {
             CameraView View;
@@ -185,33 +185,27 @@ namespace we
                 Subsystem.Render->SetWorldView(View);
             }
         }
-        // If no camera, world view stays at default (set by BeginFrame)
 
-        // 3. Render world (uses camera view or default)
+        // 3. Render world
         WorldRender();
 
-        // 4. Reset to default views for screen-space rendering
+        // 4. Render UI
         Subsystem.Render->ResetToDefaultViews();
-
-        // 5. Render UI (widgets route to ScreenUI or WorldUI based on their space)
         Subsystem.GUI->Render();
 
-        // 6. Render cursor (screen space)
+        // 5. Render cursor (Draws to CursorRenderTarget, NOT window yet)
         Subsystem.Cursor->Render(*Subsystem.Render);
 
-        // 7. Composite and present
-        sprite Composite = Subsystem.Render->FinishRender();
-        
-        // Scale composite to fill the window without changing view
-        // This keeps mouse coordinates accurate (1:1 with window pixels)
-        vec2u WindowSize = Subsystem.Window->getSize();
-        vec2f Scale(
-            static_cast<float>(WindowSize.x) / EC.RenderResolution.x,
-            static_cast<float>(WindowSize.y) / EC.RenderResolution.y
-        );
-        Composite.setScale(Scale);
-        
+        // 6. Get Composite Sprite (Game + UI) scaled/letterboxed
+        sprite Composite = Subsystem.Render->FinishComposite();
+
+        // 7. Draw Game to Window
         Subsystem.Window->draw(Composite);
+
+        // 8. Draw Cursor to Window (1:1, no scaling)
+        Subsystem.Render->PresentCursor();
+
+        // 9. Display
         Subsystem.Window->display();
     }
 
@@ -220,60 +214,69 @@ namespace we
         while (const auto Event = Subsystem.Window->pollEvent())
         {
             Subsystem.Window->HandleEvent(*Event);
-            Subsystem.GUI->HandleEvent(*Event);
-            Subsystem.Input->HandleEvent(*Event);
-        }
-
-        if (Subsystem.Window->hasFocus())
-        {
-            // Only update cursor from mouse if mouse actually moved
-            vec2i CurrentMousePos = sf::Mouse::getPosition(*Subsystem.Window);
-            if (CurrentMousePos != LastMousePosition)
+            if (Subsystem.Window->hasFocus())
             {
-                LastMousePosition = CurrentMousePos;
-                // Cursor uses window pixel coordinates directly
-                Subsystem.Cursor->SetPosition(vec2f(CurrentMousePos));
+                // Map mouse coords for UI events
+                if (Event->is<sf::Event::MouseMoved>())
+                {
+                    vec2i PixelPos = sf::Mouse::getPosition(*Subsystem.Window);
+                    vec2f UICoords = Subsystem.Render->MapPixelToCoords(PixelPos);
+                    // Pass mapped coords to GUI event or update internal state
+                    // For simple sfml events, we often just pass the event, 
+                    // but for our UI we might need to transform the mouse position internally.
+                }
+                Subsystem.GUI->HandleEvent(*Event);
+                Subsystem.Input->HandleEvent(*Event);
+            }
+
+            if (Subsystem.Window->hasFocus())
+            {
+                vec2i CurrentMousePos = sf::Mouse::getPosition(*Subsystem.Window);
+                if (CurrentMousePos != LastMousePosition)
+                {
+                    LastMousePosition = CurrentMousePos;
+                    // Cursor is in Window Pixel Space. This is correct for the new setup.
+                    Subsystem.Cursor->SetPosition(vec2f(CurrentMousePos));
+                }
             }
         }
     }
-   
 
-
-    void WaterEngine::WorldRender()
-    {
-        static vector<RenderDepth> WorldRenderDepths;
-        WorldRenderDepths.clear();
-
-        if (auto World = Subsystem.World->GetCurrentWorld())
+        void WaterEngine::WorldRender()
         {
-            World->CollectRenderDepths(WorldRenderDepths);
+            static vector<RenderDepth> WorldRenderDepths;
+            WorldRenderDepths.clear();
+
+            if (auto World = Subsystem.World->GetCurrentWorld())
+            {
+                World->CollectRenderDepths(WorldRenderDepths);
+            }
+
+            // Sort by depth (Y position) - back to front
+            std::sort(WorldRenderDepths.begin(), WorldRenderDepths.end());
+
+            // Draw sorted
+            for (const auto& RenderCmd : WorldRenderDepths)
+            {
+                Subsystem.Render->Draw(*RenderCmd.Drawable, ERenderLayer::World);
+            }
+
+            // Render debug primitives on top of game world (auto-clears after render)
+            DebugDraw::Render(*Subsystem.Render);
         }
 
-        // Sort by depth (Y position) - back to front
-        std::sort(WorldRenderDepths.begin(), WorldRenderDepths.end());
-
-        // Draw sorted
-        for (const auto& RenderCmd : WorldRenderDepths)
+        void WaterEngine::PostUpdate()
         {
-            Subsystem.Render->Draw(*RenderCmd.Drawable, ERenderLayer::World);
+
         }
 
-        // Render debug primitives on top of game world (auto-clears after render)
-        DebugDraw::Render(*Subsystem.Render);
-    }
+        bool WaterEngine::IsRunning() const
+        {
+            return Subsystem.Window->isOpen() && !Subsystem.GameState->IsShutdownRequested();
+        }
 
-    void WaterEngine::PostUpdate()
-    {
-
+        bool WaterEngine::HasFocus() const
+        {
+            return Subsystem.Window->hasFocus();
+        }
     }
-
-    bool WaterEngine::IsRunning() const
-    {
-        return Subsystem.Window->isOpen() && !Subsystem.GameState->IsShutdownRequested();
-    }
-
-    bool WaterEngine::HasFocus() const
-    {
-        return Subsystem.Window->hasFocus();
-    }
-}

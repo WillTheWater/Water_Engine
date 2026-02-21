@@ -46,6 +46,7 @@ namespace we
 
 	private:
 		bool bIsFullscreen;
+		bool bIsResizing = false;
 		WindowConfig Config; 
 
 	private:
@@ -55,9 +56,6 @@ namespace we
 		void ApplyWindowSettings();
 		void CreateGameWindow(const sf::VideoMode& Mode, uint Style, sf::State State = sf::State::Windowed);
 		void SetWindowIcon();
-
-	
-
 		void EventWindowClose();
 		void EventToggleBorderlessFullscreen();
 	};

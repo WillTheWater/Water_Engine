@@ -34,24 +34,37 @@ namespace we
 
     void WindowSubsystem::onResize()
     {
-        const vec2f TargetRes = vec2f(Config.AspectRatio);
-        const float TargetRatio = TargetRes.x / TargetRes.y;
+        // 1. Don't enforce size in fullscreen
+        if (bIsFullscreen) return;
+
+        // 2. Prevent Infinite Recursion
+        if (bIsResizing) return;
 
         vec2u NewSize = getSize();
-        NewSize.x = std::max(NewSize.x, static_cast<uint>(Config.WindowMinimumSize.x));
-        NewSize.y = std::max(NewSize.y, static_cast<uint>(Config.WindowMinimumSize.y));
 
-        float currentRatio = static_cast<float>(NewSize.x) / NewSize.y;
+        // 3. Enforce Minimum Size
+        if (NewSize.x < Config.WindowMinimumSize.x) NewSize.x = Config.WindowMinimumSize.x;
+        if (NewSize.y < Config.WindowMinimumSize.y) NewSize.y = Config.WindowMinimumSize.y;
 
-        if (std::abs(currentRatio - TargetRatio) > 0.001f)
+        // 4. Enforce Aspect Ratio
+        const float TargetRatio = Config.AspectRatio.x / Config.AspectRatio.y;
+        const float CurrentRatio = static_cast<float>(NewSize.x) / NewSize.y;
+
+        if (std::abs(CurrentRatio - TargetRatio) > 0.001f)
         {
-            if (currentRatio > TargetRatio)
+            if (CurrentRatio > TargetRatio)
                 NewSize.x = static_cast<uint>(NewSize.y * TargetRatio);
             else
                 NewSize.y = static_cast<uint>(NewSize.x / TargetRatio);
         }
 
-        if (NewSize != getSize()) { setSize(NewSize); }
+        // 5. Apply corrected size if changed
+        if (NewSize != getSize())
+        {
+            bIsResizing = true;
+            setSize(NewSize);
+            bIsResizing = false;
+        }
     }
 
     void WindowSubsystem::CreateGameWindow(const sf::VideoMode& Mode, uint Style, sf::State State)

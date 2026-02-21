@@ -12,6 +12,8 @@
 
 namespace we
 {
+    class WindowSubsystem;
+
     struct RenderConfig
     {
         vec2f RenderResolution;
@@ -37,7 +39,7 @@ namespace we
     class RenderSubsystem
     {
     public:
-        explicit RenderSubsystem(const RenderConfig& Config);
+        explicit RenderSubsystem(WindowSubsystem& Window, const RenderConfig& Config);
 
         // Draw an object to a specific layer with specified view space
         void Draw(const drawable& RenderObject, ERenderLayer Layer, EViewSpace ViewSpace);
@@ -52,7 +54,9 @@ namespace we
         void ResetWorldViewToDefault();  // Reset world targets to default view
 
         // Returns the final composite sprite
-        sprite FinishRender();
+        sprite FinishComposite(); // Returns Game+UI sprite
+        void PresentCursor();
+        vec2f MapPixelToCoords(const vec2i& PixelPos);
 
     private:
         // World Render (gameplay objects)
@@ -78,20 +82,21 @@ namespace we
         // Final composite target
         renderTexture CompositeTarget;
 
+        // Views
+        view CurrentWorldView;
+        view LetterboxView;
+
     private:
         friend class WaterEngine;
 
         void CompositeLayers();
         renderTexture* ProcessPostEffects(renderTexture* Input, renderTexture* Output, vector<unique<IPostProcess>>& Effects);
         renderTexture* GetTargetForLayer(ERenderLayer Layer);
-        void ApplyViewToTarget(renderTexture& Target, EViewSpace ViewSpace, const view& WorldView, const view& DefaultView);
+        void SetupLetterboxView();
 
     private:
+        WindowSubsystem& RenderWindow;
         vec2u RenderResolution;
         RenderConfig Config;
-        
-        // Cached views
-        view CurrentWorldView;
-        view CurrentDefaultView;
     };
 }

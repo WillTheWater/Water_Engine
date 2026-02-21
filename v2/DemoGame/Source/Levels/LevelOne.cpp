@@ -164,7 +164,7 @@ namespace we
 			auto bounds = Background->getLocalBounds();
 			Background->setOrigin({ bounds.size.x / 2.0f, bounds.size.y / 2.0f });
 			Background->setPosition({ 0.f, 0.f });
-			AddRenderDepth(&*Background, -1000.0f);
+			AddRenderDepth(&*Background, -100000.0f);
 		}
 
 		// Create pause menu UI (hidden by default)

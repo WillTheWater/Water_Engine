@@ -4,6 +4,7 @@
 // =============================================================================
 
 #include "Subsystem/RenderSubsystem.h"
+#include "Subsystem/WindowSubsystem.h"
 #include "Utility/Assert.h"
 #include "EngineConfig.h"
 #include "Utility/Log.h"
@@ -13,21 +14,22 @@
 
 namespace we
 {
-    RenderSubsystem::RenderSubsystem(const RenderConfig& InConfig)
-        : RenderResolution(static_cast<vec2u>(InConfig.RenderResolution))
+    RenderSubsystem::RenderSubsystem(WindowSubsystem& Window, const RenderConfig& InConfig)
+        : RenderWindow{Window}
+        , RenderResolution(static_cast<vec2u>(InConfig.RenderResolution))
         , Config{ InConfig }
     {
         // Set Render Targets Pixel Size
         VERIFY(WorldRenderTarget.resize(RenderResolution));
         VERIFY(ScreenUIRenderTarget.resize(RenderResolution));
         VERIFY(WorldUIRenderTarget.resize(RenderResolution));
-        VERIFY(CursorRenderTarget.resize(RenderResolution));
         VERIFY(CompositeTarget.resize(RenderResolution));
+        VERIFY(CursorRenderTarget.resize(Window.getSize()));
 
         // Set Smoothing for Render Targets
         WorldRenderTarget.setSmooth(Config.SetRenderSmooth);
         ScreenUIRenderTarget.setSmooth(false);
-        WorldUIRenderTarget.setSmooth(Config.SetRenderSmooth);
+        WorldUIRenderTarget.setSmooth(false);
         CursorRenderTarget.setSmooth(false);
         CompositeTarget.setSmooth(false);
 
@@ -42,9 +44,6 @@ namespace we
             // PPE Applied to World (gameplay)
             WorldPostProcessEffects.emplace_back(make_unique<BloomPPE>());
         }
-
-        // Cache default view
-        CurrentDefaultView = WorldRenderTarget.getDefaultView();
     }
 
     renderTexture* RenderSubsystem::GetTargetForLayer(ERenderLayer Layer)
@@ -63,14 +62,18 @@ namespace we
     {
         renderTexture* Target = GetTargetForLayer(Layer);
 
-        // Apply appropriate view before drawing
-        if (ViewSpace == EViewSpace::World)
+        // Special handling for Cursor: It always uses a 1:1 view of its target size
+        if (Layer == ERenderLayer::Cursor)
         {
-            Target->setView(CurrentWorldView);
+            view CursorView = CursorRenderTarget.getDefaultView();
+            CursorRenderTarget.setView(CursorView);
         }
         else
         {
-            Target->setView(CurrentDefaultView);
+            if (ViewSpace == EViewSpace::World)
+                Target->setView(CurrentWorldView);
+            else
+                Target->setView(Target->getDefaultView()); // Default view of the fixed target
         }
 
         Target->draw(RenderObject);
@@ -96,14 +99,20 @@ namespace we
 
     void RenderSubsystem::BeginFrame()
     {
-        // Clear all layer targets
+        // 1. Handle Cursor Target Resizing (Must match Window, not Game Resolution)
+        vec2u WindowSize = RenderWindow.getSize();
+        if (CursorRenderTarget.getSize() != WindowSize)
+        {
+            CursorRenderTarget.resize(WindowSize);
+        }
+
+        // 2. Clear Fixed Targets
         WorldRenderTarget.clear(color{ 86, 164, 183 });
         ScreenUIRenderTarget.clear(color::Transparent);
         WorldUIRenderTarget.clear(color::Transparent);
-        CursorRenderTarget.clear(color::Transparent);
         CompositeTarget.clear(color::Transparent);
 
-        if (sf::Shader::isAvailable())
+        if (sf::Shader::isAvailable)
         {
             WorldPostProcessTarget.clear(color::Transparent);
             ScreenUIPostProcessTarget.clear(color::Transparent);
@@ -111,7 +120,10 @@ namespace we
             CursorPostProcessTarget.clear(color::Transparent);
         }
 
-        // Reset ALL targets to default views
+        // 3. Clear Cursor Target
+        CursorRenderTarget.clear(color::Transparent);
+
+        // 4. Reset Views
         ResetWorldViewToDefault();
         ResetToDefaultViews();
     }
@@ -156,7 +168,7 @@ namespace we
 
     void RenderSubsystem::ResetToDefaultViews()
     {
-        CurrentDefaultView = WorldRenderTarget.getDefaultView();
+        auto CurrentDefaultView = WorldRenderTarget.getDefaultView();
         CurrentDefaultView.setViewport(rectf({ 0.f, 0.f }, { 1.f, 1.f }));
 
         // Screen UI and Cursor use default view
@@ -209,18 +221,72 @@ namespace we
         CompositeTarget.clear(color::Transparent);
         CompositeTarget.setView(CompositeTarget.getDefaultView());
 
-        // Draw in order: World -> WorldUI -> ScreenUI -> Cursor
-        CompositeTarget.draw(sprite(RenderedWorldLayer));
-        CompositeTarget.draw(sprite(RenderedWorldUILayer), sf::BlendAlpha);
-        CompositeTarget.draw(sprite(RenderedScreenUILayer), sf::BlendAlpha);
-        CompositeTarget.draw(sprite(RenderedCursorLayer), sf::BlendAlpha);
+        // Display all inputs
+        WorldRenderTarget.display();
+        ScreenUIRenderTarget.display();
+        WorldUIRenderTarget.display();
+        // NOTE: We do NOT display CursorRenderTarget here. It is handled separately.
+
+        // Composite Game Layers Only
+        CompositeTarget.setView(CompositeTarget.getDefaultView());
+
+        // World
+        sprite WorldSprite(WorldRenderTarget.getTexture());
+        CompositeTarget.draw(WorldSprite);
+
+        // World UI
+        sprite WorldUISprite(WorldUIRenderTarget.getTexture());
+        CompositeTarget.draw(WorldUISprite, sf::BlendAlpha);
+
+        // Screen UI
+        sprite ScreenUISprite(ScreenUIRenderTarget.getTexture());
+        CompositeTarget.draw(ScreenUISprite, sf::BlendAlpha);
 
         CompositeTarget.display();
     }
 
-    sprite RenderSubsystem::FinishRender()
+    sprite RenderSubsystem::FinishComposite()
     {
         CompositeLayers();
-        return sprite(CompositeTarget.getTexture());
+
+        sprite FinalSprite(CompositeTarget.getTexture());
+
+        // Calculate Letterbox Scale
+        vec2u WindowSize = RenderWindow.getSize();
+        float ScaleX = static_cast<float>(WindowSize.x) / RenderResolution.x;
+        float ScaleY = static_cast<float>(WindowSize.y) / RenderResolution.y;
+
+        // Maintain Aspect Ratio (Fit Inside)
+        float Scale = std::min(ScaleX, ScaleY);
+        FinalSprite.setScale({ Scale, Scale });
+
+        // Center it
+        float PosX = (WindowSize.x - (RenderResolution.x * Scale)) / 2.f;
+        float PosY = (WindowSize.y - (RenderResolution.y * Scale)) / 2.f;
+        FinalSprite.setPosition({ PosX, PosY });
+
+        // Cache the view for coordinate mapping
+        LetterboxView.setSize(vec2f(RenderResolution));
+        LetterboxView.setCenter(vec2f(RenderResolution) / 2.f);
+        LetterboxView.setViewport({ { PosX / WindowSize.x, PosY / WindowSize.y }, { (RenderResolution.x * Scale) / WindowSize.x, (RenderResolution.y * Scale) / WindowSize.y } });
+
+        return FinalSprite;
+    }
+
+    void RenderSubsystem::PresentCursor()
+    {
+        CursorRenderTarget.display();
+
+        // Draw cursor 1:1 to window
+        view WindowView(sf::FloatRect({ 0.f, 0.f }, vec2f(RenderWindow.getSize())));
+        RenderWindow.setView(WindowView);
+
+        sprite CursorSprite(CursorRenderTarget.getTexture());
+        RenderWindow.draw(CursorSprite, sf::BlendAlpha);
+    }
+
+    vec2f RenderSubsystem::MapPixelToCoords(const vec2i& PixelPos)
+    {
+        return RenderWindow.mapPixelToCoords(PixelPos, LetterboxView);
     }
 }
