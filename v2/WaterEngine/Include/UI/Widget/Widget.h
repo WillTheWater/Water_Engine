@@ -18,6 +18,13 @@ namespace we
 		BottomLeft, BottomCenter, BottomRight
 	};
 
+	// Which space the widget is rendered in
+	enum class EWidgetSpace
+	{
+		Screen,  // Screen-space UI (HUD, menus) - uses default view
+		World    // World-space UI (popups, health bars) - uses camera view
+	};
+
 	class Widget : public std::enable_shared_from_this<Widget>
 	{
 	public:
@@ -66,8 +73,12 @@ namespace we
 		void Hide() { SetVisible(false); }
 		bool IsVisible() const { return bVisible; }
 
-		virtual bool Contains(const vec2f& ScreenPoint) const;
-		shared<Widget> FindDeepestChildAt(const vec2f& ScreenPoint);
+		// Widget space - determines if rendered in screen or world space
+		void SetWidgetSpace(EWidgetSpace Space) { WidgetSpace = Space; }
+		EWidgetSpace GetWidgetSpace() const { return WidgetSpace; }
+
+		virtual bool Contains(const vec2f& Point) const;
+		shared<Widget> FindDeepestChildAt(const vec2f& Point);
 
 		void SetFocusable(bool bFocusable) { bIsFocusable = bFocusable; }
 		bool IsFocusable() const { return bIsFocusable; }
@@ -108,6 +119,8 @@ namespace we
 
 		bool bAutoSize = false;
 		float AutoSizePadding = 0.f;
+
+		EWidgetSpace WidgetSpace = EWidgetSpace::Screen;  // Default to screen space
 
 		Widget* Parent = nullptr;
 
