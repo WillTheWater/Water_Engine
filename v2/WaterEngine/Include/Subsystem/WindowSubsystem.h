@@ -31,7 +31,6 @@ namespace we
 		explicit WindowSubsystem(const WindowConfig& Config);
 
 		void HandleEvent(const sf::Event& Event);
-		view GetConstrainedView() const;
 		vec2f GetMousePosition() const;
 
 		// Fullscreen
@@ -47,8 +46,6 @@ namespace we
 
 	private:
 		bool bIsFullscreen;
-		mutable bool bViewDirty = true;
-		mutable view CachedView;
 		WindowConfig Config; 
 
 	private:
@@ -59,7 +56,7 @@ namespace we
 		void CreateGameWindow(const sf::VideoMode& Mode, uint Style, sf::State State = sf::State::Windowed);
 		void SetWindowIcon();
 
-		void RecomputeView() const;
+	
 
 		void EventWindowClose();
 		void EventToggleBorderlessFullscreen();

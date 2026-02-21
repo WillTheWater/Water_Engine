@@ -27,43 +27,9 @@ namespace we
         Event.visit(Handler);
     }
 
-    void WindowSubsystem::RecomputeView() const
-    {
-        float targetRatio = static_cast<float>(Config.AspectRatio.x) / static_cast<float>(Config.AspectRatio.y);
-        vec2u WinSize = getSize();
-        float windowRatio = static_cast<float>(WinSize.x) / static_cast<float>(WinSize.y);
-
-        float vWidth = 1.0f, vHeight = 1.0f, vPosX = 0.0f, vPosY = 0.0f;
-
-        if (windowRatio > targetRatio) {
-            vWidth = targetRatio / windowRatio;
-            vPosX = (1.0f - vWidth) / 2.0f;
-        }
-        else {
-            vHeight = windowRatio / targetRatio;
-            vPosY = (1.0f - vHeight) / 2.0f;
-        }
-
-        CachedView.setSize(vec2f(Config.RenderResolution));
-        CachedView.setCenter(vec2f(Config.RenderResolution) / 2.0f);
-        CachedView.setViewport(rectf({ vPosX, vPosY }, { vWidth, vHeight }));
-
-        bViewDirty = false;
-    }
-
-    view WindowSubsystem::GetConstrainedView() const
-    {
-        if (bViewDirty)
-        {
-            RecomputeView();
-        }
-        return CachedView;
-    }
-
     vec2f WindowSubsystem::GetMousePosition() const
     {
-        vec2i PixelPos = sf::Mouse::getPosition(*this);
-        return mapPixelToCoords(PixelPos, GetConstrainedView());
+        return vec2f(sf::Mouse::getPosition(*this));
     }
 
     void WindowSubsystem::onResize()
@@ -86,8 +52,6 @@ namespace we
         }
 
         if (NewSize != getSize()) { setSize(NewSize); }
-
-        bViewDirty = true;  // Mark view for recalculation
     }
 
     void WindowSubsystem::CreateGameWindow(const sf::VideoMode& Mode, uint Style, sf::State State)
@@ -116,7 +80,6 @@ namespace we
     void WindowSubsystem::EventToggleBorderlessFullscreen()
     {
         bIsFullscreen = !bIsFullscreen;
-        bViewDirty = true;  // Resolution changes, recalculate view
 
         if (bIsFullscreen)
         {
