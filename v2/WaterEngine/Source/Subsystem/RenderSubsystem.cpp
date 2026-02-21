@@ -18,134 +18,137 @@ namespace we
         , Config{ InConfig }
     {
         // Set Render Targets Pixel Size
-        VERIFY(GameRenderTarget.resize(RenderResolution));
-        VERIFY(UIRenderTarget.resize(RenderResolution));
+        VERIFY(WorldRenderTarget.resize(RenderResolution));
+        VERIFY(ScreenUIRenderTarget.resize(RenderResolution));
+        VERIFY(WorldUIRenderTarget.resize(RenderResolution));
         VERIFY(CursorRenderTarget.resize(RenderResolution));
         VERIFY(CompositeTarget.resize(RenderResolution));
 
         // Set Smoothing for Render Targets
-        GameRenderTarget.setSmooth(Config.SetRenderSmooth);
-        UIRenderTarget.setSmooth(false);
+        WorldRenderTarget.setSmooth(Config.SetRenderSmooth);
+        ScreenUIRenderTarget.setSmooth(false);
+        WorldUIRenderTarget.setSmooth(Config.SetRenderSmooth);
         CursorRenderTarget.setSmooth(false);
         CompositeTarget.setSmooth(false);
 
         // Apply Shaders to Render Targets
         if (sf::Shader::isAvailable())
         {
-            VERIFY(GamePostProcessTarget.resize(RenderResolution));
-            VERIFY(UIPostProcessTarget.resize(RenderResolution));
+            VERIFY(WorldPostProcessTarget.resize(RenderResolution));
+            VERIFY(ScreenUIPostProcessTarget.resize(RenderResolution));
+            VERIFY(WorldUIPostProcessTarget.resize(RenderResolution));
             VERIFY(CursorPostProcessTarget.resize(RenderResolution));
 
-            //PPE Applied to Game
-            GamePostProcessEffects.emplace_back(make_unique<BloomPPE>());
+            // PPE Applied to World (gameplay)
+            WorldPostProcessEffects.emplace_back(make_unique<BloomPPE>());
         }
+
+        // Cache default view
+        CurrentDefaultView = WorldRenderTarget.getDefaultView();
     }
 
     renderTexture* RenderSubsystem::GetTargetForLayer(ERenderLayer Layer)
     {
         switch (Layer)
         {
-            case ERenderLayer::Game:    return &GameRenderTarget;
-            case ERenderLayer::UI:      return &UIRenderTarget;
-            case ERenderLayer::Cursor:  return &CursorRenderTarget;
-            default:                    return &GameRenderTarget;
+            case ERenderLayer::World:      return &WorldRenderTarget;
+            case ERenderLayer::ScreenUI:   return &ScreenUIRenderTarget;
+            case ERenderLayer::WorldUI:    return &WorldUIRenderTarget;
+            case ERenderLayer::Cursor:     return &CursorRenderTarget;
+            default:                       return &WorldRenderTarget;
         }
+    }
+
+    void RenderSubsystem::Draw(const drawable& RenderObject, ERenderLayer Layer, EViewSpace ViewSpace)
+    {
+        renderTexture* Target = GetTargetForLayer(Layer);
+
+        // Apply appropriate view before drawing
+        if (ViewSpace == EViewSpace::World)
+        {
+            Target->setView(CurrentWorldView);
+        }
+        else
+        {
+            Target->setView(CurrentDefaultView);
+        }
+
+        Target->draw(RenderObject);
     }
 
     void RenderSubsystem::Draw(const drawable& RenderObject, ERenderLayer Layer)
     {
-        GetTargetForLayer(Layer)->draw(RenderObject);
-    }
-
-    void RenderSubsystem::ApplyRenderView()
-    {
-        view DefaultView = GameRenderTarget.getDefaultView();
-        DefaultView.setViewport(rectf({ 0.f, 0.f }, { 1.f, 1.f }));
-
-        GameRenderTarget.setView(DefaultView);
-        GamePostProcessTarget.setView(DefaultView);
-        UIRenderTarget.setView(DefaultView);
-        UIPostProcessTarget.setView(DefaultView);
-        CursorRenderTarget.setView(DefaultView);
-        CursorPostProcessTarget.setView(DefaultView);
-    }
-
-    void RenderSubsystem::ApplyCameraView(const optional<CameraView>& View)
-    {
-        // Use camera view if provided, otherwise use default
-        if (View)
+        // Default view space based on layer
+        EViewSpace DefaultSpace = EViewSpace::Screen;
+        switch (Layer)
         {
-            // Calculate view from camera
-            float AspectRatio = static_cast<float>(RenderResolution.x) / static_cast<float>(RenderResolution.y);
-            vec2f ViewSize = View->GetViewSize(AspectRatio);
-            
-            view SFMLView;
-            // No offset - camera position is view center
-            SFMLView.setCenter(View->Position);
-            SFMLView.setSize(ViewSize);
-            SFMLView.setRotation(sf::radians(View->Rotation));
-            SFMLView.setViewport(rectf({0.f, 0.f}, {1.f, 1.f}));
-            
-            // Apply to game render targets only (UI and Cursor stay screen-space)
-            GameRenderTarget.setView(SFMLView);
-            GamePostProcessTarget.setView(SFMLView);
-            
-            // DEBUG: Where would world (0,0) appear on the render target?
-            static int frame = 0;
-            if (++frame % 60 == 0)
-            {
-                // Transform world (0,0) to render target coordinates
-                vec2f worldOrigin = {0, 0};
-                vec2f toCenter = worldOrigin - SFMLView.getCenter();
-                vec2f normalized = {toCenter.x / SFMLView.getSize().x, toCenter.y / SFMLView.getSize().y};
-                vec2f screenPos = {normalized.x * RenderResolution.x + RenderResolution.x/2, 
-                                   normalized.y * RenderResolution.y + RenderResolution.y/2};
-                LOG("[CAMERA] ViewCenter: ({:.1f},{:.1f}), World(0,0) at screen: ({:.1f},{:.1f})",
-                    SFMLView.getCenter().x, SFMLView.getCenter().y, screenPos.x, screenPos.y);
-            }
+            case ERenderLayer::World:
+            case ERenderLayer::WorldUI:
+                DefaultSpace = EViewSpace::World;
+                break;
+            case ERenderLayer::ScreenUI:
+            case ERenderLayer::Cursor:
+                DefaultSpace = EViewSpace::Screen;
+                break;
         }
-        else
-        {
-            // No camera - use default view (existing behavior)
-            view DefaultView = GameRenderTarget.getDefaultView();
-            DefaultView.setViewport(rectf({ 0.f, 0.f }, { 1.f, 1.f }));
-            
-            GameRenderTarget.setView(DefaultView);
-            GamePostProcessTarget.setView(DefaultView);
-            
-            // DEBUG
-            static int noCamFrame = 0;
-            if (++noCamFrame % 60 == 0)
-            {
-                LOG("[NO CAMERA] ViewCenter: ({:.1f},{:.1f}), Size: ({:.1f},{:.1f})",
-                    DefaultView.getCenter().x, DefaultView.getCenter().y,
-                    DefaultView.getSize().x, DefaultView.getSize().y);
-            }
-        }
-        
-        // UI and Cursor always use default (screen-space)
-        view DefaultView = GameRenderTarget.getDefaultView();
-        DefaultView.setViewport(rectf({ 0.f, 0.f }, { 1.f, 1.f }));
-        UIRenderTarget.setView(DefaultView);
-        UIPostProcessTarget.setView(DefaultView);
-        CursorRenderTarget.setView(DefaultView);
-        CursorPostProcessTarget.setView(DefaultView);
+        Draw(RenderObject, Layer, DefaultSpace);
     }
 
-    void RenderSubsystem::StartRender()
+    void RenderSubsystem::BeginFrame()
     {
         // Clear all layer targets
-        GameRenderTarget.clear(color{ 86, 164, 183 });
-        UIRenderTarget.clear(color::Transparent);
+        WorldRenderTarget.clear(color{ 86, 164, 183 });
+        ScreenUIRenderTarget.clear(color::Transparent);
+        WorldUIRenderTarget.clear(color::Transparent);
         CursorRenderTarget.clear(color::Transparent);
         CompositeTarget.clear(color::Transparent);
 
         if (sf::Shader::isAvailable)
         {
-            GamePostProcessTarget.clear(color::Transparent);
-            UIPostProcessTarget.clear(color::Transparent);
+            WorldPostProcessTarget.clear(color::Transparent);
+            ScreenUIPostProcessTarget.clear(color::Transparent);
+            WorldUIPostProcessTarget.clear(color::Transparent);
             CursorPostProcessTarget.clear(color::Transparent);
         }
+
+        // Reset to default views initially
+        ResetToDefaultViews();
+    }
+
+    void RenderSubsystem::SetWorldView(const CameraView& Camera)
+    {
+        // Calculate aspect ratio from EngineConfig (e.g., 16.0f / 9.0f)
+        float AspectRatio = EC.AspectRatio.x / EC.AspectRatio.y;
+        
+        // Get view size based on camera orthographic size and aspect ratio
+        vec2f ViewSize = Camera.GetViewSize(AspectRatio);
+
+        view WorldView;
+        WorldView.setCenter(Camera.Position);
+        WorldView.setSize(ViewSize);
+        WorldView.setRotation(sf::radians(Camera.Rotation));
+        WorldView.setViewport(rectf({ 0.f, 0.f }, { 1.f, 1.f }));
+
+        // Cache the world view
+        CurrentWorldView = WorldView;
+
+        // Apply to world targets immediately
+        WorldRenderTarget.setView(WorldView);
+        WorldPostProcessTarget.setView(WorldView);
+        WorldUIRenderTarget.setView(WorldView);
+        WorldUIPostProcessTarget.setView(WorldView);
+    }
+
+    void RenderSubsystem::ResetToDefaultViews()
+    {
+        CurrentDefaultView = WorldRenderTarget.getDefaultView();
+        CurrentDefaultView.setViewport(rectf({ 0.f, 0.f }, { 1.f, 1.f }));
+
+        // Screen UI and Cursor use default view
+        ScreenUIRenderTarget.setView(CurrentDefaultView);
+        ScreenUIPostProcessTarget.setView(CurrentDefaultView);
+        CursorRenderTarget.setView(CurrentDefaultView);
+        CursorPostProcessTarget.setView(CurrentDefaultView);
     }
 
     renderTexture* RenderSubsystem::ProcessPostEffects(renderTexture* Input, renderTexture* Output, vector<unique<IPostProcess>>& Effects)
@@ -173,25 +176,28 @@ namespace we
 
     void RenderSubsystem::CompositeLayers()
     {
-        // Render Post Processing
+        // Render Post Processing for each layer
         auto RenderLayer = [&](renderTexture& main, renderTexture& pp, vector<unique<IPostProcess>>& effects) -> const texture& {
             if (sf::Shader::isAvailable && !effects.empty()) {
                 return ProcessPostEffects(&main, &pp, effects)->getTexture();
             }
             main.display();
             return main.getTexture();
-            };
+        };
 
-        const texture& RenderedGameLayer = RenderLayer(GameRenderTarget, GamePostProcessTarget, GamePostProcessEffects);
-        const texture& RenderedUILayer = RenderLayer(UIRenderTarget, UIPostProcessTarget, UIPostEffects);
+        const texture& RenderedWorldLayer = RenderLayer(WorldRenderTarget, WorldPostProcessTarget, WorldPostProcessEffects);
+        const texture& RenderedScreenUILayer = RenderLayer(ScreenUIRenderTarget, ScreenUIPostProcessTarget, ScreenUIPostEffects);
+        const texture& RenderedWorldUILayer = RenderLayer(WorldUIRenderTarget, WorldUIPostProcessTarget, WorldUIPostProcessEffects);
         const texture& RenderedCursorLayer = RenderLayer(CursorRenderTarget, CursorPostProcessTarget, CursorPostProcessEffects);
 
-        // Composite
+        // Composite all layers
         CompositeTarget.clear(color::Transparent);
         CompositeTarget.setView(CompositeTarget.getDefaultView());
 
-        CompositeTarget.draw(sprite(RenderedGameLayer));
-        CompositeTarget.draw(sprite(RenderedUILayer), sf::BlendAlpha);
+        // Draw in order: World -> WorldUI -> ScreenUI -> Cursor
+        CompositeTarget.draw(sprite(RenderedWorldLayer));
+        CompositeTarget.draw(sprite(RenderedWorldUILayer), sf::BlendAlpha);
+        CompositeTarget.draw(sprite(RenderedScreenUILayer), sf::BlendAlpha);
         CompositeTarget.draw(sprite(RenderedCursorLayer), sf::BlendAlpha);
 
         CompositeTarget.display();

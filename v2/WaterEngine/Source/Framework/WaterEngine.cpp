@@ -68,7 +68,6 @@ namespace we
             .DefaultCursorSize = EC.DefaultCursorSize,
             .DefaultCursorSpeed = EC.DefaultCursorSpeed,
             .JoystickDeadzone = EC.JoystickDeadzone,
-            .RenderResolution = EC.RenderResolution,
             .Window = *Subsystem.Window
         });
 
