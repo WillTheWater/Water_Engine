@@ -15,6 +15,7 @@
 #include "Input/InputActions.h"
 #include "GameStateTokens.h"
 #include "Character/PlayerCharacter.h"
+#include "Character/NPC.h"
 #include "Interface/Component/PhysicsComponent.h"
 #include "UI/PauseUI.h"
 #include "Utility/Log.h"
@@ -157,7 +158,7 @@ namespace we
 
 	void LevelOne::Construct()
 	{
-		BgTexture = LoadAsset().LoadTextureSync(GC.GridBackground);
+		BgTexture = LoadAsset().LoadTextureSync(GC.LevelOneBackground);
 		if (BgTexture)
 		{
 			Background.emplace(*BgTexture);
@@ -216,6 +217,12 @@ namespace we
 
 				CameraRef = SpawnedCam;
 			}
+		}
+
+		NPCRef = SpawnActor<NPC>();
+		if (auto npc = NPCRef.lock())
+		{
+			npc->SetPosition({ 500,-500 });
 		}
 
 		//// Test Borders - Room walls (closed loop)
@@ -317,7 +324,6 @@ namespace we
 
 	void LevelOne::OnPauseContinue()
 	{
-		// Continue just hides the menu (already handled in HidePauseMenu)
 		HidePauseMenu();
 	}
 

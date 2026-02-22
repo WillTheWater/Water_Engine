@@ -26,6 +26,8 @@ namespace we
 		string CharacterSheetIdle;
 		string CharacterSheetWalk;
 
+		string NPCSheetIdle;
+
 		string DefaultMusic;
 		string DefaultAmbient;
 		string DefaultButton;
