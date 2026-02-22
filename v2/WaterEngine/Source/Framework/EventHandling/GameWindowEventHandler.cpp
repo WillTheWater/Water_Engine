@@ -9,72 +9,87 @@
 
 namespace we
 {
-	void GameWindowEventHandler::operator()(const sf::Event::Closed&)
-	{
-		Window.EventWindowClose();
-	}
+    // =========================================================================
+    // Window Events
+    // =========================================================================
+    void GameWindowEventHandler::operator()(const sf::Event::Closed&)
+    {
+        Window.EventWindowClose();
+    }
 
-	void GameWindowEventHandler::operator()(const sf::Event::Resized&)
-	{
-		// Window.EventWindowResized(); //
-	}
+    void GameWindowEventHandler::operator()(const sf::Event::Resized&)
+    {
+        // Handled by WindowSubsystem::onResize() override
+    }
 
-	void GameWindowEventHandler::operator()(const sf::Event::FocusLost&)
-	{
-		// Window.EventWindowFocusLost(); //
-	}
+    void GameWindowEventHandler::operator()(const sf::Event::FocusLost&)
+    {
+        // TODO: Pause game when focus lost (optional)
+    }
 
-	void GameWindowEventHandler::operator()(const sf::Event::FocusGained&)
-	{
-		// Window.EventWindowFocusGained(); //
-	}
+    void GameWindowEventHandler::operator()(const sf::Event::FocusGained&)
+    {
+        // TODO: Resume game when focus gained (optional)
+    }
 
-	void GameWindowEventHandler::operator()(const sf::Event::JoystickConnected&)
-	{
-		LOG("Gamepad Connected");
-	}
+    // =========================================================================
+    // Input Events - Gamepad
+    // =========================================================================
+    void GameWindowEventHandler::operator()(const sf::Event::JoystickConnected&)
+    {
+        LOG("Gamepad Connected");
+    }
 
-	void GameWindowEventHandler::operator()(const sf::Event::JoystickDisconnected&)
-	{
-		LOG("Gamepad Disconnected");
-	}
+    void GameWindowEventHandler::operator()(const sf::Event::JoystickDisconnected&)
+    {
+        LOG("Gamepad Disconnected");
+    }
 
-	void GameWindowEventHandler::operator()(const sf::Event::JoystickButtonPressed&)
-	{
-		// Window.EventJoypadButtonPressed(); //
-	}
+    void GameWindowEventHandler::operator()(const sf::Event::JoystickButtonPressed&)
+    {
+        // Handled by InputSubsystem
+    }
 
-	void GameWindowEventHandler::operator()(const sf::Event::JoystickButtonReleased&)
-	{
-		// Window.EventJoypadButtonReleased(); //
-	}
+    void GameWindowEventHandler::operator()(const sf::Event::JoystickButtonReleased&)
+    {
+        // Handled by InputSubsystem
+    }
 
-	void GameWindowEventHandler::operator()(const sf::Event::KeyPressed& Key)
-	{
-		if (Key.scancode == sf::Keyboard::Scan::F11)
-		{
-			Window.EventToggleBorderlessFullscreen();
-		}
-		// Window.EventKeyPressed(); //
-	}
+    // =========================================================================
+    // Input Events - Keyboard
+    // =========================================================================
+    void GameWindowEventHandler::operator()(const sf::Event::KeyPressed& Key)
+    {
+        // F11: Toggle fullscreen
+        if (Key.scancode == sf::Keyboard::Scan::F11)
+        {
+            Window.EventToggleBorderlessFullscreen();
+        }
+        
+        // Other keys handled by InputSubsystem
+    }
 
-	void GameWindowEventHandler::operator()(const sf::Event::KeyReleased&)
-	{
-		// Window.EventKeyReleased(); //
-	}
+    void GameWindowEventHandler::operator()(const sf::Event::KeyReleased&)
+    {
+        // Handled by InputSubsystem
+    }
 
-	void GameWindowEventHandler::operator()(const sf::Event::MouseMoved&)
-	{
-		// Handled by cursor subsystem
-	}
+    // =========================================================================
+    // Input Events - Mouse
+    // =========================================================================
+    void GameWindowEventHandler::operator()(const sf::Event::MouseMoved&)
+    {
+        // Handled by WaterEngine::ProcessEvents() -> CursorSubsystem
+    }
 
-	void GameWindowEventHandler::operator()(const sf::Event::MouseButtonPressed&)
-	{
-		// Window.EventMouseButtonPressed(); //
-	}
+    void GameWindowEventHandler::operator()(const sf::Event::MouseButtonPressed&)
+    {
+        // Handled by InputSubsystem
+    }
 
-	void GameWindowEventHandler::operator()(const sf::Event::MouseButtonReleased&)
-	{
-		// Window.EventMouseButtonReleased(); //
-	}
-}
+    void GameWindowEventHandler::operator()(const sf::Event::MouseButtonReleased&)
+    {
+        // Handled by InputSubsystem
+    }
+
+} // namespace we

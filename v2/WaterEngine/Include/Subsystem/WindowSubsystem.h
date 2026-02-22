@@ -11,52 +11,63 @@
 
 namespace we
 {
-	struct WindowConfig
-	{
-		stringView WindowName;
-		vec2f RenderResolution;
-		vec2f AspectRatio;
-		vec2f WindowMinimumSize;
-		stringView WindowIcon;
-		bool FullscreenMode;
-		bool VsyncEnabled;
-		float TargetFPS;
-		bool EnableKeyRepeat;
-		bool DisableSFMLLogs;
-	};
+    struct WindowConfig
+    {
+        stringView WindowName;
+        vec2f      RenderResolution;
+        vec2f      AspectRatio;
+        vec2f      WindowMinimumSize;
+        stringView WindowIcon;
+        bool       FullscreenMode;
+        bool       VsyncEnabled;
+        float      TargetFPS;
+        bool       EnableKeyRepeat;
+        bool       DisableSFMLLogs;
+    };
 
-	class WindowSubsystem : public sf::RenderWindow
-	{
-	public:
-		explicit WindowSubsystem(const WindowConfig& Config);
+    class WindowSubsystem : public sf::RenderWindow
+    {
+    public:
+        explicit WindowSubsystem(const WindowConfig& Config);
 
-		void HandleEvent(const sf::Event& Event);
-		vec2f GetMousePosition() const;
+        // Event Handling
+        void HandleEvent(const sf::Event& Event);
 
-		// Fullscreen
-		void SetFullscreen(bool bFullscreen);
-		bool IsFullscreen() const { return bIsFullscreen; }
+        // Window State
+        void SetFullscreen(bool bFullscreen);
+        bool IsFullscreen() const { return bIsFullscreen; }
 
-		// VSync
-		void SetVSync(bool bEnabled);
-		bool IsVSync() const { return Config.VsyncEnabled; }
+        // VSync
+        void SetVSync(bool bEnabled);
+        bool IsVSync() const { return Config.VsyncEnabled; }
 
-	protected:
-		void onResize() override;
+        // Input
+        vec2f GetMousePosition() const;
 
-	private:
-		bool bIsFullscreen;
-		bool bIsResizing = false;
-		WindowConfig Config; 
+    protected:
+        // SFML callback when window is resized
+        void onResize() override;
 
-	private:
-		friend GameWindowEventHandler;
+    private:
+        // Aspect ratio helper
+        vec2u CalculateAspectRatioSize(const vec2u& Size) const;
 
-		void Init();
-		void ApplyWindowSettings();
-		void CreateGameWindow(const sf::VideoMode& Mode, uint Style, sf::State State = sf::State::Windowed);
-		void SetWindowIcon();
-		void EventWindowClose();
-		void EventToggleBorderlessFullscreen();
-	};
+        // Window creation
+        void CreateGameWindow(const sf::VideoMode& Mode, uint Style, sf::State State = sf::State::Windowed);
+        void ApplyWindowSettings();
+        void SetWindowIcon();
+
+        // Event handlers (called by GameWindowEventHandler)
+        void EventWindowClose();
+        void EventToggleBorderlessFullscreen();
+
+    private:
+        bool         bIsFullscreen;
+        bool         bIsResizing = false;  // Prevents recursive resize events
+        WindowConfig Config;
+
+    private:
+        friend GameWindowEventHandler;
+    };
+
 }

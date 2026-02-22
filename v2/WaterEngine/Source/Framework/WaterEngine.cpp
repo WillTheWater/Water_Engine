@@ -19,6 +19,9 @@
 
 namespace we
 {
+    // =========================================================================
+    // Lifecycle
+    // =========================================================================
     WaterEngine::WaterEngine()
     {
         PreConstruct();
@@ -28,115 +31,10 @@ namespace we
     WaterEngine::~WaterEngine()
     {
         // GameInstance is destroyed last (declared first in EngineSubsystem)
-        // Shutdown is called automatically in GameInstance destructor
         if (Subsystem.GameInst)
         {
             Subsystem.GameInst->Shutdown();
         }
-    }
-
-    void WaterEngine::PreConstruct()
-    {
-        MountAssetDirectory();
-
-        // Build All Subsystems with explicit configuration
-        Subsystem.Window = make_unique<WindowSubsystem>(WindowConfig{
-            .WindowName = EC.WindowName,
-            .RenderResolution = EC.RenderResolution,
-            .AspectRatio = EC.AspectRatio,
-            .WindowMinimumSize = EC.WindowMinimumSize,
-            .WindowIcon = EC.WindowIcon,
-            .FullscreenMode = EC.FullscreenMode,
-            .VsyncEnabled = EC.VsyncEnabled,
-            .TargetFPS = EC.TargetFPS,
-            .EnableKeyRepeat = EC.EnableKeyRepeat,
-            .DisableSFMLLogs = EC.DisableSFMLLogs
-        });
-
-        Subsystem.Render = make_unique<RenderSubsystem>(*Subsystem.Window, RenderConfig{
-            .RenderResolution = EC.RenderResolution,
-            .SetRenderSmooth = EC.SetRenderSmooth
-        });
-
-        Subsystem.Time = make_unique<TimeSubsystem>();
-        Subsystem.Input = make_unique<InputSubsystem>();
-        Subsystem.SaveLoad = make_unique<SaveLoadSubsystem>();
-        Subsystem.GameState = make_unique<GameStateSubsystem>();
-
-        Subsystem.Cursor = make_unique<CursorSubsystem>(CursorConfig{
-            .DefaultCursor = EC.DefaultCursor,
-            .DefaultCursorSize = EC.DefaultCursorSize,
-            .DefaultCursorSpeed = EC.DefaultCursorSpeed,
-            .JoystickDeadzone = EC.JoystickDeadzone,
-            .Window = *Subsystem.Window
-        });
-
-        Subsystem.Audio = make_unique<AudioSubsystem>(AudioConfig{
-            .StartupGlobalVolume = EC.StartupGlobalVolume,
-            .MaxSFXStack = EC.MaxSFXStack
-        });
-
-        Subsystem.Physics = make_unique<PhysicsSubsystem>(PhysicsConfig{
-            .DefaultGravity = vec2f{EC.DefaultGravity.x, EC.DefaultGravity.y},
-            .PhysicsScale = 0.01f,
-            .FixedTimeStep = 1.0f / 60.0f,
-            .VelocityIterations = 8,
-            .PositionIterations = 3
-        });
-
-        // These subsystems need access to other subsystems
-        Subsystem.World = make_unique<WorldSubsystem>(Subsystem);
-        Subsystem.GUI = make_unique<GUISubsystem>(Subsystem);
-        Subsystem.Camera = make_unique<CameraSubsystem>();
-    }
-
-    void WaterEngine::MountAssetDirectory()
-    {
-        // Mount .pak For Resources
-        Subsystem.AssetLoader = make_unique<ResourceSubsystem>();
-        auto PD = make_shared<PakDirectory>(EC.AssetDirectory);
-        Subsystem.AssetLoader->SetAssetDirectory(PD);
-        if (EC.DisableSFMLLogs) { sf::err().rdbuf(nullptr); }
-    }
-
-    void WaterEngine::TickGame()
-    {
-        float DeltaTime = Subsystem.Time->GetDeltaTime();
-
-        // Update cursor (joystick control)
-        Subsystem.Cursor->Update(DeltaTime);
-
-        
-        // Joystick axes polled on-demand via GetAxisValue(), no bulk polling needed
-
-        // Update timers
-        TimerManager::Get().Tick(DeltaTime);
-
-        // Update GUI (for hover state and dragging)
-        Subsystem.GUI->Update(DeltaTime);
-
-        Tick(DeltaTime);
-        
-        if (Subsystem.GameInst)
-        {
-            Subsystem.GameInst->Tick(DeltaTime);
-        }
-
-        if (Subsystem.GameState->IsTransitionPending())
-        {
-            Subsystem.GameState->ApplyPendingState();
-        }
-
-        Subsystem.Input->ProcessHeld();
-        Subsystem.AssetLoader->GarbageCycle(DeltaTime);
-
-        if (auto World = Subsystem.World->GetCurrentWorld())
-        {
-            World->BeginPlayGlobal();
-            World->TickGlobal(DeltaTime);
-        }
-
-        Subsystem.Physics->Step(DeltaTime);
     }
 
     void WaterEngine::Initialize()
@@ -151,6 +49,87 @@ namespace we
         BeginPlay();
     }
 
+    // =========================================================================
+    // Construction
+    // =========================================================================
+    void WaterEngine::PreConstruct()
+    {
+        MountAssetDirectory();
+        CreateSubsystems();
+    }
+
+    void WaterEngine::MountAssetDirectory()
+    {
+        Subsystem.AssetLoader = make_unique<ResourceSubsystem>();
+        auto PD = make_shared<PakDirectory>(EC.AssetDirectory);
+        Subsystem.AssetLoader->SetAssetDirectory(PD);
+        
+        if (EC.DisableSFMLLogs) 
+        { 
+            sf::err().rdbuf(nullptr); 
+        }
+    }
+
+    void WaterEngine::CreateSubsystems()
+    {
+        // Window and Render
+        Subsystem.Window = make_unique<WindowSubsystem>(WindowConfig{
+            .WindowName        = EC.WindowName,
+            .RenderResolution  = EC.RenderResolution,
+            .AspectRatio       = EC.AspectRatio,
+            .WindowMinimumSize = EC.WindowMinimumSize,
+            .WindowIcon        = EC.WindowIcon,
+            .FullscreenMode    = EC.FullscreenMode,
+            .VsyncEnabled      = EC.VsyncEnabled,
+            .TargetFPS         = EC.TargetFPS,
+            .EnableKeyRepeat   = EC.EnableKeyRepeat,
+            .DisableSFMLLogs   = EC.DisableSFMLLogs
+        });
+
+        Subsystem.Render = make_unique<RenderSubsystem>(*Subsystem.Window, RenderConfig{
+            .RenderResolution = EC.RenderResolution,
+            .SetRenderSmooth  = EC.SetRenderSmooth
+        });
+
+        // Core subsystems
+        Subsystem.Time      = make_unique<TimeSubsystem>();
+        Subsystem.Input     = make_unique<InputSubsystem>();
+        Subsystem.SaveLoad  = make_unique<SaveLoadSubsystem>();
+        Subsystem.GameState = make_unique<GameStateSubsystem>();
+
+        // Cursor
+        Subsystem.Cursor = make_unique<CursorSubsystem>(CursorConfig{
+            .DefaultCursor     = EC.DefaultCursor,
+            .DefaultCursorSize = EC.DefaultCursorSize,
+            .DefaultCursorSpeed= EC.DefaultCursorSpeed,
+            .JoystickDeadzone  = EC.JoystickDeadzone,
+            .Window            = *Subsystem.Window
+        });
+
+        // Audio
+        Subsystem.Audio = make_unique<AudioSubsystem>(AudioConfig{
+            .StartupGlobalVolume = EC.StartupGlobalVolume,
+            .MaxSFXStack         = EC.MaxSFXStack
+        });
+
+        // Physics
+        Subsystem.Physics = make_unique<PhysicsSubsystem>(PhysicsConfig{
+            .DefaultGravity   = vec2f{EC.DefaultGravity.x, EC.DefaultGravity.y},
+            .PhysicsScale     = 0.01f,
+            .FixedTimeStep    = 1.0f / 60.0f,
+            .VelocityIterations = 8,
+            .PositionIterations = 3
+        });
+
+        // Subsystems that depend on other subsystems
+        Subsystem.World  = make_unique<WorldSubsystem>(Subsystem);
+        Subsystem.GUI    = make_unique<GUISubsystem>(Subsystem);
+        Subsystem.Camera = make_unique<CameraSubsystem>();
+    }
+
+    // =========================================================================
+    // Main Loop
+    // =========================================================================
     void WaterEngine::Tick()
     {
         Subsystem.Time->Tick();
@@ -162,10 +141,55 @@ namespace we
         }
         else
         {
-            Subsystem.Cursor->Update(Subsystem.Time->GetUnscaledDeltaTime());
-            Subsystem.Input->ProcessHeld();
-            Subsystem.GUI->Update(Subsystem.Time->GetUnscaledDeltaTime());
+            TickPaused();
         }
+    }
+
+    void WaterEngine::TickGame()
+    {
+        float DeltaTime = Subsystem.Time->GetDeltaTime();
+
+        // Update subsystems
+        Subsystem.Cursor->Update(DeltaTime);
+        Subsystem.GUI->Update(DeltaTime);
+        TimerManager::Get().Tick(DeltaTime);
+
+        // Game tick
+        Tick(DeltaTime);
+        
+        if (Subsystem.GameInst)
+        {
+            Subsystem.GameInst->Tick(DeltaTime);
+        }
+
+        // State management
+        if (Subsystem.GameState->IsTransitionPending())
+        {
+            Subsystem.GameState->ApplyPendingState();
+        }
+
+        // Input and resources
+        Subsystem.Input->ProcessHeld();
+        Subsystem.AssetLoader->GarbageCycle(DeltaTime);
+
+        // World update
+        if (auto World = Subsystem.World->GetCurrentWorld())
+        {
+            World->BeginPlayGlobal();
+            World->TickGlobal(DeltaTime);
+        }
+
+        // Physics
+        Subsystem.Physics->Step(DeltaTime);
+    }
+
+    void WaterEngine::TickPaused()
+    {
+        float UnscaledDeltaTime = Subsystem.Time->GetUnscaledDeltaTime();
+        
+        Subsystem.Cursor->Update(UnscaledDeltaTime);
+        Subsystem.Input->ProcessHeld();
+        Subsystem.GUI->Update(UnscaledDeltaTime);
     }
 
     void WaterEngine::Render()
@@ -173,10 +197,42 @@ namespace we
         Subsystem.Audio->Update();
         Subsystem.Window->clear(color::Black);
 
-        // 1. Begin frame - clear all targets, reset all views
+        // 1. Begin frame - clear targets, reset views
         Subsystem.Render->BeginFrame();
 
-        // 2. Set up world view from camera
+        // 2. Set up world view from active camera
+        UpdateWorldViewFromCamera();
+
+        // 3. Render game world
+        WorldRender();
+
+        // 4. Render UI
+        Subsystem.Render->ResetToDefaultViews();
+        Subsystem.GUI->Render();
+
+        // 5. Render cursor to its target
+        Subsystem.Cursor->Render(*Subsystem.Render);
+
+        // 6. Composite game layers (world + UI) with letterboxing
+        sprite Composite = Subsystem.Render->FinishComposite();
+
+        // 7. Draw game to window
+        Subsystem.Window->draw(Composite);
+
+        // 8. Draw cursor directly to window (1:1, no scaling)
+        Subsystem.Render->PresentCursor();
+
+        // 9. Present frame
+        Subsystem.Window->display();
+    }
+
+    void WaterEngine::PostUpdate()
+    {
+        // Reserved for post-frame cleanup if needed
+    }
+
+    void WaterEngine::UpdateWorldViewFromCamera()
+    {
         if (Subsystem.Camera->HasActiveCamera())
         {
             CameraView View;
@@ -185,98 +241,77 @@ namespace we
                 Subsystem.Render->SetWorldView(View);
             }
         }
-
-        // 3. Render world
-        WorldRender();
-
-        // 4. Render UI
-        Subsystem.Render->ResetToDefaultViews();
-        Subsystem.GUI->Render();
-
-        // 5. Render cursor (Draws to CursorRenderTarget, NOT window yet)
-        Subsystem.Cursor->Render(*Subsystem.Render);
-
-        // 6. Get Composite Sprite (Game + UI) scaled/letterboxed
-        sprite Composite = Subsystem.Render->FinishComposite();
-
-        // 7. Draw Game to Window
-        Subsystem.Window->draw(Composite);
-
-        // 8. Draw Cursor to Window (1:1, no scaling)
-        Subsystem.Render->PresentCursor();
-
-        // 9. Display
-        Subsystem.Window->display();
     }
 
+    void WaterEngine::WorldRender()
+    {
+        static vector<RenderDepth> WorldRenderDepths;
+        WorldRenderDepths.clear();
+
+        if (auto World = Subsystem.World->GetCurrentWorld())
+        {
+            World->CollectRenderDepths(WorldRenderDepths);
+        }
+
+        // Sort by depth (Y position) - back to front
+        std::sort(WorldRenderDepths.begin(), WorldRenderDepths.end());
+
+        // Draw sorted world objects
+        for (const auto& RenderCmd : WorldRenderDepths)
+        {
+            Subsystem.Render->Draw(*RenderCmd.Drawable, ERenderLayer::World);
+        }
+
+        // Debug primitives (auto-clears after render)
+        DebugDraw::Render(*Subsystem.Render);
+    }
+
+    // =========================================================================
+    // Event Processing
+    // =========================================================================
     void WaterEngine::ProcessEvents()
     {
         while (const auto Event = Subsystem.Window->pollEvent())
         {
             Subsystem.Window->HandleEvent(*Event);
-            if (Subsystem.Window->hasFocus())
+
+            if (!Subsystem.Window->hasFocus())
             {
-                // Map mouse coords for UI events
-                if (Event->is<sf::Event::MouseMoved>())
-                {
-                    vec2i PixelPos = sf::Mouse::getPosition(*Subsystem.Window);
-                    vec2f UICoords = Subsystem.Render->MapPixelToCoords(PixelPos);
-                    // Pass mapped coords to GUI event or update internal state
-                    // For simple sfml events, we often just pass the event, 
-                    // but for our UI we might need to transform the mouse position internally.
-                }
-                Subsystem.GUI->HandleEvent(*Event);
-                Subsystem.Input->HandleEvent(*Event);
+                continue;
             }
 
-            if (Subsystem.Window->hasFocus())
-            {
-                vec2i CurrentMousePos = sf::Mouse::getPosition(*Subsystem.Window);
-                if (CurrentMousePos != LastMousePosition)
-                {
-                    LastMousePosition = CurrentMousePos;
-                    // Cursor is in Window Pixel Space. This is correct for the new setup.
-                    Subsystem.Cursor->SetPosition(vec2f(CurrentMousePos));
-                }
-            }
+            // Pass events to GUI and Input subsystems
+            Subsystem.GUI->HandleEvent(*Event);
+            Subsystem.Input->HandleEvent(*Event);
+
+            // Update cursor position on mouse movement
+            UpdateCursorPosition();
         }
     }
 
-        void WaterEngine::WorldRender()
+    void WaterEngine::UpdateCursorPosition()
+    {
+        vec2i CurrentMousePos = sf::Mouse::getPosition(*Subsystem.Window);
+        
+        if (CurrentMousePos != LastMousePosition)
         {
-            static vector<RenderDepth> WorldRenderDepths;
-            WorldRenderDepths.clear();
-
-            if (auto World = Subsystem.World->GetCurrentWorld())
-            {
-                World->CollectRenderDepths(WorldRenderDepths);
-            }
-
-            // Sort by depth (Y position) - back to front
-            std::sort(WorldRenderDepths.begin(), WorldRenderDepths.end());
-
-            // Draw sorted
-            for (const auto& RenderCmd : WorldRenderDepths)
-            {
-                Subsystem.Render->Draw(*RenderCmd.Drawable, ERenderLayer::World);
-            }
-
-            // Render debug primitives on top of game world (auto-clears after render)
-            DebugDraw::Render(*Subsystem.Render);
-        }
-
-        void WaterEngine::PostUpdate()
-        {
-
-        }
-
-        bool WaterEngine::IsRunning() const
-        {
-            return Subsystem.Window->isOpen() && !Subsystem.GameState->IsShutdownRequested();
-        }
-
-        bool WaterEngine::HasFocus() const
-        {
-            return Subsystem.Window->hasFocus();
+            LastMousePosition = CurrentMousePos;
+            // Cursor uses window pixel space
+            Subsystem.Cursor->SetPosition(vec2f(CurrentMousePos));
         }
     }
+
+    // =========================================================================
+    // State Queries
+    // =========================================================================
+    bool WaterEngine::IsRunning() const
+    {
+        return Subsystem.Window->isOpen() && !Subsystem.GameState->IsShutdownRequested();
+    }
+
+    bool WaterEngine::HasFocus() const
+    {
+        return Subsystem.Window->hasFocus();
+    }
+
+} // namespace we

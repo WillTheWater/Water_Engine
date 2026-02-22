@@ -684,8 +684,10 @@ namespace we
 
 		if (Widget->GetWidgetSpace() == EWidgetSpace::Screen)
 		{
-			// Screen widgets use cursor position directly (window pixels)
-			return ScreenPoint;
+			// Screen widgets: Map window pixels to render resolution coordinates
+			// This accounts for letterboxing when window size differs from render resolution
+			vec2i PixelPos(static_cast<int>(ScreenPoint.x), static_cast<int>(ScreenPoint.y));
+			return Subsystem.Render->MapPixelToCoords(PixelPos);
 		}
 		else
 		{
