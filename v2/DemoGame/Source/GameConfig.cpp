@@ -21,6 +21,8 @@ namespace we
         CharacterSheetIdle = Config["CharacterSheetIdle"];
         CharacterSheetWalk = Config["CharacterSheetWalk"];
 
+        NPCSheetIdle = Config["NPCSheetIdle"];
+
         DefaultMusic = Config["DefaultMusic"];
         DefaultAmbient = Config["DefaultAmbient"];
         DefaultButton = Config["DefaultButton"];

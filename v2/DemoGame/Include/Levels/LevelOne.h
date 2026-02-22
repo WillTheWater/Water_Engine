@@ -15,6 +15,8 @@ namespace we
 	class Player;
 	class Camera;
 
+	class NPC;
+
 	class LevelOne : public World
 	{
 	public:
@@ -44,6 +46,7 @@ namespace we
 		bool bSettingsOpen = false;
 
 		// Store a weak reference to the player for debugging
+		std::weak_ptr<NPC> NPCRef;
 		std::weak_ptr<Player> PlayerRef;
 		std::weak_ptr<Camera> CameraRef;
 		sf::VertexArray OriginMarker;
