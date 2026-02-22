@@ -7,45 +7,54 @@
 
 #include "Core/CoreMinimal.h"
 #include "Framework/EngineSubsystem.h"
-
 #include "Framework/GameInstance.h"
 
 namespace we
 {
-	class WaterEngine
-	{
-	public:
-		WaterEngine();
-		~WaterEngine();
+    class WaterEngine
+    {
+    public:
+        WaterEngine();
+        virtual ~WaterEngine();
 
-		void Initialize();
-		void Tick();
-		void Render();
-		void PostUpdate();
-		void ProcessEvents();
+        // Main loop functions
+        void Initialize();
+        void Tick();
+        void Render();
+        void PostUpdate();
+        void ProcessEvents();
 
-	public:
-		bool IsRunning() const;
-		bool HasFocus() const;
+        // State queries
+        bool IsRunning() const;
+        bool HasFocus() const;
 
-	protected:
-		EngineSubsystem Subsystem;
+    protected:
+        // Override to create your game-specific GameInstance
+        virtual unique<GameInstance> CreateGameInstance() { return make_unique<GameInstance>(); }
+        
+        // Override hooks for game-specific behavior
+        virtual void Construct() {}
+        virtual void BeginPlay() {}
+        virtual void Tick(float DeltaTime) {}
 
-	protected:
-		// Override to create your game-specific GameInstance
-		virtual unique<GameInstance> CreateGameInstance() { return make_unique<GameInstance>(); }
-		
-		virtual void Construct() {}
-		virtual void BeginPlay() {}
-		virtual void Tick(float) {}
+    protected:
+        EngineSubsystem Subsystem;
 
-	private:
-		void PreConstruct();
-		void MountAssetDirectory();
-		void TickGame();
-		void WorldRender();
-		void Run() = delete;
+    private:
+        // Construction
+        void PreConstruct();
+        void MountAssetDirectory();
+        void CreateSubsystems();
 
-		vec2i LastMousePosition{ -1, -1 };  // Track to detect actual mouse movement
-	};
-}
+        // Game loop helpers
+        void TickGame();
+        void TickPaused();
+        void UpdateWorldViewFromCamera();
+        void WorldRender();
+        void UpdateCursorPosition();
+
+    private:
+        vec2i LastMousePosition{ -1, -1 };  // Track to detect actual mouse movement
+    };
+
+} // namespace we

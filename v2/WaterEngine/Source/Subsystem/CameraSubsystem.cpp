@@ -7,9 +7,9 @@
 
 namespace we
 {
-    void CameraSubsystem::SetActiveCamera(ICamera* Cam)
+    void CameraSubsystem::SetActiveCamera(ICamera* Camera)
     {
-        ActiveCamera = Cam;
+        ActiveCamera = Camera;
     }
 
     ICamera* CameraSubsystem::GetActiveCamera() const
@@ -17,16 +17,20 @@ namespace we
         return ActiveCamera;
     }
 
+    bool CameraSubsystem::HasActiveCamera() const
+    {
+        return ActiveCamera != nullptr;
+    }
+
     bool CameraSubsystem::GetCurrentView(CameraView& OutView) const
     {
-        if (!ActiveCamera) return false;
+        if (!ActiveCamera) 
+        {
+            return false;
+        }
         
         OutView = ActiveCamera->CalculateView();
         return true;
     }
 
-    bool CameraSubsystem::HasActiveCamera() const
-    {
-        return ActiveCamera != nullptr;
-    }
-}
+} // namespace we
