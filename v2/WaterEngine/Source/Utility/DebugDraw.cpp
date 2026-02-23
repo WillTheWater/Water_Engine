@@ -113,7 +113,6 @@ namespace we
             Render.Draw(BottomCap, ERenderLayer::World);
 
             // Connecting lines (left and right sides)
-            // We'll draw these as thin rectangles
             float LineLength = C.HalfHeight * 2.0f;
             
             // Left side - origin must be centered so line extends equally up/down
