@@ -12,6 +12,7 @@
 #include "Subsystem/SaveLoadSubsystem.h"
 #include "Subsystem/InputSubsystem.h"
 #include "Subsystem/GUISubsystem.h"
+#include "Subsystem/ResourceSubsystem.h"
 #include "GameConfig.h"
 #include "Input/InputActions.h"
 #include "Utility/Log.h"
@@ -30,7 +31,6 @@ namespace we
 
 	DemoGameInstance::DemoGameInstance()
 	{
-		// DemoGameInstance created
 	}
 
 	DemoGameInstance::~DemoGameInstance()

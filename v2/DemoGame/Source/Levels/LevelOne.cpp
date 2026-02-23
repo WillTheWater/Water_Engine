@@ -225,29 +225,29 @@ namespace we
 			npc->SetPosition({ 500,-500 });
 		}
 
-		//// Test Borders - Room walls (closed loop)
-		//auto RoomBorder = SpawnActor<Border>(vector<vec2f>{
-		//	{ 50, 50 },
-		//	{ 1870, 50 },
-		//	{ 1870, 1030 },
-		//	{ 50, 1030 }
-		//});
-		//if (auto RB = RoomBorder.lock())
-		//{
-		//	RB->SetClosedLoop(true);
-		//	RB->SetDebugColor(color{ 255, 255, 0 });  // Yellow
-		//}
+		// Test Borders - Room walls (closed loop)
+		auto RoomBorder = SpawnActor<Border>(vector<vec2f>{
+			{ 50, 50 },
+			{ 1870, 50 },
+			{ 1870, 1030 },
+			{ 50, 1030 }
+		});
+		if (auto RB = RoomBorder.lock())
+		{
+			RB->SetClosedLoop(true);
+			RB->SetDebugColor(color{ 255, 255, 0 });  // Yellow
+		}
 
-		//// Test Border - Center divider wall (open chain)
-		//auto DividerWall = SpawnActor<Border>(vector<vec2f>{
-		//	{ 960, 200 },
-		//	{ 960, 500 },
-		//	{ 960, 800 }
-		//});
-		//if (auto DW = DividerWall.lock())
-		//{
-		//	DW->SetDebugColor(color{ 0, 255, 255 });  // Cyan
-		//}
+		// Test Border - Center divider wall (open chain)
+		auto DividerWall = SpawnActor<Border>(vector<vec2f>{
+			{ 960, 200 },
+			{ 960, 500 },
+			{ 960, 800 }
+		});
+		if (auto DW = DividerWall.lock())
+		{
+			DW->SetDebugColor(color{ 0, 255, 255 });  // Cyan
+		}
 
 		// Bind input for pause toggle (ESC and Gamepad Start)
 		SetupInputBindings();
