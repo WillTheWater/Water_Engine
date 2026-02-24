@@ -45,6 +45,10 @@ namespace we
 		void ShowDialog();               // Show dialog panel
 		void HideDialog();               // Hide dialog panel
 		bool IsDialogVisible() const;
+		
+		// Player proximity notifications (for autonomous behavior)
+		virtual void OnPlayerEnteredRange(Actor* Player);
+		virtual void OnPlayerLeftRange(Actor* Player);
 
 		// Accessors
 		const string& GetName() const { return Name; }

@@ -193,10 +193,13 @@ namespace we
 			NearbyInteractables.insert(Interactive);
 			LOG("[Player] Entered interaction range of: {}", typeid(*OtherActor).name());
 			
-			// Show interaction hint for NPCs
+			// Show interaction hint for NPCs and make them idle
 			if (auto* NPC = dynamic_cast<class NPC*>(OtherActor))
 			{
 				NPC->ShowInteractionHint();
+				
+				// Notify NPC that player is nearby (for Kiyoshi to stop walking)
+				NPC->OnPlayerEnteredRange(this);
 			}
 		}
 	}
@@ -219,6 +222,9 @@ namespace we
 			{
 				NPC->HideInteractionHint();
 				NPC->HideDialog();  // Close dialog if player walks away
+				
+				// Notify NPC that player left (for Kiyoshi to resume patrol)
+				NPC->OnPlayerLeftRange(this);
 			}
 		}
 	}

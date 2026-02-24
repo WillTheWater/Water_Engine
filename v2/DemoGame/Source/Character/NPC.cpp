@@ -46,7 +46,8 @@ namespace we
 	{
 		if (PhysicsComp)
 		{
-			PhysicsComp->SetBodyType(BodyType::Static);
+			// Note: Body type should be set by derived class if movement is needed
+			// Default is Static for simple NPCs, Kinematic for moving NPCs
 			
 			// Add sensor for interaction detection (player can detect us when nearby)
 			PhysicsComp->SetSensorShape(true, 60.0f);  // 60 unit radius sensor
@@ -208,5 +209,22 @@ namespace we
 	bool NPC::IsDialogVisible() const
 	{
 		return bDialogVisible;
+	}
+
+	void NPC::OnPlayerEnteredRange(Actor* Player)
+	{
+		// Base implementation does nothing
+		// Derived classes like Kiyoshi override this
+		(void)Player;
+	}
+
+	void NPC::OnPlayerLeftRange(Actor* Player)
+	{
+		// Base implementation - just hide dialog if player leaves
+		if (bDialogVisible)
+		{
+			HideDialog();
+		}
+		(void)Player;
 	}
 }

@@ -5,6 +5,7 @@
 
 #include "Character/Aoi.h"
 #include "Interface/Component/AnimationComponent.h"
+#include "Interface/Component/PhysicsComponent.h"
 #include "Utility/Log.h"
 #include "GameConfig.h"
 
@@ -18,6 +19,12 @@ namespace we
 
 	void Aoi::InitializeAnimations()
 	{
+		// Aoi is a static NPC - no movement
+		if (PhysicsComp)
+		{
+			PhysicsComp->SetBodyType(BodyType::Static);
+		}
+		
 		AnimComp = make_shared<AnimationComponent>(this);
 		AnimComp->BeginPlay();
 
