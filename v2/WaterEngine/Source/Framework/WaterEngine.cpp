@@ -211,7 +211,17 @@ namespace we
         Subsystem.GUI->Render();
 
         // 5. Render cursor to its target
-        Subsystem.Cursor->Render(*Subsystem.Render, Subsystem.Camera.get());
+        Subsystem.Cursor->Render(*Subsystem.Render);
+
+        // Debug: Draw mouse position if cursor is visible
+        if (DebugDraw::IsEnabled() && Subsystem.Cursor->IsVisible())
+        {
+            DebugDraw::DrawMousePosition(
+                Subsystem.Cursor->GetPosition(),
+                vec2f(EC.RenderResolution.x, EC.RenderResolution.y),
+                Subsystem.Camera.get()
+            );
+        }
 
         // 6. Composite game layers (world + UI) with letterboxing
         sprite Composite = Subsystem.Render->FinishComposite();

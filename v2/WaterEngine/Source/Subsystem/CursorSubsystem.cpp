@@ -62,55 +62,12 @@ namespace we
 		}
 	}
 
-	void CursorSubsystem::Render(RenderSubsystem& Renderer, const CameraSubsystem* Camera) const
+	void CursorSubsystem::Render(RenderSubsystem& Renderer) const
 	{
 		if (!bIsVisible)
 			return;
 
-		// Draw cursor sprite
 		Renderer.Draw(CursorSprite, ERenderLayer::Cursor);
-
-		// Draw debug text for mouse position
-		RenderDebugText(Renderer, Camera);
-	}
-
-	void CursorSubsystem::RenderDebugText(RenderSubsystem& Renderer, const CameraSubsystem* Camera) const
-	{
-		// Lazy-load debug font
-		if (!DebugFont)
-		{
-			DebugFont = LoadAsset().LoadFontSync(EC.DefaultFont);
-		}
-
-		if (!DebugFont)
-			return;
-
-		// Get window position
-		vec2f WindowPos = GetPosition();
-
-		// Get world position if camera is available
-		vec2f WorldPos = WindowPos;
-		if (Camera)
-		{
-			WorldPos = GetWorldPosition(*Camera);
-		}
-
-		// Format: "Mouse: 1234x567 | World: 1234x567" (no decimals)
-		string Content = std::format("Mouse: {:.0f}x{:.0f} | World: {:.0f}x{:.0f}", 
-			WindowPos.x, WindowPos.y, WorldPos.x, WorldPos.y);
-
-		// Use render resolution for positioning (works in both windowed and fullscreen)
-		// Position at top-right with padding
-		vec2f TextPos = { EC.RenderResolution.x - 10.0f, 10.0f };
-
-		text TextObj(*DebugFont, Content, 16);
-		TextObj.setPosition(TextPos);
-		TextObj.setFillColor(color::Red);
-		
-		// Right-align the text
-		TextObj.setOrigin({ TextObj.getLocalBounds().size.x, 0.0f });
-		
-		Renderer.Draw(TextObj, ERenderLayer::ScreenUI);
 	}
 
 	void CursorSubsystem::ApplyCursorSize()

@@ -7,7 +7,7 @@
 
 #include "Core/CoreMinimal.h"
 #include "Subsystem/ResourceSubsystem.h"
-#include <format>
+
 
 namespace we
 {
@@ -30,7 +30,7 @@ namespace we
 		explicit CursorSubsystem(const CursorConfig& Config);
 
 		void Update(float DeltaTime);
-		void Render(RenderSubsystem& Renderer, const CameraSubsystem* Camera = nullptr) const;
+		void Render(RenderSubsystem& Renderer) const;
 
 		void SetSpeed(float Speed) { CursorSpeed = Speed; }
 		float GetSpeed() const { return CursorSpeed; }
@@ -56,9 +56,6 @@ namespace we
 		vec2f GetWindowSize() const;
 
 	private:
-		void RenderDebugText(RenderSubsystem& Renderer, const CameraSubsystem* Camera) const;
-
-	private:
 		texture CursorTexture;
 		sprite CursorSprite;
 		vec2f CursorSize;
@@ -66,6 +63,5 @@ namespace we
 		bool bIsVisible;
 		CursorConfig Config;
 		vec2f LastMousePosition{ -1.0f, -1.0f };
-		mutable shared<font> DebugFont;
 	};
 }

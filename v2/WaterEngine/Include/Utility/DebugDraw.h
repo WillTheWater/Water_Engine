@@ -10,6 +10,7 @@
 namespace we
 {
     class RenderSubsystem;
+    class CameraSubsystem;
 
     // Debug primitive types
     struct DebugLine
@@ -73,7 +74,8 @@ namespace we
         static void Text(const string& Content, vec2f Position, const color& Color = color::White, uint CharacterSize = 16);
 
         // Draw mouse position at top-right of screen (call every frame to update)
-        static void DrawMousePosition(vec2f MousePos, vec2f WindowSize, const color& Color = color::Yellow);
+        // Shows both window coords and world coords (if camera provided)
+        static void DrawMousePosition(vec2f MousePos, vec2f RenderResolution, const CameraSubsystem* Camera = nullptr, const color& Color = color::Red);
 
         // Render all queued primitives and clear them (single call, auto-clears)
         static void Render(RenderSubsystem& Render);

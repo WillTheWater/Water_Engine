@@ -6,6 +6,8 @@
 #include "Utility/DebugDraw.h"
 #include "Subsystem/RenderSubsystem.h"
 #include "Subsystem/ResourceSubsystem.h"
+#include "Subsystem/CameraSubsystem.h"
+#include "EngineConfig.h"
 #include <cmath>
 #include <format>
 
@@ -49,17 +51,39 @@ namespace we
         Texts.push_back({ Content, Position, Color, CharacterSize });
     }
 
-    void DebugDraw::DrawMousePosition(vec2f MousePos, vec2f WindowSize, const color& Color)
+    void DebugDraw::DrawMousePosition(vec2f MousePos, vec2f RenderResolution, const CameraSubsystem* Camera, const color& Color)
     {
         if (!bIsEnabled) return;
 
-        // Format: "Mouse Pos: 1234x567" (no decimals)
-        string Content = std::format("Mouse Pos: {:.0f}x{:.0f}", MousePos.x, MousePos.y);
+        // Calculate world position if camera is available
+        vec2f WorldPos = MousePos;
+        if (Camera)
+        {
+            // Get current camera view
+            CameraView View;
+            if (Camera->GetCurrentView(View))
+            {
+                float AspectRatio = EC.AspectRatio.x / EC.AspectRatio.y;
+                vec2f ViewSize = View.GetViewSize(AspectRatio);
+                
+                // Convert to normalized device coordinates (-1 to 1)
+                float NormalizedX = (MousePos.x / RenderResolution.x) * 2.0f - 1.0f;
+                float NormalizedY = (MousePos.y / RenderResolution.y) * 2.0f - 1.0f;
+                
+                // Convert to world coordinates
+                WorldPos.x = View.Position.x + NormalizedX * ViewSize.x * 0.5f;
+                WorldPos.y = View.Position.y + NormalizedY * ViewSize.y * 0.5f;
+            }
+        }
 
-        // Position at top-right with some padding
-        vec2f Position = { WindowSize.x - 200.0f, 10.0f };
+        // Format: "Mouse: 1234x567 | World: 1234x567" (no decimals)
+        string Content = std::format("Mouse: {:.0f}x{:.0f}\nWorld  : {:.0f}x{:.0f}",
+            MousePos.x, MousePos.y, WorldPos.x, WorldPos.y);
 
-        Texts.push_back({ Content, Position, Color, 16 });
+        // Position at top-right with padding (using render resolution)
+        vec2f Position = { RenderResolution.x - 200.0f, 10.0f };
+
+        Texts.push_back({ Content, Position, Color, 20 });
     }
 
     void DebugDraw::Render(RenderSubsystem& Render)
