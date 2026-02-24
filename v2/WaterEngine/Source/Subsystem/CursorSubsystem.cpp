@@ -114,6 +114,16 @@ namespace we
 		CursorSprite.setPosition(Position);
 	}
 
+	void CursorSubsystem::UpdateFromMouse(vec2f MousePosition)
+	{
+		// Only update if mouse actually moved
+		if (MousePosition != LastMousePosition)
+		{
+			LastMousePosition = MousePosition;
+			SetPosition(MousePosition);
+		}
+	}
+
 	vec2f CursorSubsystem::GetPosition() const
 	{
 		return CursorSprite.getPosition();

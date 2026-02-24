@@ -44,6 +44,9 @@ namespace we
 		void SetPosition(vec2f Position);
 		vec2f GetPosition() const;
 
+		// Update position from mouse input (call when mouse moves)
+		void UpdateFromMouse(vec2f MousePosition);
+
 		// Convert window pixel position to world coordinates using camera
 		vec2f GetWorldPosition(const CameraSubsystem& Camera) const;
 
@@ -62,5 +65,6 @@ namespace we
 		float CursorSpeed;
 		bool bIsVisible;
 		CursorConfig Config;
+		vec2f LastMousePosition{ -1.0f, -1.0f };
 	};
 }

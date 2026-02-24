@@ -30,7 +30,7 @@ namespace we
 
     WaterEngine::~WaterEngine()
     {
-        // GameInstance is destroyed last (declared first in EngineSubsystem)
+        // GameInstance is destroyed last
         if (Subsystem.GameInst)
         {
             Subsystem.GameInst->Shutdown();
@@ -285,19 +285,7 @@ namespace we
             Subsystem.Input->HandleEvent(*Event);
 
             // Update cursor position on mouse movement
-            UpdateCursorPosition();
-        }
-    }
-
-    void WaterEngine::UpdateCursorPosition()
-    {
-        vec2i CurrentMousePos = sf::Mouse::getPosition(*Subsystem.Window);
-        
-        if (CurrentMousePos != LastMousePosition)
-        {
-            LastMousePosition = CurrentMousePos;
-            // Cursor uses window pixel space
-            Subsystem.Cursor->SetPosition(vec2f(CurrentMousePos));
+            Subsystem.Cursor->UpdateFromMouse(vec2f(sf::Mouse::getPosition(*Subsystem.Window)));
         }
     }
 

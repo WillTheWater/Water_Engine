@@ -29,7 +29,7 @@ namespace we
         bool HasFocus() const;
 
     protected:
-        // Override to create your game-specific GameInstance
+        // Override to create game-specific GameInstance
         virtual unique<GameInstance> CreateGameInstance() { return make_unique<GameInstance>(); }
         
         // Override hooks for game-specific behavior
@@ -51,10 +51,5 @@ namespace we
         void TickPaused();
         void UpdateWorldViewFromCamera();
         void WorldRender();
-        void UpdateCursorPosition();
-
-    private:
-        vec2i LastMousePosition{ -1, -1 };  // Track to detect actual mouse movement
     };
-
-} // namespace we
+}
