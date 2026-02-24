@@ -7,6 +7,7 @@
 
 #include "Core/CoreMinimal.h"
 #include "Subsystem/ResourceSubsystem.h"
+#include <format>
 
 namespace we
 {
@@ -29,7 +30,7 @@ namespace we
 		explicit CursorSubsystem(const CursorConfig& Config);
 
 		void Update(float DeltaTime);
-		void Render(RenderSubsystem& Renderer) const;
+		void Render(RenderSubsystem& Renderer, const CameraSubsystem* Camera = nullptr) const;
 
 		void SetSpeed(float Speed) { CursorSpeed = Speed; }
 		float GetSpeed() const { return CursorSpeed; }
@@ -40,14 +41,10 @@ namespace we
 		void SetCursorSize(vec2f Size);
 		vec2f GetCursorSize() const { return CursorSize; }
 
-		// Cursor position in window pixel coordinates
 		void SetPosition(vec2f Position);
 		vec2f GetPosition() const;
 
-		// Update position from mouse input (call when mouse moves)
 		void UpdateFromMouse(vec2f MousePosition);
-
-		// Convert window pixel position to world coordinates using camera
 		vec2f GetWorldPosition(const CameraSubsystem& Camera) const;
 
 		void SetJoystickDeadzone(float Deadzone) { Config.JoystickDeadzone = Deadzone; }
@@ -59,6 +56,9 @@ namespace we
 		vec2f GetWindowSize() const;
 
 	private:
+		void RenderDebugText(RenderSubsystem& Renderer, const CameraSubsystem* Camera) const;
+
+	private:
 		texture CursorTexture;
 		sprite CursorSprite;
 		vec2f CursorSize;
@@ -66,5 +66,6 @@ namespace we
 		bool bIsVisible;
 		CursorConfig Config;
 		vec2f LastMousePosition{ -1.0f, -1.0f };
+		mutable shared<font> DebugFont;
 	};
 }

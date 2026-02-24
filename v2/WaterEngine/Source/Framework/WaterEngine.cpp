@@ -211,7 +211,7 @@ namespace we
         Subsystem.GUI->Render();
 
         // 5. Render cursor to its target
-        Subsystem.Cursor->Render(*Subsystem.Render);
+        Subsystem.Cursor->Render(*Subsystem.Render, Subsystem.Camera.get());
 
         // 6. Composite game layers (world + UI) with letterboxing
         sprite Composite = Subsystem.Render->FinishComposite();

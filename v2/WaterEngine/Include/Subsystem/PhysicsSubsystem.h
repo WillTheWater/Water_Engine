@@ -30,7 +30,7 @@ namespace we
         Type EventType;
         b2Body* BodyA;
         b2Body* BodyB;
-        bool bSensorContact;  // True if at least one fixture is a sensor
+        bool bSensorContact;
     };
 
     class PhysicsContactListener : public b2ContactListener

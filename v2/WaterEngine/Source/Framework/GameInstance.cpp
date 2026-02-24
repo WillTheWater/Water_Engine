@@ -25,6 +25,6 @@ namespace we
 
 	void GameInstance::Tick(float DeltaTime)
 	{
-		// Base implementation - derived classes override
+		// Rare Use Cases
 	}
 }

@@ -28,7 +28,6 @@ namespace we
 
 	void CursorSubsystem::Update(float DeltaTime)
 	{
-		// Don't update position when cursor is not visible
 		if (!bIsVisible)
 			return;
 
@@ -50,7 +49,6 @@ namespace we
 			float RawT = (InputLength - Config.JoystickDeadzone) / (1.0f - Config.JoystickDeadzone);
 			float ScaledT = Clamp01(RawT);
 			
-			// Move the cursor sprite (in window pixel coordinates)
 			vec2f Delta = NormalizedDir * CursorSpeed * ScaledT * DeltaTime;
 			CursorSprite.move(Delta);
 
@@ -64,12 +62,55 @@ namespace we
 		}
 	}
 
-	void CursorSubsystem::Render(RenderSubsystem& Renderer) const
+	void CursorSubsystem::Render(RenderSubsystem& Renderer, const CameraSubsystem* Camera) const
 	{
-		if (bIsVisible)
+		if (!bIsVisible)
+			return;
+
+		// Draw cursor sprite
+		Renderer.Draw(CursorSprite, ERenderLayer::Cursor);
+
+		// Draw debug text for mouse position
+		RenderDebugText(Renderer, Camera);
+	}
+
+	void CursorSubsystem::RenderDebugText(RenderSubsystem& Renderer, const CameraSubsystem* Camera) const
+	{
+		// Lazy-load debug font
+		if (!DebugFont)
 		{
-			Renderer.Draw(CursorSprite, ERenderLayer::Cursor);
+			DebugFont = LoadAsset().LoadFontSync(EC.DefaultFont);
 		}
+
+		if (!DebugFont)
+			return;
+
+		// Get window position
+		vec2f WindowPos = GetPosition();
+
+		// Get world position if camera is available
+		vec2f WorldPos = WindowPos;
+		if (Camera)
+		{
+			WorldPos = GetWorldPosition(*Camera);
+		}
+
+		// Format: "Mouse: 1234x567 | World: 1234x567" (no decimals)
+		string Content = std::format("Mouse: {:.0f}x{:.0f} | World: {:.0f}x{:.0f}", 
+			WindowPos.x, WindowPos.y, WorldPos.x, WorldPos.y);
+
+		// Use render resolution for positioning (works in both windowed and fullscreen)
+		// Position at top-right with padding
+		vec2f TextPos = { EC.RenderResolution.x - 10.0f, 10.0f };
+
+		text TextObj(*DebugFont, Content, 16);
+		TextObj.setPosition(TextPos);
+		TextObj.setFillColor(color::Red);
+		
+		// Right-align the text
+		TextObj.setOrigin({ TextObj.getLocalBounds().size.x, 0.0f });
+		
+		Renderer.Draw(TextObj, ERenderLayer::ScreenUI);
 	}
 
 	void CursorSubsystem::ApplyCursorSize()
@@ -96,7 +137,6 @@ namespace we
 
 		bIsVisible = Visible;
 
-		// When becoming visible, center the cursor on screen
 		if (bIsVisible)
 		{
 			CenterCursor();
@@ -116,7 +156,6 @@ namespace we
 
 	void CursorSubsystem::UpdateFromMouse(vec2f MousePosition)
 	{
-		// Only update if mouse actually moved
 		if (MousePosition != LastMousePosition)
 		{
 			LastMousePosition = MousePosition;
@@ -131,27 +170,21 @@ namespace we
 
 	vec2f CursorSubsystem::GetWorldPosition(const CameraSubsystem& Camera) const
 	{
-		// Get current camera view
 		CameraView View;
 		if (!Camera.GetCurrentView(View))
 		{
-			// No active camera, return cursor position as-is
 			return CursorSprite.getPosition();
 		}
 
-		// Calculate aspect ratio
 		float AspectRatio = EC.AspectRatio.x / EC.AspectRatio.y;
 		vec2f ViewSize = View.GetViewSize(AspectRatio);
 
-		// Get cursor position in window pixels
 		vec2f PixelPos = CursorSprite.getPosition();
 		vec2f WindowSize = GetWindowSize();
 
-		// Convert to normalized device coordinates (-1 to 1)
 		float NormalizedX = (PixelPos.x / WindowSize.x) * 2.0f - 1.0f;
 		float NormalizedY = (PixelPos.y / WindowSize.y) * 2.0f - 1.0f;
 
-		// Convert to world coordinates
 		vec2f WorldPos;
 		WorldPos.x = View.Position.x + NormalizedX * ViewSize.x * 0.5f;
 		WorldPos.y = View.Position.y + NormalizedY * ViewSize.y * 0.5f;

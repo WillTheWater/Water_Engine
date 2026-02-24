@@ -27,12 +27,7 @@ namespace we
 
 	struct EngineSubsystem
 	{
-		// Dependencies: Declare AFTER things they depend on
-		// (Destroyed in reverse order: things declared first are destroyed last)
-		
-		// GameInstance is destroyed LAST - all subsystems may reference it during cleanup
 		unique<GameInstance> GameInst;
-		
 		unique<ResourceSubsystem> AssetLoader;
 		unique<SaveLoadSubsystem> SaveLoad;
 		unique<TimeSubsystem> Time;
@@ -40,11 +35,11 @@ namespace we
 		unique<CursorSubsystem> Cursor;
 		unique<GameStateSubsystem> GameState;
 		unique<AudioSubsystem> Audio;
-		unique<PhysicsSubsystem> Physics;  // Destroyed after World (World's actors need physics cleanup)
-		unique<WorldSubsystem> World;      // Destroyed after GUI
-		unique<GUISubsystem> GUI;          // Destroyed after Render/Audio
-		unique<RenderSubsystem> Render;    // Destroyed after Window
-		unique<CameraSubsystem> Camera;    // Destroyed after Render (render may query camera during cleanup)
-		unique<WindowSubsystem> Window;    // Destroyed last (OS window must outlive everything)
+		unique<PhysicsSubsystem> Physics;
+		unique<WorldSubsystem> World;
+		unique<GUISubsystem> GUI; 
+		unique<RenderSubsystem> Render;
+		unique<CameraSubsystem> Camera;
+		unique<WindowSubsystem> Window;
 	};
 }

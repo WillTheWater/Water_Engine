@@ -46,6 +46,14 @@ namespace we
         float Thickness;
     };
 
+    struct DebugText
+    {
+        string Content;
+        vec2f Position;  // Screen-space position (pixels from top-left)
+        color Color;
+        uint CharacterSize;
+    };
+
     // Debug drawing system - renders wireframe primitives on top of game world
     // Thread-safe accumulation, automatically cleared after rendering
     class DebugDraw
@@ -61,6 +69,12 @@ namespace we
         static void Rect(const vec2f& Position, const vec2f& HalfExtents, float Rotation, const color& Color = color::Red, float Thickness = 2.0f);
         static void Capsule(const vec2f& Position, float HalfHeight, float Radius, const color& Color = color::Red, float Thickness = 2.0f);
 
+        // Screen-space text (position in pixels from top-left)
+        static void Text(const string& Content, vec2f Position, const color& Color = color::White, uint CharacterSize = 16);
+
+        // Draw mouse position at top-right of screen (call every frame to update)
+        static void DrawMousePosition(vec2f MousePos, vec2f WindowSize, const color& Color = color::Yellow);
+
         // Render all queued primitives and clear them (single call, auto-clears)
         static void Render(RenderSubsystem& Render);
 
@@ -72,6 +86,8 @@ namespace we
         static vector<DebugCircle> Circles;
         static vector<DebugRect> Rects;
         static vector<DebugCapsule> Capsules;
+        static vector<DebugText> Texts;
         static bool bIsEnabled;
+        static shared<font> DebugFont;
     };
 }

@@ -30,8 +30,6 @@ namespace we
 
 		// Called once when the game is shutting down, before destruction
 		virtual void Shutdown();
-
-		// Called every frame (use sparingly - prefer subsystems for tick logic)
 		virtual void Tick(float DeltaTime);
 
 		// Access to engine subsystems

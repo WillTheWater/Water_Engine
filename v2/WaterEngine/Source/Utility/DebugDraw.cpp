@@ -5,7 +5,9 @@
 
 #include "Utility/DebugDraw.h"
 #include "Subsystem/RenderSubsystem.h"
+#include "Subsystem/ResourceSubsystem.h"
 #include <cmath>
+#include <format>
 
 namespace we
 {
@@ -13,7 +15,9 @@ namespace we
     vector<DebugCircle> DebugDraw::Circles;
     vector<DebugRect> DebugDraw::Rects;
     vector<DebugCapsule> DebugDraw::Capsules;
+    vector<DebugText> DebugDraw::Texts;
     bool DebugDraw::bIsEnabled = true;
+    shared<font> DebugDraw::DebugFont = nullptr;
 
     void DebugDraw::Line(const vec2f& Start, const vec2f& End, const color& Color, float Thickness)
     {
@@ -37,6 +41,25 @@ namespace we
     {
         if (!bIsEnabled) return;
         Capsules.push_back({ Position, HalfHeight, Radius, Color, Thickness });
+    }
+
+    void DebugDraw::Text(const string& Content, vec2f Position, const color& Color, uint CharacterSize)
+    {
+        if (!bIsEnabled) return;
+        Texts.push_back({ Content, Position, Color, CharacterSize });
+    }
+
+    void DebugDraw::DrawMousePosition(vec2f MousePos, vec2f WindowSize, const color& Color)
+    {
+        if (!bIsEnabled) return;
+
+        // Format: "Mouse Pos: 1234x567" (no decimals)
+        string Content = std::format("Mouse Pos: {:.0f}x{:.0f}", MousePos.x, MousePos.y);
+
+        // Position at top-right with some padding
+        vec2f Position = { WindowSize.x - 200.0f, 10.0f };
+
+        Texts.push_back({ Content, Position, Color, 16 });
     }
 
     void DebugDraw::Render(RenderSubsystem& Render)
@@ -130,6 +153,27 @@ namespace we
             Render.Draw(RightLine, ERenderLayer::World);
         }
 
+        // Render text (screen-space, use default view)
+        if (!Texts.empty())
+        {
+            // Lazy-load debug font if needed
+            if (!DebugFont)
+            {
+                DebugFont = LoadAsset().LoadFontSync("Assets/Font/Default/defaultFont.otf");
+            }
+
+            if (DebugFont)
+            {
+                for (const auto& T : Texts)
+                {
+                    text TextObj(*DebugFont, T.Content, T.CharacterSize);
+                    TextObj.setPosition(T.Position);
+                    TextObj.setFillColor(T.Color);
+                    Render.Draw(TextObj, ERenderLayer::ScreenUI);
+                }
+            }
+        }
+
         // Auto-clear after rendering (no manual Clear() needed)
         Clear();
     }
@@ -140,5 +184,6 @@ namespace we
         Circles.clear();
         Rects.clear();
         Capsules.clear();
+        Texts.clear();
     }
 }
