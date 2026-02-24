@@ -73,30 +73,4 @@ namespace we
 		shared<TextBlock> DialogText;       // Dialog text
 		bool bDialogVisible = false;
 	};
-
-	// =============================================================================
-	// Alice - Village NPC with simple 1-way idle animation
-	// =============================================================================
-
-	class Alice : public NPC
-	{
-	public:
-		Alice(World* OwningWorld);
-
-	protected:
-		virtual void InitializeAnimations() override;
-	};
-
-	// =============================================================================
-	// Bob - Merchant NPC with 8-way idle animation (old sprite sheet format)
-	// =============================================================================
-
-	class Bob : public NPC
-	{
-	public:
-		Bob(World* OwningWorld);
-
-	protected:
-		virtual void InitializeAnimations() override;
-	};
 }

@@ -156,7 +156,7 @@ namespace we
 		InteractionHint->SetLocalOffset({ NPCPos.x, NPCPos.y - 120.f });
 		
 		// Update dialog panel position (above and to the left)
-		DialogPanel->SetLocalOffset({ NPCPos.x - 240.f, NPCPos.y - 180.f });
+		DialogPanel->SetLocalOffset({ NPCPos.x - 120.f, NPCPos.y - 120.f });
 	}
 
 	void NPC::ShowInteractionHint()
@@ -208,74 +208,5 @@ namespace we
 	bool NPC::IsDialogVisible() const
 	{
 		return bDialogVisible;
-	}
-
-	// ==========================================================================
-	// Alice Implementation - Simple 1-way idle animation
-	// ==========================================================================
-
-	Alice::Alice(World* OwningWorld)
-		: NPC(OwningWorld, GC.NPCSheetIdle, "Alice")
-	{
-		SetDialog("Hello! I'm Alice. Welcome to our village!");
-	}
-
-	void Alice::InitializeAnimations()
-	{
-		AnimComp = make_shared<AnimationComponent>(this);
-		AnimComp->BeginPlay();
-
-		// Load animation sheet (girlidle format - 256x256 frames, 8 per row)
-		AnimComp->AddSpriteSheet(0, SpriteSheet{ GC.NPCSheetIdle, {256, 256}, 8 });
-
-		// Single idle animation facing down (row 0)
-		AnimComp->AddAnimation({ 1, 0, {0, 0}, {0, 7}, 0.15f, true });
-
-		// Start with idle
-		AnimComp->Transition(1);
-		
-		LOG("[Alice] Initialized 1-way idle animation");
-	}
-
-	// ==========================================================================
-	// Bob Implementation - 8-way idle animation (old sprite sheet format)
-	// ==========================================================================
-
-	Bob::Bob(World* OwningWorld)
-		: NPC(OwningWorld, GC.OldNPCSheetIdle, "Bob")
-	{
-		SetDialog("Greetings! I'm Bob. I sell potions and items.");
-	}
-
-	void Bob::InitializeAnimations()
-	{
-		AnimComp = make_shared<AnimationComponent>(this);
-		AnimComp->BeginPlay();
-
-		// Use the oldIdle sprite sheet (8x8 grid, 256x256 frames)
-		AnimComp->AddSpriteSheet(0, SpriteSheet{ GC.OldNPCSheetIdle, {256, 256}, 8 });
-
-		// IDLE animations for all 8 directions
-		// Row 0: Idle Down
-		AnimComp->AddAnimation({ 1, 0, {0, 0}, {0, 7}, 0.15f, true });
-		// Row 1: Idle DownRight
-		AnimComp->AddAnimation({ 2, 0, {1, 0}, {1, 7}, 0.15f, true });
-		// Row 2: Idle Right
-		AnimComp->AddAnimation({ 3, 0, {2, 0}, {2, 7}, 0.15f, true });
-		// Row 3: Idle UpRight
-		AnimComp->AddAnimation({ 4, 0, {3, 0}, {3, 7}, 0.15f, true });
-		// Row 4: Idle Up
-		AnimComp->AddAnimation({ 5, 0, {4, 0}, {4, 7}, 0.15f, true });
-		// Row 5: Idle UpLeft
-		AnimComp->AddAnimation({ 6, 0, {5, 0}, {5, 7}, 0.15f, true });
-		// Row 6: Idle Left
-		AnimComp->AddAnimation({ 7, 0, {6, 0}, {6, 7}, 0.15f, true });
-		// Row 7: Idle DownLeft
-		AnimComp->AddAnimation({ 8, 0, {7, 0}, {7, 7}, 0.15f, true });
-
-		// Start facing down
-		AnimComp->Transition(1);
-		
-		LOG("[Bob] Initialized 8-way idle animations");
 	}
 }

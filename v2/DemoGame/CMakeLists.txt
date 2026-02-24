@@ -40,6 +40,8 @@ set(GAME_HEADERS
     Include/Character/PlayerCharacter.h
     Include/Character/MovementComponent.h
     Include/Character/NPC.h
+    Include/Character/Aoi.h
+    Include/Character/Kiyoshi.h
 )
 
 set(GAME_SOURCES
@@ -59,6 +61,8 @@ set(GAME_SOURCES
     Source/Character/PlayerCharacter.cpp
     Source/Character/MovementComponent.cpp
     Source/Character/NPC.cpp
+    Source/Character/Aoi.cpp
+    Source/Character/Kiyoshi.cpp
 )
 
 # =============================================================================

@@ -11,11 +11,11 @@
 namespace we
 {
 	class PauseUI;
-
 	class Player;
 	class Camera;
-
 	class NPC;
+	class Aoi;
+	class Kiyoshi;
 
 	class LevelOne : public World
 	{
@@ -45,9 +45,11 @@ namespace we
 		bool bPauseMenuOpen = false;
 		bool bSettingsOpen = false;
 
-		// Store a weak reference to the player for debugging
-		std::weak_ptr<NPC> NPCRef;
-		std::weak_ptr<NPC> NPC2Ref;
+		// NPCs
+		std::weak_ptr<Aoi> AoiRef;
+		std::weak_ptr<Kiyoshi> KiyoshiRef;
+		
+		// Player and Camera
 		std::weak_ptr<Player> PlayerRef;
 		std::weak_ptr<Camera> CameraRef;
 		sf::VertexArray OriginMarker;

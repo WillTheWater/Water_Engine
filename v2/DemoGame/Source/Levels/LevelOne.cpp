@@ -16,6 +16,8 @@
 #include "GameStateTokens.h"
 #include "Character/PlayerCharacter.h"
 #include "Character/NPC.h"
+#include "Character/Aoi.h"
+#include "Character/Kiyoshi.h"
 #include "Interface/Component/PhysicsComponent.h"
 #include "UI/PauseUI.h"
 #include "Utility/Log.h"
@@ -219,18 +221,18 @@ namespace we
 			}
 		}
 
-		// Spawn Alice (simple 1-way idle NPC)
-		NPCRef = SpawnActor<Alice>();
-		if (auto npc = NPCRef.lock())
+		// Spawn Aoi (village girl - simple 1-way idle)
+		AoiRef = SpawnActor<Aoi>();
+		if (auto aoi = AoiRef.lock())
 		{
-			npc->SetPosition({ 500,-500 });
+			aoi->SetPosition({ 500, -500 });
 		}
 
-		// Spawn Bob (8-way idle NPC)
-		NPC2Ref = SpawnActor<Bob>();
-		if (auto npc2 = NPC2Ref.lock())
+		// Spawn Kiyoshi (old man merchant - 8-way idle)
+		KiyoshiRef = SpawnActor<Kiyoshi>();
+		if (auto kiyoshi = KiyoshiRef.lock())
 		{
-			npc2->SetPosition({ -500,-500 });
+			kiyoshi->SetPosition({ -500, -500 });
 		}
 
 		// Test Borders - Room walls (closed loop)
