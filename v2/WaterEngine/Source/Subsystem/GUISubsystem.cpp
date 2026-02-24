@@ -405,6 +405,22 @@ namespace we
 
 	void GUISubsystem::HandleKeyPressed(const sf::Event::KeyPressed& Key)
 	{
+		// Only process GUI navigation keys if we have visible widgets
+		bool bHasVisibleWidgets = false;
+		for (const auto& Widget : Widgets)
+		{
+			if (Widget && Widget->IsVisible())
+			{
+				bHasVisibleWidgets = true;
+				break;
+			}
+		}
+		
+		if (!bHasVisibleWidgets)
+		{
+			return;  // No visible UI, ignore GUI input
+		}
+		
 		if (Key.scancode == sf::Keyboard::Scan::Tab)
 		{
 			if (Key.shift)
@@ -591,7 +607,11 @@ namespace we
 	{
 		if (auto Focused = FocusedWidget.lock())
 		{
-			Focused->OnClicked.Broadcast();
+			// Only activate if the widget is visible and focusable
+			if (Focused->IsVisible() && Focused->IsFocusable())
+			{
+				Focused->OnClicked.Broadcast();
+			}
 		}
 	}
 

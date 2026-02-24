@@ -5,6 +5,7 @@
 
 #include "Character/PlayerCharacter.h"
 #include "Character/MovementComponent.h"
+#include "Character/NPC.h"
 #include "Interface/Component/AnimationComponent.h"
 #include "Interface/Component/PhysicsComponent.h"
 #include "Interface/IInteractive.h"
@@ -191,6 +192,12 @@ namespace we
 		{
 			NearbyInteractables.insert(Interactive);
 			LOG("[Player] Entered interaction range of: {}", typeid(*OtherActor).name());
+			
+			// Show interaction hint for NPCs
+			if (auto* NPC = dynamic_cast<class NPC*>(OtherActor))
+			{
+				NPC->ShowInteractionHint();
+			}
 		}
 	}
 
@@ -206,6 +213,13 @@ namespace we
 		{
 			NearbyInteractables.erase(Interactive);
 			LOG("[Player] Left interaction range of: {}", typeid(*OtherActor).name());
+			
+			// Hide interaction hint and dialog for NPCs
+			if (auto* NPC = dynamic_cast<class NPC*>(OtherActor))
+			{
+				NPC->HideInteractionHint();
+				NPC->HideDialog();  // Close dialog if player walks away
+			}
 		}
 	}
 

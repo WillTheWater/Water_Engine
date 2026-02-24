@@ -219,15 +219,15 @@ namespace we
 			}
 		}
 
-		// First NPC (original)
-		NPCRef = SpawnActor<NPC>(GC.NPCSheetIdle, "Alice", "Hello! I'm Alice. Welcome to our village!");
+		// Spawn Alice (simple 1-way idle NPC)
+		NPCRef = SpawnActor<Alice>();
 		if (auto npc = NPCRef.lock())
 		{
 			npc->SetPosition({ 500,-500 });
 		}
 
-		// Second NPC (different dialog)
-		NPC2Ref = SpawnActor<NPC>(GC.NPCSheetIdle, "Bob", "Greetings! I'm Bob. I sell potions and items.");
+		// Spawn Bob (8-way idle NPC)
+		NPC2Ref = SpawnActor<Bob>();
 		if (auto npc2 = NPC2Ref.lock())
 		{
 			npc2->SetPosition({ -500,-500 });

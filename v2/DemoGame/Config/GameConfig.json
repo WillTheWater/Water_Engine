@@ -6,6 +6,8 @@
   "CharacterSheetIdle": "Assets/Textures/Default/idle.png",
   "CharacterSheetWalk": "Assets/Textures/Default/walk.png",
   "NPCSheetIdle": "Assets/Textures/Default/girlidle.png",
+  "OldNPCSheetIdle": "Assets/Textures/Default/oldIdle.png",
+  "OldNPCSheetWalk": "Assets/Textures/Default/oldWalk.png",
   "DefaultMusic": "Assets/Audio/Default/defaultMusic.ogg",
   "DefaultAmbient": "Assets/Audio/Default/defaultAmbient.ogg",
   "DefaultButton": "Assets/Textures/Default/defaultButton.png",

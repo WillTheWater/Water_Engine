@@ -10,38 +10,93 @@
 #include "Interface/Component/CameraComponent.h"
 #include "Interface/Component/IMovementComponent.h"
 #include "Interface/IInteractive.h"
-#include "GameConfig.h"
+#include "UI/Widget/Panel.h"
+#include "UI/Widget/TextBlock.h"
 
 namespace we
 {
 	class AnimationComponent;
 
-	enum class NPCAnimState : uint8
-	{
-		None = 0,
-		Idle
-	};
+	// =============================================================================
+	// Base NPC Class
+	// =============================================================================
+	// Abstract base class for all NPCs. Provides interaction system, UI hints,
+	// and dialog boxes. Derived classes implement their own animation setups.
+	// =============================================================================
 
 	class NPC : public Character, public IInteractive
 	{
 	public:
-		NPC(World* OwningWorld, const string& TexturePath = GC.NPCSheetIdle, const string& InName = "NPC", const string& InDialog = "Hello! I am an NPC.");
+		NPC(World* OwningWorld, const string& TexturePath, const string& InName);
+		virtual ~NPC() = default;
 
 		virtual void BeginPlay() override;
 		virtual void Tick(float DeltaTime) override;
 		virtual void Destroy() override;
-
-	public:
-		void InitializeAnimations();
 
 		// IInteractive interface
 		virtual void OnInteract(Actor* Interactor) override;
 		virtual bool CanInteract() const override { return true; }
 		virtual string GetInteractionPrompt() const override { return "Talk to " + Name; }
 
-	private:
+		// UI Management
+		void ShowInteractionHint();      // Show "!" above head
+		void HideInteractionHint();      // Hide "!"
+		void ShowDialog();               // Show dialog panel
+		void HideDialog();               // Hide dialog panel
+		bool IsDialogVisible() const;
+
+		// Accessors
+		const string& GetName() const { return Name; }
+		void SetDialog(const string& InDialog) { Dialog = InDialog; }
+
+	protected:
+		// Override this in derived classes to set up animations
+		virtual void InitializeAnimations() = 0;
+
+		// Helper to set up interaction sensor
+		void SetupInteractionSensor();
+
+		// UI Creation
+		void CreateInteractionHint();
+		void CreateDialogPanel();
+		void UpdateUIPositions();  // Keep UI positioned above NPC
+
+	protected:
 		shared<AnimationComponent> AnimComp;
 		string Name;
 		string Dialog;
+
+		// UI Elements
+		shared<TextBlock> InteractionHint;  // The "!" indicator
+		shared<Panel> DialogPanel;          // Dialog box panel
+		shared<TextBlock> DialogText;       // Dialog text
+		bool bDialogVisible = false;
+	};
+
+	// =============================================================================
+	// Alice - Village NPC with simple 1-way idle animation
+	// =============================================================================
+
+	class Alice : public NPC
+	{
+	public:
+		Alice(World* OwningWorld);
+
+	protected:
+		virtual void InitializeAnimations() override;
+	};
+
+	// =============================================================================
+	// Bob - Merchant NPC with 8-way idle animation (old sprite sheet format)
+	// =============================================================================
+
+	class Bob : public NPC
+	{
+	public:
+		Bob(World* OwningWorld);
+
+	protected:
+		virtual void InitializeAnimations() override;
 	};
 }
