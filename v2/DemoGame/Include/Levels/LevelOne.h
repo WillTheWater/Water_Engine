@@ -47,6 +47,7 @@ namespace we
 
 		// Store a weak reference to the player for debugging
 		std::weak_ptr<NPC> NPCRef;
+		std::weak_ptr<NPC> NPC2Ref;
 		std::weak_ptr<Player> PlayerRef;
 		std::weak_ptr<Camera> CameraRef;
 		sf::VertexArray OriginMarker;

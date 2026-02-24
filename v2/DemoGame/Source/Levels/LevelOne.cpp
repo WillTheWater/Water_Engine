@@ -219,10 +219,18 @@ namespace we
 			}
 		}
 
-		NPCRef = SpawnActor<NPC>();
+		// First NPC (original)
+		NPCRef = SpawnActor<NPC>(GC.NPCSheetIdle, "Alice", "Hello! I'm Alice. Welcome to our village!");
 		if (auto npc = NPCRef.lock())
 		{
 			npc->SetPosition({ 500,-500 });
+		}
+
+		// Second NPC (different dialog)
+		NPC2Ref = SpawnActor<NPC>(GC.NPCSheetIdle, "Bob", "Greetings! I'm Bob. I sell potions and items.");
+		if (auto npc2 = NPC2Ref.lock())
+		{
+			npc2->SetPosition({ -500,-500 });
 		}
 
 		// Test Borders - Room walls (closed loop)
@@ -273,6 +281,26 @@ namespace we
 				return;
 			}
 			OnTogglePause();
+		});
+
+		// Bind interaction inputs
+		Subsystem.Input->Bind(ACTION_INTERACT, Input::Keyboard{ sf::Keyboard::Scan::E });
+		Subsystem.Input->Bind(ACTION_INTERACT, Input::Gamepad{ GamepadButton::South, 0 });  // A on Xbox
+
+		// Register interaction callback
+		Subsystem.Input->OnPressed(ACTION_INTERACT, [this]()
+		{
+			// Don't interact if game is paused
+			if (Subsystem.Time->IsPaused())
+			{
+				return;
+			}
+
+			// Try to interact
+			if (auto Player = PlayerRef.lock())
+			{
+				Player->TryInteract();
+			}
 		});
 	}
 

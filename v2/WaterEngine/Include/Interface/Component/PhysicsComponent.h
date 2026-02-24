@@ -8,6 +8,7 @@
 #include "Core/CoreMinimal.h"
 #include "Interface/Component/IPhysicsComponent.h"
 #include "Subsystem/PhysicsSubsystem.h"
+#include "Utility/Delegate.h"
 
 class b2Body;
 class b2Fixture;
@@ -32,6 +33,10 @@ namespace we
         virtual void OnBeginOverlap(IPhysicsComponent* Other) override;
         virtual void OnEndOverlap(IPhysicsComponent* Other) override;
         virtual b2Body* GetPhysicsBody() const override { return Body; }
+
+        // Delegates for overlap events (composition-friendly alternative to overriding)
+        Delegate<IPhysicsComponent*> OnBeginOverlapEvent;
+        Delegate<IPhysicsComponent*> OnEndOverlapEvent;
 
         // Shape setup
         void SetBodyType(BodyType Type);

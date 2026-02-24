@@ -35,6 +35,8 @@ set(GAME_HEADERS
     
     Include/Input/InputActions.h
 
+    Include/Interface/IInteractive.h
+
     Include/Character/PlayerCharacter.h
     Include/Character/MovementComponent.h
     Include/Character/NPC.h

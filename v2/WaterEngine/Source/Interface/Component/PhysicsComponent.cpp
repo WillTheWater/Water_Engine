@@ -158,12 +158,18 @@ namespace we
     {
         // Override in derived classes to handle overlap begin
         (void)Other;
+        
+        // Broadcast to delegates
+        OnBeginOverlapEvent.Broadcast(Other);
     }
 
     void PhysicsComponent::OnEndOverlap(IPhysicsComponent* Other)
     {
         // Override in derived classes to handle overlap end
         (void)Other;
+        
+        // Broadcast to delegates
+        OnEndOverlapEvent.Broadcast(Other);
     }
 
     void PhysicsComponent::SetBodyType(BodyType NewType)

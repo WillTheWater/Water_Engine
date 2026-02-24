@@ -7,6 +7,7 @@
 #include "Character/MovementComponent.h"
 #include "Interface/Component/AnimationComponent.h"
 #include "Interface/Component/PhysicsComponent.h"
+#include "Interface/IInteractive.h"
 #include "Framework/World/World.h"
 #include "Framework/EngineSubsystem.h"
 #include "Utility/Math.h"
@@ -27,6 +28,9 @@ namespace we
 	{
 		InitializeAnimations();
 		Character::BeginPlay();
+
+		// Setup interaction sensor (uses existing PhysicsComp)
+		SetupInteractionSensor();
 		
 		// Create camera component (not an Actor - owned by player)
 		//LOG("[Player] Spawning at ({:.1f}, {:.1f})", GetPosition().x, GetPosition().y);
@@ -151,5 +155,70 @@ namespace we
 		if (MoveComp) MoveComp->EndPlay();
 		if (AnimComp) AnimComp->EndPlay();
 		Character::Destroy();
+	}
+
+	void Player::SetupInteractionSensor()
+	{
+		// Use the existing PhysicsComp from Character base class
+		// Set up a sensor on the existing physics component
+		if (PhysicsComp)
+		{
+			// Add a sensor shape for interaction detection (separate from collision)
+			PhysicsComp->SetSensorShape(true, 100.0f);  // Circle sensor with 100 unit radius
+			
+			// Bind overlap callbacks using delegates on the existing physics component
+			PhysicsComp->OnBeginOverlapEvent.Bind(this, &Player::OnInteractionOverlapBegin);
+			PhysicsComp->OnEndOverlapEvent.Bind(this, &Player::OnInteractionOverlapEnd);
+			
+			LOG("[Player] Interaction sensor set up on existing PhysicsComp");
+		}
+		else
+		{
+			LOG("[Player] ERROR: No PhysicsComp available for interaction sensor!");
+		}
+	}
+
+	void Player::OnInteractionOverlapBegin(IPhysicsComponent* Other)
+	{
+		if (!Other) return;
+
+		Actor* OtherActor = Other->GetOwner();
+		if (!OtherActor) return;
+
+		// Check if the other actor implements IInteractive
+		IInteractive* Interactive = dynamic_cast<IInteractive*>(OtherActor);
+		if (Interactive)
+		{
+			NearbyInteractables.insert(Interactive);
+			LOG("[Player] Entered interaction range of: {}", typeid(*OtherActor).name());
+		}
+	}
+
+	void Player::OnInteractionOverlapEnd(IPhysicsComponent* Other)
+	{
+		if (!Other) return;
+
+		Actor* OtherActor = Other->GetOwner();
+		if (!OtherActor) return;
+
+		IInteractive* Interactive = dynamic_cast<IInteractive*>(OtherActor);
+		if (Interactive)
+		{
+			NearbyInteractables.erase(Interactive);
+			LOG("[Player] Left interaction range of: {}", typeid(*OtherActor).name());
+		}
+	}
+
+	void Player::TryInteract()
+	{
+		// Find the first interactable that can be interacted with
+		for (IInteractive* Interactive : NearbyInteractables)
+		{
+			if (Interactive && Interactive->CanInteract())
+			{
+				Interactive->OnInteract(this);
+				return;  // Only interact with one at a time
+			}
+		}
 	}
 }

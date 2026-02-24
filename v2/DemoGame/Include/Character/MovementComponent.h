@@ -9,15 +9,6 @@
 
 namespace we
 {
-	enum InputActions
-	{
-		MOVE_UP = 1,
-		MOVE_DOWN,
-		MOVE_LEFT,
-		MOVE_RIGHT,
-		INTERACT
-	};
-
 	// MovementComponent calculates movement intent from input
 	// Does NOT apply movement - external code (e.g., PlayerCharacter) must apply velocity to physics or position
 	class MovementComponent : public IMovementComponent

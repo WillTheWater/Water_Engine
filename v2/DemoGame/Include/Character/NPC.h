@@ -9,6 +9,7 @@
 #include "Framework/World/Actor/Character.h"
 #include "Interface/Component/CameraComponent.h"
 #include "Interface/Component/IMovementComponent.h"
+#include "Interface/IInteractive.h"
 #include "GameConfig.h"
 
 namespace we
@@ -21,10 +22,10 @@ namespace we
 		Idle
 	};
 
-	class NPC : public Character
+	class NPC : public Character, public IInteractive
 	{
 	public:
-		NPC(World* OwningWorld, const string& TexturePath = GC.NPCSheetIdle);
+		NPC(World* OwningWorld, const string& TexturePath = GC.NPCSheetIdle, const string& InName = "NPC", const string& InDialog = "Hello! I am an NPC.");
 
 		virtual void BeginPlay() override;
 		virtual void Tick(float DeltaTime) override;
@@ -33,7 +34,14 @@ namespace we
 	public:
 		void InitializeAnimations();
 
+		// IInteractive interface
+		virtual void OnInteract(Actor* Interactor) override;
+		virtual bool CanInteract() const override { return true; }
+		virtual string GetInteractionPrompt() const override { return "Talk to " + Name; }
+
 	private:
 		shared<AnimationComponent> AnimComp;
+		string Name;
+		string Dialog;
 	};
 }

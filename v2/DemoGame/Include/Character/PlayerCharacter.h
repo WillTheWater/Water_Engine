@@ -9,11 +9,13 @@
 #include "Framework/World/Actor/Character.h"
 #include "Interface/Component/CameraComponent.h"
 #include "Interface/Component/IMovementComponent.h"
+#include "Interface/Component/PhysicsComponent.h"
 #include "GameConfig.h"
 
 namespace we
 {
 	class AnimationComponent;
+	class IInteractive;
 
 	enum class AnimState : uint8
 	{
@@ -53,10 +55,21 @@ namespace we
 		void UpdateFootsteps();
 		void PlayFootstep();
 
+		// Interaction system
+		void TryInteract();
+
+	private:
+		void SetupInteractionSensor();
+		void OnInteractionOverlapBegin(IPhysicsComponent* Other);
+		void OnInteractionOverlapEnd(IPhysicsComponent* Other);
+
 	private:
 		shared<IMovementComponent> MoveComp;
 		shared<AnimationComponent> AnimComp;
 		//shared<CameraComponent> CamComp;  // Camera component (not an Actor)
 		uint LastFootstepFrame = 255;
+
+		// Interaction
+		set<IInteractive*> NearbyInteractables;
 	};
 }

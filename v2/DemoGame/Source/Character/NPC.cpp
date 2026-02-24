@@ -14,8 +14,10 @@
 
 namespace we
 {
-	NPC::NPC(World* OwningWorld, const string& TexturePath)
+	NPC::NPC(World* OwningWorld, const string& TexturePath, const string& InName, const string& InDialog)
 		: Character(OwningWorld, TexturePath)
+		, Name(InName)
+		, Dialog(InDialog.empty() ? "Hello! I am " + InName + "." : InDialog)
 	{
 		SetCharacterRadius(40.0f);
 		SetCollisionOffset({ 0, 10 });
@@ -28,6 +30,11 @@ namespace we
 		if (PhysicsComp)
 		{
 			PhysicsComp->SetBodyType(BodyType::Static);
+			
+			// Add sensor for interaction detection (player can detect us when nearby)
+			PhysicsComp->SetSensorShape(true, 60.0f);  // 60 unit radius sensor
+			
+			LOG("[{}] Interaction sensor set up", Name);
 		}
 	}
 
@@ -59,5 +66,13 @@ namespace we
 	{
 		if (AnimComp) AnimComp->EndPlay();
 		Character::Destroy();
+	}
+
+	void NPC::OnInteract(Actor* Interactor)
+	{
+		LOG("[{}] Interaction triggered by: {}", Name, typeid(*Interactor).name());
+		LOG("[{}] {}", Name, Dialog);
+		
+		// Future: Open dialogue, give quest, play animation, etc.
 	}
 }

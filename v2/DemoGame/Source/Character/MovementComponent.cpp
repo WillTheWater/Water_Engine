@@ -4,6 +4,7 @@
 // =============================================================================
 
 #include "Character/MovementComponent.h"
+#include "Input/InputActions.h"
 #include "Framework/World/Actor/Actor.h"
 #include "Framework/EngineSubsystem.h"
 #include "Framework/World/World.h"
@@ -29,17 +30,18 @@ namespace we
 
 		vec2f RawInput;
 
-		if (Owner->GetWorld()->GetSubsystem().Input->IsPressed(MOVE_UP))
+		auto* Input = Owner->GetWorld()->GetSubsystem().Input.get();
+		if (Input->IsPressed(MOVE_UP))
 			RawInput.y -= 1;
-		if (Owner->GetWorld()->GetSubsystem().Input->IsPressed(MOVE_DOWN))
+		if (Input->IsPressed(MOVE_DOWN))
 			RawInput.y += 1;
-		if (Owner->GetWorld()->GetSubsystem().Input->IsPressed(MOVE_LEFT))
+		if (Input->IsPressed(MOVE_LEFT))
 			RawInput.x -= 1;
-		if (Owner->GetWorld()->GetSubsystem().Input->IsPressed(MOVE_RIGHT))
+		if (Input->IsPressed(MOVE_RIGHT))
 			RawInput.x += 1;
 
-		float AxisX = Owner->GetWorld()->GetSubsystem().Input->GetAxisValue(0, sf::Joystick::Axis::X);
-		float AxisY = Owner->GetWorld()->GetSubsystem().Input->GetAxisValue(0, sf::Joystick::Axis::Y);
+		float AxisX = Input->GetAxisValue(0, sf::Joystick::Axis::X);
+		float AxisY = Input->GetAxisValue(0, sf::Joystick::Axis::Y);
 
 		if (std::abs(AxisX) > EC.JoystickDeadzone)
 			RawInput.x += AxisX;
@@ -78,7 +80,7 @@ namespace we
 
 	void MovementComponent::BindInput()
 	{
-		auto& Input = Owner->GetWorld()->GetSubsystem().Input;
+		auto* Input = Owner->GetWorld()->GetSubsystem().Input.get();
 
 		// WASD
 		Input->Bind(MOVE_UP, Input::Keyboard{ sf::Keyboard::Scan::W });
@@ -91,10 +93,6 @@ namespace we
 		Input->Bind(MOVE_DOWN, Input::Keyboard{ sf::Keyboard::Scan::Down });
 		Input->Bind(MOVE_LEFT, Input::Keyboard{ sf::Keyboard::Scan::Left });
 		Input->Bind(MOVE_RIGHT, Input::Keyboard{ sf::Keyboard::Scan::Right });
-
-		// Interact
-		Input->Bind(INTERACT, Input::Keyboard{ sf::Keyboard::Scan::E });
-		Input->Bind(INTERACT, Input::Gamepad{ GamepadButton::South, 0 });
 	}
 
 	void MovementComponent::UpdateFacingDirection()
