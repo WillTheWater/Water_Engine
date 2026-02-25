@@ -66,7 +66,7 @@ namespace we
 		DialogText->SetRenderDepth(250.f);
 		DialogText->SetColor(color::White);
 		DialogText->SetAlignment(TextAlignment::Left);
-		DialogText->SetWrapWidth(290.f);
+		DialogText->SetWrapWidth(270.f);
 		DialogPanel->AddChild(DialogText, Anchor::TopLeft, Anchor::TopLeft, { 15.f, 30.f });
 	}
 
