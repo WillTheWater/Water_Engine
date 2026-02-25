@@ -24,19 +24,14 @@ namespace we
 	{
 		NPC::BeginPlay();
 		
-		// Change to kinematic body so we can move him
 		if (PhysicsComp)
 		{
 			PhysicsComp->SetBodyType(BodyType::Kinematic);
 		}
 		
-		// Setup waypoints
 		SetupWaypoints();
 		
-		// Start idling at first position
 		StartIdling();
-		
-		LOG("[Kiyoshi] BeginPlay complete - starting patrol");
 	}
 
 	void Kiyoshi::SetupWaypoints()
@@ -45,8 +40,8 @@ namespace we
 		vec2f StartPos = GetPosition();
 		
 		Waypoints.push_back(StartPos);
-		Waypoints.push_back(StartPos + vec2f{ 200.f, 0.f });   // 200 units right
-		Waypoints.push_back(StartPos + vec2f{ 100.f, 150.f }); // 100 right, 150 down
+		Waypoints.push_back(StartPos + vec2f{ 400.f, 0.f });   // 200 units right
+		Waypoints.push_back(StartPos + vec2f{ 100.f, 350.f }); // 100 right, 150 down
 		
 		CurrentWaypointIndex = 0;
 		
@@ -272,7 +267,7 @@ namespace we
 	void Kiyoshi::OnPlayerLeftRange(Actor* Player)
 	{
 		// When player leaves, hide dialog and resume patrol
-		if (bDialogVisible)
+		if (IsDialogVisible())
 		{
 			HideDialog();
 		}

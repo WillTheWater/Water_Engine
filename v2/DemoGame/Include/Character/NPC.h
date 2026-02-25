@@ -10,25 +10,25 @@
 #include "Interface/Component/CameraComponent.h"
 #include "Interface/Component/IMovementComponent.h"
 #include "Interface/IInteractive.h"
-#include "UI/Widget/Panel.h"
-#include "UI/Widget/TextBlock.h"
 
 namespace we
 {
 	class AnimationComponent;
+	class DialogBox;
 
 	// =============================================================================
 	// Base NPC Class
 	// =============================================================================
-	// Abstract base class for all NPCs. Provides interaction system, UI hints,
-	// and dialog boxes. Derived classes implement their own animation setups.
+	// Abstract base class for all NPCs. Provides interaction system and dialog
+	// functionality. UI creation is delegated to DialogBox class.
+	// Derived classes implement their own animation setups.
 	// =============================================================================
 
 	class NPC : public Character, public IInteractive
 	{
 	public:
 		NPC(World* OwningWorld, const string& TexturePath, const string& InName);
-		virtual ~NPC() = default;
+		virtual ~NPC();
 
 		virtual void BeginPlay() override;
 		virtual void Tick(float DeltaTime) override;
@@ -39,7 +39,7 @@ namespace we
 		virtual bool CanInteract() const override { return true; }
 		virtual string GetInteractionPrompt() const override { return "Talk to " + Name; }
 
-		// UI Management
+		// UI Management - delegated to DialogBox
 		void ShowInteractionHint();      // Show "!" above head
 		void HideInteractionHint();      // Hide "!"
 		void ShowDialog();               // Show dialog panel
@@ -53,6 +53,7 @@ namespace we
 		// Accessors
 		const string& GetName() const { return Name; }
 		void SetDialog(const string& InDialog) { Dialog = InDialog; }
+		void SetDialogTitle(const string& InTitle) { DialogTitle = InTitle; }
 
 	protected:
 		// Override this in derived classes to set up animations
@@ -61,20 +62,13 @@ namespace we
 		// Helper to set up interaction sensor
 		void SetupInteractionSensor();
 
-		// UI Creation
-		void CreateInteractionHint();
-		void CreateDialogPanel();
-		void UpdateUIPositions();  // Keep UI positioned above NPC
-
 	protected:
 		shared<AnimationComponent> AnimComp;
 		string Name;
 		string Dialog;
+		string DialogTitle;
 
-		// UI Elements
-		shared<TextBlock> InteractionHint;  // The "!" indicator
-		shared<Panel> DialogPanel;          // Dialog box panel
-		shared<TextBlock> DialogText;       // Dialog text
-		bool bDialogVisible = false;
+		// UI is now managed by DialogBox
+		unique<DialogBox> DialogUI;
 	};
 }

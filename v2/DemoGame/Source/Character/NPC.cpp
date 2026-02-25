@@ -8,8 +8,7 @@
 #include "Interface/Component/PhysicsComponent.h"
 #include "Framework/World/World.h"
 #include "Framework/EngineSubsystem.h"
-#include "Subsystem/GUISubsystem.h"
-#include "Utility/Math.h"
+#include "UI/DialogBox.h"
 #include "Utility/Log.h"
 #include "GameConfig.h"
 
@@ -23,10 +22,13 @@ namespace we
 		: Character(OwningWorld, TexturePath)
 		, Name(InName)
 		, Dialog("Hello! I am " + InName + ".")
+		, DialogTitle(InName)
 	{
 		SetCharacterRadius(40.0f);
 		SetCollisionOffset({ 0, 10 });
 	}
+
+	NPC::~NPC() = default;
 
 	void NPC::BeginPlay()
 	{
@@ -37,9 +39,13 @@ namespace we
 		
 		SetupInteractionSensor();
 		
-		// Create UI elements
-		CreateInteractionHint();
-		CreateDialogPanel();
+		// Create DialogBox UI (delegates UI creation to DialogBox class)
+		DialogUI = make_unique<DialogBox>(GetWorld()->GetSubsystem(), EWidgetSpace::World);
+		DialogUI->SetDialogText(Dialog);
+		DialogUI->SetTitleText(DialogTitle);
+		DialogUI->SetLocalOffset({ -150.f, -120.f }); // Position above NPC
+		
+		LOG("[{}] DialogBox UI created", Name);
 	}
 
 	void NPC::SetupInteractionSensor()
@@ -63,17 +69,19 @@ namespace we
 			AnimComp->Tick(DeltaTime);
 		}
 
-		// Update UI positions to follow NPC
-		UpdateUIPositions();
+		// Update DialogBox position to follow NPC
+		if (DialogUI)
+		{
+			DialogUI->SetWorldPosition(GetPosition());
+		}
 
 		Character::Tick(DeltaTime);
 	}
 
 	void NPC::Destroy()
 	{
-		// Hide and cleanup UI
-		HideInteractionHint();
-		HideDialog();
+		// Cleanup UI - DialogBox destructor handles widget cleanup
+		DialogUI.reset();
 		
 		if (AnimComp) AnimComp->EndPlay();
 		Character::Destroy();
@@ -83,112 +91,48 @@ namespace we
 	{
 		LOG("[{}] Interaction triggered by: {}", Name, typeid(*Interactor).name());
 		
-		// Show dialog instead of just logging
-		if (!bDialogVisible)
+		// Toggle dialog visibility
+		if (DialogUI)
 		{
-			ShowDialog();
-		}
-		else
-		{
-			HideDialog();
+			if (!DialogUI->IsVisible())
+			{
+				ShowDialog();
+			}
+			else
+			{
+				HideDialog();
+			}
 		}
 	}
 
 	// ==========================================================================
-	// UI Creation and Management
+	// UI Management - Delegated to DialogBox
 	// ==========================================================================
-
-	void NPC::CreateInteractionHint()
-	{
-		auto* GUI = GetWorld()->GetSubsystem().GUI.get();
-		if (!GUI) return;
-
-		// Create "!" text block - size 40, white with black border effect
-		InteractionHint = GUI->CreateTextBlock("!", 0.f, 40);
-		InteractionHint->SetWidgetSpace(EWidgetSpace::World);  // Follows NPC in world space
-		
-		// Position above NPC head
-		InteractionHint->SetLocalOffset({ 0.f, -80.f });
-		
-		// Hide initially
-		InteractionHint->Hide();
-		
-		LOG("[{}] Created interaction hint", Name);
-	}
-
-	void NPC::CreateDialogPanel()
-	{
-		auto* GUI = GetWorld()->GetSubsystem().GUI.get();
-		if (!GUI) return;
-
-		// Create dialog panel - 240x80, black with alpha 150, 4px white border
-		DialogPanel = GUI->CreatePanel(
-			{ 240.f, 80.f },           // Size
-			color{ 0, 0, 0, 150 },     // Black with alpha 150
-			color{ 255, 255, 255, 255 }, // White border
-			4.f,                        // 4px border thickness
-			EWidgetSpace::World         // World space (follows NPC)
-		);
-		
-		// Position above and to the left of NPC
-		DialogPanel->SetLocalOffset({ -120.f, -120.f });
-		
-		// Create dialog text
-		DialogText = GUI->CreateTextBlock(Dialog, 220.f, 24);
-		DialogText->SetWidgetSpace(EWidgetSpace::World);
-		
-		// Add text to panel
-		DialogPanel->AddChild(DialogText, Anchor::Center, Anchor::Center);
-		
-		// Hide initially
-		DialogPanel->Hide();
-		DialogText->Hide();
-		
-		LOG("[{}] Created dialog panel", Name);
-	}
-
-	void NPC::UpdateUIPositions()
-	{
-		if (!InteractionHint || !DialogPanel) return;
-
-		vec2f NPCPos = GetPosition();
-		
-		// Update interaction hint position (above NPC head)
-		InteractionHint->SetLocalOffset({ NPCPos.x, NPCPos.y - 120.f });
-		
-		// Update dialog panel position (above and to the left)
-		DialogPanel->SetLocalOffset({ NPCPos.x - 120.f, NPCPos.y - 120.f });
-	}
 
 	void NPC::ShowInteractionHint()
 	{
-		if (InteractionHint && !bDialogVisible)  // Don't show if dialog is open
+		if (DialogUI)
 		{
-			InteractionHint->Show();
+			DialogUI->ShowInteractionHint();
 		}
 	}
 
 	void NPC::HideInteractionHint()
 	{
-		if (InteractionHint)
+		if (DialogUI)
 		{
-			InteractionHint->Hide();
+			DialogUI->HideInteractionHint();
 		}
 	}
 
 	void NPC::ShowDialog()
 	{
-		if (DialogPanel && DialogText)
+		if (DialogUI)
 		{
 			// Update text in case it changed
-			DialogText->SetText(Dialog);
-			
-			DialogPanel->Show();
-			DialogText->Show();
-			bDialogVisible = true;
-			
-			// Hide interaction hint when dialog is showing
-			HideInteractionHint();
+			DialogUI->SetDialogText(Dialog);
+			DialogUI->SetTitleText(DialogTitle);
+			DialogUI->Show();
 			
 			LOG("[{}] Showing dialog", Name);
 		}
@@ -196,19 +140,16 @@ namespace we
 
 	void NPC::HideDialog()
 	{
-		if (DialogPanel && DialogText)
+		if (DialogUI)
 		{
-			DialogPanel->Hide();
-			DialogText->Hide();
-			bDialogVisible = false;
-			
+			DialogUI->Hide();
 			LOG("[{}] Hiding dialog", Name);
 		}
 	}
 
 	bool NPC::IsDialogVisible() const
 	{
-		return bDialogVisible;
+		return DialogUI && DialogUI->IsVisible();
 	}
 
 	void NPC::OnPlayerEnteredRange(Actor* Player)
@@ -220,11 +161,8 @@ namespace we
 
 	void NPC::OnPlayerLeftRange(Actor* Player)
 	{
-		// Base implementation - just hide dialog if player leaves
-		if (bDialogVisible)
-		{
-			HideDialog();
-		}
+		// Base implementation - hide dialog if player leaves
+		HideDialog();
 		(void)Player;
 	}
 }

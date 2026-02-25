@@ -17,24 +17,23 @@ namespace we
 		SetDialog("Hello! I'm Aoi. Welcome to our village!");
 	}
 
-	void Aoi::InitializeAnimations()
+	void Aoi::BeginPlay()
 	{
-		// Aoi is a static NPC - no movement
-		if (PhysicsComp)
-		{
-			PhysicsComp->SetBodyType(BodyType::Static);
-		}
-		
+		NPC::BeginPlay();
+		auto PhyBody = GetPhysicsComponent();
+		PhyBody->SetBodyType(BodyType::Static);
+		InitializeAnimations();
+	}
+
+	void Aoi::InitializeAnimations()
+	{		
 		AnimComp = make_shared<AnimationComponent>(this);
 		AnimComp->BeginPlay();
 
-		// Load animation sheet (girlidle format - 256x256 frames, 8 per row)
 		AnimComp->AddSpriteSheet(0, SpriteSheet{ GC.NPCSheetIdle, {256, 256}, 8 });
 
-		// Single idle animation facing down (row 0)
 		AnimComp->AddAnimation({ 1, 0, {0, 0}, {0, 7}, 0.15f, true });
 
-		// Start with idle
 		AnimComp->Transition(1);
 		
 		LOG("[Aoi] Initialized 1-way idle animation");

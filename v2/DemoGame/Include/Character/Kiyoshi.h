@@ -64,7 +64,7 @@ namespace we
 		
 		// Idle timer
 		TimerHandle IdleTimerHandle;
-		float MinIdleTime = 3.0f;
-		float MaxIdleTime = 6.0f;
+		float MinIdleTime = 2.0f;
+		float MaxIdleTime = 4.0f;
 	};
 }

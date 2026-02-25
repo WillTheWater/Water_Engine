@@ -18,6 +18,8 @@ namespace we
 	public:
 		Aoi(World* OwningWorld);
 
+		void BeginPlay() override;
+
 	protected:
 		virtual void InitializeAnimations() override;
 	};

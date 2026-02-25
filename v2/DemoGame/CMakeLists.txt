@@ -32,6 +32,7 @@ set(GAME_HEADERS
     Include/UI/PauseUI.h
     Include/UI/SettingsMenuUI.h
     Include/UI/SettingsController.h
+    Include/UI/DialogBox.h
     
     Include/Input/InputActions.h
 
@@ -57,6 +58,7 @@ set(GAME_SOURCES
     Source/UI/PauseUI.cpp
     Source/UI/SettingsMenuUI.cpp
     Source/UI/SettingsController.cpp
+    Source/UI/DialogBox.cpp
     
     Source/Character/PlayerCharacter.cpp
     Source/Character/MovementComponent.cpp
