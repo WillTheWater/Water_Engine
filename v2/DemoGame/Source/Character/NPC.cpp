@@ -14,6 +14,9 @@
 
 namespace we
 {
+	// Static empty delegate for when DialogUI doesn't exist yet
+	Delegate<> NPC::EmptyDelegate;
+
 	// ==========================================================================
 	// Base NPC Implementation
 	// ==========================================================================
@@ -21,11 +24,13 @@ namespace we
 	NPC::NPC(World* OwningWorld, const string& TexturePath, const string& InName)
 		: Character(OwningWorld, TexturePath)
 		, Name(InName)
-		, Dialog("Hello! I am " + InName + ".")
-		, DialogTitle(InName)
+		, PendingDialogTitle(InName)
 	{
 		SetCharacterRadius(40.0f);
 		SetCollisionOffset({ 0, 10 });
+		
+		// Set default single-page dialog
+		PendingDialogPages.push_back("Hello! I am " + Name + ".");
 	}
 
 	NPC::~NPC() = default;
@@ -39,22 +44,29 @@ namespace we
 		
 		SetupInteractionSensor();
 		
-		// Create DialogBox UI
+		// Create DialogBox UI (delegates UI creation to DialogBox class)
 		DialogUI = make_unique<DialogBox>(GetWorld()->GetSubsystem(), EWidgetSpace::World);
-		DialogUI->SetDialogText(Dialog);
-		DialogUI->SetTitleText(DialogTitle);
-		DialogUI->SetLocalOffset({ 0.f, -220.f }); // Position above NPC
+		
+		// Transfer pending dialog pages to the DialogBox
+		if (!PendingDialogPages.empty())
+		{
+			DialogUI->SetDialogPages(PendingDialogPages);
+		}
+		DialogUI->SetTitleText(PendingDialogTitle.empty() ? Name : PendingDialogTitle);
+		
+		DialogUI->SetLocalOffset({ -160.f, -120.f }); // Center above NPC
+		
+		LOG("[{}] DialogBox UI created with {} pages", Name, PendingDialogPages.size());
 	}
 
 	void NPC::SetupInteractionSensor()
 	{
 		if (PhysicsComp)
 		{
-			// Note: Body type should be set by derived class if movement is needed
-			// Default is Static for simple NPCs, Kinematic for moving NPCs
-			
-			// Add sensor for interaction detection (player can detect when nearby)
+			// Add sensor for interaction detection (player can detect us when nearby)
 			PhysicsComp->SetSensorShape(true, 60.0f);  // 60 unit radius sensor
+			
+			LOG("[{}] Interaction sensor set up", Name);
 		}
 	}
 
@@ -76,6 +88,7 @@ namespace we
 
 	void NPC::Destroy()
 	{
+		// Cleanup UI - DialogBox destructor handles widget cleanup
 		DialogUI.reset();
 		
 		if (AnimComp) AnimComp->EndPlay();
@@ -86,16 +99,79 @@ namespace we
 	{
 		LOG("[{}] Interaction triggered by: {}", Name, typeid(*Interactor).name());
 		
+		// If dialog is already visible, close it (E key toggle behavior)
+		if (DialogUI && DialogUI->IsVisible())
+		{
+			HideDialog();
+			return;
+		}
+		
+		// Otherwise show the dialog
 		if (DialogUI)
 		{
-			if (!DialogUI->IsVisible())
-			{
-				ShowDialog();
-			}
-			else
-			{
-				HideDialog();
-			}
+			ShowDialog();
+		}
+	}
+
+	// ==========================================================================
+	// Dialog Input Handling
+	// ==========================================================================
+
+	bool NPC::HandleDialogConfirm()
+	{
+		if (DialogUI && DialogUI->IsVisible())
+		{
+			// Let DialogBox handle the confirm (advance or close)
+			return DialogUI->HandleConfirm();
+		}
+		return false;
+	}
+
+	// ==========================================================================
+	// Dialog Content Methods
+	// ==========================================================================
+
+	void NPC::SetDialog(const string& InDialog)
+	{
+		PendingDialogPages.clear();
+		PendingDialogPages.push_back(InDialog);
+		
+		// If DialogBox already exists, update it directly
+		if (DialogUI)
+		{
+			DialogUI->SetDialogText(InDialog);
+		}
+	}
+
+	void NPC::SetDialogPages(const vector<string>& InPages)
+	{
+		PendingDialogPages = InPages;
+		
+		// If DialogBox already exists, update it directly
+		if (DialogUI)
+		{
+			DialogUI->SetDialogPages(InPages);
+		}
+	}
+
+	void NPC::AddDialogPage(const string& InPage)
+	{
+		PendingDialogPages.push_back(InPage);
+		
+		// If DialogBox already exists, add to it directly
+		if (DialogUI)
+		{
+			DialogUI->AddDialogPage(InPage);
+		}
+	}
+
+	void NPC::ClearDialogPages()
+	{
+		PendingDialogPages.clear();
+		
+		if (DialogUI)
+		{
+			DialogUI->ClearDialogPages();
 		}
 	}
 
@@ -123,9 +199,8 @@ namespace we
 	{
 		if (DialogUI)
 		{
-			DialogUI->SetDialogText(Dialog);
-			DialogUI->SetTitleText(DialogTitle);
 			DialogUI->Show();
+			LOG("[{}] Showing dialog ({} pages)", Name, DialogUI->GetTotalPages());
 		}
 	}
 
@@ -134,6 +209,7 @@ namespace we
 		if (DialogUI)
 		{
 			DialogUI->Hide();
+			LOG("[{}] Hiding dialog", Name);
 		}
 	}
 
@@ -149,6 +225,7 @@ namespace we
 
 	void NPC::OnPlayerLeftRange(Actor* Player)
 	{
+		// When player leaves, hide dialog
 		HideDialog();
 		(void)Player;
 	}

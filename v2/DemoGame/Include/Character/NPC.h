@@ -10,17 +10,18 @@
 #include "Interface/Component/CameraComponent.h"
 #include "Interface/Component/IMovementComponent.h"
 #include "Interface/IInteractive.h"
+#include "UI/DialogBox.h"
 
 namespace we
 {
 	class AnimationComponent;
-	class DialogBox;
 
 	// =============================================================================
 	// Base NPC Class
 	// =============================================================================
 	// Abstract base class for all NPCs. Provides interaction system and dialog
 	// functionality. UI creation is delegated to DialogBox class.
+	// Supports paginated dialogs (multiple pages of text).
 	// Derived classes implement their own animation setups.
 	// =============================================================================
 
@@ -46,13 +47,31 @@ namespace we
 		void HideDialog();               // Hide dialog panel
 		bool IsDialogVisible() const;
 		
+		// Dialog input handling - returns true if dialog is visible and handled input
+		bool HandleDialogConfirm();
+
 		// Player proximity notifications
 		virtual void OnPlayerEnteredRange(Actor* Player);
 		virtual void OnPlayerLeftRange(Actor* Player);
 
+		// Dialog content - single text or multiple pages
 		const string& GetName() const { return Name; }
-		void SetDialog(const string& InDialog) { Dialog = InDialog; }
-		void SetDialogTitle(const string& InTitle) { DialogTitle = InTitle; }
+		
+		// Set a single dialog (creates one page)
+		void SetDialog(const string& InDialog);
+		
+		// Set multiple dialog pages (for longer conversations)
+		void SetDialogPages(const vector<string>& InPages);
+		void AddDialogPage(const string& InPage);
+		void ClearDialogPages();
+
+		// Check if this NPC has any dialog set
+		bool HasDialog() const { return !PendingDialogPages.empty(); }
+		int GetDialogPageCount() const { return static_cast<int>(PendingDialogPages.size()); }
+
+		// Dialog delegates - forward from DialogBox
+		Delegate<>& OnDialogShown() { return DialogUI ? DialogUI->OnShown : EmptyDelegate; }
+		Delegate<>& OnDialogHidden() { return DialogUI ? DialogUI->OnHidden : EmptyDelegate; }
 
 	protected:
 		// Override this in derived classes to set up animations
@@ -62,8 +81,13 @@ namespace we
 	protected:
 		shared<AnimationComponent> AnimComp;
 		string Name;
-		string Dialog;
-		string DialogTitle;
 		unique<DialogBox> DialogUI;
+		
+		// Dialog pages stored here until DialogBox is created in BeginPlay
+		vector<string> PendingDialogPages;
+		string PendingDialogTitle;
+		
+	private:
+		static Delegate<> EmptyDelegate;
 	};
 }

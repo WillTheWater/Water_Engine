@@ -4,7 +4,6 @@
 // =============================================================================
 
 #include "UI/DialogBox.h"
-#include "UI/Widget/Button.h"
 #include "UI/Widget/Panel.h"
 #include "UI/Widget/TextBlock.h"
 #include "Framework/EngineSubsystem.h"
@@ -33,70 +32,47 @@ namespace we
 	}
 
 	// ==========================================================================
-	// UI Creation
+	// UI Creation - Buttonless Design
+	// ==========================================================================
+	// Dialog uses Enter key or Controller South button to advance.
+	// No on-screen buttons - cleaner look for keyboard/controller users.
 	// ==========================================================================
 
 	void DialogBox::CreateUI()
 	{
 		// Create main dialog panel
 		DialogPanel = Subsystem.GUI->CreatePanel(
-			{ 300.f, 140.f },              // Size
-			color{ 0, 0, 0, 200 },         // Dark background with transparency
-			color{ 255, 255, 255, 255 },   // White border
-			0.f,                           // No border
-			WidgetSpace                    // World space
+			{ 320.f, 140.f },              // Compact size without buttons
+			color{ 20, 20, 30, 230 },      // Dark blue-gray background
+			color{ 180, 160, 120, 255 },   // Gold/bronze border
+			3.f,
+			WidgetSpace
 		);
 		DialogPanel->SetRenderDepth(200.f);
 
-		// Create title text (NPC name) - at top of panel
-		TitleText = Subsystem.GUI->CreateTextBlock("", 280.f, 20, WidgetSpace);
+		// =============================================================
+		// TITLE - Centered at top
+		// =============================================================
+		TitleText = Subsystem.GUI->CreateTextBlock("NPC Name", 0.f, 18, WidgetSpace);
 		TitleText->SetRenderDepth(250.f);
-		TitleText->SetColor(color{ 255, 220, 100, 255 }); // Gold color for name
+		TitleText->SetColor(color{ 255, 220, 100, 255 }); // Gold
 		TitleText->SetAlignment(TextAlignment::Center);
-		DialogPanel->AddChild(TitleText, Anchor::TopCenter, Anchor::TopCenter, { 0.f, 10.f });
+		DialogPanel->AddChild(TitleText, Anchor::TopCenter, Anchor::TopCenter, { 0.f, 6.f });
 
-		// Create dialog text - main content area
-		DialogText = Subsystem.GUI->CreateTextBlock("", 280.f, 18, WidgetSpace);
+		// =============================================================
+		// DIALOG TEXT - Left aligned below title
+		// =============================================================
+		DialogText = Subsystem.GUI->CreateTextBlock("", 290.f, 16, WidgetSpace);
 		DialogText->SetRenderDepth(250.f);
 		DialogText->SetColor(color::White);
 		DialogText->SetAlignment(TextAlignment::Left);
-		DialogPanel->AddChild(DialogText, Anchor::TopCenter, Anchor::TopCenter, { 0.f, 40.f });
-
-		// Create Continue button - bottom right
-		ContinueButton = Subsystem.GUI->CreateButton(
-			"Continue", 
-			vec2f{ 90.f, 28.f }, 
-			color{ 50, 50, 50, 200 }, 
-			color::White, 
-			1.f, 
-			WidgetSpace
-		);
-		ContinueButton->SetRenderDepth(250.f);
-		ContinueButton->SetHoverSound(GC.DefaultButtonHoverSound);
-		ContinueButton->SetClickSound(GC.DefaultButtonClickSound);
-		ContinueButton->OnClicked.Bind(this, &DialogBox::OnContinueButtonClicked);
-		DialogPanel->AddChild(ContinueButton, Anchor::BottomRight, Anchor::BottomRight, { -10.f, -8.f });
-
-		// Create Close button - top right corner (X)
-		CloseButton = Subsystem.GUI->CreateButton(
-			"X", 
-			vec2f{ 28.f, 28.f },
-			color{ 100, 50, 50, 200 },
-			color::White,
-			1.f,
-			WidgetSpace
-		);
-		CloseButton->SetRenderDepth(250.f);
-		CloseButton->SetHoverSound(GC.DefaultButtonHoverSound);
-		CloseButton->SetClickSound(GC.DefaultButtonClickSound);
-		CloseButton->OnClicked.Bind(this, &DialogBox::OnCloseButtonClicked);
-		DialogPanel->AddChild(CloseButton, Anchor::TopRight, Anchor::TopRight, { -5.f, 5.f });
+		DialogText->SetWrapWidth(290.f);
+		DialogPanel->AddChild(DialogText, Anchor::TopLeft, Anchor::TopLeft, { 15.f, 30.f });
 	}
 
 	void DialogBox::CreateInteractionHint()
 	{
-		// Create "!" text block as interaction hint
-		InteractionHint = Subsystem.GUI->CreateTextBlock("!", 0.f, 36, WidgetSpace);
+		InteractionHint = Subsystem.GUI->CreateTextBlock("!", 0.f, 32, WidgetSpace);
 		InteractionHint->SetRenderDepth(300.f);
 		InteractionHint->SetColor(color::White);
 		InteractionHint->SetOutlineColor(color::Black);
@@ -106,17 +82,112 @@ namespace we
 	}
 
 	// ==========================================================================
-	// Content Management
+	// Dialog Content Management
 	// ==========================================================================
 
 	void DialogBox::SetDialogText(const string& InText)
 	{
-		NPCDialog = InText;
-		if (DialogText)
+		DialogPages.clear();
+		DialogPages.push_back(InText);
+		CurrentPageIndex = 0;
+		UpdateDialogText();
+	}
+
+	void DialogBox::SetDialogPages(const vector<string>& InPages)
+	{
+		DialogPages = InPages;
+		CurrentPageIndex = 0;
+		UpdateDialogText();
+	}
+
+	void DialogBox::AddDialogPage(const string& InPage)
+	{
+		bool wasEmpty = DialogPages.empty();
+		DialogPages.push_back(InPage);
+		if (wasEmpty)
 		{
-			DialogText->SetText(InText);
+			CurrentPageIndex = 0;
+			UpdateDialogText();
 		}
 	}
+
+	void DialogBox::ClearDialogPages()
+	{
+		DialogPages.clear();
+		CurrentPageIndex = 0;
+		if (DialogText)
+		{
+			DialogText->SetText("");
+		}
+	}
+
+	const string& DialogBox::GetCurrentDialogText() const
+	{
+		if (CurrentPageIndex >= 0 && CurrentPageIndex < static_cast<int>(DialogPages.size()))
+		{
+			return DialogPages[CurrentPageIndex];
+		}
+		static const string EmptyString;
+		return EmptyString;
+	}
+
+	bool DialogBox::IsOnLastPage() const
+	{
+		return DialogPages.empty() || CurrentPageIndex >= static_cast<int>(DialogPages.size()) - 1;
+	}
+
+	void DialogBox::UpdateDialogText()
+	{
+		if (DialogText)
+		{
+			DialogText->SetText(GetCurrentDialogText());
+		}
+	}
+
+	void DialogBox::AdvancePage()
+	{
+		if (!IsOnLastPage())
+		{
+			CurrentPageIndex++;
+			UpdateDialogText();
+		}
+	}
+
+	void DialogBox::ResetToFirstPage()
+	{
+		CurrentPageIndex = 0;
+		UpdateDialogText();
+	}
+
+	// ==========================================================================
+	// Input Handling
+	// ==========================================================================
+
+	bool DialogBox::HandleConfirm()
+	{
+		if (!IsVisible())
+		{
+			return false;
+		}
+
+		if (IsOnLastPage())
+		{
+			// On last page, close the dialog
+			Hide();
+			OnDialogFinished.Broadcast();
+		}
+		else
+		{
+			// Advance to next page
+			AdvancePage();
+		}
+
+		return true;
+	}
+
+	// ==========================================================================
+	// Title
+	// ==========================================================================
 
 	void DialogBox::SetTitleText(const string& InTitle)
 	{
@@ -133,14 +204,15 @@ namespace we
 
 	void DialogBox::SetWorldPosition(const vec2f& Position)
 	{
+		vec2f FinalPosition = Position + LocalOffset;
+		
 		if (DialogPanel)
 		{
-			DialogPanel->SetLocalOffset(Position + LocalOffset);
+			DialogPanel->SetLocalOffset(FinalPosition);
 		}
 		if (InteractionHint)
 		{
-			// Position hint above the dialog
-			InteractionHint->SetLocalOffset({ Position.x, Position.y - 60.f });
+			InteractionHint->SetLocalOffset({ Position.x, Position.y - 70.f });
 		}
 	}
 
@@ -152,13 +224,13 @@ namespace we
 	{
 		if (bIsCleaningUp) return;
 
+		ResetToFirstPage();
+
 		if (DialogPanel) DialogPanel->SetVisible(true);
-		if (DialogText) DialogText->SetVisible(true);
-		if (TitleText) TitleText->SetVisible(true);
-		
 		bDialogVisible = true;
 		
 		HideInteractionHint();
+		OnShown.Broadcast();
 	}
 
 	void DialogBox::Hide()
@@ -166,10 +238,8 @@ namespace we
 		if (bIsCleaningUp) return;
 
 		if (DialogPanel) DialogPanel->SetVisible(false);
-		if (DialogText) DialogText->SetVisible(false);
-		if (TitleText) TitleText->SetVisible(false);
-		
 		bDialogVisible = false;
+		OnHidden.Broadcast();
 	}
 
 	bool DialogBox::IsVisible() const
@@ -212,21 +282,5 @@ namespace we
 	bool DialogBox::IsInteractionHintVisible() const
 	{
 		return InteractionHint && InteractionHint->IsVisible();
-	}
-
-	// ==========================================================================
-	// Button Callbacks
-	// ==========================================================================
-
-	void DialogBox::OnContinueButtonClicked()
-	{
-		OnContinueClicked.Broadcast();
-		Hide();
-	}
-
-	void DialogBox::OnCloseButtonClicked()
-	{
-		OnCloseClicked.Broadcast();
-		Hide();
 	}
 }

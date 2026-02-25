@@ -49,15 +49,31 @@ namespace we
 		bool IsPressed() const { return bPressed; }
 		bool IsHovered() const { return bHovered; }
 
+		// Label text
+		void SetLabel(const string& InLabel);
+		const string& GetLabel() const { return Label; }
+
+		// Font management
+		void SetFont(shared<font> InFont);
+		void SetFont(const string& FontPath);
+		shared<font> GetFont() const { return TextFont; }
+
+		// Text size (character size in pixels)
+		void SetTextSize(uint InSize);
+		uint GetTextSize() const { return TextSize; }
+
 	private:
 		void UpdateVisualState();
 		void OnButtonHoverGained();
 		void OnButtonHoverLost();
 		void LoadTexture(shared<texture>& OutTexture, const string& Path);
+		void RebuildText();
 
+	private:
 		string Label;
 		mutable optional<text> LabelText;
 		shared<font> TextFont;
+		uint TextSize = 24;  // Default character size
 
 		mutable rectangle BackgroundRect;
 

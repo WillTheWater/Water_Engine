@@ -38,6 +38,16 @@ namespace we
 		void ShowPauseMenu();
 		void HidePauseMenu();
 
+		// Dialog input handling
+		void OnInteractPressed();
+		void OnDialogConfirmPressed();
+		bool IsAnyDialogVisible() const;
+		void HideAllDialogs();
+
+		// Cursor visibility handling (bound to dialog delegates)
+		void OnDialogShown();
+		void OnDialogHidden();
+
 	private:
 		shared<texture> BgTexture;
 		optional<sprite> Background;

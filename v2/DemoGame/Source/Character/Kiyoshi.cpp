@@ -17,7 +17,13 @@ namespace we
 	Kiyoshi::Kiyoshi(World* OwningWorld)
 		: NPC(OwningWorld, GC.OldNPCSheetIdle, "Kiyoshi")
 	{
-		SetDialog("Greetings! I'm Kiyoshi. I sell potions and items.");
+		// Set up paginated dialog - player presses Continue to advance
+		SetDialogPages({
+			"Greetings, traveler! I am Kiyoshi, the village merchant.",
+			"I've been selling potions and rare items in these parts for over forty years.",
+			"If you ever need healing potions or magical artifacts, come find me!",
+			"Is there something I can help you with today?"
+		});
 	}
 
 	void Kiyoshi::BeginPlay()

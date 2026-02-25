@@ -33,11 +33,7 @@ namespace we
 		BackgroundRect.setOutlineThickness(OutlineThickness);
 
 		TextFont = LoadAsset().LoadFontSync(EC.DefaultFont);
-		if (TextFont && !Label.empty())
-		{
-			LabelText.emplace(*TextFont, Label, 24);
-			LabelText->setFillColor(color::Black);
-		}
+		RebuildText();
 
 		OnHoverGained.Bind(this, &Button::OnButtonHoverGained);
 		OnHoverLost.Bind(this, &Button::OnButtonHoverLost);
@@ -83,11 +79,7 @@ namespace we
 		}
 
 		TextFont = LoadAsset().LoadFontSync(EC.DefaultFont);
-		if (TextFont && !Label.empty())
-		{
-			LabelText.emplace(*TextFont, Label, 24);
-			LabelText->setFillColor(color::Black);
-		}
+		RebuildText();
 
 		OnHoverGained.Bind(this, &Button::OnButtonHoverGained);
 		OnHoverLost.Bind(this, &Button::OnButtonHoverLost);
@@ -225,6 +217,61 @@ namespace we
 		if (!Path.empty())
 		{
 			OutTexture = LoadAsset().LoadTextureSync(Path);
+		}
+	}
+
+	// ==========================================================================
+	// Label Text Management
+	// ==========================================================================
+
+	void Button::SetLabel(const string& InLabel)
+	{
+		Label = InLabel;
+		RebuildText();
+	}
+
+	void Button::RebuildText()
+	{
+		if (TextFont && !Label.empty())
+		{
+			LabelText.emplace(*TextFont, Label, TextSize);
+			LabelText->setFillColor(color::Black);
+		}
+		else
+		{
+			LabelText.reset();
+		}
+	}
+
+	// ==========================================================================
+	// Font Management
+	// ==========================================================================
+
+	void Button::SetFont(shared<font> InFont)
+	{
+		TextFont = InFont;
+		RebuildText();
+	}
+
+	void Button::SetFont(const string& FontPath)
+	{
+		if (!FontPath.empty())
+		{
+			TextFont = LoadAsset().LoadFontSync(FontPath);
+			RebuildText();
+		}
+	}
+
+	// ==========================================================================
+	// Text Size
+	// ==========================================================================
+
+	void Button::SetTextSize(uint InSize)
+	{
+		if (TextSize != InSize)
+		{
+			TextSize = InSize;
+			RebuildText();
 		}
 	}
 }

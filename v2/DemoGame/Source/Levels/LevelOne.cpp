@@ -223,6 +223,9 @@ namespace we
 		if (auto aoi = AoiRef.lock())
 		{
 			aoi->SetPosition({ 500, -500 });
+			// Bind to dialog visibility delegates for cursor control
+			aoi->OnDialogShown().Bind(this, &LevelOne::OnDialogShown);
+			aoi->OnDialogHidden().Bind(this, &LevelOne::OnDialogHidden);
 		}
 
 		// Spawn Kiyoshi
@@ -230,6 +233,9 @@ namespace we
 		if (auto kiyoshi = KiyoshiRef.lock())
 		{
 			kiyoshi->SetPosition({ -500, -500 });
+			// Bind to dialog visibility delegates for cursor control
+			kiyoshi->OnDialogShown().Bind(this, &LevelOne::OnDialogShown);
+			kiyoshi->OnDialogHidden().Bind(this, &LevelOne::OnDialogHidden);
 		}
 
 		// Test Borders - Room walls (closed loop)
@@ -282,11 +288,11 @@ namespace we
 			OnTogglePause();
 		});
 
-		// Bind interaction inputs
+		// Bind interaction inputs (E key and Gamepad South button)
 		Subsystem.Input->Bind(ACTION_INTERACT, Input::Keyboard{ sf::Keyboard::Scan::E });
 		Subsystem.Input->Bind(ACTION_INTERACT, Input::Gamepad{ GamepadButton::South, 0 });
 
-		// Register interaction callback
+		// Register interaction callback - handles both normal interact and dialog advance
 		Subsystem.Input->OnPressed(ACTION_INTERACT, [this]()
 		{
 			if (Subsystem.Time->IsPaused())
@@ -294,6 +300,14 @@ namespace we
 				return;
 			}
 
+			// If any dialog is open, advance/close it instead of triggering new interact
+			if (IsAnyDialogVisible())
+			{
+				OnDialogConfirmPressed();
+				return;
+			}
+
+			// Otherwise, try normal interaction
 			if (auto Player = PlayerRef.lock())
 			{
 				Player->TryInteract();
@@ -382,5 +396,77 @@ namespace we
 	void LevelOne::Tick(float DeltaTime)
 	{
 		World::Tick(DeltaTime);
+	}
+
+	// ==========================================================================
+	// Dialog Input Handling
+	// ==========================================================================
+
+	bool LevelOne::IsAnyDialogVisible() const
+	{
+		if (auto aoi = AoiRef.lock())
+		{
+			if (aoi->IsDialogVisible()) return true;
+		}
+		if (auto kiyoshi = KiyoshiRef.lock())
+		{
+			if (kiyoshi->IsDialogVisible()) return true;
+		}
+		return false;
+	}
+
+	void LevelOne::OnDialogConfirmPressed()
+	{
+		// Try to handle confirm on any visible dialog
+		if (auto aoi = AoiRef.lock())
+		{
+			if (aoi->IsDialogVisible())
+			{
+				aoi->HandleDialogConfirm();
+				return;
+			}
+		}
+		if (auto kiyoshi = KiyoshiRef.lock())
+		{
+			if (kiyoshi->IsDialogVisible())
+			{
+				kiyoshi->HandleDialogConfirm();
+				return;
+			}
+		}
+	}
+
+	void LevelOne::HideAllDialogs()
+	{
+		if (auto aoi = AoiRef.lock())
+		{
+			aoi->HideDialog();
+		}
+		if (auto kiyoshi = KiyoshiRef.lock())
+		{
+			kiyoshi->HideDialog();
+		}
+	}
+
+	// ==========================================================================
+	// Dialog Cursor Visibility
+	// ==========================================================================
+
+	void LevelOne::OnDialogShown()
+	{
+		// Show cursor when dialog opens (but not if pause menu is open)
+		if (!bPauseMenuOpen)
+		{
+			Subsystem.Cursor->SetVisibility(true);
+		}
+	}
+
+	void LevelOne::OnDialogHidden()
+	{
+		// Hide cursor when dialog closes (but not if pause menu is open)
+		if (!bPauseMenuOpen)
+		{
+			Subsystem.Cursor->SetVisibility(false);
+		}
 	}
 }
