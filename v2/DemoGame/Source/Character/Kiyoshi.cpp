@@ -36,36 +36,29 @@ namespace we
 
 	void Kiyoshi::SetupWaypoints()
 	{
-		// Set up 3 waypoints for Kiyoshi to patrol between
+		// 3 waypoints
 		vec2f StartPos = GetPosition();
 		
 		Waypoints.push_back(StartPos);
-		Waypoints.push_back(StartPos + vec2f{ 400.f, 0.f });   // 200 units right
-		Waypoints.push_back(StartPos + vec2f{ 100.f, 350.f }); // 100 right, 150 down
+		Waypoints.push_back(StartPos + vec2f{ 400.f, 0.f });
+		Waypoints.push_back(StartPos + vec2f{ 100.f, 350.f });
 		
 		CurrentWaypointIndex = 0;
-		
-		LOG("[Kiyoshi] Setup {} waypoints", Waypoints.size());
 	}
 
 	void Kiyoshi::Tick(float DeltaTime)
 	{
-		// Update animation component
 		if (AnimComp) AnimComp->Tick(DeltaTime);
 		
-		// Update movement logic (only if not interacting)
 		if (!bInteracting)
 		{
 			UpdateMovement(DeltaTime);
 		}
 		
-		// Update animation based on state
 		UpdateAnimation();
 		
-		// Apply velocity through physics component
 		SetVelocity(CurrentVelocity);
 		
-		// Update base NPC (UI, etc.)
 		NPC::Tick(DeltaTime);
 	}
 
@@ -73,20 +66,17 @@ namespace we
 	{
 		if (CurrentState == KiyoshiState::Walking)
 		{
-			// Check if we've reached the waypoint
 			vec2f CurrentPos = GetPosition();
 			vec2f TargetPos = Waypoints[CurrentWaypointIndex];
 			vec2f ToTarget = TargetPos - CurrentPos;
 			float DistanceSquared = ToTarget.lengthSquared();
 			
-			// If close enough to waypoint, stop and idle
-			if (DistanceSquared < 100.0f)  // 10 units * 10 units
+			if (DistanceSquared < 100.0f)
 			{
 				StartIdling();
 			}
 			else
 			{
-				// Continue moving toward waypoint
 				vec2f Direction = ToTarget.normalized();
 				CurrentVelocity = Direction * WalkSpeed;
 				SetFacingDirection(Direction);
@@ -99,7 +89,6 @@ namespace we
 		CurrentState = KiyoshiState::Idle;
 		CurrentVelocity = vec2f{ 0, 0 };
 		
-		// Set random idle time between 3-6 seconds
 		float IdleTime = RandomRange(MinIdleTime, MaxIdleTime);
 		
 		IdleTimerHandle = TimerManager::Get().SetTimer(
@@ -108,8 +97,6 @@ namespace we
 			IdleTime, 
 			false
 		);
-		
-		LOG("[Kiyoshi] Starting idle for {:.2f} seconds at waypoint {}", IdleTime, CurrentWaypointIndex);
 	}
 
 	void Kiyoshi::OnIdleTimerExpired()
@@ -124,24 +111,18 @@ namespace we
 	{
 		CurrentState = KiyoshiState::Walking;
 		
-		// Move to next waypoint
 		MoveToNextWaypoint();
-		
-		LOG("[Kiyoshi] Starting walk to waypoint {}", CurrentWaypointIndex);
 	}
 
 	void Kiyoshi::MoveToNextWaypoint()
 	{
-		// Advance to next waypoint
 		CurrentWaypointIndex = (CurrentWaypointIndex + 1) % Waypoints.size();
 		
 		vec2f TargetPos = Waypoints[CurrentWaypointIndex];
 		vec2f CurrentPos = GetPosition();
 		
-		// Calculate direction to waypoint
 		vec2f Direction = (TargetPos - CurrentPos).normalized();
 		
-		// Set velocity and facing
 		CurrentVelocity = Direction * WalkSpeed;
 		SetFacingDirection(Direction);
 	}
@@ -163,16 +144,10 @@ namespace we
 	{
 		if (!AnimComp) return;
 		
-		// Determine if moving
 		bool bIsMoving = (CurrentVelocity.lengthSquared() > 1.0f);
 		
-		// Get angle from forward vector
 		float Angle = std::atan2(ForwardVector.y, ForwardVector.x);
 		int DirIndex = GetDirectionIndexFromAngle(Angle);
-		
-		// Animation state IDs:
-		// 1-8 = Idle (down, downright, right, upright, up, upleft, left, downleft)
-		// 9-16 = Walk (down, downright, right, upright, up, upleft, left, downleft)
 		
 		uint8 BaseState = bIsMoving ? 9 : 1;
 		uint8 TargetState = BaseState + DirIndex;
@@ -182,14 +157,9 @@ namespace we
 
 	int Kiyoshi::GetDirectionIndexFromAngle(float Angle) const
 	{
-		// Convert angle to 8-direction index
 		int DirIndex = int(std::round(Angle / (PI / 4.0f))) % 8;
 		if (DirIndex < 0) DirIndex += 8;
-		
-		// Remap to animation order (down, downright, right, upright, up, upleft, left, downleft)
-		// Angle order: 0=Right, 1=DownRight, 2=Down, 3=DownLeft, 4=Left, 5=UpLeft, 6=Up, 7=UpRight
-		// Our order:   0=Down, 1=DownRight, 2=Right, 3=UpRight, 4=Up, 5=UpLeft, 6=Left, 7=DownLeft
-		
+				
 		static const int Remap[8] = {
 			2,  // Right (0) -> index 2
 			1,  // DownRight (1) -> index 1
@@ -206,99 +176,66 @@ namespace we
 
 	void Kiyoshi::OnInteract(Actor* Interactor)
 	{
-		// Call base NPC logic (show/hide dialog)
 		NPC::OnInteract(Interactor);
 		
 		if (!bInteracting)
 		{
-			// Start interacting - stop moving
 			bInteracting = true;
-			
-			// Cancel any idle timer
 			TimerManager::Get().ClearTimer(IdleTimerHandle);
-			
-			// Stop movement
 			CurrentState = KiyoshiState::Idle;
 			CurrentVelocity = vec2f{ 0, 0 };
 			
-			// Face the player IMMEDIATELY
 			if (Interactor)
 			{
 				FacePosition(Interactor->GetPosition());
-				// Update animation immediately to show facing
 				UpdateAnimation();
 			}
-			
-			LOG("[Kiyoshi] Started interacting with {}", Interactor ? typeid(*Interactor).name() : "unknown");
 		}
 		else
 		{
-			// Dialog closed - DON'T resume patrol here
-			// Wait until player actually leaves
 			bInteracting = false;
-			
-			LOG("[Kiyoshi] Dialog closed, waiting for player to leave");
 		}
 	}
 
 	void Kiyoshi::OnPlayerEnteredRange(Actor* Player)
 	{
-		// When player enters range, stop walking and idle
 		if (!bInteracting && CurrentState == KiyoshiState::Walking)
 		{
-			// Cancel any existing timer
 			TimerManager::Get().ClearTimer(IdleTimerHandle);
-			
-			// Stop and idle
 			StartIdling();
-			
-			// Face the player
 			if (Player)
 			{
 				FacePosition(Player->GetPosition());
 				UpdateAnimation();
 			}
-			
-			LOG("[Kiyoshi] Player entered range, stopping to idle");
 		}
 		(void)Player;
 	}
 
 	void Kiyoshi::OnPlayerLeftRange(Actor* Player)
 	{
-		// When player leaves, hide dialog and resume patrol
 		if (IsDialogVisible())
 		{
 			HideDialog();
 		}
-		
-		// Always resume patrol when player leaves
 		if (bInteracting)
 		{
 			bInteracting = false;
 		}
-		
-		// Resume patrol
 		ResumePatrol();
-		
-		LOG("[Kiyoshi] Player left range, resuming patrol");
 		(void)Player;
 	}
 
 	void Kiyoshi::ResumePatrol()
 	{
-		// Make sure we're not interacting and set to idle state
 		bInteracting = false;
 		CurrentState = KiyoshiState::Idle;
 		CurrentVelocity = vec2f{ 0, 0 };
-		
-		// Start idling with a timer to resume walking
 		StartIdling();
 	}
 
 	void Kiyoshi::Destroy()
 	{
-		// Clear timer
 		TimerManager::Get().ClearTimer(IdleTimerHandle);
 		
 		NPC::Destroy();
@@ -309,10 +246,8 @@ namespace we
 		AnimComp = make_shared<AnimationComponent>(this);
 		AnimComp->BeginPlay();
 
-		// IDLE sprite sheet (oldIdle - 8x8 grid)
 		AnimComp->AddSpriteSheet(0, SpriteSheet{ GC.OldNPCSheetIdle, {256, 256}, 8 });
 		
-		// WALK sprite sheet (oldWalk - 8x8 grid)
 		AnimComp->AddSpriteSheet(1, SpriteSheet{ GC.OldNPCSheetWalk, {256, 256}, 8 });
 
 		// IDLE animations (states 1-8)
@@ -337,7 +272,5 @@ namespace we
 
 		// Start facing down (idle)
 		AnimComp->Transition(1);
-		
-		LOG("[Kiyoshi] Initialized 8-way idle and walk animations");
 	}
 }

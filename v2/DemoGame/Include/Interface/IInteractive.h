@@ -22,13 +22,8 @@ namespace we
     public:
         virtual ~IInteractive() = default;
 
-        // Called when a player interacts with this object
         virtual void OnInteract(Actor* Interactor) = 0;
-
-        // Return true if this object can currently be interacted with
         virtual bool CanInteract() const { return true; }
-
-        // Get interaction prompt text (e.g., "Talk", "Open", "Pick up")
         virtual string GetInteractionPrompt() const { return "Interact"; }
     };
 }

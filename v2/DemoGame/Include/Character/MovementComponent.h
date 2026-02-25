@@ -9,8 +9,6 @@
 
 namespace we
 {
-	// MovementComponent calculates movement intent from input
-	// Does NOT apply movement - external code (e.g., PlayerCharacter) must apply velocity to physics or position
 	class MovementComponent : public IMovementComponent
 	{
 	public:
@@ -42,7 +40,7 @@ namespace we
 		vec2f Velocity;
 		vec2f InputVector;
 
-		// Default facing down (0,1), right is (-1,0) for 2D top-down
+		// Default facing down (0,1), right is (-1,0)
 		vec2f ForwardVector{ 0, 1 };
 		vec2f RightVector{ -1, 0 };
 	};

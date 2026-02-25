@@ -14,9 +14,6 @@ namespace we
 
 	// =========================================================================
 	// SettingsController - Controls the settings menu
-	// 
-	// Binds SettingsMenuUI widgets to engine subsystems.
-	// Handles immediate updates and UI text synchronization.
 	// =========================================================================
 	class SettingsController : public WidgetController
 	{
@@ -44,7 +41,6 @@ namespace we
 		void OnDeadzoneChanged(float Value);
 		void OnCursorSpeedChanged(float Value);
 
-		// Helper to update text from value
 		static string ValueToPercentText(float Value);
 
 	private:

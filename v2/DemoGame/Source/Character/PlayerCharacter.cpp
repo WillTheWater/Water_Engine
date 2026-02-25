@@ -30,7 +30,7 @@ namespace we
 		InitializeAnimations();
 		Character::BeginPlay();
 
-		// Setup interaction sensor (uses existing PhysicsComp)
+		// Setup interaction sensor
 		SetupInteractionSensor();
 		
 		// Create camera component (not an Actor - owned by player)
@@ -47,7 +47,6 @@ namespace we
 
 	void Player::Tick(float DeltaTime)
 	{
-		// Tick components manually
 		if (MoveComp) MoveComp->Tick(DeltaTime);
 		if (AnimComp) AnimComp->Tick(DeltaTime);
 		//if (CamComp) CamComp->Update(DeltaTime);  // Update camera follow
@@ -66,7 +65,6 @@ namespace we
 
 	void Player::InitializeAnimations()
 	{
-		// Create components directly with make_shared
 		MoveComp = make_shared<MovementComponent>(this);
 		MoveComp->SetSpeed(300.0f);
 		MoveComp->BeginPlay();
@@ -160,14 +158,11 @@ namespace we
 
 	void Player::SetupInteractionSensor()
 	{
-		// Use the existing PhysicsComp from Character base class
-		// Set up a sensor on the existing physics component
 		if (PhysicsComp)
 		{
 			// Add a sensor shape for interaction detection (separate from collision)
 			PhysicsComp->SetSensorShape(true, 100.0f);  // Circle sensor with 100 unit radius
 			
-			// Bind overlap callbacks using delegates on the existing physics component
 			PhysicsComp->OnBeginOverlapEvent.Bind(this, &Player::OnInteractionOverlapBegin);
 			PhysicsComp->OnEndOverlapEvent.Bind(this, &Player::OnInteractionOverlapEnd);
 			
@@ -231,13 +226,12 @@ namespace we
 
 	void Player::TryInteract()
 	{
-		// Find the first interactable that can be interacted with
 		for (IInteractive* Interactive : NearbyInteractables)
 		{
 			if (Interactive && Interactive->CanInteract())
 			{
 				Interactive->OnInteract(this);
-				return;  // Only interact with one at a time
+				return;
 			}
 		}
 	}

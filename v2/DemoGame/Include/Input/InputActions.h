@@ -10,9 +10,6 @@
 // =============================================================================
 // Game Input Actions
 // =============================================================================
-// All input actions used by the game should be defined here.
-// This prevents conflicts between different systems using different enums.
-// =============================================================================
 
 enum InputActions : int
 {

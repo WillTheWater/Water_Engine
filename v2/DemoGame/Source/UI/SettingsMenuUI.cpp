@@ -42,14 +42,13 @@ namespace we
 	{
 		vec2f Center = vec2f(EC.RenderResolution) / 2.0f;
 
-		// Main background panel - all widgets are children of this
-		// Children auto-inherit render depth (parent + 1) and visibility
+		// Main background panel
 		BackgroundPanel = Subsystem.GUI->CreatePanel({ 700.0f, 800.0f }, color{ 30, 30, 30, 240 }, color{ 100, 100, 100 }, 2.0f);
 		BackgroundPanel->SetAnchorPosition(Anchor::Center, Anchor::Center);
 		BackgroundPanel->SetRenderDepth(200.0f);
 		BackgroundPanel->SetVisible(false);
 
-		// Title (auto-inherits render depth 201 from parent)
+		// Title
 		auto Title = Subsystem.GUI->CreateTextBlock("SETTINGS", 0.0f, 36);
 		Title->SetColor(color::White);
 		Title->SetAlignment(TextAlignment::Center);

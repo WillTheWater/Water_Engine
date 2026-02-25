@@ -19,9 +19,6 @@ namespace we
 	// ==========================================================================
 	// DialogBox - UI class for NPC dialog interactions
 	// ==========================================================================
-	// Encapsulates all dialog UI creation and management. Supports both
-	// world-space (attached to NPC) and screen-space modes.
-	// ==========================================================================
 
 	class DialogBox
 	{
@@ -50,7 +47,6 @@ namespace we
 		void HideInteractionHint();
 		bool IsInteractionHintVisible() const;
 
-		// Delegates
 		Delegate<> OnContinueClicked;
 		Delegate<> OnCloseClicked;
 

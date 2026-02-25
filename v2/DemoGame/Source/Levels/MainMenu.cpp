@@ -41,13 +41,10 @@ namespace we
 		MenuUI->OnPlayClicked.Bind(this, &MainMenu::OnPlayClicked);
 		MenuUI->OnSettingsClicked.Bind(this, &MainMenu::OnSettingsClicked);
 		MenuUI->OnQuitClicked.Bind(this, &MainMenu::OnQuitClicked);
-
-		// Note: Settings closed binding happens in OnSettingsClicked to ensure fresh binding
 	}
 
 	void MainMenu::BeginPlay()
 	{
-		// Nothing needed here - MainMenuUI handles its own visibility
 	}
 
 	void MainMenu::Tick(float DeltaTime)
@@ -56,7 +53,6 @@ namespace we
 
 	void MainMenu::OnPlayClicked()
 	{
-		// Hide main menu UI (don't clear - that would remove persistent UI like settings)
 		MenuUI->Hide();
 		
 		Subsystem.GameState->RequestStateChange(MakeState(EGameState::LevelOne));
@@ -64,12 +60,10 @@ namespace we
 
 	void MainMenu::OnSettingsClicked()
 	{
-		// Hide main menu and show settings via GameInstance (persists across worlds)
 		MenuUI->Hide();
 		
 		if (auto* GI = static_cast<DemoGameInstance*>(Subsystem.GameInst.get()))
 		{
-			// Clear any stale bindings and bind fresh
 			GI->OnSettingsClosed.Clear();
 			GI->OnSettingsClosed.Bind(this, &MainMenu::OnSettingsBackClicked);
 			GI->ShowSettings();
@@ -78,7 +72,6 @@ namespace we
 
 	void MainMenu::OnSettingsBackClicked()
 	{
-		// Show main menu again
 		MenuUI->Show();
 	}
 

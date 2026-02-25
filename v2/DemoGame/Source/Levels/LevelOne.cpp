@@ -178,12 +178,9 @@ namespace we
 
 		// Initialize Red X at WORLD ORIGIN (0,0)
 		OriginMarker = sf::VertexArray(sf::PrimitiveType::Lines, 4);
-		float size = 50.f; // Size of the X
-
-		// Line 1 - at world (0,0)
+		float size = 50.f;
 		OriginMarker[0].position = { -size, -size };
 		OriginMarker[1].position = {  size,  size };
-		// Line 2
 		OriginMarker[2].position = { -size,  size };
 		OriginMarker[3].position = {  size, -size };
 
@@ -209,7 +206,7 @@ namespace we
 				C->AttachTo(P.get(), { 0.f, 0.f });
 
 				// 2. Set the "Lag" to 0 for a hard lock (character stays perfectly still in center)
-				C->SetSmoothTime(0.0f);
+				C->SetSmoothTime(0.3f);
 
 				// 3. Register this as the LIVE camera in the subsystem
 				if (auto* CamSys = Subsystem.Camera.get())
@@ -221,14 +218,14 @@ namespace we
 			}
 		}
 
-		// Spawn Aoi (village girl - simple 1-way idle)
+		// Spawn Aoi
 		AoiRef = SpawnActor<Aoi>();
 		if (auto aoi = AoiRef.lock())
 		{
 			aoi->SetPosition({ 500, -500 });
 		}
 
-		// Spawn Kiyoshi (old man merchant - 8-way idle)
+		// Spawn Kiyoshi
 		KiyoshiRef = SpawnActor<Kiyoshi>();
 		if (auto kiyoshi = KiyoshiRef.lock())
 		{
@@ -245,7 +242,7 @@ namespace we
 		if (auto RB = RoomBorder.lock())
 		{
 			RB->SetClosedLoop(true);
-			RB->SetDebugColor(color{ 255, 255, 0 });  // Yellow
+			RB->SetDebugColor(color{ 255, 255, 0 });
 		}
 
 		// Test Border - Center divider wall (open chain)
@@ -256,7 +253,7 @@ namespace we
 		});
 		if (auto DW = DividerWall.lock())
 		{
-			DW->SetDebugColor(color{ 0, 255, 255 });  // Cyan
+			DW->SetDebugColor(color{ 0, 255, 255 });
 		}
 
 		// Bind input for pause toggle (ESC and Gamepad Start)
@@ -287,18 +284,16 @@ namespace we
 
 		// Bind interaction inputs
 		Subsystem.Input->Bind(ACTION_INTERACT, Input::Keyboard{ sf::Keyboard::Scan::E });
-		Subsystem.Input->Bind(ACTION_INTERACT, Input::Gamepad{ GamepadButton::South, 0 });  // A on Xbox
+		Subsystem.Input->Bind(ACTION_INTERACT, Input::Gamepad{ GamepadButton::South, 0 });
 
 		// Register interaction callback
 		Subsystem.Input->OnPressed(ACTION_INTERACT, [this]()
 		{
-			// Don't interact if game is paused
 			if (Subsystem.Time->IsPaused())
 			{
 				return;
 			}
 
-			// Try to interact
 			if (auto Player = PlayerRef.lock())
 			{
 				Player->TryInteract();
@@ -322,11 +317,8 @@ namespace we
 	{
 		bPauseMenuOpen = true;
 		PauseMenuUI->Show();
-		
-		// Show cursor when pause menu is open
 		Subsystem.Cursor->SetVisibility(true);
 		
-		// Pause the game (freeze gameplay)
 		if (Subsystem.Time)
 		{
 			Subsystem.Time->SetPaused(true);
@@ -339,17 +331,12 @@ namespace we
 	{
 		bPauseMenuOpen = false;
 		PauseMenuUI->Hide();
-		
-		// Hide cursor when returning to game
 		Subsystem.Cursor->SetVisibility(false);
 		
-		// Resume the game
 		if (Subsystem.Time)
 		{
 			Subsystem.Time->SetPaused(false);
 		}
-		
-
 	}
 
 	void LevelOne::OnPauseContinue()
@@ -360,17 +347,11 @@ namespace we
 	void LevelOne::OnPauseSettings()
 	{
 		bSettingsOpen = true;
-		
-		// Hide pause menu temporarily while settings is open
 		PauseMenuUI->Hide();
-		
-		// Show cursor for settings menu
 		Subsystem.Cursor->SetVisibility(true);
 		
-		// Show settings via GameInstance (persists across worlds)
 		if (auto* GI = static_cast<DemoGameInstance*>(Subsystem.GameInst.get()))
 		{
-			// Clear any stale bindings and bind fresh
 			GI->OnSettingsClosed.Clear();
 			GI->OnSettingsClosed.Bind(this, &LevelOne::OnSettingsClosed);
 			GI->ShowSettings();
@@ -381,7 +362,6 @@ namespace we
 	{
 		bSettingsOpen = false;
 		
-		// If we're still paused, show cursor for pause menu
 		if (bPauseMenuOpen)
 		{
 			Subsystem.Cursor->SetVisibility(true);
@@ -389,7 +369,6 @@ namespace we
 		}
 		else
 		{
-			// Resume game - hide cursor
 			Subsystem.Cursor->SetVisibility(false);
 		}
 	}
@@ -397,8 +376,6 @@ namespace we
 	void LevelOne::OnPauseQuit()
 	{
 		HidePauseMenu();
-		
-		// Quit the game
 		Subsystem.GameState->RequestShutdown();
 	}
 

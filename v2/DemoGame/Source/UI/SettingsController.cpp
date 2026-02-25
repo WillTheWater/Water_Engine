@@ -20,7 +20,6 @@ namespace we
 	constexpr stringView KEY_AMBIENT_VOLUME = "Settings.AmbientVolume";
 	constexpr stringView KEY_SFX_VOLUME = "Settings.SFXVolume";
 	constexpr stringView KEY_VSYNC = "Settings.VSync";
-	// Note: KEY_FULLSCREEN removed - fullscreen is runtime toggle only, not saved
 	constexpr stringView KEY_SMOOTH_RENDER = "Settings.SmoothRender";
 	constexpr stringView KEY_DEADZONE = "Settings.Deadzone";
 	constexpr stringView KEY_CURSOR_SPEED = "Settings.CursorSpeed";
@@ -79,8 +78,6 @@ namespace we
 		{
 			Slider->OnValueChanged.Bind([this](float Value) { OnCursorSpeedChanged(Value); });
 		}
-
-		// UI bindings created
 	}
 
 	void SettingsController::SyncUIFromSettings()
@@ -124,7 +121,6 @@ namespace we
 		}
 
 		// Video settings - read current values from WindowSubsystem
-		// Note: Fullscreen is NOT saved - it's runtime-only to avoid startup issues
 		if (auto Check = UI.GetFullscreenCheck())
 		{
 			Check->SetChecked(Subsystem.Window->IsFullscreen());
@@ -160,8 +156,6 @@ namespace we
 			if (auto Text = UI.GetCursorSpeedValue())
 				Text->SetText(std::to_string(static_cast<int>(Speed)));
 		}
-
-		// UI synced from AudioSubsystem
 	}
 
 	void SettingsController::Show()
@@ -229,7 +223,6 @@ namespace we
 	// =========================================================================
 	void SettingsController::OnFullscreenToggled(bool bChecked)
 	{
-		// Note: Fullscreen is NOT saved - toggle is runtime-only to avoid startup issues
 		Subsystem.Window->SetFullscreen(bChecked);
 	}
 

@@ -20,7 +20,7 @@ namespace we
 	enum class AnimState : uint8
 	{
 		None = 0,
-		// Idle states (8 directions)
+		// Idle states
 		IdleRight,      // 1
 		IdleDownRight,  // 2
 		IdleDown,       // 3
@@ -29,7 +29,7 @@ namespace we
 		IdleUpLeft,     // 6
 		IdleUp,         // 7
 		IdleUpRight,    // 8
-		// Run states (8 directions)
+		// Run states
 		RunRight,       // 9
 		RunDownRight,   // 10
 		RunDown,        // 11
@@ -55,7 +55,6 @@ namespace we
 		void UpdateFootsteps();
 		void PlayFootstep();
 
-		// Interaction system
 		void TryInteract();
 
 	private:
@@ -66,7 +65,6 @@ namespace we
 	private:
 		shared<IMovementComponent> MoveComp;
 		shared<AnimationComponent> AnimComp;
-		//shared<CameraComponent> CamComp;  // Camera component (not an Actor)
 		uint LastFootstepFrame = 255;
 
 		// Interaction

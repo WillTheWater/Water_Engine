@@ -37,7 +37,6 @@ namespace we
 		void HideSettings();
 		bool IsSettingsVisible() const;
 
-		// Bind this to know when user clicks "Back" in settings
 		Delegate<> OnSettingsClosed;
 
 	private:
@@ -48,7 +47,7 @@ namespace we
 		void BindGUINavigationInput();
 
 	private:
-		// Persistent UI - created once, shown/hidden as needed
+		// Persistent UI
 		unique<SettingsMenuUI> SettingsUI;
 		unique<SettingsController> SettingsCtrl;
 	};

@@ -49,7 +49,7 @@ namespace we
 		void OnIdleTimerExpired();
 
 	private:
-		// Waypoint system
+		// Waypoints
 		vector<vec2f> Waypoints;
 		uint CurrentWaypointIndex = 0;
 		
@@ -59,7 +59,7 @@ namespace we
 		
 		// Movement
 		vec2f CurrentVelocity;
-		vec2f ForwardVector{ 0, 1 };  // Default facing down
+		vec2f ForwardVector{ 0, 1 };
 		float WalkSpeed = 80.0f;
 		
 		// Idle timer

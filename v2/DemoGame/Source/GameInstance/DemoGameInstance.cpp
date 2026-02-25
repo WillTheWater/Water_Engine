@@ -44,7 +44,7 @@ namespace we
 		
 		// DemoGameInstance initializing...
 		
-		// Apply saved VSync setting (safe to do during init)
+		// Apply saved VSync setting
 		ApplySavedVSyncSetting();
 		
 		// Apply saved gameplay settings (cursor/deadzone)
@@ -69,8 +69,6 @@ namespace we
 		
 		// Bind GUI navigation input (gamepad)
 		BindGUINavigationInput();
-		
-		// DemoGameInstance initialized
 	}
 
 	void DemoGameInstance::ApplySavedVSyncSetting()
@@ -143,8 +141,6 @@ namespace we
 
 	void DemoGameInstance::Shutdown()
 	{
-		// DemoGameInstance shutting down
-		
 		SettingsCtrl.reset();
 		SettingsUI.reset();
 		
@@ -160,7 +156,6 @@ namespace we
 	{
 		if (SettingsCtrl)
 		{
-			// Showing settings menu
 			SettingsCtrl->Show();
 		}
 	}
@@ -169,7 +164,6 @@ namespace we
 	{
 		if (SettingsCtrl)
 		{
-			// Hiding settings menu
 			SettingsCtrl->Hide();
 		}
 	}
@@ -181,10 +175,7 @@ namespace we
 
 	void DemoGameInstance::OnSettingsBackClicked()
 	{
-		// Settings closed (back button clicked)
 		HideSettings();
-		
-		// Notify listeners and clear the delegate to prevent stale bindings
 		OnSettingsClosed.Broadcast();
 		OnSettingsClosed.Clear();
 	}
@@ -207,7 +198,5 @@ namespace we
 		Input.OnPressed(GUI_CANCEL, [&GUI]() { GUI.OnGamepadCancel(); });
 		Input.OnPressed(GUI_NAV_NEXT, [&GUI]() { GUI.OnGamepadNavigateNext(); });
 		Input.OnPressed(GUI_NAV_PREVIOUS, [&GUI]() { GUI.OnGamepadNavigatePrevious(); });
-
-		LOG("GUI navigation input bound");
 	}
 }

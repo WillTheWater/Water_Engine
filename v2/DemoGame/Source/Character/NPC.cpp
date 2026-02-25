@@ -39,13 +39,11 @@ namespace we
 		
 		SetupInteractionSensor();
 		
-		// Create DialogBox UI (delegates UI creation to DialogBox class)
+		// Create DialogBox UI
 		DialogUI = make_unique<DialogBox>(GetWorld()->GetSubsystem(), EWidgetSpace::World);
 		DialogUI->SetDialogText(Dialog);
 		DialogUI->SetTitleText(DialogTitle);
-		DialogUI->SetLocalOffset({ -150.f, -120.f }); // Position above NPC
-		
-		LOG("[{}] DialogBox UI created", Name);
+		DialogUI->SetLocalOffset({ 0.f, -220.f }); // Position above NPC
 	}
 
 	void NPC::SetupInteractionSensor()
@@ -55,10 +53,8 @@ namespace we
 			// Note: Body type should be set by derived class if movement is needed
 			// Default is Static for simple NPCs, Kinematic for moving NPCs
 			
-			// Add sensor for interaction detection (player can detect us when nearby)
+			// Add sensor for interaction detection (player can detect when nearby)
 			PhysicsComp->SetSensorShape(true, 60.0f);  // 60 unit radius sensor
-			
-			LOG("[{}] Interaction sensor set up", Name);
 		}
 	}
 
@@ -80,7 +76,6 @@ namespace we
 
 	void NPC::Destroy()
 	{
-		// Cleanup UI - DialogBox destructor handles widget cleanup
 		DialogUI.reset();
 		
 		if (AnimComp) AnimComp->EndPlay();
@@ -91,7 +86,6 @@ namespace we
 	{
 		LOG("[{}] Interaction triggered by: {}", Name, typeid(*Interactor).name());
 		
-		// Toggle dialog visibility
 		if (DialogUI)
 		{
 			if (!DialogUI->IsVisible())
@@ -129,12 +123,9 @@ namespace we
 	{
 		if (DialogUI)
 		{
-			// Update text in case it changed
 			DialogUI->SetDialogText(Dialog);
 			DialogUI->SetTitleText(DialogTitle);
 			DialogUI->Show();
-			
-			LOG("[{}] Showing dialog", Name);
 		}
 	}
 
@@ -143,7 +134,6 @@ namespace we
 		if (DialogUI)
 		{
 			DialogUI->Hide();
-			LOG("[{}] Hiding dialog", Name);
 		}
 	}
 
@@ -154,14 +144,11 @@ namespace we
 
 	void NPC::OnPlayerEnteredRange(Actor* Player)
 	{
-		// Base implementation does nothing
-		// Derived classes like Kiyoshi override this
 		(void)Player;
 	}
 
 	void NPC::OnPlayerLeftRange(Actor* Player)
 	{
-		// Base implementation - hide dialog if player leaves
 		HideDialog();
 		(void)Player;
 	}

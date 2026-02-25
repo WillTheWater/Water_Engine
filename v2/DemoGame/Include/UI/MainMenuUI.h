@@ -23,13 +23,8 @@ namespace we
 		Delegate<> OnSettingsClicked;
 		Delegate<> OnQuitClicked;
 
-		// Hide all UI elements
 		void Hide();
-
-		// Show all UI elements
 		void Show();
-
-		// Check if visible
 		bool IsVisible() const;
 
 	private:

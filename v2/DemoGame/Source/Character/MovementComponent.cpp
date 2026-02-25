@@ -59,8 +59,7 @@ namespace we
 			InputVector = {};
 		}
 
-		// Calculate velocity from input - but DON'T apply it
-		// External code (e.g., PlayerCharacter) decides how to use this velocity
+		// Calculate velocity from input
 		Velocity = InputVector * Speed;
 	}
 

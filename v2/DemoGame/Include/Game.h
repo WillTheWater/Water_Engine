@@ -27,7 +27,6 @@ namespace we
 		virtual void Tick(float) override;
 
 	private:
-		//unique<PauseUI> PauseMenu;
 		bool bPaused;
 
 	private:

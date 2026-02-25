@@ -14,9 +14,7 @@ namespace we
     {
         GameConfig();
 
-		// Settings
 		float StartupGlobalVolume;
-
 		
 		string DefaultBackground;
 		

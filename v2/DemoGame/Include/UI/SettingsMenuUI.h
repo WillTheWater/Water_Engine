@@ -58,10 +58,10 @@ namespace we
 		EngineSubsystem& Subsystem;
 		bool bIsVisible;
 
-		// Main container - all other widgets are children of this
+		// Main container
 		shared<Panel> BackgroundPanel;
 
-		// Keep references to interactive widgets for logic binding
+		// References to interactive widgets for logic binding
 		shared<Slider> MasterSlider;
 		shared<Slider> MusicSlider;
 		shared<Slider> AmbientSlider;

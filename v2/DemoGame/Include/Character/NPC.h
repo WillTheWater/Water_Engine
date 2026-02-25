@@ -46,11 +46,10 @@ namespace we
 		void HideDialog();               // Hide dialog panel
 		bool IsDialogVisible() const;
 		
-		// Player proximity notifications (for autonomous behavior)
+		// Player proximity notifications
 		virtual void OnPlayerEnteredRange(Actor* Player);
 		virtual void OnPlayerLeftRange(Actor* Player);
 
-		// Accessors
 		const string& GetName() const { return Name; }
 		void SetDialog(const string& InDialog) { Dialog = InDialog; }
 		void SetDialogTitle(const string& InTitle) { DialogTitle = InTitle; }
@@ -58,8 +57,6 @@ namespace we
 	protected:
 		// Override this in derived classes to set up animations
 		virtual void InitializeAnimations() = 0;
-
-		// Helper to set up interaction sensor
 		void SetupInteractionSensor();
 
 	protected:
@@ -67,8 +64,6 @@ namespace we
 		string Name;
 		string Dialog;
 		string DialogTitle;
-
-		// UI is now managed by DialogBox
 		unique<DialogBox> DialogUI;
 	};
 }

@@ -30,8 +30,6 @@ namespace we
 	DialogBox::~DialogBox()
 	{
 		bIsCleaningUp = true;
-		// Widgets are managed by GUISubsystem via shared_ptr
-		// They will be automatically cleaned up when DialogBox is destroyed
 	}
 
 	// ==========================================================================
@@ -40,13 +38,13 @@ namespace we
 
 	void DialogBox::CreateUI()
 	{
-		// Create main dialog panel - larger size to accommodate text and buttons
+		// Create main dialog panel
 		DialogPanel = Subsystem.GUI->CreatePanel(
 			{ 300.f, 140.f },              // Size
 			color{ 0, 0, 0, 200 },         // Dark background with transparency
 			color{ 255, 255, 255, 255 },   // White border
-			2.f,                           // 2px border
-			WidgetSpace                    // World or Screen space
+			0.f,                           // No border
+			WidgetSpace                    // World space
 		);
 		DialogPanel->SetRenderDepth(200.f);
 
@@ -160,7 +158,6 @@ namespace we
 		
 		bDialogVisible = true;
 		
-		// Hide interaction hint when dialog is showing
 		HideInteractionHint();
 	}
 
