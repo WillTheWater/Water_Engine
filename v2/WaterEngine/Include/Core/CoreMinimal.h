@@ -26,6 +26,7 @@
 // =============================================================================
 // Third Party - SFML
 // =============================================================================
+#include <SFML/Audio.hpp>
 #include <SFML/Graphics.hpp>
 #include <SFML/Graphics/Shader.hpp>
 #include <SFML/System/Angle.hpp>
@@ -84,6 +85,13 @@ namespace we
 	using renderTarget  = sf::RenderTarget;
 	using renderTexture = sf::RenderTexture;
 	using shader        = sf::Shader;
+
+	// -------------------------------------------------------------------------
+	// SFML Audio Types
+	// -------------------------------------------------------------------------
+	using soundBuffer   = sf::SoundBuffer;
+	using sound         = sf::Sound;
+	using music         = sf::Music;
 
 	// -------------------------------------------------------------------------
 	// Math Constants

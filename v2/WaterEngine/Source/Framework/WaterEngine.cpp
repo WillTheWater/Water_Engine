@@ -25,22 +25,24 @@ namespace we
 
 	void WaterEngine::MountAssetDirectory()
 	{
+		// Create ResourceSubsystem first
+		Subsystem.Resources = make_unique<ResourceSubsystem>();
+
 #ifdef WE_RELEASE
-		// Release: Mount Content.pak file
+		// Release: Mount Content.pak and pass to ResourceSubsystem
 		try
 		{
-			Subsystem.AssetDirectory = make_unique<PakDirectory>("Content.pak");
+			auto pak = make_shared<PakDirectory>("Content.pak");
+			Subsystem.Resources->SetAssetDirectory(pak);
 			LOG("Mounted Content.pak");
 		}
 		catch (const std::exception& e)
 		{
 			LOG("Failed to mount Content.pak: {}", e.what());
-			// Fall back to loose files if pak fails
-			Subsystem.AssetDirectory = nullptr;
 		}
 #else
-		// Debug: Use loose files - AssetDirectory stays nullptr
-		// Files are accessed directly from filesystem
+		// Debug: Use loose files - no pak mounted
+		// Files accessed directly from filesystem
 		LOG("Debug mode: Using loose files (no pak mounted)");
 #endif
 	}
@@ -48,6 +50,8 @@ namespace we
 	void WaterEngine::CreateSubsystems()
 	{
 		Subsystem.Window = make_unique<WindowSubsystem>();
+		Subsystem.Render = make_unique<RenderSubsystem>();
+		Subsystem.Time = make_unique<TimeSubsystem>();
 	}
 
 	void WaterEngine::Initialize()
@@ -64,10 +68,10 @@ namespace we
 		const char* ConfigPath = "Content/Config/EngineConfig.ini";
 
 #ifdef WE_RELEASE
-		// Release: Load from mounted pak
-		if (Subsystem.AssetDirectory)
+		// Release: Load from mounted pak via ResourceSubsystem
+		if (auto assetDir = Subsystem.Resources->GetAssetDirectory())
 		{
-			bLoaded = EngineConfigManager::LoadFromAssetDirector(*Subsystem.AssetDirectory, ConfigPath);
+			bLoaded = EngineConfigManager::LoadFromAssetDirector(*assetDir, ConfigPath);
 		}
 #else
 		// Debug: Load from loose file
@@ -95,6 +99,17 @@ namespace we
 
 	void WaterEngine::Tick()
 	{
+		Subsystem.Time->Tick();
+		Subsystem.Resources->PollCompletedRequests();
+
+		if (!Subsystem.Time->IsPaused())
+		{
+			//TickGame();
+		}
+		else
+		{
+			//TickPaused();
+		}
 	}
 
 	void WaterEngine::Render()

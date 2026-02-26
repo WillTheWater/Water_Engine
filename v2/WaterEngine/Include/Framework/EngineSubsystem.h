@@ -8,6 +8,8 @@
 #include "Core/CoreMinimal.h"
 
 #include "Interface/IAssetDirector.h"
+#include "Subsystem/ResourceSubsystem.h"
+#include "Subsystem/TimeSubsystem.h"
 #include "Subsystem/RenderSubsystem.h"
 #include "Subsystem/WindowSubsystem.h"
 
@@ -17,7 +19,8 @@ namespace we
 
 	struct EngineSubsystem
 	{
-		unique<IAssetDirector> AssetDirectory;
+		unique<ResourceSubsystem> Resources;
+		unique<TimeSubsystem> Time;
 		unique<RenderSubsystem> Render;
 		unique<WindowSubsystem> Window;
 	};
