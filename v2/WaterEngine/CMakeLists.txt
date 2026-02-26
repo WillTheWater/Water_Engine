@@ -139,6 +139,6 @@ if(WIN32)
 
     target_link_options(WaterEngine PUBLIC
         $<$<CONFIG:Debug>:/SUBSYSTEM:CONSOLE>
-        $<$<CONFIG:Release>:/SUBSYSTEM:WINDOWS>
+        $<$<CONFIG:Release>:/SUBSYSTEM:CONSOLE>
     )
 endif()

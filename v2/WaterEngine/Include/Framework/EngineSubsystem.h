@@ -6,20 +6,19 @@
 #pragma once
 
 #include "Core/CoreMinimal.h"
+
 #include "Interface/IAssetDirector.h"
+#include "Subsystem/RenderSubsystem.h"
+#include "Subsystem/WindowSubsystem.h"
 
 namespace we
 {
-	class PakDirectory : public IAssetDirector
+	class GameInstance;
+
+	struct EngineSubsystem
 	{
-	public:
-		explicit PakDirectory(const string& PakFilePath);
-		~PakDirectory();
-
-		bool Exists(stringView Path) const override;
-		bool ReadFile(stringView Path, vector<uint8>& OutData) const override;
-
-	private:
-		string MountedPakPath;
+		unique<IAssetDirector> AssetDirectory;
+		unique<RenderSubsystem> Render;
+		unique<WindowSubsystem> Window;
 	};
 }

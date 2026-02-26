@@ -7,6 +7,7 @@
 
 #include "Core/CoreMinimal.h"
 #include "Core/EngineConfig.h"
+#include "Framework/EngineSubsystem.h"
 
 namespace we
 {
@@ -15,5 +16,21 @@ namespace we
 	public:
 		WaterEngine();
 		virtual ~WaterEngine();
+
+		// Main loop functions
+		void Initialize();
+		void Tick();
+		void Render();
+		void ProcessEvents();
+		bool IsRunning() const;
+
+
+	private:
+		EngineSubsystem Subsystem;
+		void PreConstruct();
+		void MountAssetDirectory();
+		void CreateSubsystems();
+		void LoadEngineConfig();
+		void ApplyEngineConfig();
 	};
 }

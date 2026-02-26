@@ -6,6 +6,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Interface/IAssetDirector.h"
 
 namespace we
 {
@@ -65,6 +66,9 @@ namespace we
 	public:
 		// Load config from EngineConfig.ini
 		static bool LoadFromFile(const string& FilePath);
+		
+		// Load config from IAssetDirector (for Release mode with pak files)
+		static bool LoadFromAssetDirector(const IAssetDirector& AssetDir, const string& FilePath);
 		
 		// Reload config (for hot reload)
 		static bool Reload();

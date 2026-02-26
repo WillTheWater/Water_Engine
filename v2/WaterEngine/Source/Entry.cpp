@@ -4,7 +4,6 @@
 // =============================================================================
 
 #include <SFML/GpuPreference.hpp>
-#include <SFML/System/Sleep.hpp>
 
 #include "Entry.h"
 #include "Framework/WaterEngine.h"
@@ -13,6 +12,16 @@ SFML_DEFINE_DISCRETE_GPU_PREFERENCE
 
 int main()
 {
-    auto Demo = we::GetEngine();
+	auto Engine = we::GetEngine();
 
+	Engine->Initialize();
+
+	while (Engine->IsRunning())
+	{
+		Engine->ProcessEvents();
+		Engine->Tick();
+		Engine->Render();
+	}
+
+	return 0;
 }
