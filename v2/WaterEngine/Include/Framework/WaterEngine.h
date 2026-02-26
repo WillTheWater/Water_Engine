@@ -11,6 +11,9 @@
 
 namespace we
 {
+	class Editor;
+	enum class EngineMode { Editor, Play };
+
 	class WaterEngine
 	{
 	public:
@@ -24,13 +27,25 @@ namespace we
 		void ProcessEvents();
 		bool IsRunning() const;
 
+		// Mode control
+		void SetMode(EngineMode NewMode);
+		bool IsInEditor() const { return CurrentMode == EngineMode::Editor; }
+		bool IsPlaying() const { return CurrentMode == EngineMode::Play; }
+
+	protected:
+		EngineSubsystem Subsystem;
+		unique<Editor> EditorInstance;
+		EngineMode CurrentMode = EngineMode::Editor;
+
+		virtual void TickGame(float DeltaTime);
+		virtual void TickEditor(float DeltaTime);
 
 	private:
-		EngineSubsystem Subsystem;
 		void PreConstruct();
 		void MountAssetDirectory();
 		void CreateSubsystems();
 		void LoadEngineConfig();
 		void ApplyEngineConfig();
+		void InitializeEditor();
 	};
 }

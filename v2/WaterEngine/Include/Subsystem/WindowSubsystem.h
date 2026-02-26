@@ -6,16 +6,19 @@
 #pragma once
 
 #include "Core/CoreMinimal.h"
+#include "Core/EngineConfig.h"
 #include <SFML/Graphics.hpp>
 
 namespace we
 {
-
     class WindowSubsystem : public sf::RenderWindow
     {
     public:
-        explicit WindowSubsystem();
+        // Create window using config values
+        explicit WindowSubsystem(const EngineConfig::WindowConfig& Config);
 
+    private:
+        // VSync takes precedence: if enabled, TargetFPS is ignored
+        void ConfigureFrameLimit(const EngineConfig::WindowConfig& Config);
     };
-
 }
