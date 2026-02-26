@@ -15,23 +15,5 @@ namespace we
 	public:
 		WaterEngine();
 		virtual ~WaterEngine();
-
-		bool Init();
-		void TestRun();
-		bool IsRunning() const;
-
-		void ReloadConfig();
-		sf::Texture* LoadTextureDirect(const string& Path);
-		const EngineConfig& GetConfig() const;
-
-		void SaveRotation();
-		void LoadRotation();
-
-	private:
-		std::unique_ptr<sf::RenderWindow> Window;
-		bool Running;
-		bool Initialized;
-
-		dictionary<string, sf::Texture> TestTextures;
 	};
 }

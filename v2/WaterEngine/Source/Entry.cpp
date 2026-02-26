@@ -15,8 +15,4 @@ int main()
 {
     auto Demo = we::GetEngine();
 
-    while (Demo->IsRunning())
-    {
-        Demo->TestRun();
-    }
 }
