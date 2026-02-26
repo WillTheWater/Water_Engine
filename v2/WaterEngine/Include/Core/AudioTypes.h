@@ -5,12 +5,6 @@
 
 #pragma once
 
-#include <SFML/Audio.hpp>
-#include <SFML/Audio/Listener.hpp>
-
 namespace we
 {
-	using soundBuffer = sf::SoundBuffer;
-	using music = sf::Music;
-	using sound = sf::Sound;
 }

@@ -5,9 +5,6 @@
 
 #pragma once
 
-#include <nlohmann/json.hpp>
-
 namespace we
 {
-	using json = nlohmann::json;
 }

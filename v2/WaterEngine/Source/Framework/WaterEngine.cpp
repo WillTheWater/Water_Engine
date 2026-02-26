@@ -3,313 +3,276 @@
 // Copyright(C) 2026 Will The Water
 // =============================================================================
 
-#include <filesystem>
-
 #include "Framework/WaterEngine.h"
-#include "AssetDirectory/PakDirectory.h"
-#include "Framework/World/World.h"
 #include "Utility/Log.h"
-#include "Utility/DebugDraw.h"
-#include "Utility/Timer.h"
-#include "Subsystem/WindowSubsystem.h"
-#include "Subsystem/RenderSubsystem.h"
-#include "Subsystem/CursorSubsystem.h"
-#include "Subsystem/AudioSubsystem.h"
-#include "Subsystem/PhysicsSubsystem.h"
+#include "Asset/FileWatcher.h"
+#include "Asset/PakSource.h"
+#include <toml++/toml.hpp>
+#include <imgui.h>
+#include <imgui-SFML.h>
+#include <physfs.h>
+#include <filesystem>
 
 namespace we
 {
-    // =========================================================================
-    // Lifecycle
-    // =========================================================================
-    WaterEngine::WaterEngine()
-    {
-        PreConstruct();
-        Construct();
-    }
+	static FileWatcher TextureWatcher;
+	static string WatchedTexturePath;
+	static bool NeedsReload = false;
 
-    WaterEngine::~WaterEngine()
-    {
-        // GameInstance is destroyed last
-        if (Subsystem.GameInst)
-        {
-            Subsystem.GameInst->Shutdown();
-        }
-    }
+	static float SpriteRotation = 0.0f;
+	static bool ShowEditor = true;
+	static bool ImGuiInitialized = false;
 
-    void WaterEngine::Initialize()
-    {
-        // Create GameInstance via game-specific factory
-        Subsystem.GameInst = CreateGameInstance();
-        if (Subsystem.GameInst)
-        {
-            Subsystem.GameInst->Init(Subsystem);
-        }
-        
-        BeginPlay();
-    }
+	WaterEngine::WaterEngine()
+		: Running(true), Initialized(false)
+	{
+	}
 
-    // =========================================================================
-    // Construction
-    // =========================================================================
-    void WaterEngine::PreConstruct()
-    {
-        MountAssetDirectory();
-        CreateSubsystems();
-    }
+	WaterEngine::~WaterEngine() = default;
 
-    void WaterEngine::MountAssetDirectory()
-    {
-        Subsystem.AssetLoader = make_unique<ResourceSubsystem>();
-        auto PD = make_shared<PakDirectory>(EC.AssetDirectory);
-        Subsystem.AssetLoader->SetAssetDirectory(PD);
-        
-        if (EC.DisableSFMLLogs) 
-        { 
-            sf::err().rdbuf(nullptr); 
-        }
-    }
+	bool WaterEngine::IsRunning() const
+	{
+		return Running;
+	}
 
-    void WaterEngine::CreateSubsystems()
-    {
-        // Window and Render
-        Subsystem.Window = make_unique<WindowSubsystem>(WindowConfig{
-            .WindowName        = EC.WindowName,
-            .RenderResolution  = EC.RenderResolution,
-            .AspectRatio       = EC.AspectRatio,
-            .WindowMinimumSize = EC.WindowMinimumSize,
-            .WindowIcon        = EC.WindowIcon,
-            .FullscreenMode    = EC.FullscreenMode,
-            .VsyncEnabled      = EC.VsyncEnabled,
-            .TargetFPS         = EC.TargetFPS,
-            .EnableKeyRepeat   = EC.EnableKeyRepeat,
-            .DisableSFMLLogs   = EC.DisableSFMLLogs
-        });
+	bool WaterEngine::Init()
+	{
+		if (Initialized)
+			return true;
 
-        Subsystem.Render = make_unique<RenderSubsystem>(*Subsystem.Window, RenderConfig{
-            .RenderResolution = EC.RenderResolution,
-            .SetRenderSmooth  = EC.SetRenderSmooth
-        });
+		#ifdef WE_RELEASE
+		if (std::filesystem::exists("Content.pak"))
+		{
+			LOG("Found Content.pak, mounting...");
+			if (PakSource::MountPak("Content.pak", "/"))
+			{
+				LOG("Content.pak mounted successfully");
+			}
+			else
+			{
+				LOG("Failed to mount Content.pak");
+			}
+		}
+		#endif
 
-        // Core subsystems
-        Subsystem.Time      = make_unique<TimeSubsystem>();
-        Subsystem.Input     = make_unique<InputSubsystem>();
-        Subsystem.SaveLoad  = make_unique<SaveLoadSubsystem>();
-        Subsystem.GameState = make_unique<GameStateSubsystem>();
+		#ifdef WE_RELEASE
+		const char* ConfigPath = "Content/Config/EngineConfig.ini";
+		#else
+		const char* ConfigPath = "EngineConfig.ini";
+		#endif
+		
+		if (!EngineConfigManager::LoadFromFile(ConfigPath))
+		{
+			LOG("Failed to load {}", ConfigPath);
+			return false;
+		}
 
-        // Cursor
-        Subsystem.Cursor = make_unique<CursorSubsystem>(CursorConfig{
-            .DefaultCursor     = EC.DefaultCursor,
-            .DefaultCursorSize = EC.DefaultCursorSize,
-            .DefaultCursorSpeed= EC.DefaultCursorSpeed,
-            .JoystickDeadzone  = EC.JoystickDeadzone,
-            .Window            = *Subsystem.Window
-        });
+		const EngineConfig& Config = EngineConfigManager::Get();
+		sf::VideoMode VideoMode({ Config.Window.Width, Config.Window.Height });
+		Window = std::make_unique<sf::RenderWindow>(VideoMode, Config.Window.Title);
+		Window->setVerticalSyncEnabled(Config.Window.VSync);
+		LOG("Window created: {}x{} - {}", Config.Window.Width, Config.Window.Height, Config.Window.Title);
 
-        // Audio
-        Subsystem.Audio = make_unique<AudioSubsystem>(AudioConfig{
-            .StartupGlobalVolume = EC.StartupGlobalVolume,
-            .MaxSFXStack         = EC.MaxSFXStack
-        });
+		if (!ImGui::SFML::Init(*Window))
+		{
+			LOG("Failed to initialize ImGui-SFML");
+			return false;
+		}
+		ImGuiInitialized = true;
 
-        // Physics
-        Subsystem.Physics = make_unique<PhysicsSubsystem>(PhysicsConfig{
-            .DefaultGravity   = vec2f{EC.DefaultGravity.x, EC.DefaultGravity.y},
-            .PhysicsScale     = 0.01f,
-            .FixedTimeStep    = 1.0f / 60.0f,
-            .VelocityIterations = 8,
-            .PositionIterations = 3
-        });
+		#ifdef WE_RELEASE
+		ImGui::GetIO().IniFilename = nullptr;
+		#endif
 
-        // Subsystems that depend on other subsystems
-        Subsystem.World  = make_unique<WorldSubsystem>(Subsystem);
-        Subsystem.GUI    = make_unique<GUISubsystem>(Subsystem);
-        Subsystem.Camera = make_unique<CameraSubsystem>();
-    }
+		string TexturePath = "Content/Assets/Textures/Default/defaultCursor.png";
+		if (!LoadTextureDirect(TexturePath))
+		{
+			TexturePath = "./Content/Assets/Textures/Default/defaultCursor.png";
+		}
+		if (LoadTextureDirect(TexturePath))
+		{
+			LOG("Loaded texture: {}", TexturePath);
+			WatchedTexturePath = TexturePath;
 
-    // =========================================================================
-    // Main Loop
-    // =========================================================================
-    void WaterEngine::Tick()
-    {
-        Subsystem.Time->Tick();
-        Subsystem.AssetLoader->PollCompletedRequests();
+			#ifndef WE_RELEASE
+			TextureWatcher.WatchDirectory("Content/Assets/Textures/Default");
+			TextureWatcher.SetCallback([](const string& FileName)
+			{
+				if (FileName.find("defaultCursor") != string::npos)
+				{
+					LOG("Texture changed: {}", FileName);
+					NeedsReload = true;
+				}
+			});
+			#endif
+		}
 
-        if (!Subsystem.Time->IsPaused())
-        {
-            TickGame();
-        }
-        else
-        {
-            TickPaused();
-        }
-    }
+		LoadRotation();
 
-    void WaterEngine::TickGame()
-    {
-        float DeltaTime = Subsystem.Time->GetDeltaTime();
+		Initialized = true;
+		return true;
+	}
 
-        // Update subsystems
-        Subsystem.Cursor->Update(DeltaTime);
-        Subsystem.GUI->Update(DeltaTime);
-        TimerManager::Get().Tick(DeltaTime);
+	void WaterEngine::TestRun()
+	{
+		if (!Initialized)
+		{
+			if (!Init())
+			{
+				Running = false;
+				return;
+			}
+		}
 
-        // Game tick
-        Tick(DeltaTime);
-        
-        if (Subsystem.GameInst)
-        {
-            Subsystem.GameInst->Tick(DeltaTime);
-        }
+		#ifndef WE_RELEASE
+		TextureWatcher.Update();
+		if (NeedsReload)
+		{
+			NeedsReload = false;
+			TestTextures.erase(WatchedTexturePath);
+			if (LoadTextureDirect(WatchedTexturePath))
+			{
+				LOG("Texture hot reloaded!");
+			}
+		}
+		#endif
 
-        // State management
-        if (Subsystem.GameState->IsTransitionPending())
-        {
-            Subsystem.GameState->ApplyPendingState();
-        }
+		static sf::Clock DeltaClock;
+		ImGui::SFML::Update(*Window, DeltaClock.restart());
 
-        // Input and resources
-        Subsystem.Input->ProcessHeld();
-        Subsystem.AssetLoader->GarbageCycle(DeltaTime);
+		Window->clear(sf::Color::Black);
 
-        // World update
-        if (auto World = Subsystem.World->GetCurrentWorld())
-        {
-            World->BeginPlayGlobal();
-            World->TickGlobal(DeltaTime);
-        }
+		auto It = TestTextures.find(WatchedTexturePath);
+		if (It != TestTextures.end())
+		{
+			sf::Sprite Sprite(It->second);
+			auto Bounds = Sprite.getLocalBounds();
+			Sprite.setOrigin(sf::Vector2f(Bounds.size.x / 2.0f, Bounds.size.y / 2.0f));
+			Sprite.setPosition(sf::Vector2f(400.0f, 300.0f));
+			Sprite.setRotation(sf::degrees(SpriteRotation));
+			Window->draw(Sprite);
+		}
 
-        // Physics
-        Subsystem.Physics->Step(DeltaTime);
-    }
+		if (ShowEditor)
+		{
+			ImGui::Begin("Editor");
+			
+			ImGui::Text("Cursor Sprite");
+			ImGui::SliderFloat("Rotation", &SpriteRotation, 0.0f, 360.0f);
+			
+			if (ImGui::Button("Save"))
+			{
+				SaveRotation();
+				LOG("Rotation saved: {}", SpriteRotation);
+			}
+			ImGui::SameLine();
+			if (ImGui::Button("Load"))
+			{
+				LoadRotation();
+				LOG("Rotation loaded: {}", SpriteRotation);
+			}
+			
+			ImGui::End();
+		}
 
-    void WaterEngine::TickPaused()
-    {
-        float UnscaledDeltaTime = Subsystem.Time->GetUnscaledDeltaTime();
-        
-        Subsystem.Cursor->Update(UnscaledDeltaTime);
-        Subsystem.Input->ProcessHeld();
-        Subsystem.GUI->Update(UnscaledDeltaTime);
-    }
+		ImGui::SFML::Render(*Window);
 
-    void WaterEngine::Render()
-    {
-        Subsystem.Audio->Update();
-        Subsystem.Window->clear(color::Black);
+		Window->display();
 
-        // 1. Begin frame - clear targets, reset views
-        Subsystem.Render->BeginFrame();
+		while (const auto Event = Window->pollEvent())
+		{
+			ImGui::SFML::ProcessEvent(*Window, *Event);
+			
+			if (Event->is<sf::Event::Closed>())
+				Running = false;
+		}
+	}
 
-        // 2. Set up world view from active camera
-        UpdateWorldViewFromCamera();
+	void WaterEngine::ReloadConfig()
+	{
+		if (EngineConfigManager::Reload())
+		{
+			const EngineConfig& Config = EngineConfigManager::Get();
+			LOG("Config reloaded! VSync: {}", Config.Window.VSync);
+			
+			if (Window)
+			{
+				Window->setVerticalSyncEnabled(Config.Window.VSync);
+			}
+		}
+		else
+		{
+			LOG("Failed to reload config");
+		}
+	}
 
-        // 3. Render game world
-        WorldRender();
+	sf::Texture* WaterEngine::LoadTextureDirect(const string& Path)
+	{
+		sf::Texture Texture;
+		
+		if (PHYSFS_isInit())
+		{
+			PHYSFS_File* File = PHYSFS_openRead(Path.c_str());
+			if (File)
+			{
+				PHYSFS_sint64 Size = PHYSFS_fileLength(File);
+				if (Size > 0)
+				{
+					std::vector<uint8> Buffer(Size);
+					PHYSFS_readBytes(File, Buffer.data(), Size);
+					PHYSFS_close(File);
+					
+					if (Texture.loadFromMemory(Buffer.data(), Buffer.size()))
+					{
+						string Name = Path;
+						TestTextures[Name] = std::move(Texture);
+						return &TestTextures[Name];
+					}
+				}
+				PHYSFS_close(File);
+			}
+		}
+		
+		if (!Texture.loadFromFile(Path))
+		{
+			LOG("Failed to load texture: {}", Path);
+			return nullptr;
+		}
 
-        // 4. Render UI
-        Subsystem.Render->ResetToDefaultViews();
-        Subsystem.GUI->Render();
+		string Name = Path;
+		TestTextures[Name] = std::move(Texture);
+		return &TestTextures[Name];
+	}
 
-        // 5. Render cursor to its target
-        Subsystem.Cursor->Render(*Subsystem.Render);
+	const EngineConfig& WaterEngine::GetConfig() const
+	{
+		return EngineConfigManager::Get();
+	}
 
-        // Debug: Draw mouse position if cursor is visible
-        if (DebugDraw::IsEnabled() && Subsystem.Cursor->IsVisible())
-        {
-            DebugDraw::DrawMousePosition(
-                Subsystem.Cursor->GetPosition(),
-                vec2f(EC.RenderResolution.x, EC.RenderResolution.y),
-                Subsystem.Camera.get()
-            );
-        }
+	void WaterEngine::SaveRotation()
+	{
+		std::ofstream File("SpriteRotation.toml");
+		if (File.is_open())
+		{
+			File << "# Sprite Editor Data\n";
+			File << "[Sprite]\n";
+			File << "Rotation = " << SpriteRotation << "\n";
+			File.close();
+		}
+	}
 
-        // 6. Composite game layers (world + UI) with letterboxing
-        sprite Composite = Subsystem.Render->FinishComposite();
-
-        // 7. Draw game to window
-        Subsystem.Window->draw(Composite);
-
-        // 8. Draw cursor directly to window (1:1, no scaling)
-        Subsystem.Render->PresentCursor();
-
-        // 9. Present frame
-        Subsystem.Window->display();
-    }
-
-    void WaterEngine::PostUpdate()
-    {
-        // Reserved for post-frame cleanup if needed
-    }
-
-    void WaterEngine::UpdateWorldViewFromCamera()
-    {
-        if (Subsystem.Camera->HasActiveCamera())
-        {
-            CameraView View;
-            if (Subsystem.Camera->GetCurrentView(View))
-            {
-                Subsystem.Render->SetWorldView(View);
-            }
-        }
-    }
-
-    void WaterEngine::WorldRender()
-    {
-        static vector<RenderDepth> WorldRenderDepths;
-        WorldRenderDepths.clear();
-
-        if (auto World = Subsystem.World->GetCurrentWorld())
-        {
-            World->CollectRenderDepths(WorldRenderDepths);
-        }
-
-        // Sort by depth (Y position) - back to front
-        std::sort(WorldRenderDepths.begin(), WorldRenderDepths.end());
-
-        // Draw sorted world objects
-        for (const auto& RenderCmd : WorldRenderDepths)
-        {
-            Subsystem.Render->Draw(*RenderCmd.Drawable, ERenderLayer::World);
-        }
-
-        // Debug primitives (auto-clears after render)
-        DebugDraw::Render(*Subsystem.Render);
-    }
-
-    // =========================================================================
-    // Event Processing
-    // =========================================================================
-    void WaterEngine::ProcessEvents()
-    {
-        while (const auto Event = Subsystem.Window->pollEvent())
-        {
-            Subsystem.Window->HandleEvent(*Event);
-
-            if (!Subsystem.Window->hasFocus())
-            {
-                continue;
-            }
-
-            // Pass events to GUI and Input subsystems
-            Subsystem.GUI->HandleEvent(*Event);
-            Subsystem.Input->HandleEvent(*Event);
-
-            // Update cursor position on mouse movement
-            Subsystem.Cursor->UpdateFromMouse(vec2f(sf::Mouse::getPosition(*Subsystem.Window)));
-        }
-    }
-
-    // =========================================================================
-    // State Queries
-    // =========================================================================
-    bool WaterEngine::IsRunning() const
-    {
-        return Subsystem.Window->isOpen() && !Subsystem.GameState->IsShutdownRequested();
-    }
-
-    bool WaterEngine::HasFocus() const
-    {
-        return Subsystem.Window->hasFocus();
-    }
-
-} // namespace we
+	void WaterEngine::LoadRotation()
+	{
+		try
+		{
+			toml::table tbl = toml::parse_file("SpriteRotation.toml");
+			if (toml::node_view sprite = tbl["Sprite"])
+			{
+				SpriteRotation = static_cast<float>(sprite["Rotation"].value_or(0.0));
+			}
+		}
+		catch (...)
+		{
+		}
+	}
+}

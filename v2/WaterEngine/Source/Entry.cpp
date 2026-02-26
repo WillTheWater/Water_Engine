@@ -13,21 +13,10 @@ SFML_DEFINE_DISCRETE_GPU_PREFERENCE
 
 int main()
 {
-    auto WE = we::GetEngine();
-    WE->Initialize();
+    auto Demo = we::GetEngine();
 
-    while (WE->IsRunning())
+    while (Demo->IsRunning())
     {
-        WE->ProcessEvents();
-
-        if (!WE->HasFocus())
-        {
-            sf::sleep(sf::microseconds(10));
-            continue;
-        }
-
-        WE->Tick();
-        WE->Render();
-        WE->PostUpdate();
+        Demo->TestRun();
     }
 }

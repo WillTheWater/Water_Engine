@@ -6,50 +6,32 @@
 #pragma once
 
 #include "Core/CoreMinimal.h"
-#include "Framework/EngineSubsystem.h"
-#include "Framework/GameInstance.h"
+#include "Core/EngineConfig.h"
 
 namespace we
 {
-    class WaterEngine
-    {
-    public:
-        WaterEngine();
-        virtual ~WaterEngine();
+	class WaterEngine
+	{
+	public:
+		WaterEngine();
+		virtual ~WaterEngine();
 
-        // Main loop functions
-        void Initialize();
-        void Tick();
-        void Render();
-        void PostUpdate();
-        void ProcessEvents();
+		bool Init();
+		void TestRun();
+		bool IsRunning() const;
 
-        // State queries
-        bool IsRunning() const;
-        bool HasFocus() const;
+		void ReloadConfig();
+		sf::Texture* LoadTextureDirect(const string& Path);
+		const EngineConfig& GetConfig() const;
 
-    protected:
-        // Override to create game-specific GameInstance
-        virtual unique<GameInstance> CreateGameInstance() { return make_unique<GameInstance>(); }
-        
-        // Override hooks for game-specific behavior
-        virtual void Construct() {}
-        virtual void BeginPlay() {}
-        virtual void Tick(float DeltaTime) {}
+		void SaveRotation();
+		void LoadRotation();
 
-    protected:
-        EngineSubsystem Subsystem;
+	private:
+		std::unique_ptr<sf::RenderWindow> Window;
+		bool Running;
+		bool Initialized;
 
-    private:
-        // Construction
-        void PreConstruct();
-        void MountAssetDirectory();
-        void CreateSubsystems();
-
-        // Game loop helpers
-        void TickGame();
-        void TickPaused();
-        void UpdateWorldViewFromCamera();
-        void WorldRender();
-    };
+		dictionary<string, sf::Texture> TestTextures;
+	};
 }

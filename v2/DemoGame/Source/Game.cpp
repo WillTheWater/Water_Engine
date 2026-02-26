@@ -4,17 +4,7 @@
 // =============================================================================
 
 #include "Game.h"
-#include "GameInstance/DemoGameInstance.h"
-#include "Framework/World/World.h"
-#include "Subsystem/WorldSubsystem.h"
-#include "Subsystem/GameStateSubsystem.h"
-#include "Input/InputActions.h"
-#include "GameStateTokens.h"
-#include "Utility/Log.h"
-
-// ========================= LEVELS =========================
-#include "Levels/MainMenu.h"
-#include "Levels/LevelOne.h"
+#include "Entry.h"
 
 namespace we
 {
@@ -22,66 +12,9 @@ namespace we
 	{
 		return make_unique<Game>();
 	}
-	
-	unique<GameInstance> Game::CreateGameInstance()
-	{
-		return make_unique<DemoGameInstance>();
-	}
 
 	Game::Game()
 		: WaterEngine{}
-		, bPaused{ false }
 	{
-		Construct();
-	}
-
-	void Game::Construct()
-	{
-		RegisterLevels();
-
-		Subsystem.GameState->OnStateEnter.Bind(this, &Game::OnStateEnter);
-		Subsystem.GameState->OnStateExit.Bind(this, &Game::OnStateExit);
-	}
-
-	void Game::BeginPlay()
-	{
-		Subsystem.GameState->RequestStateChange(MakeState(EGameState::MainMenu));
-		BindInput();
-	}
-
-	void Game::Tick(float DeltaTime)
-	{
-		
-	}
-
-	void Game::RegisterLevels()
-	{
-		RegisterLevel(MainMenu);
-		RegisterLevel(LevelOne);
-	}
-
-	void Game::OnStateEnter(shared<IGameStateToken> NewState)
-	{
-		Subsystem.World->LoadWorldForState(NewState.get());
-		LOG("Entered state: {}", NewState->GetDebugName());
-	}
-
-	void Game::OnStateExit(shared<IGameStateToken> OldState)
-	{
-		if (OldState)
-		{
-			LOG("Exited state: {}", OldState->GetDebugName());
-		}
-	}
-
-	void Game::BindInput()
-	{
-	
-	}
-
-	void Game::TogglePause()
-	{
-		bPaused = !Subsystem.Time->IsPaused();
-		Subsystem.Time->SetPaused(bPaused);
 	}
 }

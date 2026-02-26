@@ -6,7 +6,7 @@
 cmake_minimum_required(VERSION 3.30.3)
 
 project(WaterEngine
-    VERSION 2.0.0 ## Iteration.Features.BugFixes
+    VERSION 2.0.0
     LANGUAGES C CXX
 )
 

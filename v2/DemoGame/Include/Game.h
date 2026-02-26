@@ -6,8 +6,7 @@
 #pragma once
 
 #include "Core/CoreMinimal.h"
-#include <Framework/WaterEngine.h>
-#include "UI/PauseUI.h"
+#include "Framework/WaterEngine.h"
 
 namespace we
 {
@@ -15,24 +14,5 @@ namespace we
 	{
 	public:
 		Game();
-
-	public:
-		void TogglePause();
-
-	protected:
-		unique<GameInstance> CreateGameInstance() override;
-		
-		virtual void Construct() override;
-		virtual void BeginPlay() override;
-		virtual void Tick(float) override;
-
-	private:
-		bool bPaused;
-
-	private:
-		void RegisterLevels();
-		void OnStateEnter(shared<IGameStateToken> NewState);
-		void OnStateExit(shared<IGameStateToken> OldState);
-		void BindInput();
 	};
 }

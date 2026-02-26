@@ -3,4 +3,6 @@
 // Copyright(C) 2026 Will The Water
 // =============================================================================
 
-#include "AssetDirectory/PakDirectory.h"
+#pragma once
+
+#include "Core/CoreMinimal.h"
