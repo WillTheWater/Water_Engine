@@ -26,6 +26,17 @@ namespace we
 			float TargetFPS = 60.0f;
 		} Window;
 
+		// Render Settings
+		struct RenderConfig
+		{
+			uint ResolutionX = 1920;
+			uint ResolutionY = 1080;
+			bool WorldSmooth = true;
+			bool WorldUISmooth = false;
+			bool ScreenUISmooth = false;
+			bool CursorSmooth = false;
+		} Render;
+
 		// Path Settings
 		struct PathConfig
 		{
@@ -56,6 +67,7 @@ namespace we
 			float MusicVolume = 1.0f;
 			float SFXVolume = 1.0f;
 		} Audio;
+
 	};
 
 	// =============================================================================

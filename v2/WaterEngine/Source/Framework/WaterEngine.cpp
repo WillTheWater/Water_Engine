@@ -10,6 +10,7 @@
 #include "Utility/Log.h"
 #include "Utility/Assert.h"
 #include <exception>
+#include <optional>
 
 // ImGui-SFML
 #include <imgui.h>
@@ -26,18 +27,17 @@ namespace we
 
 	void WaterEngine::PreConstruct()
 	{
-		// Order matters:
-		// 1. Create ResourceSubsystem (no deps)
-		// 2. Mount pak (Release) 
-		// 3. Load config using ResourceSubsystem
-		// 4. Create Window using config values
-		// 5. Create other subsystems
-		// 6. Init Editor
-		
+		// Create ResourceSubsystem first (no deps)
 		MountAssetDirectory();
+		
+		// Load config using ResourceSubsystem
 		LoadEngineConfig();
+		
+		// Create subsystems
 		CreateSubsystems();
-		InitializeEditor();
+		
+		// Create editor
+		EditorInstance = make_unique<Editor>(Subsystem);
 	}
 
 	void WaterEngine::MountAssetDirectory()
@@ -95,19 +95,13 @@ namespace we
 	{
 		const EngineConfig& Config = EngineConfigManager::Get();
 		
-		// Create Window WITH config values
+		// Create all subsystems with their config dependencies
 		Subsystem.Window = make_unique<WindowSubsystem>(Config.Window);
-		
-		// Create other subsystems
-		Subsystem.Render = make_unique<RenderSubsystem>();
+		Subsystem.Camera = make_unique<CameraSubsystem>();
+		Subsystem.Render = make_unique<RenderSubsystem>(Config.Render, *Subsystem.Window);
 		Subsystem.Time = make_unique<TimeSubsystem>();
 		
-		// Subsystem.Worlds created by game project
-	}
-
-	void WaterEngine::InitializeEditor()
-	{
-		EditorInstance = make_unique<Editor>(Subsystem);
+		// Subsystem.Worlds and Subsystem.Resources created earlier
 	}
 
 	void WaterEngine::Initialize()
@@ -191,24 +185,39 @@ namespace we
 
 	void WaterEngine::Render()
 	{
+		// Begin render frame
+		Subsystem.Render->BeginFrame();
+
+		// Get camera view if available
+		std::optional<CameraView> CamView;
+		if (Subsystem.Camera)
+		{
+			CamView = Subsystem.Camera->GetCurrentView();
+		}
+
+		// Set world view (uses camera if available, default if not)
+		Subsystem.Render->SetWorldView(CamView);
+
+		// TODO: Render world actors, UI, etc. via Subsystem.Render->Draw()
+
+		// End frame (display targets)
+		Subsystem.Render->EndFrame();
+
 		// Clear window
 		Subsystem.Window->clear(color::Black);
 
 		if (CurrentMode == EngineMode::Play)
 		{
-			// Full game rendering
-			// TODO: Render world, composite layers, present
+			// Full game rendering - get composited output with letterboxing
+			sprite FinalFrame = Subsystem.Render->FinishComposite();
+			Subsystem.Window->draw(FinalFrame);
+			
+			// Draw cursor on top (1:1 with window)
+			Subsystem.Render->PresentCursor();
 		}
 		else
 		{
-			// Editor mode: render world to texture, then draw UI
-			if (Subsystem.Worlds && Subsystem.Worlds->GetCurrentWorld())
-			{
-				// TODO: Render world to RenderSubsystem's WorldRenderTarget
-				// Subsystem.Render->RenderWorld(Subsystem.Worlds->GetCurrentWorld());
-			}
-
-			// Draw editor UI (shows world texture in viewport)
+			// Editor mode: Editor UI shows world texture via GetWorldTexture()
 			EditorInstance->DrawUI();
 		}
 

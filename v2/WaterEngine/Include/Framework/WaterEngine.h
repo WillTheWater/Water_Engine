@@ -45,7 +45,5 @@ namespace we
 		void MountAssetDirectory();
 		void CreateSubsystems();
 		void LoadEngineConfig();
-		void ApplyEngineConfig();
-		void InitializeEditor();
 	};
 }

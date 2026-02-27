@@ -98,9 +98,9 @@ namespace we
         // Called once per frame from main thread
         void PollCompletedRequests();
 
-        // -------------------------------------------------------------------------
+        // =========================================================================
         // ASYNC LOADING (Callbacks fire on main thread)
-        // -------------------------------------------------------------------------
+        // =========================================================================
 
         void LoadTextureAsync(const string& Path, 
             AssetSuccessCallback<texture> OnSuccess,
@@ -118,9 +118,9 @@ namespace we
             AssetSuccessCallback<vector<uint8>> OnSuccess,
             AssetErrorCallback OnError = nullptr);
 
-        // -------------------------------------------------------------------------
+        // =========================================================================
         // SYNC LOADING (Direct, blocks calling thread)
-        // -------------------------------------------------------------------------
+        // =========================================================================
 
         shared<texture> LoadTextureSync(const string& Path);
         shared<font> LoadFontSync(const string& Path);
@@ -129,9 +129,9 @@ namespace we
         shared<shader> LoadShaderSync(const string& Path, shader::Type Type);
         shared<vector<uint8>> LoadRawDataSync(const string& Path);
 
-        // -------------------------------------------------------------------------
+        // =========================================================================
         // PLACEHOLDER
-        // -------------------------------------------------------------------------
+        // =========================================================================
 
         shared<texture> GetPlaceholderTexture();
 

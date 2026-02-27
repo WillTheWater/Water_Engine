@@ -19,7 +19,6 @@ namespace we
         create(Mode, Config.Title, Style, State);
         
         // Configure VSync / FPS limit
-        // SFML: Use VSync OR FramerateLimit, not both
         ConfigureFrameLimit(Config);
 
         LOG("Window created: {}x{} | VSync: {} | TargetFPS: {}", 

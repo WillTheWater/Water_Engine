@@ -98,6 +98,16 @@ namespace we
 				CurrentConfig.Audio.SFXVolume = static_cast<float>(audio["SFXVolume"].value_or(1.0));
 			}
 
+			if (toml::node_view render = tbl["Render"])
+			{
+				CurrentConfig.Render.ResolutionX = render["ResolutionX"].value_or(1920u);
+				CurrentConfig.Render.ResolutionY = render["ResolutionY"].value_or(1080u);
+				CurrentConfig.Render.WorldSmooth = render["WorldSmooth"].value_or(true);
+				CurrentConfig.Render.WorldUISmooth = render["WorldUISmooth"].value_or(false);
+				CurrentConfig.Render.ScreenUISmooth = render["ScreenUISmooth"].value_or(false);
+				CurrentConfig.Render.CursorSmooth = render["CursorSmooth"].value_or(false);
+			}
+
 			LoadedPath = FilePath;
 			IsLoaded = true;
 			return true;
@@ -176,6 +186,16 @@ namespace we
 				CurrentConfig.Audio.GlobalVolume = static_cast<float>(audio["GlobalVolume"].value_or(1.0));
 				CurrentConfig.Audio.MusicVolume = static_cast<float>(audio["MusicVolume"].value_or(1.0));
 				CurrentConfig.Audio.SFXVolume = static_cast<float>(audio["SFXVolume"].value_or(1.0));
+			}
+
+			if (toml::node_view render = tbl["Render"])
+			{
+				CurrentConfig.Render.ResolutionX = render["ResolutionX"].value_or(1920u);
+				CurrentConfig.Render.ResolutionY = render["ResolutionY"].value_or(1080u);
+				CurrentConfig.Render.WorldSmooth = render["WorldSmooth"].value_or(true);
+				CurrentConfig.Render.WorldUISmooth = render["WorldUISmooth"].value_or(false);
+				CurrentConfig.Render.ScreenUISmooth = render["ScreenUISmooth"].value_or(false);
+				CurrentConfig.Render.CursorSmooth = render["CursorSmooth"].value_or(false);
 			}
 
 			LoadedPath = "pak://" + FilePath;

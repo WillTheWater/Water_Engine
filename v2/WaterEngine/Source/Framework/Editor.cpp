@@ -23,8 +23,6 @@ namespace we
 
     Editor::~Editor()
     {
-        // Don't call Shutdown() here - let it be called explicitly or in Cleanup
-        // Shutdown might access Subsystem which could be in bad state during destruction
     }
 
     void Editor::Initialize()
@@ -179,16 +177,8 @@ namespace we
         ImVec2 availSize = ImGui::GetContentRegionAvail();
 
         // Get world render texture from RenderSubsystem
-        // TODO: Add GetWorldLayerTexture() to RenderSubsystem
-        // For now, placeholder - shows a colored rectangle
-        // const texture& worldTex = Subsystem.Render->GetWorldLayerTexture();
-        // ImGui::Image(worldTex, availSize);
-        
-        ImVec2 cursorPos = ImGui::GetCursorScreenPos();
-        ImDrawList* drawList = ImGui::GetWindowDrawList();
-        drawList->AddRectFilled(cursorPos, 
-            ImVec2(cursorPos.x + availSize.x, cursorPos.y + availSize.y),
-            IM_COL32(86, 164, 183, 255));
+        const texture& worldTex = Subsystem.Render->GetWorldTexture();
+        ImGui::Image(worldTex, availSize);
 
         if (bViewportHovered)
         {
