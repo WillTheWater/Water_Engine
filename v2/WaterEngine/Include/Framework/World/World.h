@@ -6,46 +6,54 @@
 #pragma once
 
 #include "Core/CoreMinimal.h"
+#include "Framework/World/Object.h"
+#include "Framework/World/RenderTypes.h"
 
 namespace we
 {
-	struct EngineSubsystem;
 	class Actor;
+	struct EngineSubsystem;
 
-	// =============================================================================
-	// WORLD - Container for all game objects in a level
-	// =============================================================================
-
-	class World
+	class World : public Object
 	{
 	public:
-		explicit World(EngineSubsystem& Subsystem);
+		World(EngineSubsystem& InSubsystem);
 		virtual ~World();
+
+		void BeginPlayGlobal();
+		void TickGlobal(float DeltaTime);
+		void CollectRenderDepths(vector<RenderDepth>& OutDepths);
+
+		// Dirty flag for render sorting
+		void MarkRenderDirty() { bRenderOrderDirty = true; }
+		bool IsRenderDirty() const { return bRenderOrderDirty; }
 
 		// Lifecycle
 		virtual void Construct();
 		virtual void BeginPlay();
 		virtual void Tick(float DeltaTime);
 
-		void BeginPlayGlobal();
-		void TickGlobal(float DeltaTime);
-
 		// Actor spawning
 		template<typename ActorType, typename... Args>
 		weak<ActorType> SpawnActor(Args&&... args);
 
-		// Access
 		EngineSubsystem& GetSubsystem() const { return Subsystem; }
-		const vector<shared<Actor>>& GetActors() const { return Actors; }
 
 	protected:
+		void AddRenderDepth(const drawable* Drawable, float Depth);
+		void ClearManualRenderDepths();
+
+	private:
+		void ManageActors(float DeltaTime);
+
+	private:
 		EngineSubsystem& Subsystem;
 		vector<shared<Actor>> Actors;
 		vector<shared<Actor>> PendingActors;
 		bool bHasBegunPlay = false;
-
-	private:
-		void ManageActors(float DeltaTime);
+		vector<RenderDepth> ManualRenderDepths;
+		vector<RenderDepth> CachedRenderDepths;
+		bool bRenderOrderDirty = true;
 	};
 
 	template<typename ActorType, typename... Args>
