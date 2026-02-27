@@ -22,6 +22,7 @@ namespace we
 
 		void BeginPlayGlobal();
 		void TickGlobal(float DeltaTime);
+		void Render();
 		void CollectRenderDepths(vector<RenderDepth>& OutDepths);
 
 		// Dirty flag for render sorting
@@ -38,6 +39,7 @@ namespace we
 		weak<ActorType> SpawnActor(Args&&... args);
 
 		EngineSubsystem& GetSubsystem() const { return Subsystem; }
+		const vector<shared<Actor>>& GetActors() const { return Actors; }
 
 	protected:
 		void AddRenderDepth(const drawable* Drawable, float Depth);

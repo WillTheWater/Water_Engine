@@ -140,8 +140,8 @@ namespace we
 		}
 		else
 		{
-			// Default view centered at origin
-			WorldView.setCenter({ 0.0f, 0.0f });
+			// Default view centered at screen center
+			WorldView.setCenter(vec2f(RenderResolution) / 2.0f);
 			WorldView.setSize(vec2f(RenderResolution));
 		}
 

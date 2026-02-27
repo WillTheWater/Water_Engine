@@ -45,6 +45,12 @@ namespace we
 	{
 		ActorPosition = NewPosition;
 		UpdateTransform();
+		
+		// Notify world that render order may need update
+		if (OwningWorld)
+		{
+			OwningWorld->MarkRenderDirty();
+		}
 	}
 
 	void Actor::SetRotation(angle NewRotation)

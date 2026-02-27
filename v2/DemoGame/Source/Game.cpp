@@ -5,6 +5,7 @@
 
 #include "Game.h"
 #include "Entry.h"
+#include "Levels/MainMenu.h"
 
 namespace we
 {
@@ -16,5 +17,14 @@ namespace we
 	Game::Game()
 		: WaterEngine{}
 	{
+	}
+
+	void Game::Initialize()
+	{
+		// Initialize base engine
+		WaterEngine::Initialize();
+		
+		// Load MainMenu world
+		LoadWorld<MainMenu>();
 	}
 }

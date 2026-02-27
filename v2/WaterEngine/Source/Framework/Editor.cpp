@@ -42,13 +42,12 @@ namespace we
     void Editor::OnPlay()
     {
         if (CurrentMode == EditorMode::Play) return;
-        if (!Subsystem.Worlds) return;
 
         SaveWorldState();
         
-        if (auto world = Subsystem.Worlds->GetCurrentWorld())
+        if (Subsystem.CurrentWorld)
         {
-            world->BeginPlayGlobal();
+            Subsystem.CurrentWorld->BeginPlayGlobal();
         }
 
         CurrentMode = EditorMode::Play;
@@ -79,23 +78,19 @@ namespace we
 
     void Editor::SaveWorldState()
     {
-        if (!Subsystem.Worlds) return;
-        
         WorldSnapshot.clear();
-        if (auto world = Subsystem.Worlds->GetCurrentWorld())
+        if (Subsystem.CurrentWorld)
         {
-            // world->Serialize(WorldSnapshot);
+            // Subsystem.CurrentWorld->Serialize(WorldSnapshot);
             // TODO: Implement World::Serialize
         }
     }
 
     void Editor::RestoreWorldState()
     {
-        if (!Subsystem.Worlds) return;
-        
-        if (auto world = Subsystem.Worlds->GetCurrentWorld())
+        if (Subsystem.CurrentWorld)
         {
-            // world->Deserialize(WorldSnapshot);
+            // Subsystem.CurrentWorld->Deserialize(WorldSnapshot);
             // TODO: Implement World::Deserialize
         }
     }
@@ -165,7 +160,7 @@ namespace we
     void Editor::DrawSceneViewport()
     {
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
-        ImGui::Begin("Scene", nullptr, 
+        ImGui::Begin("Viewport", nullptr, 
             ImGuiWindowFlags_NoCollapse | 
             ImGuiWindowFlags_NoScrollbar | 
             ImGuiWindowFlags_NoScrollWithMouse);
@@ -193,14 +188,11 @@ namespace we
     {
         ImGui::Begin("Hierarchy");
 
-        if (!Subsystem.Worlds)
-        {
-            ImGui::Text("WorldSubsystem not initialized");
-        }
-        else if (auto world = Subsystem.Worlds->GetCurrentWorld())
+        if (Subsystem.CurrentWorld)
         {
             // TODO: List all actors
-            ImGui::Text("Actors: (TODO)");
+            ImGui::Text("Actors: (TODO - %zu actors)", 
+                Subsystem.CurrentWorld->GetActors().size());
         }
         else
         {

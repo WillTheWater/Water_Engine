@@ -9,7 +9,7 @@
 
 #include "Interface/IAssetDirector.h"
 #include "Subsystem/ResourceSubsystem.h"
-#include "Subsystem/WorldSubsystem.h"
+#include "Subsystem/WorldFactory.h"
 #include "Subsystem/CameraSubsystem.h"
 #include "Subsystem/TimeSubsystem.h"
 #include "Subsystem/RenderSubsystem.h"
@@ -17,12 +17,14 @@
 
 namespace we
 {
+	class World;
 	class GameInstance;
 
 	struct EngineSubsystem
 	{
 		unique<ResourceSubsystem> Resources;
-		unique<WorldSubsystem> Worlds;
+		unique<WorldFactory> Worlds;  
+		unique<World> CurrentWorld;        
 		unique<CameraSubsystem> Camera;
 		unique<TimeSubsystem> Time;
 		unique<RenderSubsystem> Render;
