@@ -14,10 +14,8 @@ namespace we
 	{
 	}
 
-	void MainMenu::BeginPlayGlobal()
+	void MainMenu::BeginPlay()
 	{
-		World::BeginPlayGlobal();
-
 		// Create background rectangle
 		auto BgActor = SpawnActor<Actor>();
 		if (auto bg = BgActor.lock())
@@ -50,10 +48,8 @@ namespace we
 		}
 	}
 
-	void MainMenu::TickGlobal(float DeltaTime)
+	void MainMenu::Tick(float DeltaTime)
 	{
-		World::TickGlobal(DeltaTime);
-
 		// Simple animation - bob the title card
 		if (auto title = TitleCard.lock())
 		{

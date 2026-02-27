@@ -43,6 +43,9 @@ namespace we
         // Create editor (Debug only)
 #ifndef WE_RELEASE
         EditorInstance = make_unique<Editor>(Subsystem);
+        EditorInstance->OnRequestPlayStop = [this](bool bPlay) {
+            SetMode(bPlay ? EngineMode::Play : EngineMode::Editor);
+        };
 #endif
     }
 
@@ -188,15 +191,8 @@ namespace we
 #ifndef WE_RELEASE
     void WaterEngine::TickEditor(float DeltaTime)
     {
-        // Simulate mode: world ticks, editor UI shows
-        if (EditorInstance->IsSimulating())
-        {
-            if (Subsystem.CurrentWorld)
-            {
-                Subsystem.CurrentWorld->TickGlobal(DeltaTime);
-            }
-        }
-        // Edit mode: world frozen, only editor UI updates
+        // Edit mode: world is frozen, only editor UI updates
+        // World only ticks when in Play mode via TickGame()
     }
 #endif
 
@@ -221,6 +217,14 @@ namespace we
             Subsystem.CurrentWorld->Render();
         }
 
+#ifndef WE_RELEASE
+        // Draw editor grid on top of everything when in editor mode
+        if (CurrentMode != EngineMode::Play)
+        {
+            Subsystem.Render->DrawEditorGrid();
+        }
+#endif
+
         // End frame (display targets)
         Subsystem.Render->EndFrame();
 
@@ -240,7 +244,7 @@ namespace we
         else
         {
             // Editor mode: Editor UI shows world texture via GetWorldTexture()
-            EditorInstance->DrawUI();
+            EditorInstance->DrawUI(CurrentMode == EngineMode::Play);
         }
 #endif
 
@@ -268,6 +272,20 @@ namespace we
             {
                 Subsystem.Window->close();
             }
+
+#ifndef WE_RELEASE
+            // ESC to exit Play mode and return to Editor
+            if (CurrentMode == EngineMode::Play)
+            {
+                if (const auto* keyPressed = Event->getIf<sf::Event::KeyPressed>())
+                {
+                    if (keyPressed->code == sf::Keyboard::Key::Escape)
+                    {
+                        SetMode(EngineMode::Editor);
+                    }
+                }
+            }
+#endif
         }
     }
 

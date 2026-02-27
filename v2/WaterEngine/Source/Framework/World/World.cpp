@@ -8,6 +8,7 @@
 #include "Framework/EngineSubsystem.h"
 #include "Subsystem/RenderSubsystem.h"
 #include "Utility/Math.h"
+#include "Utility/Log.h"
 
 namespace we
 {

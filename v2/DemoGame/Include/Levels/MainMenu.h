@@ -15,8 +15,9 @@ namespace we
 	public:
 		MainMenu(EngineSubsystem& Subsystem);
 
-		void BeginPlayGlobal();
-		void TickGlobal(float DeltaTime);
+		// World overrides - game logic goes here
+		virtual void BeginPlay() override;
+		virtual void Tick(float DeltaTime) override;
 
 	private:
 		weak<Actor> Background;

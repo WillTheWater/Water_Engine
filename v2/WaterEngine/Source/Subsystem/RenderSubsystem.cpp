@@ -68,7 +68,7 @@ namespace we
 	void RenderSubsystem::ClearRenderTargets()
 	{
 		// World gets background color
-		WorldRenderTarget.clear(color{ 86, 164, 183 });
+		WorldRenderTarget.clear(color::Black);
 
 		// UI layers transparent
 		ScreenUIRenderTarget.clear(color::Transparent);
@@ -140,9 +140,9 @@ namespace we
 		}
 		else
 		{
-			// Default view centered at screen center
-			WorldView.setCenter(vec2f(RenderResolution) / 2.0f);
-			WorldView.setSize(vec2f(RenderResolution));
+			// Default view centered at screen center with editor offset and zoom
+			WorldView.setCenter((vec2f(RenderResolution) / 2.0f) + EditorCameraOffset);
+			WorldView.setSize(vec2f(RenderResolution) / EditorZoom);
 		}
 
 		WorldView.setViewport(rectf({ 0.f, 0.f }, { 1.f, 1.f }));
@@ -153,6 +153,55 @@ namespace we
 		WorldPostProcessTarget.setView(WorldView);
 		WorldUIRenderTarget.setView(WorldView);
 		WorldUIPostProcessTarget.setView(WorldView);
+	}
+
+	// =========================================================================
+	// Editor Grid
+	// =========================================================================
+
+	void RenderSubsystem::DrawEditorGrid(float GridSpacing, int Subdivisions)
+	{
+		if (!bGridEnabled) return;
+
+		// Calculate visible area based on current view
+		vec2f viewCenter = CurrentWorldView.getCenter();
+		vec2f viewSize = CurrentWorldView.getSize();
+		
+		float left = viewCenter.x - viewSize.x * 0.5f;
+		float right = viewCenter.x + viewSize.x * 0.5f;
+		float top = viewCenter.y - viewSize.y * 0.5f;
+		float bottom = viewCenter.y + viewSize.y * 0.5f;
+		
+		// Round to nearest grid line
+		float startX = std::floor(left / GridSpacing) * GridSpacing;
+		float endX = std::ceil(right / GridSpacing) * GridSpacing;
+		float startY = std::floor(top / GridSpacing) * GridSpacing;
+		float endY = std::ceil(bottom / GridSpacing) * GridSpacing;
+		
+		sf::VertexArray lines(sf::PrimitiveType::Lines);
+		
+		// Vertical grid lines
+		for (float x = startX; x <= endX; x += GridSpacing)
+		{
+			bool isAxis = (std::abs(x) < 0.001f);
+			color lineColor = isAxis ? GridXAxisColor : GridLineColor;
+			
+			lines.append(sf::Vertex(vec2f(x, top), lineColor));
+			lines.append(sf::Vertex(vec2f(x, bottom), lineColor));
+		}
+		
+		// Horizontal grid lines  
+		for (float y = startY; y <= endY; y += GridSpacing)
+		{
+			bool isAxis = (std::abs(y) < 0.001f);
+			color lineColor = isAxis ? GridYAxisColor : GridLineColor;
+			
+			lines.append(sf::Vertex(vec2f(left, y), lineColor));
+			lines.append(sf::Vertex(vec2f(right, y), lineColor));
+		}
+		
+		// Draw to world target
+		WorldRenderTarget.draw(lines);
 	}
 
 	// =========================================================================
