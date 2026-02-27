@@ -5,13 +5,11 @@
 
 #include "Framework/World/Actor.h"
 #include "Framework/World/World.h"
-#include "Framework/EngineSubsystem.h"
-#include "Subsystem/ResourceSubsystem.h"
 #include "Utility/Math.h"
 
 namespace we
 {
-	Actor::Actor(World* InWorld, const string& TexturePath)
+	Actor::Actor(World* InWorld)
 		: Object()
 		, OwningWorld{ InWorld }
 		, ActorPosition{}
@@ -19,14 +17,6 @@ namespace we
 		, ActorScale{ 1.0f, 1.0f }
 		, bIsVisible{ true }
 	{
-		// Initialize sprite with placeholder or provided texture
-		if (!TexturePath.empty() && OwningWorld)
-		{
-			// TODO: Load texture via ResourceSubsystem
-			// For now, create empty sprite (will be set when texture loads)
-		}
-		
-		Initialize();
 	}
 
 	void Actor::BeginPlay()
@@ -42,31 +32,36 @@ namespace we
 
 	const drawable* Actor::GetDrawable() const
 	{
-		return (bIsVisible && ActorSprite.has_value()) ? &ActorSprite.value() : nullptr;
+		if (!bIsVisible) return nullptr;
+		
+		// Prefer shape for grey boxing, fallback to sprite
+		if (ActorShape) return ActorShape.get();
+		if (ActorSprite.has_value()) return &ActorSprite.value();
+		
+		return nullptr;
 	}
 
 	void Actor::SetPosition(const vec2f& NewPosition)
 	{
 		ActorPosition = NewPosition;
-		UpdateSpriteTransform();
+		UpdateTransform();
 	}
 
 	void Actor::SetRotation(angle NewRotation)
 	{
 		ActorRotation = NewRotation;
-		UpdateSpriteTransform();
+		UpdateTransform();
 	}
 
 	void Actor::SetScale(const vec2f& NewScale)
 	{
 		ActorScale = NewScale;
-		UpdateSpriteTransform();
+		UpdateTransform();
 	}
 
-	void Actor::Initialize()
-	{
-		// Sprite will be initialized when texture is set
-	}
+	// =========================================================================
+	// Sprite
+	// =========================================================================
 
 	void Actor::SetTexture(shared<texture> NewTexture)
 	{
@@ -74,15 +69,14 @@ namespace we
 		{
 			ActorTexture = NewTexture;
 			
-			// Create or recreate sprite with new texture
+			// Create sprite with new texture
 			ActorSprite.emplace(*ActorTexture);
 			
-			// Reset origin to center of new texture
+			// Center origin
 			auto bounds = ActorSprite->getLocalBounds();
 			ActorSprite->setOrigin({ bounds.size.x / 2.0f, bounds.size.y / 2.0f });
 			
-			// Apply current transform
-			UpdateSpriteTransform();
+			UpdateTransform();
 		}
 	}
 
@@ -91,13 +85,64 @@ namespace we
 		if (ActorSprite) ActorSprite->setTextureRect(TexRect);
 	}
 
-	void Actor::SetOrigin(const vec2f& Origin)
+	void Actor::SetSpriteOrigin(const vec2f& Origin)
 	{
 		if (ActorSprite) ActorSprite->setOrigin(Origin);
 	}
 
-	void Actor::UpdateSpriteTransform()
+	// =========================================================================
+	// Shape (Grey Boxing)
+	// =========================================================================
+
+	void Actor::SetShape(unique<shape> NewShape)
 	{
+		ActorShape = std::move(NewShape);
+		UpdateTransform();
+	}
+
+	void Actor::SetShapeColor(const color& Color)
+	{
+		if (ActorShape)
+		{
+			ActorShape->setFillColor(Color);
+		}
+	}
+
+	void Actor::SetAsRectangle(vec2f Size, color FillColor)
+	{
+		auto rect = make_unique<rectangle>(Size);
+		rect->setFillColor(FillColor);
+		rect->setOrigin({ Size.x / 2.0f, Size.y / 2.0f });
+		
+		ActorShape = std::move(rect);
+		UpdateTransform();
+	}
+
+	void Actor::SetAsCircle(float Radius, color FillColor)
+	{
+		auto circ = make_unique<circle>(Radius);
+		circ->setFillColor(FillColor);
+		circ->setOrigin({ Radius, Radius });
+		
+		ActorShape = std::move(circ);
+		UpdateTransform();
+	}
+
+	// =========================================================================
+	// Transform Update
+	// =========================================================================
+
+	void Actor::UpdateTransform()
+	{
+		// Update shape
+		if (ActorShape)
+		{
+			ActorShape->setPosition(ActorPosition);
+			ActorShape->setRotation(ActorRotation);
+			ActorShape->setScale(ActorScale);
+		}
+		
+		// Update sprite
 		if (ActorSprite)
 		{
 			ActorSprite->setPosition(ActorPosition);

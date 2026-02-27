@@ -9,7 +9,6 @@
 
 namespace we
 {
-	// Render depth entry for Y-sorting (2.5D effect)
 	struct RenderDepth
 	{
 		const drawable* Drawable = nullptr;
