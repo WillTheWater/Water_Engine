@@ -14,8 +14,6 @@ int main()
 {
 	auto Engine = we::GetEngine();
 
-	Engine->Initialize();
-
 	while (Engine->IsRunning())
 	{
 		Engine->ProcessEvents();

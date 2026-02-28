@@ -63,9 +63,13 @@ namespace we
 		// Audio Settings
 		struct AudioConfig
 		{
-			float GlobalVolume = 1.0f;
-			float MusicVolume = 1.0f;
-			float SFXVolume = 1.0f;
+			float MasterVolume = 1.0f;
+			float MusicVolume = 0.8f;
+			float AmbientVolume = 0.8f;
+			float SFXVolume = 0.8f;
+			float VoiceVolume = 1.0f;
+			float UIVolume = 1.0f;
+			uint MaxSFXInstances = 32;
 		} Audio;
 
 	};

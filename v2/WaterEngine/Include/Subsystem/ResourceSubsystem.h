@@ -125,7 +125,6 @@ namespace we
         shared<texture> LoadTextureSync(const string& Path);
         shared<font> LoadFontSync(const string& Path);
         shared<soundBuffer> LoadSoundSync(const string& Path);
-        shared<music> LoadMusicSync(const string& Path);
         shared<shader> LoadShaderSync(const string& Path, shader::Type Type);
         shared<vector<uint8>> LoadRawDataSync(const string& Path);
 

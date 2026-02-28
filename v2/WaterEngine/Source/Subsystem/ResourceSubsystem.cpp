@@ -200,17 +200,6 @@ namespace we
             });
     }
 
-    shared<music> ResourceSubsystem::LoadMusicSync(const string& Path)
-    {
-        // Music needs persistent data
-        auto data = LoadRawDataSync(Path);
-        if (!data) return nullptr;
-
-        // TODO: Implement MusicMemoryStream
-        LOG("LoadMusicSync not fully implemented - needs MusicMemoryStream");
-        return nullptr;
-    }
-
     shared<shader> ResourceSubsystem::LoadShaderSync(const string& Path, shader::Type Type)
     {
         auto data = LoadRawDataSync(Path);

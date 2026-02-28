@@ -8,7 +8,6 @@
 #include "Core/CoreMinimal.h"
 #include "Core/EngineConfig.h"
 #include "Framework/EngineSubsystem.h"
-#include "Framework/World/World.h"
 
 // Editor only exists in Debug builds
 #ifndef WE_RELEASE
@@ -23,10 +22,9 @@ namespace we
     {
     public:
         WaterEngine();
-        virtual ~WaterEngine();
+        ~WaterEngine();
 
         // Main loop functions
-        virtual void Initialize();
         void Tick();
         void Render();
         void ProcessEvents();
@@ -37,17 +35,13 @@ namespace we
         bool IsInEditor() const { return CurrentMode == EngineMode::Editor; }
         bool IsPlaying() const { return CurrentMode == EngineMode::Play; }
 
-        // World management - template factory
-        template<typename WorldType>
-        void LoadWorld()
-        {
-            static_assert(std::is_base_of_v<World, WorldType>, "WorldType must derive from World");
-            Subsystem.CurrentWorld = make_unique<WorldType>(Subsystem);
-            Subsystem.CurrentWorld->BeginPlayGlobal();
-        }
-
     protected:
+        // Subsystems - accessible to derived Game classes
         EngineSubsystem Subsystem;
+        
+        // Override hooks for game-specific behavior
+        virtual void Construct() {}
+        virtual void BeginPlay() {}
 
 #ifndef WE_RELEASE
         unique<Editor> EditorInstance;
@@ -56,12 +50,13 @@ namespace we
         EngineMode CurrentMode = EngineMode::Play;  // Release always starts in Play mode
 #endif
 
-        virtual void TickGame(float DeltaTime);
+    private:
+        void Initialize();
+        void TickGame(float DeltaTime);
 #ifndef WE_RELEASE
-        virtual void TickEditor(float DeltaTime);
+        void TickEditor(float DeltaTime);
 #endif
 
-    private:
         void PreConstruct();
         void MountAssetDirectory();
         void CreateSubsystems();

@@ -49,9 +49,9 @@ namespace we
         Subsystem.Render->SetEditorCameraOffset({ 0, 0 });
         Subsystem.Render->SetEditorZoom(1.0f);
         
-        if (Subsystem.CurrentWorld)
+        if (Subsystem.World->GetCurrentWorld())
         {
-            Subsystem.CurrentWorld->BeginPlayGlobal();
+            Subsystem.World->GetCurrentWorld()->BeginPlayGlobal();
         }
 
         LOG("Editor: Entered Play mode");
@@ -70,20 +70,12 @@ namespace we
     void Editor::SaveWorldState()
     {
         WorldSnapshot.clear();
-        if (Subsystem.CurrentWorld)
-        {
-            // Subsystem.CurrentWorld->Serialize(WorldSnapshot);
-            // TODO: Implement World::Serialize
-        }
+        // TODO: Implement world state serialization for play/stop
     }
 
     void Editor::RestoreWorldState()
     {
-        if (Subsystem.CurrentWorld)
-        {
-            // Subsystem.CurrentWorld->Deserialize(WorldSnapshot);
-            // TODO: Implement World::Deserialize
-        }
+        // TODO: Implement world state deserialization for play/stop
     }
 
     // ============================================================================
@@ -449,9 +441,9 @@ namespace we
             ImGuiWindowFlags_NoCollapse | 
             ImGuiWindowFlags_NoResize))
         {
-            if (Subsystem.CurrentWorld)
+            if (Subsystem.World->GetCurrentWorld())
             {
-                const auto& actors = Subsystem.CurrentWorld->GetActors();
+                const auto& actors = Subsystem.World->GetCurrentWorld()->GetActors();
                 
                 for (const auto& actor : actors)
                 {
@@ -533,11 +525,6 @@ namespace we
         if (ImGui::GetIO().WantCaptureMouse || ImGui::GetIO().WantCaptureKeyboard)
         {
             return true;
-        }
-
-        if (bViewportFocused)
-        {
-            // TODO: Camera controls
         }
 
         return false;

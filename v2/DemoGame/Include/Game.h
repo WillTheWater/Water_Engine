@@ -15,6 +15,7 @@ namespace we
 	public:
 		Game();
 
-		virtual void Initialize() override;
+	protected:
+		void Construct() override;
 	};
 }

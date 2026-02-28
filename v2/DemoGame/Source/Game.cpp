@@ -17,14 +17,12 @@ namespace we
 	Game::Game()
 		: WaterEngine{}
 	{
+		Construct();
 	}
 
-	void Game::Initialize()
+	void Game::Construct()
 	{
-		// Initialize base engine
-		WaterEngine::Initialize();
-		
 		// Load MainMenu world
-		LoadWorld<MainMenu>();
+		Subsystem.World->LoadWorld<MainMenu>();
 	}
 }

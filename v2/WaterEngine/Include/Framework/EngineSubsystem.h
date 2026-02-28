@@ -8,8 +8,10 @@
 #include "Core/CoreMinimal.h"
 
 #include "Interface/IAssetDirector.h"
+#include "Subsystem/AudioSubsystem.h"
 #include "Subsystem/ResourceSubsystem.h"
-#include "Subsystem/WorldFactory.h"
+#include "Framework/World/WorldFactory.h"
+#include "Subsystem/WorldSubsystem.h"
 #include "Subsystem/CameraSubsystem.h"
 #include "Subsystem/TimeSubsystem.h"
 #include "Subsystem/RenderSubsystem.h"
@@ -17,15 +19,12 @@
 
 namespace we
 {
-	class World;
-	class GameInstance;
-
 	struct EngineSubsystem
 	{
 		unique<ResourceSubsystem> Resources;
-		unique<WorldFactory> Worlds;  
-		unique<World> CurrentWorld;        
+		unique<WorldSubsystem> World;
 		unique<CameraSubsystem> Camera;
+		unique<AudioSubsystem> Audio;
 		unique<TimeSubsystem> Time;
 		unique<RenderSubsystem> Render;
 		unique<WindowSubsystem> Window;

@@ -93,9 +93,13 @@ namespace we
 
 			if (toml::node_view audio = tbl["Audio"])
 			{
-				CurrentConfig.Audio.GlobalVolume = static_cast<float>(audio["GlobalVolume"].value_or(1.0));
-				CurrentConfig.Audio.MusicVolume = static_cast<float>(audio["MusicVolume"].value_or(1.0));
-				CurrentConfig.Audio.SFXVolume = static_cast<float>(audio["SFXVolume"].value_or(1.0));
+				CurrentConfig.Audio.MasterVolume = static_cast<float>(audio["MasterVolume"].value_or(1.0));
+				CurrentConfig.Audio.MusicVolume = static_cast<float>(audio["MusicVolume"].value_or(0.8));
+				CurrentConfig.Audio.AmbientVolume = static_cast<float>(audio["AmbientVolume"].value_or(0.8));
+				CurrentConfig.Audio.SFXVolume = static_cast<float>(audio["SFXVolume"].value_or(0.8));
+				CurrentConfig.Audio.VoiceVolume = static_cast<float>(audio["VoiceVolume"].value_or(1.0));
+				CurrentConfig.Audio.UIVolume = static_cast<float>(audio["UIVolume"].value_or(1.0));
+				CurrentConfig.Audio.MaxSFXInstances = audio["MaxSFXInstances"].value_or(32u);
 			}
 
 			if (toml::node_view render = tbl["Render"])
@@ -183,9 +187,13 @@ namespace we
 
 			if (toml::node_view audio = tbl["Audio"])
 			{
-				CurrentConfig.Audio.GlobalVolume = static_cast<float>(audio["GlobalVolume"].value_or(1.0));
-				CurrentConfig.Audio.MusicVolume = static_cast<float>(audio["MusicVolume"].value_or(1.0));
-				CurrentConfig.Audio.SFXVolume = static_cast<float>(audio["SFXVolume"].value_or(1.0));
+				CurrentConfig.Audio.MasterVolume = static_cast<float>(audio["MasterVolume"].value_or(1.0));
+				CurrentConfig.Audio.MusicVolume = static_cast<float>(audio["MusicVolume"].value_or(0.8));
+				CurrentConfig.Audio.AmbientVolume = static_cast<float>(audio["AmbientVolume"].value_or(0.8));
+				CurrentConfig.Audio.SFXVolume = static_cast<float>(audio["SFXVolume"].value_or(0.8));
+				CurrentConfig.Audio.VoiceVolume = static_cast<float>(audio["VoiceVolume"].value_or(1.0));
+				CurrentConfig.Audio.UIVolume = static_cast<float>(audio["UIVolume"].value_or(1.0));
+				CurrentConfig.Audio.MaxSFXInstances = audio["MaxSFXInstances"].value_or(32u);
 			}
 
 			if (toml::node_view render = tbl["Render"])

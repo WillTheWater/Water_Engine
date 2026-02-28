@@ -25,6 +25,7 @@ namespace we
     WaterEngine::WaterEngine()
     {
         PreConstruct();
+        Initialize();
     }
 
     WaterEngine::~WaterEngine() = default;
@@ -54,8 +55,8 @@ namespace we
         // Create ResourceSubsystem first - no dependencies
         Subsystem.Resources = make_unique<ResourceSubsystem>();
         
-        // Create WorldFactory
-        Subsystem.Worlds = make_unique<WorldFactory>();
+        // Create WorldSubsystem (owns its own factory)
+        Subsystem.World = make_unique<WorldSubsystem>(Subsystem);
 
 #ifdef WE_RELEASE
         // Release: Mount Content.pak and pass to ResourceSubsystem
@@ -110,10 +111,9 @@ namespace we
         // Create all subsystems with their config dependencies
         Subsystem.Window = make_unique<WindowSubsystem>(Config.Window);
         Subsystem.Camera = make_unique<CameraSubsystem>();
+        Subsystem.Audio  = make_unique<AudioSubsystem>(Config.Audio, *Subsystem.Resources);
         Subsystem.Render = make_unique<RenderSubsystem>(Config.Render, *Subsystem.Window);
         Subsystem.Time   = make_unique<TimeSubsystem>();
-        
-        // Subsystem.Resources, Subsystem.Worlds created earlier in MountAssetDirectory
     }
 
     void WaterEngine::Initialize()
@@ -134,6 +134,9 @@ namespace we
 #endif
 
         LOG("WaterEngine Initialized");
+        
+        // Game-specific construction hook
+        Construct();
     }
 
     void WaterEngine::SetMode(EngineMode NewMode)
@@ -160,6 +163,12 @@ namespace we
         auto DeltaTime = Subsystem.Time->GetDeltaTime();
         Subsystem.Resources->PollCompletedRequests();
 
+        // Update Audio
+        if (Subsystem.Audio)
+        {
+            Subsystem.Audio->Update(DeltaTime);
+        }
+
         // Update ImGui
         ImGui::SFML::Update(*Subsystem.Window, sf::seconds(DeltaTime));
 
@@ -182,9 +191,9 @@ namespace we
     void WaterEngine::TickGame(float DeltaTime)
     {
         // Tick current world if exists
-        if (Subsystem.CurrentWorld)
+        if (Subsystem.World)
         {
-            Subsystem.CurrentWorld->TickGlobal(DeltaTime);
+            Subsystem.World->Tick(DeltaTime);
         }
     }
 
@@ -212,9 +221,9 @@ namespace we
         Subsystem.Render->SetWorldView(CamView);
 
         // Render current world
-        if (Subsystem.CurrentWorld)
+        if (Subsystem.World)
         {
-            Subsystem.CurrentWorld->Render();
+            Subsystem.World->Render();
         }
 
 #ifndef WE_RELEASE
