@@ -7,7 +7,9 @@
 
 #include "Core/CoreMinimal.h"
 #include "Core/AudioTypes.h"
+#include "Core/EngineConfig.h"
 #include "Interface/IAssetDirector.h"
+#include "Core/MusicMemoryStream.h"
 
 #include <thread>
 #include <mutex>
@@ -127,6 +129,9 @@ namespace we
         shared<soundBuffer> LoadSoundSync(const string& Path);
         shared<shader> LoadShaderSync(const string& Path, shader::Type Type);
         shared<vector<uint8>> LoadRawDataSync(const string& Path);
+        
+        // Music loading (returns music with persistent stream for pak support)
+        shared<music> LoadMusic(const string& Path);
 
         // =========================================================================
         // PLACEHOLDER
@@ -158,6 +163,11 @@ namespace we
 
         std::queue<unique<LoadRequestBase>> PendingRequests;
         vector<unique<LoadRequestBase>> CompletedRequests;
+
+        // Music cache (needs persistent data + stream)
+        dictionary<string, shared<vector<uint8>>> MusicDataCache;
+        dictionary<string, shared<MusicMemoryStream>> MusicStreamCache;
+        dictionary<string, weak<music>> MusicCache;
 
         shared<texture> PlaceholderTexture;
     };

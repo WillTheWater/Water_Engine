@@ -35,9 +35,14 @@ namespace we
 
     void WorldSubsystem::StartPlay()
     {
+        LOG("WorldSubsystem::StartPlay called");
         if (CurrentWorld)
         {
             CurrentWorld->BeginPlayGlobal();
+        }
+        else
+        {
+            LOG("WorldSubsystem::StartPlay - No current world!");
         }
     }
 

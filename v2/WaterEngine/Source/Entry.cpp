@@ -13,6 +13,7 @@ SFML_DEFINE_DISCRETE_GPU_PREFERENCE
 int main()
 {
 	auto Engine = we::GetEngine();
+	Engine->Initialize();
 
 	while (Engine->IsRunning())
 	{

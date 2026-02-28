@@ -26,7 +26,6 @@ namespace we
     WaterEngine::WaterEngine()
     {
         PreConstruct();
-        Initialize();
     }
 
     WaterEngine::~WaterEngine() = default;
@@ -136,13 +135,27 @@ namespace we
         LOG("WaterEngine Initialized");
         
         // Game-specific construction hook (loads world, calls PreConstruct)
+        LOG("Calling Construct()...");
         Construct();
+        LOG("Construct() completed");
         
 #ifdef WE_RELEASE
         // Release: No editor, start Play mode immediately
+        LOG("Release mode: Starting Play mode");
         if (Subsystem.World)
         {
-            Subsystem.World->StartPlay();
+            if (Subsystem.World->GetCurrentWorld())
+            {
+                Subsystem.World->StartPlay();
+            }
+            else
+            {
+                LOG("Release mode: CurrentWorld is null!");
+            }
+        }
+        else
+        {
+            LOG("Release mode: World subsystem is null!");
         }
 #endif
     }

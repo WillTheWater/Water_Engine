@@ -6,6 +6,7 @@
 #include "Game.h"
 #include "Entry.h"
 #include "Levels/MainMenu.h"
+#include "Utility/Log.h"
 
 namespace we
 {
@@ -22,7 +23,9 @@ namespace we
 
 	void Game::Construct()
 	{
+		LOG("Game::Construct - START");
 		// Load MainMenu world
 		Subsystem.World->LoadWorld<MainMenu>();
+		LOG("Game::Construct - END");
 	}
 }

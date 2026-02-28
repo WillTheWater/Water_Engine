@@ -70,18 +70,34 @@ if(CMAKE_BUILD_TYPE STREQUAL "Release")
     set(PAK_OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/Content.pak")
     set(STAGING_DIR "${CMAKE_CURRENT_BINARY_DIR}/ContentStaging")
     
+    # Create a cmake script to handle the pak creation
+    file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/PackContent.cmake" "
+# Clean staging
+file(REMOVE_RECURSE \"${STAGING_DIR}\")
+file(MAKE_DIRECTORY \"${STAGING_DIR}\")
+
+# Copy content
+file(COPY \"${CONTENT_SRC_DIR}/\" DESTINATION \"${STAGING_DIR}\")
+
+# Copy configs
+file(MAKE_DIRECTORY \"${STAGING_DIR}/Config\")
+file(COPY \"${CONFIG_SRC_DIR}/\" DESTINATION \"${STAGING_DIR}/Config\")
+file(COPY \"${ENGINE_CONFIG_SOURCE}\" DESTINATION \"${STAGING_DIR}/Config\")
+
+# Create pak (Assets/ will be at root)
+execute_process(
+    COMMAND \${CMAKE_COMMAND} -E tar cf \"${PAK_OUTPUT}\" --format=zip .
+    WORKING_DIRECTORY \"${STAGING_DIR}\"
+)
+")
+    
     add_custom_command(
-        TARGET ${DEMO_GAME} POST_BUILD
-        # Clean staging dir
-        COMMAND ${CMAKE_COMMAND} -E rm -rf ${STAGING_DIR}
-        # Copy Content to staging
-        COMMAND ${CMAKE_COMMAND} -E copy_directory ${CONTENT_SRC_DIR} ${STAGING_DIR}/Content
-        # Copy configs to staging/Content/Config
-        COMMAND ${CMAKE_COMMAND} -E make_directory ${STAGING_DIR}/Content/Config
-        COMMAND ${CMAKE_COMMAND} -E copy_directory ${CONFIG_SRC_DIR} ${STAGING_DIR}/Content/Config
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different ${ENGINE_CONFIG_SOURCE} ${STAGING_DIR}/Content/Config/EngineConfig.ini
-        # Create pak Content
-        COMMAND ${CMAKE_COMMAND} -E chdir ${STAGING_DIR} ${CMAKE_COMMAND} -E tar cf ${PAK_OUTPUT} --format=zip Content
+        OUTPUT ${PAK_OUTPUT}
+        COMMAND ${CMAKE_COMMAND} -P "${CMAKE_CURRENT_BINARY_DIR}/PackContent.cmake"
+        DEPENDS ${CONTENT_SRC_DIR} ${CONFIG_SRC_DIR} ${ENGINE_CONFIG_SOURCE}
         COMMENT "Packing Content.pak"
     )
+    
+    add_custom_target(PackContents ALL DEPENDS ${PAK_OUTPUT})
+    add_dependencies(${DEMO_GAME} PackContents)
 endif()

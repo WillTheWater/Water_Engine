@@ -54,97 +54,61 @@ namespace we
     // Playback
     // ========================================================================
 
-    void AudioSubsystem::PlayMusic(const string& Path, const AudioPlaybackConfig& InConfig)
+    void AudioSubsystem::PlayMusic(const string& Path)
     {
         StopMusic();
 
-        // Load raw data
-        auto data = Resources.LoadRawDataSync(Path);
-        if (!data || data->empty())
+        auto Music = Resources.LoadMusic(Path);
+        if (!Music)
         {
             ERROR("Failed to load music: {}", Path);
             return;
         }
 
-        // Create music with memory stream
         CurrentMusic = we::make_unique<MusicTrack>();
-        CurrentMusic->DataBuffer = data;
-        CurrentMusic->Stream = we::make_unique<MusicMemoryStream>(data);
-        CurrentMusic->Config = InConfig;
-        CurrentMusic->Music = we::make_shared<music>();
+        CurrentMusic->Music = Music;
+        CurrentMusic->Config.bLoop = true;
+        CurrentMusic->Config.Volume = 1.0f;
+        CurrentMusic->CurrentVolume = 1.0f;
+        CurrentMusic->TargetVolume = 1.0f;
 
-        if (!CurrentMusic->Music->openFromStream(*CurrentMusic->Stream))
-        {
-            ERROR("Failed to open music stream: {}", Path);
-            CurrentMusic = nullptr;
-            return;
-        }
-
-        CurrentMusic->Music->setLooping(InConfig.bLoop);
-        CurrentMusic->Music->setPitch(InConfig.Pitch);
-        CurrentMusic->CurrentVolume = InConfig.Volume;
-        CurrentMusic->TargetVolume = InConfig.Volume;
+        Music->setLooping(true);
+        Music->setPitch(1.0f);
         
         ApplyVolumeToMusic(*CurrentMusic);
-        CurrentMusic->Music->play();
+        Music->play();
 
         LOG("Playing music: {}", Path);
     }
 
-    void AudioSubsystem::PlayAmbient(const string& Path, const AudioPlaybackConfig& InConfig)
+    void AudioSubsystem::PlayAmbient(const string& Path)
     {
         StopAmbient();
 
-        auto data = Resources.LoadRawDataSync(Path);
-        if (!data || data->empty())
+        auto Music = Resources.LoadMusic(Path);
+        if (!Music)
         {
             ERROR("Failed to load ambient: {}", Path);
             return;
         }
 
         CurrentAmbient = we::make_unique<MusicTrack>();
-        CurrentAmbient->DataBuffer = data;
-        CurrentAmbient->Stream = we::make_unique<MusicMemoryStream>(data);
-        CurrentAmbient->Config = InConfig;
-        CurrentAmbient->Music = we::make_shared<music>();
+        CurrentAmbient->Music = Music;
+        CurrentAmbient->Config.bLoop = true;
+        CurrentAmbient->Config.Volume = 1.0f;
+        CurrentAmbient->CurrentVolume = 1.0f;
+        CurrentAmbient->TargetVolume = 1.0f;
 
-        if (!CurrentAmbient->Music->openFromStream(*CurrentAmbient->Stream))
-        {
-            ERROR("Failed to open ambient stream: {}", Path);
-            CurrentAmbient = nullptr;
-            return;
-        }
-
-        CurrentAmbient->Music->setLooping(InConfig.bLoop);
-        CurrentAmbient->Music->setPitch(InConfig.Pitch);
-        CurrentAmbient->CurrentVolume = InConfig.Volume;
-        CurrentAmbient->TargetVolume = InConfig.Volume;
+        Music->setLooping(true);
+        Music->setPitch(1.0f);
         
         ApplyVolumeToMusic(*CurrentAmbient);
-        CurrentAmbient->Music->play();
+        Music->play();
+
+        LOG("Playing ambient: {}", Path);
     }
 
-    void AudioSubsystem::CrossfadeMusic(const string& Path, float FadeDuration, const AudioPlaybackConfig& InConfig)
-    {
-        if (CurrentMusic && CurrentMusic->Music && CurrentMusic->Music->getStatus() == music::Status::Playing)
-        {
-            // Fade out current
-            CurrentMusic->TargetVolume = 0.0f;
-            CurrentMusic->FadeSpeed = CurrentMusic->CurrentVolume / FadeDuration;
-        }
-
-        // Start new music at 0 volume, fade in
-        PlayMusic(Path, InConfig);
-        if (CurrentMusic)
-        {
-            CurrentMusic->CurrentVolume = 0.0f;
-            CurrentMusic->TargetVolume = InConfig.Volume;
-            CurrentMusic->FadeSpeed = InConfig.Volume / FadeDuration;
-            ApplyVolumeToMusic(*CurrentMusic);
-        }
-    }
-
-    void AudioSubsystem::PlaySFX(const string& Path, const AudioPlaybackConfig& InConfig)
+    void AudioSubsystem::PlaySFX(const string& Path)
     {
         auto buffer = Resources.LoadSoundSync(Path);
         if (!buffer)
@@ -164,27 +128,20 @@ namespace we
         SFXInstance instance;
         instance.Buffer = buffer;
         instance.Sound = we::make_unique<sound>(*buffer);
-        instance.Config = InConfig;
-        instance.CurrentVolume = InConfig.Volume;
+        instance.Config.bLoop = false;
+        instance.Config.Volume = 1.0f;
+        instance.CurrentVolume = 1.0f;
 
-        instance.Sound->setLooping(InConfig.bLoop);
-        instance.Sound->setPitch(InConfig.Pitch);
+        instance.Sound->setLooping(false);
+        instance.Sound->setPitch(1.0f);
         
-        // Set 3D position if spatial
-        if (InConfig.bSpatial)
-        {
-            instance.Sound->setPosition({ InConfig.Position.x, InConfig.Position.y, 0.0f });
-            instance.Sound->setMinDistance(InConfig.MinDistance);
-            instance.Sound->setAttenuation(DistanceAttenuationFactor);
-        }
-
         ApplyVolumeToSFX(instance);
         instance.Sound->play();
 
         ActiveSFX.push_back(std::move(instance));
     }
 
-    void AudioSubsystem::PlayVoice(const string& Path, const AudioPlaybackConfig& InConfig)
+    void AudioSubsystem::PlayVoice(const string& Path)
     {
         auto buffer = Resources.LoadSoundSync(Path);
         if (!buffer)
@@ -196,7 +153,7 @@ namespace we
         CleanupStoppedSounds();
 
         // Remove oldest voice if at limit
-        while (ActiveVoice.size() >= MaxVoiceInstances && !ActiveVoice.empty())
+        while (ActiveVoice.size() >= 4 && !ActiveVoice.empty())
         {
             ActiveVoice.erase(ActiveVoice.begin());
         }
@@ -204,11 +161,12 @@ namespace we
         SFXInstance instance;
         instance.Buffer = buffer;
         instance.Sound = we::make_unique<sound>(*buffer);
-        instance.Config = InConfig;
-        instance.CurrentVolume = InConfig.Volume;
+        instance.Config.bLoop = false;
+        instance.Config.Volume = 1.0f;
+        instance.CurrentVolume = 1.0f;
 
-        instance.Sound->setLooping(false);  // Voice never loops
-        instance.Sound->setPitch(InConfig.Pitch);
+        instance.Sound->setLooping(false);
+        instance.Sound->setPitch(1.0f);
         
         ApplyVolumeToSFX(instance);
         instance.Sound->play();
@@ -216,9 +174,8 @@ namespace we
         ActiveVoice.push_back(std::move(instance));
     }
 
-    void AudioSubsystem::PlayUI(const string& Path, const AudioPlaybackConfig& InConfig)
+    void AudioSubsystem::PlayUI(const string& Path)
     {
-        // UI sounds bypass pause and use UI channel
         auto buffer = Resources.LoadSoundSync(Path);
         if (!buffer)
         {
@@ -226,21 +183,20 @@ namespace we
             return;
         }
 
-        auto sound = we::make_unique<we::sound>(*buffer);
+        auto snd = we::make_unique<we::sound>(*buffer);
         
         // Calculate UI volume (ignores pause)
-        Volume effectiveVol = InConfig.Volume;
+        Volume effectiveVol = 1.0f;
         if (bMasterMuted || ChannelMuted[static_cast<size_t>(AudioChannel::UI)])
             effectiveVol = 0.0f;
         else
             effectiveVol *= MasterVolume * ChannelVolumes[static_cast<size_t>(AudioChannel::UI)];
         
-        sound->setVolume(effectiveVol * 100.0f);
-        sound->setPitch(InConfig.Pitch);
-        sound->play();
+        snd->setVolume(effectiveVol * 100.0f);
+        snd->setPitch(1.0f);
+        snd->play();
         
-        // UI sounds are fire-and-forget, we don't track them
-        // The sound object will stop and cleanup automatically when destroyed
+        // UI sounds are fire-and-forget
     }
 
     // ========================================================================
@@ -420,7 +376,6 @@ namespace we
     void AudioSubsystem::SetListenerDirection(vec2f Direction)
     {
         ListenerDirection = Direction;
-        // SFML uses Z as forward, we use Y as down on screen
         sf::Listener::setDirection({ Direction.x, Direction.y, -1.0f });
     }
 

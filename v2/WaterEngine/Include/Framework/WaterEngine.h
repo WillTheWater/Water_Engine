@@ -49,7 +49,7 @@ namespace we
         EngineMode CurrentMode = EngineMode::Play;  // Release always starts in Play mode
 #endif
 
-    private:
+    public:
         void Initialize();
         void TickGame(float DeltaTime);
 #ifndef WE_RELEASE

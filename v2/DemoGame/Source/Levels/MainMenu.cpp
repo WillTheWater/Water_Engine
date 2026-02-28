@@ -6,7 +6,6 @@
 #include "Levels/MainMenu.h"
 #include "Framework/World/Actor.h"
 #include "Framework/EngineSubsystem.h"
-#include "Core/AudioTypes.h"
 
 namespace we
 {
@@ -22,8 +21,8 @@ namespace we
 		if (auto bg = BgActor.lock())
 		{
 			bg->SetAsRectangle({ 1920.0f, 1080.0f }, color(20, 30, 50));
-			bg->SetPosition({ 960.0f, 540.0f });  // Center of 1920x1080
-			bg->SetCustomRenderDepth(-1000.0f);  // Force to back, ignores Y position
+			bg->SetPosition({ 960.0f, 540.0f });
+			bg->SetCustomRenderDepth(-1000.0f);
 			Background = bg;
 		}
 
@@ -52,16 +51,9 @@ namespace we
 
 	void MainMenu::BeginPlay()
 	{
-		// Start music and ambient when Play mode starts
-		AudioPlaybackConfig MusicConfig;
-		MusicConfig.bLoop = true;
-		MusicConfig.Volume = 0.7f;
-		Subsystem.Audio->PlayMusic("Assets/Audio/Default/defaultMusic.ogg", MusicConfig);
-		
-		AudioPlaybackConfig AmbientConfig;
-		AmbientConfig.bLoop = true;
-		AmbientConfig.Volume = 0.5f;
-		Subsystem.Audio->PlayAmbient("Assets/Audio/Default/defaultAmbient.ogg", AmbientConfig);
+		// Music and ambient play automatically when game starts
+		Subsystem.Audio->PlayMusic("Assets/Audio/Default/defaultMusic.ogg");
+		Subsystem.Audio->PlayAmbient("Assets/Audio/Default/defaultAmbient.ogg");
 	}
 
 	void MainMenu::EndPlay()

@@ -8,20 +8,18 @@
 #include "Core/CoreMinimal.h"
 #include "Core/AudioTypes.h"
 #include "Core/EngineConfig.h"
-#include "Core/MusicMemoryStream.h"
 
 namespace we
 {
-    // Forward declarations
+    // Forward declaration
     class ResourceSubsystem;
 
     // =========================================================================
-    // Audio Subsystem - Bus-based mixing with streaming music support
+    // Audio Subsystem - Playback control with built-in resource loading
     // =========================================================================
     class AudioSubsystem
     {
     public:
-        // Initialize with config and resource subsystem for loading
         AudioSubsystem(const EngineConfig::AudioConfig& Config, ResourceSubsystem& Resources);
         ~AudioSubsystem();
 
@@ -29,16 +27,13 @@ namespace we
         void Update(float DeltaTime);
 
         // =====================================================================
-        // Playback
+        // Playback (loads automatically via ResourceSubsystem)
         // =====================================================================
-        void PlayMusic(const string& Path, const AudioPlaybackConfig& Config = {});
-        void PlayAmbient(const string& Path, const AudioPlaybackConfig& Config = {});
-        void PlaySFX(const string& Path, const AudioPlaybackConfig& Config = {});
-        void PlayVoice(const string& Path, const AudioPlaybackConfig& Config = {});
-        void PlayUI(const string& Path, const AudioPlaybackConfig& Config = {});
-
-        // Crossfade to new music (fade out current, fade in new)
-        void CrossfadeMusic(const string& Path, float FadeDuration, const AudioPlaybackConfig& Config = {});
+        void PlayMusic(const string& Path);
+        void PlayAmbient(const string& Path);
+        void PlaySFX(const string& Path);
+        void PlayVoice(const string& Path);
+        void PlayUI(const string& Path);
 
         // =====================================================================
         // Stop
@@ -92,9 +87,6 @@ namespace we
         // Internal track structures
         struct MusicTrack
         {
-            // Note: Order matters! Music must be destroyed before Stream
-            unique<MusicMemoryStream> Stream;
-            shared<vector<uint8>> DataBuffer;
             shared<music> Music;
             AudioPlaybackConfig Config;
             Volume CurrentVolume = 1.0f;
@@ -121,10 +113,6 @@ namespace we
     private:
         ResourceSubsystem& Resources;
         const EngineConfig::AudioConfig Config;
-        
-        // Additional audio settings (not in config)
-        static constexpr size_t MaxVoiceInstances = 4;
-        static constexpr float DistanceAttenuationFactor = 1.0f;
 
         // Playback state
         unique<MusicTrack> CurrentMusic;

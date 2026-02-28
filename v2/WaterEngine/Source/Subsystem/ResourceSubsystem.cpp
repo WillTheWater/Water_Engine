@@ -111,9 +111,10 @@ namespace we
         }
 
         vector<uint8> data;
+        LOG("Attempting to read: {}", Path);
         if (!AssetDirector->ReadFile(Path, data))
         {
-            ERROR("Failed to read: {}", Path);
+            ERROR("Failed to read: {} (exists: {})", Path, AssetDirector->Exists(Path));
             return nullptr;
         }
 
@@ -219,6 +220,54 @@ namespace we
                 out = in;
                 return true;
             });
+    }
+
+    shared<music> ResourceSubsystem::LoadMusic(const string& Path)
+    {
+        // Check cache first
+        auto it = MusicCache.find(Path);
+        if (it != MusicCache.end())
+        {
+            if (auto cached = it->second.lock())
+                return cached;
+        }
+
+        if (!AssetDirector)
+        {
+            ERROR("No asset directory for: {}", Path);
+            return nullptr;
+        }
+
+        // Load data if not cached
+        auto& data = MusicDataCache[Path];
+        if (!data)
+        {
+            vector<uint8> raw;
+            LOG("Loading music data: {}", Path);
+            if (!AssetDirector->ReadFile(Path, raw))
+            {
+                ERROR("Failed to read music: {}", Path);
+                return nullptr;
+            }
+            data = make_shared<vector<uint8>>(std::move(raw));
+        }
+
+        // Create stream and music
+        auto stream = make_shared<MusicMemoryStream>(data);
+        auto musicAsset = make_shared<music>();
+
+        if (!musicAsset->openFromStream(*stream))
+        {
+            ERROR("Failed to open music stream: {}", Path);
+            return nullptr;
+        }
+
+        // Store stream and cache music
+        MusicStreamCache[Path] = stream;
+        MusicCache[Path] = musicAsset;
+        
+        LOG("Music loaded: {}", Path);
+        return musicAsset;
     }
 
     shared<texture> ResourceSubsystem::GetPlaceholderTexture()

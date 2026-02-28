@@ -32,6 +32,25 @@ namespace we
 		{
 			LOG("Failed to mount pak: {}", MountedPakPath);
 		}
+		else
+		{
+			LOG("Pak mounted: {}", MountedPakPath);
+			// List some files for debugging
+			char** files = PHYSFS_enumerateFiles("Assets/Audio/Default");
+			if (files)
+			{
+				LOG("Files in Assets/Audio/Default:");
+				for (char** i = files; *i != nullptr; i++)
+				{
+					LOG("  - {}", *i);
+				}
+				PHYSFS_freeList(files);
+			}
+			else
+			{
+				LOG("  (directory not found or empty)");
+			}
+		}
 	}
 
 	PakDirectory::~PakDirectory()
