@@ -32,13 +32,13 @@ namespace we
 
     void WaterEngine::PreConstruct()
     {
-        // Create ResourceSubsystem first (no deps)
-        MountAssetDirectory();
+        // Create ResourceSubsystem first (needed for config loading)
+        CreateResourceSubsystem();
         
         // Load config using ResourceSubsystem
         LoadEngineConfig();
         
-        // Create subsystems
+        // Create remaining subsystems
         CreateSubsystems();
         
         // Create editor (Debug only)
@@ -50,16 +50,12 @@ namespace we
 #endif
     }
 
-    void WaterEngine::MountAssetDirectory()
+    void WaterEngine::CreateResourceSubsystem()
     {
-        // Create ResourceSubsystem first - no dependencies
         Subsystem.Resources = make_unique<ResourceSubsystem>();
-        
-        // Create WorldSubsystem (owns its own factory)
-        Subsystem.World = make_unique<WorldSubsystem>(Subsystem);
 
 #ifdef WE_RELEASE
-        // Release: Mount Content.pak and pass to ResourceSubsystem
+        // Release: Mount Content.pak
         try
         {
             auto pak = make_shared<PakDirectory>("Content.pak");
@@ -71,7 +67,6 @@ namespace we
             LOG("Failed to mount Content.pak: {}", e.what());
         }
 #else
-        // Debug: Use loose files - no pak mounted
         LOG("Debug mode: Using loose files (no pak mounted)");
 #endif
     }
@@ -111,6 +106,7 @@ namespace we
         // Create all subsystems with their config dependencies
         Subsystem.Window = make_unique<WindowSubsystem>(Config.Window);
         Subsystem.Camera = make_unique<CameraSubsystem>();
+        Subsystem.World  = make_unique<WorldSubsystem>(Subsystem);
         Subsystem.Audio  = make_unique<AudioSubsystem>(Config.Audio, *Subsystem.Resources);
         Subsystem.Render = make_unique<RenderSubsystem>(Config.Render, *Subsystem.Window);
         Subsystem.Time   = make_unique<TimeSubsystem>();

@@ -58,8 +58,8 @@ namespace we
 #endif
 
         void PreConstruct();
-        void MountAssetDirectory();
-        void CreateSubsystems();
+        void CreateResourceSubsystem();  // Creates Resources and mounts pak (Release)
+        void CreateSubsystems();         // Creates all other subsystems
         void LoadEngineConfig();
     };
 }
