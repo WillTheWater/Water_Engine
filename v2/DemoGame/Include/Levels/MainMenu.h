@@ -22,6 +22,20 @@ namespace we
 		virtual void Tick(float DeltaTime) override;
 
 	private:
+		// =============================================================================
+		// INPUT SYSTEM TESTS - REMOVE AFTER TESTING
+		// =============================================================================
+		void SetupInputTests();  // Binds all test inputs
+		void CleanupInputTests(); // Unbinds test inputs
+		
+		// Test state tracking
+		bool bTestJumpTriggered = false;
+		bool bTestFireHeld = false;
+		float TestMovementX = 0.0f;
+		float TestMovementY = 0.0f;
+		// END INPUT TESTS
+
+	private:
 		weak<Actor> Background;
 		weak<Actor> TitleCard;
 	};

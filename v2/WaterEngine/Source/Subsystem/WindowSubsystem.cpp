@@ -15,8 +15,11 @@ namespace we
         const sf::VideoMode Mode({ Config.Width, Config.Height });
         const sf::State State = Config.Fullscreen ? sf::State::Fullscreen : sf::State::Windowed;
         const uint Style = sf::Style::Default;
-
+        setKeyRepeatEnabled(false);
         create(Mode, Config.Title, Style, State);
+        
+        // Disable key repeat - InputSubsystem handles held keys via OnHeld callbacks
+        setKeyRepeatEnabled(false);
         
         // Configure VSync / FPS limit
         ConfigureFrameLimit(Config);

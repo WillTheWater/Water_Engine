@@ -201,6 +201,12 @@ namespace we
             Subsystem.Audio->Update(DeltaTime);
         }
 
+        // Update Input (held callbacks)
+        if (Subsystem.Input)
+        {
+            Subsystem.Input->ProcessHeld();
+        }
+
         // Update ImGui
         ImGui::SFML::Update(*Subsystem.Window, sf::seconds(DeltaTime));
 
@@ -217,6 +223,12 @@ namespace we
 #ifndef WE_RELEASE
             TickEditor(DeltaTime);
 #endif
+        }
+
+        // Post-update Input (advance frame counter for IsJustPressed/IsJustReleased)
+        if (Subsystem.Input)
+        {
+            Subsystem.Input->PostUpdate();
         }
     }
 
