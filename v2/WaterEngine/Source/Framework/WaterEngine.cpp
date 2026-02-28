@@ -135,8 +135,16 @@ namespace we
 
         LOG("WaterEngine Initialized");
         
-        // Game-specific construction hook
+        // Game-specific construction hook (loads world, calls PreConstruct)
         Construct();
+        
+#ifdef WE_RELEASE
+        // Release: No editor, start Play mode immediately
+        if (Subsystem.World)
+        {
+            Subsystem.World->StartPlay();
+        }
+#endif
     }
 
     void WaterEngine::SetMode(EngineMode NewMode)
@@ -146,10 +154,20 @@ namespace we
 #ifndef WE_RELEASE
         if (NewMode == EngineMode::Play)
         {
+            // Start Play mode - BeginPlay is called on world
+            if (Subsystem.World)
+            {
+                Subsystem.World->StartPlay();
+            }
             EditorInstance->OnPlay();
         }
         else
         {
+            // End Play mode - EndPlay is called on world
+            if (Subsystem.World)
+            {
+                Subsystem.World->EndPlay();
+            }
             EditorInstance->OnStop();
         }
 #endif

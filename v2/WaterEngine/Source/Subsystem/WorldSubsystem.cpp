@@ -24,12 +24,28 @@ namespace we
         CurrentWorld = Factory.Create(Name, Subsystem);
         if (CurrentWorld)
         {
-            CurrentWorld->BeginPlayGlobal();
+            CurrentWorld->PreConstruct();
             LOG("Loaded world: {}", Name);
         }
         else
         {
             ERROR("Failed to load world '{}': not registered", Name);
+        }
+    }
+
+    void WorldSubsystem::StartPlay()
+    {
+        if (CurrentWorld)
+        {
+            CurrentWorld->BeginPlayGlobal();
+        }
+    }
+
+    void WorldSubsystem::EndPlay()
+    {
+        if (CurrentWorld)
+        {
+            CurrentWorld->EndPlayGlobal();
         }
     }
 

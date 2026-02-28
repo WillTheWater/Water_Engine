@@ -21,6 +21,7 @@ namespace we
 		virtual ~World();
 
 		void BeginPlayGlobal();
+		void EndPlayGlobal();
 		void TickGlobal(float DeltaTime);
 		void Render();
 		void CollectRenderDepths(vector<RenderDepth>& OutDepths);
@@ -30,8 +31,9 @@ namespace we
 		bool IsRenderDirty() const { return bRenderOrderDirty; }
 
 		// Lifecycle
-		virtual void Construct();
-		virtual void BeginPlay();
+		virtual void PreConstruct();   // Setup actors/visuals (Editor & Play)
+		virtual void BeginPlay();      // Game logic start (Play only)
+		virtual void EndPlay();        // Game logic cleanup (Play only)
 		virtual void Tick(float DeltaTime);
 
 		// Actor spawning

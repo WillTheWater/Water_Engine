@@ -15,8 +15,10 @@ namespace we
 	public:
 		MainMenu(EngineSubsystem& Subsystem);
 
-		// World overrides - game logic goes here
+		// World overrides
+		virtual void PreConstruct() override;
 		virtual void BeginPlay() override;
+		virtual void EndPlay() override;
 		virtual void Tick(float DeltaTime) override;
 
 	private:

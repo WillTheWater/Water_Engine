@@ -6,8 +6,8 @@
 #pragma once
 
 #include "Core/CoreMinimal.h"
-#include "Framework/World/WorldFactory.h"
 #include "Framework/World/World.h"
+#include "Framework/World/WorldFactory.h"
 
 namespace we
 {
@@ -25,19 +25,28 @@ namespace we
         // Access factory for registration
         WorldFactory& GetFactory() { return Factory; }
 
-        // World management - template factory
+        // World management - template factory (calls PreConstruct only)
         template<typename WorldType>
         void LoadWorld()
         {
             static_assert(std::is_base_of_v<World, WorldType>, "WorldType must derive from World");
             CurrentWorld = Factory.Create<WorldType>(Subsystem);
-            CurrentWorld->BeginPlayGlobal();
+            if (CurrentWorld)
+            {
+                CurrentWorld->PreConstruct();
+            }
         }
 
         // Load world by name (uses registered factory)
         void LoadWorld(const string& Name);
 
-        // Unload current world
+        // Start Play mode - calls BeginPlay on current world
+        void StartPlay();
+        
+        // End Play mode - calls EndPlay on current world
+        void EndPlay();
+
+        // Stop Play mode - unloads current world
         void UnloadWorld();
 
         // Get current world

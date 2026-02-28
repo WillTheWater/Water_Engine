@@ -92,9 +92,10 @@ namespace we
         // Internal track structures
         struct MusicTrack
         {
-            shared<music> Music;
-            shared<vector<uint8>> DataBuffer;
+            // Note: Order matters! Music must be destroyed before Stream
             unique<MusicMemoryStream> Stream;
+            shared<vector<uint8>> DataBuffer;
+            shared<music> Music;
             AudioPlaybackConfig Config;
             Volume CurrentVolume = 1.0f;
             Volume TargetVolume = 1.0f;

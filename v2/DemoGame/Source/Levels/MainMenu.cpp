@@ -15,19 +15,8 @@ namespace we
 	{
 	}
 
-	void MainMenu::BeginPlay()
+	void MainMenu::PreConstruct()
 	{
-		// Start music and ambient on separate channels
-		AudioPlaybackConfig MusicConfig;
-		MusicConfig.bLoop = true;
-		MusicConfig.Volume = 0.7f;
-		Subsystem.Audio->PlayMusic("Assets/Audio/Default/defaultMusic.ogg", MusicConfig);
-		
-		AudioPlaybackConfig AmbientConfig;
-		AmbientConfig.bLoop = true;
-		AmbientConfig.Volume = 0.5f;
-		Subsystem.Audio->PlayAmbient("Assets/Audio/Default/defaultAmbient.ogg", AmbientConfig);
-		
 		// Create background rectangle with custom render depth (drawn behind everything)
 		auto BgActor = SpawnActor<Actor>();
 		if (auto bg = BgActor.lock())
@@ -59,6 +48,26 @@ namespace we
 				shape->SetPosition({ x, y });
 			}
 		}
+	}
+
+	void MainMenu::BeginPlay()
+	{
+		// Start music and ambient when Play mode starts
+		AudioPlaybackConfig MusicConfig;
+		MusicConfig.bLoop = true;
+		MusicConfig.Volume = 0.7f;
+		Subsystem.Audio->PlayMusic("Assets/Audio/Default/defaultMusic.ogg", MusicConfig);
+		
+		AudioPlaybackConfig AmbientConfig;
+		AmbientConfig.bLoop = true;
+		AmbientConfig.Volume = 0.5f;
+		Subsystem.Audio->PlayAmbient("Assets/Audio/Default/defaultAmbient.ogg", AmbientConfig);
+	}
+
+	void MainMenu::EndPlay()
+	{
+		// Stop all audio when exiting Play mode
+		Subsystem.Audio->StopAll();
 	}
 
 	void MainMenu::Tick(float DeltaTime)

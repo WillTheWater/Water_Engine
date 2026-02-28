@@ -29,7 +29,18 @@ namespace we
         if (!bHasBegunPlay)
         {
             bHasBegunPlay = true;
+            LOG("World BeginPlay");
             BeginPlay();
+        }
+    }
+
+    void World::EndPlayGlobal()
+    {
+        if (bHasBegunPlay)
+        {
+            bHasBegunPlay = false;
+            LOG("World EndPlay");
+            EndPlay();
         }
     }
 
@@ -159,7 +170,8 @@ namespace we
         }
     }
 
-    void World::Construct() {}
+    void World::PreConstruct() {}
     void World::BeginPlay() {}
+    void World::EndPlay() {}
     void World::Tick(float DeltaTime) {}
 }
