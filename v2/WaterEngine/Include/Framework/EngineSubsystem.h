@@ -10,6 +10,7 @@
 #include "Interface/IAssetDirector.h"
 #include "Subsystem/AudioSubsystem.h"
 #include "Subsystem/ResourceSubsystem.h"
+#include "Subsystem/InputSubsystem.h"
 #include "Framework/World/WorldFactory.h"
 #include "Subsystem/WorldSubsystem.h"
 #include "Subsystem/CameraSubsystem.h"
@@ -25,6 +26,7 @@ namespace we
 		unique<WorldSubsystem> World;
 		unique<CameraSubsystem> Camera;
 		unique<AudioSubsystem> Audio;
+		unique<InputSubsystem> Input;
 		unique<TimeSubsystem> Time;
 		unique<RenderSubsystem> Render;
 		unique<WindowSubsystem> Window;

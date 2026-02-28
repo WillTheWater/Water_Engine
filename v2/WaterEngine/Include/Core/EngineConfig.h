@@ -63,7 +63,7 @@ namespace we
 		// Audio Settings
 		struct AudioConfig
 		{
-			float MasterVolume = 1.0f;
+			float MasterVolume = 0.4f;
 			float MusicVolume = 0.8f;
 			float AmbientVolume = 0.8f;
 			float SFXVolume = 0.8f;

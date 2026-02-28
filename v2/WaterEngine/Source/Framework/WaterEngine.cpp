@@ -111,6 +111,7 @@ namespace we
         Subsystem.Camera = make_unique<CameraSubsystem>();
         Subsystem.World  = make_unique<WorldSubsystem>(Subsystem);
         Subsystem.Audio  = make_unique<AudioSubsystem>(Config.Audio, *Subsystem.Resources);
+        Subsystem.Input  = make_unique<InputSubsystem>();
         Subsystem.Render = make_unique<RenderSubsystem>(Config.Render, *Subsystem.Window);
         Subsystem.Time   = make_unique<TimeSubsystem>();
     }
@@ -322,10 +323,17 @@ namespace we
                     if (keyPressed->code == sf::Keyboard::Key::Escape)
                     {
                         SetMode(EngineMode::Editor);
+                        continue;  // Don't pass ESC to Input subsystem
                     }
                 }
             }
 #endif
+
+            // Game input only in Play mode with window focus
+            if (Subsystem.Input && CurrentMode == EngineMode::Play && Subsystem.Window->hasFocus())
+            {
+                Subsystem.Input->HandleEvent(*Event);
+            }
         }
     }
 
