@@ -38,10 +38,11 @@ namespace we
 		template<typename ActorType, typename... Args>
 		weak<ActorType> SpawnActor(Args&&... args);
 
-		EngineSubsystem& GetSubsystem() const { return Subsystem; }
 		const vector<shared<Actor>>& GetActors() const { return Actors; }
 
 	protected:
+		// Direct subsystem access for derived worlds
+		EngineSubsystem& Subsystem;
 		// Register a manual drawable for rendering (not an actor)
 		// Use this for debug overlays, effects, etc. that aren't actors
 		// For actors, use Actor::SetCustomRenderDepth() instead
@@ -52,7 +53,6 @@ namespace we
 		void ManageActors(float DeltaTime);
 
 	private:
-		EngineSubsystem& Subsystem;
 		vector<shared<Actor>> Actors;
 		vector<shared<Actor>> PendingActors;
 		bool bHasBegunPlay = false;

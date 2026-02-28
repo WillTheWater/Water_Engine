@@ -6,6 +6,7 @@
 #include "Levels/MainMenu.h"
 #include "Framework/World/Actor.h"
 #include "Framework/EngineSubsystem.h"
+#include "Core/AudioTypes.h"
 
 namespace we
 {
@@ -16,6 +17,17 @@ namespace we
 
 	void MainMenu::BeginPlay()
 	{
+		// Start music and ambient on separate channels
+		AudioPlaybackConfig MusicConfig;
+		MusicConfig.bLoop = true;
+		MusicConfig.Volume = 0.7f;
+		Subsystem.Audio->PlayMusic("Assets/Audio/Default/defaultMusic.ogg", MusicConfig);
+		
+		AudioPlaybackConfig AmbientConfig;
+		AmbientConfig.bLoop = true;
+		AmbientConfig.Volume = 0.5f;
+		Subsystem.Audio->PlayAmbient("Assets/Audio/Default/defaultAmbient.ogg", AmbientConfig);
+		
 		// Create background rectangle with custom render depth (drawn behind everything)
 		auto BgActor = SpawnActor<Actor>();
 		if (auto bg = BgActor.lock())

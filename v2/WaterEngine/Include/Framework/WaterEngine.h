@@ -39,9 +39,8 @@ namespace we
         // Subsystems - accessible to derived Game classes
         EngineSubsystem Subsystem;
         
-        // Override hooks for game-specific behavior
+        // Override hooks for game
         virtual void Construct() {}
-        virtual void BeginPlay() {}
 
 #ifndef WE_RELEASE
         unique<Editor> EditorInstance;

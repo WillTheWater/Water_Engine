@@ -6,6 +6,7 @@
 #include "Framework/WaterEngine.h"
 #include "Framework/World/World.h"
 #include "AssetDirectory/PakDirectory.h"
+#include "AssetDirectory/FileDirectory.h"
 #include "Utility/Log.h"
 #include "Utility/Assert.h"
 #include <exception>
@@ -67,7 +68,10 @@ namespace we
             LOG("Failed to mount Content.pak: {}", e.what());
         }
 #else
-        LOG("Debug mode: Using loose files (no pak mounted)");
+        // Debug: Use loose files from Content directory
+        auto fileDir = make_shared<FileDirectory>("Content");
+        Subsystem.Resources->SetAssetDirectory(fileDir);
+        LOG("Debug mode: Using loose files from Content/");
 #endif
     }
 
