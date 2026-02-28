@@ -16,12 +16,13 @@ namespace we
 
 	void MainMenu::BeginPlay()
 	{
-		// Create background rectangle
+		// Create background rectangle with custom render depth (drawn behind everything)
 		auto BgActor = SpawnActor<Actor>();
 		if (auto bg = BgActor.lock())
 		{
 			bg->SetAsRectangle({ 1920.0f, 1080.0f }, color(20, 30, 50));
 			bg->SetPosition({ 960.0f, 540.0f });  // Center of 1920x1080
+			bg->SetCustomRenderDepth(-1000.0f);  // Force to back, ignores Y position
 			Background = bg;
 		}
 

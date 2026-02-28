@@ -139,6 +139,56 @@ namespace we
                 if (ImGui::Button("1.5x", ImVec2(40, 0))) { FontScale = 1.5f; ImGui::GetIO().FontGlobalScale = 1.5f; }
                 ImGui::SameLine();
                 if (ImGui::Button("2x", ImVec2(40, 0))) { FontScale = 2.0f; ImGui::GetIO().FontGlobalScale = 2.0f; }
+                
+                ImGui::SeparatorText("Grid");
+                bool gridEnabled = Subsystem.Render->IsGridEnabled();
+                if (ImGui::Checkbox("Show Grid", &gridEnabled))
+                {
+                    Subsystem.Render->SetGridEnabled(gridEnabled);
+                }
+                
+                bool originEnabled = Subsystem.Render->IsGridOriginEnabled();
+                if (ImGui::Checkbox("Show Origin", &originEnabled))
+                {
+                    Subsystem.Render->SetGridOriginEnabled(originEnabled);
+                }
+                
+                if (ImGui::BeginMenu("Grid Colors"))
+                {
+                    auto gridColor = Subsystem.Render->GetGridColor();
+                    float gridColorF[4] = { gridColor.r / 255.0f, gridColor.g / 255.0f, gridColor.b / 255.0f, gridColor.a / 255.0f };
+                    if (ImGui::ColorEdit4("Grid Lines", gridColorF))
+                    {
+                        Subsystem.Render->SetGridColor(color(
+                            static_cast<uint8>(gridColorF[0] * 255),
+                            static_cast<uint8>(gridColorF[1] * 255),
+                            static_cast<uint8>(gridColorF[2] * 255),
+                            static_cast<uint8>(gridColorF[3] * 255)));
+                    }
+
+                    auto xAxisColor = Subsystem.Render->GetGridXAxisColor();
+                    float xAxisColorF[4] = { xAxisColor.r / 255.0f, xAxisColor.g / 255.0f, xAxisColor.b / 255.0f, xAxisColor.a / 255.0f };
+                    if (ImGui::ColorEdit4("X Axis", xAxisColorF))
+                    {
+                        Subsystem.Render->SetGridXAxisColor(color(
+                            static_cast<uint8>(xAxisColorF[0] * 255),
+                            static_cast<uint8>(xAxisColorF[1] * 255),
+                            static_cast<uint8>(xAxisColorF[2] * 255),
+                            static_cast<uint8>(xAxisColorF[3] * 255)));
+                    }
+
+                    auto yAxisColor = Subsystem.Render->GetGridYAxisColor();
+                    float yAxisColorF[4] = { yAxisColor.r / 255.0f, yAxisColor.g / 255.0f, yAxisColor.b / 255.0f, yAxisColor.a / 255.0f };
+                    if (ImGui::ColorEdit4("Y Axis", yAxisColorF))
+                    {
+                        Subsystem.Render->SetGridYAxisColor(color(
+                            static_cast<uint8>(yAxisColorF[0] * 255),
+                            static_cast<uint8>(yAxisColorF[1] * 255),
+                            static_cast<uint8>(yAxisColorF[2] * 255),
+                            static_cast<uint8>(yAxisColorF[3] * 255)));
+                    }
+                    ImGui::EndMenu();
+                }
                 ImGui::EndMenu();
             }
 
@@ -355,9 +405,10 @@ namespace we
             );
             ImGui::SetCursorPos(cursorPos);
 
-            // Draw the world texture
+            // Draw the world texture (flip Y to match SFML's coordinate system)
             const texture& worldTex = Subsystem.Render->GetWorldTexture();
-            ImGui::Image(worldTex, displaySize);
+            ImTextureID texID = (ImTextureID)(intptr_t)worldTex.getNativeHandle();
+            ImGui::Image(texID, displaySize, ImVec2(0, 1), ImVec2(1, 0));
 
             // Overlay: resolution info
             ImVec2 windowPos = ImGui::GetWindowPos();
@@ -441,9 +492,11 @@ namespace we
                 ImGui::SeparatorText("Transform");
                 
                 vec2f pos = SelectedActor->GetPosition();
-                if (ImGui::DragFloat2("Position", &pos.x, 1.0f))
+                float posArr[2] = { pos.x, pos.y };
+                // Drag to change, Ctrl+Click or Double-click to type exact value
+                if (ImGui::DragFloat2("Position", posArr, 1.0f, -999999.0f, 999999.0f, "%.2f"))
                 {
-                    SelectedActor->SetPosition(pos);
+                    SelectedActor->SetPosition({ posArr[0], posArr[1] });
                 }
 
                 bool visible = SelectedActor->IsVisible();
@@ -464,48 +517,6 @@ namespace we
             // Mouse Position
             ImGui::SeparatorText("Mouse");
             ImGui::Text("World: %.1f, %.1f", MouseWorldPos.x, MouseWorldPos.y);
-
-            // Grid Settings
-            ImGui::SeparatorText("Grid Settings");
-            
-            bool gridEnabled = Subsystem.Render->IsGridEnabled();
-            if (ImGui::Checkbox("Show Grid", &gridEnabled))
-            {
-                Subsystem.Render->SetGridEnabled(gridEnabled);
-            }
-
-            auto gridColor = Subsystem.Render->GetGridColor();
-            float gridColorF[4] = { gridColor.r / 255.0f, gridColor.g / 255.0f, gridColor.b / 255.0f, gridColor.a / 255.0f };
-            if (ImGui::ColorEdit4("Grid Lines", gridColorF))
-            {
-                Subsystem.Render->SetGridColor(color(
-                    static_cast<uint8>(gridColorF[0] * 255),
-                    static_cast<uint8>(gridColorF[1] * 255),
-                    static_cast<uint8>(gridColorF[2] * 255),
-                    static_cast<uint8>(gridColorF[3] * 255)));
-            }
-
-            auto xAxisColor = Subsystem.Render->GetGridXAxisColor();
-            float xAxisColorF[4] = { xAxisColor.r / 255.0f, xAxisColor.g / 255.0f, xAxisColor.b / 255.0f, xAxisColor.a / 255.0f };
-            if (ImGui::ColorEdit4("X Axis", xAxisColorF))
-            {
-                Subsystem.Render->SetGridXAxisColor(color(
-                    static_cast<uint8>(xAxisColorF[0] * 255),
-                    static_cast<uint8>(xAxisColorF[1] * 255),
-                    static_cast<uint8>(xAxisColorF[2] * 255),
-                    static_cast<uint8>(xAxisColorF[3] * 255)));
-            }
-
-            auto yAxisColor = Subsystem.Render->GetGridYAxisColor();
-            float yAxisColorF[4] = { yAxisColor.r / 255.0f, yAxisColor.g / 255.0f, yAxisColor.b / 255.0f, yAxisColor.a / 255.0f };
-            if (ImGui::ColorEdit4("Y Axis", yAxisColorF))
-            {
-                Subsystem.Render->SetGridYAxisColor(color(
-                    static_cast<uint8>(yAxisColorF[0] * 255),
-                    static_cast<uint8>(yAxisColorF[1] * 255),
-                    static_cast<uint8>(yAxisColorF[2] * 255),
-                    static_cast<uint8>(yAxisColorF[3] * 255)));
-            }
         }
         ImGui::End();
         ImGui::PopStyleColor();
@@ -555,9 +566,9 @@ namespace we
             vec2f currentOffset = Subsystem.Render->GetEditorCameraOffset();
             
             if (ImGui::IsKeyDown(ImGuiKey_W) || ImGui::IsKeyDown(ImGuiKey_UpArrow))
-                currentOffset.y += panSpeed;
-            if (ImGui::IsKeyDown(ImGuiKey_S) || ImGui::IsKeyDown(ImGuiKey_DownArrow))
                 currentOffset.y -= panSpeed;
+            if (ImGui::IsKeyDown(ImGuiKey_S) || ImGui::IsKeyDown(ImGuiKey_DownArrow))
+                currentOffset.y += panSpeed;
             if (ImGui::IsKeyDown(ImGuiKey_A) || ImGui::IsKeyDown(ImGuiKey_LeftArrow))
                 currentOffset.x -= panSpeed;
             if (ImGui::IsKeyDown(ImGuiKey_D) || ImGui::IsKeyDown(ImGuiKey_RightArrow))
@@ -584,7 +595,7 @@ namespace we
                 // Adjust delta by zoom level (dragging same distance should move view same amount regardless of zoom)
                 vec2f currentOffset = Subsystem.Render->GetEditorCameraOffset();
                 currentOffset.x -= delta.x / Subsystem.Render->GetEditorZoom();
-                currentOffset.y += delta.y / Subsystem.Render->GetEditorZoom();
+                currentOffset.y -= delta.y / Subsystem.Render->GetEditorZoom();
                 Subsystem.Render->SetEditorCameraOffset(currentOffset);
                 
                 LastMousePos = currentPos;

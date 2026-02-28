@@ -42,6 +42,9 @@ namespace we
 		const vector<shared<Actor>>& GetActors() const { return Actors; }
 
 	protected:
+		// Register a manual drawable for rendering (not an actor)
+		// Use this for debug overlays, effects, etc. that aren't actors
+		// For actors, use Actor::SetCustomRenderDepth() instead
 		void AddRenderDepth(const drawable* Drawable, float Depth);
 		void ClearManualRenderDepths();
 

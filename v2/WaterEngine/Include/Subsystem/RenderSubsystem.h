@@ -50,6 +50,8 @@ namespace we
 		// Editor grid toggle
 		void SetGridEnabled(bool bEnabled) { bGridEnabled = bEnabled; }
 		bool IsGridEnabled() const { return bGridEnabled; }
+		void SetGridOriginEnabled(bool bEnabled) { bGridOriginEnabled = bEnabled; }
+		bool IsGridOriginEnabled() const { return bGridOriginEnabled; }
 
 		// Editor grid colors
 		void SetGridColor(const color& GridColor) { GridLineColor = GridColor; }
@@ -108,7 +110,8 @@ namespace we
 
 		// Grid settings
 		bool bGridEnabled = true;
-		color GridLineColor = color(120, 120, 120, 160);
+		bool bGridOriginEnabled = true;
+		color GridLineColor = color(255, 255, 255, 120);
 		color GridXAxisColor = color(255, 80, 80);
 		color GridYAxisColor = color(80, 255, 80);
 

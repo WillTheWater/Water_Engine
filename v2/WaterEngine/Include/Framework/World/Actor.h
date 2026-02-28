@@ -7,6 +7,7 @@
 
 #include "Core/CoreMinimal.h"
 #include "Framework/World/Object.h"
+#include <optional>
 
 namespace we
 {
@@ -38,7 +39,15 @@ namespace we
 
 		// Rendering - returns primary drawable (shape or sprite)
 		virtual const drawable* GetDrawable() const;
-		virtual float GetRenderDepth() const { return ActorPosition.y; }
+		
+		// Render depth - returns custom depth if set, otherwise Y position
+		virtual float GetRenderDepth() const { return CustomRenderDepth.value_or(ActorPosition.y); }
+		
+		// Custom render depth - overrides Y-based sorting
+		void SetCustomRenderDepth(float Depth) { CustomRenderDepth = Depth; }
+		void ClearCustomRenderDepth() { CustomRenderDepth.reset(); }
+		bool HasCustomRenderDepth() const { return CustomRenderDepth.has_value(); }
+		
 		void SetVisible(bool bVisible) { bIsVisible = bVisible; }
 		bool IsVisible() const { return bIsVisible; }
 
@@ -79,5 +88,8 @@ namespace we
 		// State
 		bool bIsVisible = true;
 		bool bHasBegunPlay = false;
+		
+		// Custom render depth (overrides Y-based sorting)
+		std::optional<float> CustomRenderDepth;
 	};
 }
