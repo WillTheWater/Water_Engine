@@ -19,11 +19,11 @@ namespace we
 		struct WindowConfig
 		{
 			string Title = "Water Engine";
-			uint Width = 1920;
-			uint Height = 1080;
+			vec2u DefaultSize = { 1920, 1080 };
+			vec2u MinimumSize = { 1280, 720 };
 			bool Fullscreen = false;
 			bool VSync = true;
-			float TargetFPS = 60.0f;
+			uint TargetFPS = 120;
 		} Window;
 
 		// Render Settings

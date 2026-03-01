@@ -4,17 +4,18 @@
 // =============================================================================
 
 #include "Subsystem/RenderSubsystem.h"
+#include "Subsystem/WindowSubsystem.h"
 #include "Utility/Log.h"
 #include "Utility/Assert.h"
 
 namespace we
 {
-	RenderSubsystem::RenderSubsystem(const EngineConfig::RenderConfig& Config, sf::Window& Window)
+	RenderSubsystem::RenderSubsystem(const EngineConfig::RenderConfig& Config, WindowSubsystem& Window)
 		: RenderResolution{ Config.ResolutionX, Config.ResolutionY }
 		, WindowSize{ Window.getSize() }
 		, RenderWindow{ Window }
 	{
-		// Initialize main render targets
+		// Initialize main render targets at fixed render resolution
 		VERIFY(WorldRenderTarget.resize(RenderResolution), "Failed to resize WorldRenderTarget");
 		VERIFY(ScreenUIRenderTarget.resize(RenderResolution), "Failed to resize ScreenUIRenderTarget");
 		VERIFY(WorldUIRenderTarget.resize(RenderResolution), "Failed to resize WorldUIRenderTarget");
@@ -45,7 +46,7 @@ namespace we
 
 	void RenderSubsystem::BeginFrame()
 	{
-		// Update cursor target size if window changed
+		// Resize cursor target if window size changed
 		vec2u NewWindowSize = RenderWindow.getSize();
 		if (CursorRenderTarget.getSize() != NewWindowSize)
 		{
@@ -211,7 +212,7 @@ namespace we
 			if (left <= 0 && right >= 0 && top <= 0 && bottom >= 0)
 			{
 				// Draw white circle at origin
-				circle originCircle(8.0f / EditorZoom);  // Size inversely proportional to zoom
+				circle originCircle(8.0f / EditorZoom);
 				originCircle.setFillColor(color::White);
 				originCircle.setOrigin({ 8.0f / EditorZoom, 8.0f / EditorZoom });
 				originCircle.setPosition({ 0, 0 });
@@ -350,21 +351,26 @@ namespace we
 	{
 		CompositeLayers();
 
-		// Calculate letterbox/pillarbox
-		float ScaleX = static_cast<float>(WindowSize.x) / RenderResolution.x;
-		float ScaleY = static_cast<float>(WindowSize.y) / RenderResolution.y;
+		// Calculate letterbox/pillarbox to fit render resolution into window
+		// Get FRESH window size (may have changed due to resize/fullscreen)
+		vec2u CurrentWindowSize = RenderWindow.getSize();
+		float ScaleX = static_cast<float>(CurrentWindowSize.x) / RenderResolution.x;
+		float ScaleY = static_cast<float>(CurrentWindowSize.y) / RenderResolution.y;
+
+		// Maintain aspect ratio (fit inside window)
 		float Scale = std::min(ScaleX, ScaleY);
 
-		float PosX = (WindowSize.x - (RenderResolution.x * Scale)) / 2.0f;
-		float PosY = (WindowSize.y - (RenderResolution.y * Scale)) / 2.0f;
-
-		// Update letterbox view for coordinate mapping
-		UpdateLetterboxView(Scale, PosX, PosY);
+		// Center the sprite
+		float PosX = (CurrentWindowSize.x - (RenderResolution.x * Scale)) / 2.f;
+		float PosY = (CurrentWindowSize.y - (RenderResolution.y * Scale)) / 2.f;
 
 		// Build final sprite
 		sprite FinalSprite(CompositeTarget.getTexture());
 		FinalSprite.setScale({ Scale, Scale });
 		FinalSprite.setPosition({ PosX, PosY });
+
+		// Cache the letterbox view for coordinate mapping
+		UpdateLetterboxView(Scale, PosX, PosY);
 
 		return FinalSprite;
 	}
@@ -373,9 +379,12 @@ namespace we
 	{
 		LetterboxView.setSize(vec2f(RenderResolution));
 		LetterboxView.setCenter(vec2f(RenderResolution) / 2.0f);
+		
+		// Calculate viewport in normalized coordinates (0-1 range)
+		vec2u CurrentWindowSize = RenderWindow.getSize();
 		LetterboxView.setViewport({
-			{ PosX / WindowSize.x, PosY / WindowSize.y },
-			{ (RenderResolution.x * Scale) / WindowSize.x, (RenderResolution.y * Scale) / WindowSize.y }
+			{ PosX / CurrentWindowSize.x, PosY / CurrentWindowSize.y },
+			{ (RenderResolution.x * Scale) / CurrentWindowSize.x, (RenderResolution.y * Scale) / CurrentWindowSize.y }
 		});
 	}
 
@@ -383,12 +392,21 @@ namespace we
 	{
 		CursorRenderTarget.display();
 
-		// Draw cursor 1:1 to window
-		view WindowView(sf::FloatRect({ 0.f, 0.f }, vec2f(WindowSize)));
-		// Note: This needs the actual RenderWindow (sf::RenderWindow) to set view
-		// For now, just draw the sprite
+		// Get current window size for 1:1 cursor rendering
+		vec2u CurrentWindowSize = RenderWindow.getSize();
+
+		// Resize cursor target if window size changed
+		if (CursorRenderTarget.getSize() != CurrentWindowSize)
+		{
+			(void)CursorRenderTarget.resize(CurrentWindowSize);
+		}
+
+		// Draw cursor 1:1 to window (no scaling)
+		view WindowView(sf::FloatRect({ 0.f, 0.f }, vec2f(CurrentWindowSize)));
+		RenderWindow.setView(WindowView);
+
 		sprite CursorSprite(CursorRenderTarget.getTexture());
-		// Window.draw(CursorSprite, sf::BlendAlpha);  // Needs RenderWindow access
+		RenderWindow.draw(CursorSprite, sf::BlendAlpha);
 	}
 
 	const texture& RenderSubsystem::GetWorldTexture() const
@@ -398,9 +416,6 @@ namespace we
 
 	vec2f RenderSubsystem::MapPixelToCoords(vec2i PixelPos) const
 	{
-		// Uses the cached letterbox view
-		// Note: This needs RenderWindow.mapPixelToCoords
-		// For now, return simple mapping
-		return vec2f(PixelPos);
+		return RenderWindow.mapPixelToCoords(PixelPos, LetterboxView);
 	}
 }

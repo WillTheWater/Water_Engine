@@ -311,6 +311,8 @@ namespace we
     {
         while (const auto Event = Subsystem.Window->pollEvent())
         {
+            // Window Event Handling
+            Subsystem.Window->HandleEvent(*Event);
 #ifndef WE_RELEASE
             // Editor gets first dibs (except in Play mode)
             if (CurrentMode != EngineMode::Play)
@@ -320,11 +322,6 @@ namespace we
             }
 #endif
 
-            // Window close
-            if (Event->is<sf::Event::Closed>())
-            {
-                Subsystem.Window->close();
-            }
 
 #ifndef WE_RELEASE
             // ESC to exit Play mode and return to Editor

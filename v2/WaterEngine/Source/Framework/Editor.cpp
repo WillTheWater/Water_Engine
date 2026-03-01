@@ -189,36 +189,6 @@ namespace we
         ImGui::End();
         ImGui::PopStyleVar();
 
-        // === PLAY/STOP CONTROLS ===
-        ImVec2 buttonSize(60, 25);
-        ImVec2 toolbarPos(workPos.x + (workSize.x - buttonSize.x) * 0.5f - 5, workPos.y + 30);
-        
-        ImGui::SetNextWindowPos(toolbarPos);
-        ImGui::SetNextWindowSize(ImVec2(buttonSize.x + 10, buttonSize.y + 10));
-        ImGui::Begin("##PlayControls", nullptr,
-            ImGuiWindowFlags_NoTitleBar |
-            ImGuiWindowFlags_NoResize |
-            ImGuiWindowFlags_NoMove |
-            ImGuiWindowFlags_NoScrollbar |
-            ImGuiWindowFlags_NoBackground);
-
-        if (!bIsPlaying)
-        {
-            if (ImGui::Button("Play", buttonSize))
-            {
-                if (OnRequestPlayStop) OnRequestPlayStop(true);
-            }
-        }
-        else
-        {
-            if (ImGui::Button("Stop", buttonSize))
-            {
-                if (OnRequestPlayStop) OnRequestPlayStop(false);
-            }
-        }
-
-        ImGui::End();
-
         // === RESIZE HANDLES ===
         // Draw these LAST so they appear on top of everything
         // Vertical resize handle between left panels and Details
@@ -335,7 +305,7 @@ namespace we
         // VIEWPORT (upper left)
         ImGui::SetNextWindowPos(ImVec2(workPos.x, workPos.y + menuBarHeight));
         ImGui::SetNextWindowSize(ImVec2(leftPanelWidth, viewportHeight));
-        DrawViewport();
+        DrawViewport(bIsPlaying);
 
         // WORLD (below viewport)
         ImGui::SetNextWindowPos(ImVec2(workPos.x, workPos.y + menuBarHeight + viewportHeight + resizeHandleWidth));
@@ -348,7 +318,7 @@ namespace we
         DrawDetails();
     }
 
-    void Editor::DrawViewport()
+    void Editor::DrawViewport(bool bIsPlaying)
     {
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
         
@@ -402,11 +372,54 @@ namespace we
             ImTextureID texID = (ImTextureID)(intptr_t)worldTex.getNativeHandle();
             ImGui::Image(texID, displaySize, ImVec2(0, 1), ImVec2(1, 0));
 
-            // Overlay: resolution info
+            // Overlay: resolution info (top-left) - ORIGINAL POSITION
             ImVec2 windowPos = ImGui::GetWindowPos();
             ImVec2 absPos(windowPos.x + cursorPos.x + 5, windowPos.y + cursorPos.y + 5);
             std::string info = std::to_string(renderRes.x) + "x" + std::to_string(renderRes.y);
             ImGui::GetForegroundDrawList()->AddText(absPos, IM_COL32(255, 255, 255, 200), info.c_str());
+
+            // === PLAY/STOP + RECENTER BUTTONS (Top-Right of Viewport) ===
+            ImVec2 buttonSize(80, 35);
+            float buttonSpacing = 8.0f;
+            
+            // Calculate button positions (absolute screen coords)
+            float buttonsRight = windowPos.x + cursorPos.x + displaySize.x - 10;
+            float buttonsTop = windowPos.y + cursorPos.y + 10;
+            
+            // Recenter button position (rightmost)
+            ImVec2 recenterPos(buttonsRight - buttonSize.x, buttonsTop);
+            // Play/Stop button position (left of Recenter)
+            ImVec2 playPos(buttonsRight - buttonSize.x * 2 - buttonSpacing, buttonsTop);
+            
+            // Draw buttons using ImGui's button API with absolute positioning
+            // Need to use SetCursorScreenPos for absolute positioning
+            ImGui::SetCursorScreenPos(playPos);
+            
+            // Play/Stop button
+            if (!bIsPlaying)
+            {
+                if (ImGui::Button("Play", buttonSize))
+                {
+                    if (OnRequestPlayStop) OnRequestPlayStop(true);
+                }
+            }
+            else
+            {
+                if (ImGui::Button("Stop", buttonSize))
+                {
+                    if (OnRequestPlayStop) OnRequestPlayStop(false);
+                }
+            }
+            
+            // Recenter button - only active in Edit mode
+            ImGui::SetCursorScreenPos(recenterPos);
+            ImGui::BeginDisabled(bIsPlaying);
+            if (ImGui::Button("Recenter", buttonSize))
+            {
+                Subsystem.Render->SetEditorCameraOffset({0,0});
+                Subsystem.Render->SetEditorZoom(1.0f);
+            }
+            ImGui::EndDisabled();
 
             if (bViewportHovered)
             {

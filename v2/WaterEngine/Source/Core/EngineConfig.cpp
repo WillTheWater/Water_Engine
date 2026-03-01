@@ -64,11 +64,29 @@ namespace we
 			if (toml::node_view window = tbl["Window"])
 			{
 				CurrentConfig.Window.Title = window["Title"].value_or("Water Engine");
-				CurrentConfig.Window.Width = window["Width"].value_or(1920u);
-				CurrentConfig.Window.Height = window["Height"].value_or(1080u);
 				CurrentConfig.Window.Fullscreen = window["Fullscreen"].value_or(false);
 				CurrentConfig.Window.VSync = window["VSync"].value_or(true);
 				CurrentConfig.Window.TargetFPS = window["TargetFPS"].value_or(60.0);
+				
+				// DefaultSize as array [width, height]
+				if (auto arr = window["DefaultSize"].as_array())
+				{
+					if (arr->size() >= 2)
+					{
+						CurrentConfig.Window.DefaultSize.x = arr->get(0)->value_or(1920u);
+						CurrentConfig.Window.DefaultSize.y = arr->get(1)->value_or(1080u);
+					}
+				}
+				
+				// MinimumSize as array [width, height]
+				if (auto arr = window["MinimumSize"].as_array())
+				{
+					if (arr->size() >= 2)
+					{
+						CurrentConfig.Window.MinimumSize.x = arr->get(0)->value_or(1280u);
+						CurrentConfig.Window.MinimumSize.y = arr->get(1)->value_or(720u);
+					}
+				}
 			}
 
 			if (toml::node_view paths = tbl["Paths"])
@@ -158,11 +176,29 @@ namespace we
 			if (toml::node_view window = tbl["Window"])
 			{
 				CurrentConfig.Window.Title = window["Title"].value_or("Water Engine");
-				CurrentConfig.Window.Width = window["Width"].value_or(1920u);
-				CurrentConfig.Window.Height = window["Height"].value_or(1080u);
 				CurrentConfig.Window.Fullscreen = window["Fullscreen"].value_or(false);
 				CurrentConfig.Window.VSync = window["VSync"].value_or(true);
 				CurrentConfig.Window.TargetFPS = window["TargetFPS"].value_or(60.0);
+				
+				// DefaultSize as array [width, height]
+				if (auto arr = window["DefaultSize"].as_array())
+				{
+					if (arr->size() >= 2)
+					{
+						CurrentConfig.Window.DefaultSize.x = arr->get(0)->value_or(1920u);
+						CurrentConfig.Window.DefaultSize.y = arr->get(1)->value_or(1080u);
+					}
+				}
+				
+				// MinimumSize as array [width, height]
+				if (auto arr = window["MinimumSize"].as_array())
+				{
+					if (arr->size() >= 2)
+					{
+						CurrentConfig.Window.MinimumSize.x = arr->get(0)->value_or(1280u);
+						CurrentConfig.Window.MinimumSize.y = arr->get(1)->value_or(720u);
+					}
+				}
 			}
 
 			if (toml::node_view paths = tbl["Paths"])

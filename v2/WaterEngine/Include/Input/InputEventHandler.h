@@ -14,11 +14,6 @@ namespace we
 
 	struct InputEventHandler
 	{
-		InputEventHandler(InputSubsystem& InInput)
-			: Input{ InInput }
-		{
-		}
-
 		InputSubsystem& Input;
 
 		void operator()(const sf::Event::JoystickConnected&);

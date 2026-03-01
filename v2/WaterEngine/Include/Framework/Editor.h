@@ -58,7 +58,7 @@ namespace we
     private:
         void DrawMainDockSpace();   // Root docking area
         void DrawMainMenuBar();     // File, Edit, View menus
-        void DrawViewport();        // Game view at render resolution
+        void DrawViewport(bool bIsPlaying);        // Game view at render resolution
         void DrawWorld();           // Actor list (was Hierarchy)
         void DrawDetails();         // Selected actor properties (was Inspector)
 

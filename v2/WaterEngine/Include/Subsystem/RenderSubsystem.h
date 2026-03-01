@@ -13,10 +13,9 @@
 
 namespace we
 {
+	class WindowSubsystem;
 	enum class ERenderLayer { World, ScreenUI, WorldUI, Cursor };
 	enum class EViewSpace { World, Screen };
-
-
 
 	// =========================================================================
 	// RenderSubsystem - Multi-layer rendering with post-processing
@@ -25,7 +24,7 @@ namespace we
 	{
 	public:
 		// Initialize with config and window (for cursor sizing & final output)
-		RenderSubsystem(const EngineConfig::RenderConfig& Config, sf::Window& Window);
+		RenderSubsystem(const EngineConfig::RenderConfig& Config, WindowSubsystem& Window);
 		~RenderSubsystem();
 
 		// Frame management
@@ -102,7 +101,7 @@ namespace we
 		// State
 		vec2u RenderResolution;
 		vec2u WindowSize;
-		sf::Window& RenderWindow;
+		WindowSubsystem& RenderWindow;
 		view CurrentWorldView;
 		view LetterboxView;
 		vec2f EditorCameraOffset;
