@@ -169,6 +169,30 @@ namespace we
 			}
 		}
 		// END INPUT TESTS
+
+		// =============================================================================
+		// PHYSICS BOX CONTROL - Apply input forces to physics box
+		// =============================================================================
+		if (auto box = PhysicsBox.lock())
+		{
+			b2Body* Body = box->GetPhysicsBody();
+			if (Body)
+			{
+				// Apply movement force based on WASD input (top-down, no gravity)
+				float MoveSpeed = 10.0f;  // Force magnitude
+				b2Vec2 Force(TestMovementX * MoveSpeed, TestMovementY * MoveSpeed);
+				Body->ApplyForceToCenter(Force, true);  // true = wake body
+
+				// Apply jump impulse (Space) - adds some Z-like bounce for testing
+				if (bTestJumpTriggered)
+				{
+					bTestJumpTriggered = false;  // Reset jump flag
+					b2Vec2 JumpImpulse(0.0f, -15.0f);  // Upward impulse
+					Body->ApplyLinearImpulseToCenter(JumpImpulse, true);  // true = wake body
+					LOG("[PHYSICS] Applied jump impulse to box");
+				}
+			}
+		}
 	}
 
 	// =============================================================================
@@ -177,16 +201,6 @@ namespace we
 	// =============================================================================
 	void MainMenu::SetupInputTests()
 	{
-		if (!Subsystem.Input)
-		{
-			LOG("[INPUT TEST] Input subsystem is null!");
-			return;
-		}
-
-		LOG("[INPUT TEST] ============================================");
-		LOG("[INPUT TEST] Setting up input bindings...");
-		LOG("[INPUT TEST] ============================================");
-
 		// TEST 1: STATE-BASED INPUT (IsPressed queries in Tick)
 		// Movement: WASD keys
 		Subsystem.Input->Bind(TEST_MOVE_UP, Input::Keyboard{sf::Keyboard::Scan::W});
@@ -276,16 +290,6 @@ namespace we
 		// Left Stick Y axis -> MoveUp (negative) / MoveDown (positive)
 		Subsystem.Input->Bind(TEST_MOVE_UP, Input::JoystickAxis{sf::Joystick::Axis::Y, -0.3f, 0});
 		Subsystem.Input->Bind(TEST_MOVE_DOWN, Input::JoystickAxis{sf::Joystick::Axis::Y, 0.3f, 0});
-		LOG("[INPUT TEST] Bound Left Stick axes for movement (threshold +/-0.3)");
-
-		LOG("[INPUT TEST] ============================================");
-		LOG("[INPUT TEST] All input bindings complete!");
-		LOG("[INPUT TEST] ============================================");
-		LOG("[INPUT TEST] Keyboard: WASD/Arrows (move), Space (jump), E (interact)");
-		LOG("[INPUT TEST] Mouse: Left Click (fire)");
-		LOG("[INPUT TEST] Gamepad: South (A), East (B), Start buttons");
-		LOG("[INPUT TEST] Joystick: Left Stick (movement, threshold +/-0.3)");
-		LOG("[INPUT TEST] ============================================");
 	}
 
 	void MainMenu::CleanupInputTests()

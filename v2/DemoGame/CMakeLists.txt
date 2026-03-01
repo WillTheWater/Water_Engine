@@ -49,12 +49,11 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
         )
     endif()
     
-    # Copy game configs to Content/Config
+    # Create Config directory (game config is now header-only, but engine config goes here)
     add_custom_command(
         TARGET ${DEMO_GAME} POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E make_directory ${CONTENT_DEST_DIR}/Config
-        COMMAND ${CMAKE_COMMAND} -E copy_directory ${CONFIG_SRC_DIR} ${CONTENT_DEST_DIR}/Config
-        COMMENT "Copying Config to Content/Config"
+        COMMENT "Creating Config directory"
     )
     
     # Copy engine config to Content/Config
@@ -81,7 +80,6 @@ file(COPY \"${CONTENT_SRC_DIR}/\" DESTINATION \"${STAGING_DIR}\")
 
 # Copy configs
 file(MAKE_DIRECTORY \"${STAGING_DIR}/Config\")
-file(COPY \"${CONFIG_SRC_DIR}/\" DESTINATION \"${STAGING_DIR}/Config\")
 file(COPY \"${ENGINE_CONFIG_SOURCE}\" DESTINATION \"${STAGING_DIR}/Config\")
 
 # Create pak (Assets/ will be at root)
@@ -94,7 +92,7 @@ execute_process(
     add_custom_command(
         OUTPUT ${PAK_OUTPUT}
         COMMAND ${CMAKE_COMMAND} -P "${CMAKE_CURRENT_BINARY_DIR}/PackContent.cmake"
-        DEPENDS ${CONTENT_SRC_DIR} ${CONFIG_SRC_DIR} ${ENGINE_CONFIG_SOURCE}
+        DEPENDS ${CONTENT_SRC_DIR} ${ENGINE_CONFIG_SOURCE}
         COMMENT "Packing Content.pak"
     )
     
