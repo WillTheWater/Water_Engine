@@ -7,6 +7,7 @@
 
 #include "Core/CoreMinimal.h"
 #include "Framework/World/Object.h"
+#include "Framework/Physics/PhysicsTypes.h"
 #include <optional>
 
 // Forward declare Box2D body
@@ -18,9 +19,8 @@ namespace we
 
 	// Actor can render as sprite, shape, or both
 	enum class EActorRenderMode { None, Sprite, Shape, Both };
-
-	// Physics type for actor
-	enum class PhysicsType { None, Static, Kinematic, Dynamic };
+	
+	// PhysicsType is now in Framework/Physics/PhysicsTypes.h
 
 	class Actor : public Object
 	{
