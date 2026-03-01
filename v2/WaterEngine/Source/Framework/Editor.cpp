@@ -507,7 +507,7 @@ namespace we
             {
                 ImGui::SeparatorText("Transform");
                 
-                vec2f pos = SelectedActor->GetPosition();
+                vec2f pos = SelectedActor->GetActorPosition();
                 float posArr[2] = { pos.x, pos.y };
                 // Drag to change, Ctrl+Click or Double-click to type exact value
                 if (ImGui::DragFloat2("Position", posArr, 1.0f, -999999.0f, 999999.0f, "%.2f"))

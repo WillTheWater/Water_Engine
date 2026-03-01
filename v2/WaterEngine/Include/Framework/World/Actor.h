@@ -9,6 +9,9 @@
 #include "Framework/World/Object.h"
 #include <optional>
 
+// Forward declare Box2D body
+class b2Body;
+
 namespace we
 {
 	class World;
@@ -16,11 +19,14 @@ namespace we
 	// Actor can render as sprite, shape, or both
 	enum class EActorRenderMode { None, Sprite, Shape, Both };
 
+	// Physics type for actor
+	enum class PhysicsType { None, Static, Kinematic, Dynamic };
+
 	class Actor : public Object
 	{
 	public:
 		Actor(World* OwningWorld);
-		virtual ~Actor() = default;
+		virtual ~Actor();
 
 		// Lifecycle
 		virtual void BeginPlay();
@@ -29,13 +35,19 @@ namespace we
 
 		// Transform
 		void SetPosition(const vec2f& Position);
-		vec2f GetPosition() const { return ActorPosition; }
+		vec2f GetActorPosition() const { return ActorPosition; }
 
 		void SetRotation(angle Rotation);
-		angle GetRotation() const { return ActorRotation; }
+		angle GetActorRotation() const { return ActorRotation; }
 
 		void SetScale(const vec2f& Scale);
 		vec2f GetScale() const { return ActorScale; }
+
+		// Physics
+		void SetPhysicsType(PhysicsType Type);
+		PhysicsType GetPhysicsType() const { return PhysicsBodyType; }
+		b2Body* GetPhysicsBody() const { return PhysicsBody; }
+		float GetPhysicsScale() const;
 
 		// Rendering - returns primary drawable (shape or sprite)
 		virtual const drawable* GetDrawable() const;
@@ -67,10 +79,14 @@ namespace we
 		void SetAsRectangle(vec2f Size, color FillColor = color::White);
 		void SetAsCircle(float Radius, color FillColor = color::White);
 
+		// Get actor extents (half-size) for physics/collision
+		vec2f GetActorExtents() const;
+
 		World* GetWorld() const { return OwningWorld; }
 
 	protected:
 		void UpdateTransform();
+		void UpdatePhysicsBodyTransform();
 
 	private:
 		World* OwningWorld;
@@ -88,6 +104,10 @@ namespace we
 		// State
 		bool bIsVisible = true;
 		bool bHasBegunPlay = false;
+		
+		// Physics
+		PhysicsType PhysicsBodyType = PhysicsType::None;
+		b2Body* PhysicsBody = nullptr;
 		
 		// Custom render depth (overrides Y-based sorting)
 		std::optional<float> CustomRenderDepth;

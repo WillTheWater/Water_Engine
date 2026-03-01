@@ -17,6 +17,7 @@
 #include "Subsystem/TimeSubsystem.h"
 #include "Subsystem/RenderSubsystem.h"
 #include "Subsystem/WindowSubsystem.h"
+#include "Subsystem/PhysicsSubsystem.h"
 
 namespace we
 {
@@ -30,5 +31,6 @@ namespace we
 		unique<TimeSubsystem> Time;
 		unique<RenderSubsystem> Render;
 		unique<WindowSubsystem> Window;
+		unique<PhysicsSubsystem> Physics;
 	};
 }

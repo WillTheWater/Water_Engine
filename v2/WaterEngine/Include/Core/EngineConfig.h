@@ -55,8 +55,10 @@ namespace we
 		// Physics Settings
 		struct PhysicsConfig
 		{
-			float GravityX = 0.0f;
-			float GravityY = 9.8f;
+			vec2f Gravity = { 0.f, 9.8f };
+			float PhysicsScale = 0.01f;
+			uint VelocityIterations = 8;
+			uint PositionIterations = 3;
 			float TimeStep = 0.016f;
 		} Physics;
 

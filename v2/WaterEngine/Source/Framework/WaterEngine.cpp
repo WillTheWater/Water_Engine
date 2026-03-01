@@ -114,6 +114,7 @@ namespace we
         Subsystem.Input  = make_unique<InputSubsystem>();
         Subsystem.Render = make_unique<RenderSubsystem>(Config.Render, *Subsystem.Window);
         Subsystem.Time   = make_unique<TimeSubsystem>();
+        Subsystem.Physics = make_unique<PhysicsSubsystem>(Config.Physics);
     }
 
     void WaterEngine::Initialize()
@@ -234,6 +235,12 @@ namespace we
 
     void WaterEngine::TickGame(float DeltaTime)
     {
+        // Step physics simulation
+        if (Subsystem.Physics)
+        {
+            Subsystem.Physics->Step(DeltaTime);
+        }
+
         // Tick current world if exists
         if (Subsystem.World)
         {

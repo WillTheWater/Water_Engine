@@ -104,8 +104,15 @@ namespace we
 
 			if (toml::node_view physics = tbl["Physics"])
 			{
-				CurrentConfig.Physics.GravityX = static_cast<float>(physics["GravityX"].value_or(0.0));
-				CurrentConfig.Physics.GravityY = static_cast<float>(physics["GravityY"].value_or(9.8));
+				// Gravity as array [x, y]
+				if (auto arr = physics["Gravity"].as_array())
+				{
+					if (arr->size() >= 2)
+					{
+						CurrentConfig.Physics.Gravity.x = arr->get(0)->value_or(0.0);
+						CurrentConfig.Physics.Gravity.y = arr->get(1)->value_or(9.8);
+					}
+				}
 				CurrentConfig.Physics.TimeStep = static_cast<float>(physics["TimeStep"].value_or(0.016));
 			}
 
@@ -216,8 +223,15 @@ namespace we
 
 			if (toml::node_view physics = tbl["Physics"])
 			{
-				CurrentConfig.Physics.GravityX = static_cast<float>(physics["GravityX"].value_or(0.0));
-				CurrentConfig.Physics.GravityY = static_cast<float>(physics["GravityY"].value_or(9.8));
+// Gravity as array [x, y]
+				if (auto arr = physics["Gravity"].as_array())
+				{
+					if (arr->size() >= 2)
+					{
+						CurrentConfig.Physics.Gravity.x = arr->get(0)->value_or(0.0);
+						CurrentConfig.Physics.Gravity.y = arr->get(1)->value_or(9.8);
+					}
+				}
 				CurrentConfig.Physics.TimeStep = static_cast<float>(physics["TimeStep"].value_or(0.016));
 			}
 

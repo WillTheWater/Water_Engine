@@ -80,7 +80,7 @@ namespace we
 		// Simple animation - bob the title card
 		if (auto title = TitleCard.lock())
 		{
-			vec2f Pos = title->GetPosition();
+			vec2f Pos = title->GetActorPosition();
 			static float Time = 0.0f;
 			Time += DeltaTime;
 			Pos.y = 300.0f + std::sin(Time * 2.0f) * 20.0f;

@@ -109,11 +109,11 @@ namespace we
             {
                 if ((*It)->HasBegunPlay())
                 {
-                    vec2f OldPos = (*It)->GetPosition();
+                    vec2f OldPos = (*It)->GetActorPosition();
                     (*It)->Tick(DeltaTime);
                     
                     // Mark dirty if actor moved in Y
-                    if (!FloatEquals((*It)->GetPosition().y, OldPos.y))
+                    if (!FloatEquals((*It)->GetActorPosition().y, OldPos.y))
                     {
                         bRenderOrderDirty = true;
                     }
