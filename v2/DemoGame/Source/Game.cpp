@@ -6,6 +6,7 @@
 #include "Game.h"
 #include "Entry.h"
 #include "Levels/MainMenu.h"
+#include "Config/GameConfig.h"
 #include "Utility/Log.h"
 
 namespace we
@@ -24,6 +25,17 @@ namespace we
 	void Game::Construct()
 	{
 		LOG("Game::Construct - START");
+		LOG("Game: {} v{}", GameConfig::Name, GameConfig::Version);
+		
+		// Set physics gravity from game config (top-down = no gravity)
+		if (Subsystem.Physics)
+		{
+			Subsystem.Physics->SetGravity(GameConfig::Gravity);
+			LOG("Game::Construct - Set gravity to [{}, {}]", 
+				GameConfig::Gravity.x, 
+				GameConfig::Gravity.y);
+		}
+		
 		// Load MainMenu world
 		Subsystem.World->LoadWorld<MainMenu>();
 		LOG("Game::Construct - END");

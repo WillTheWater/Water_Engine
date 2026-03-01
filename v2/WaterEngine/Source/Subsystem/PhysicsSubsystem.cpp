@@ -39,6 +39,11 @@ namespace we
 		PhysicsWorld.Step(DeltaTime, VelocityIterations, PositionIterations);
 	}
 
+	void PhysicsSubsystem::SetGravity(const vec2f& Gravity)
+	{
+		PhysicsWorld.SetGravity(b2Vec2{ Gravity.x, Gravity.y });
+	}
+
 	b2Body* PhysicsSubsystem::AddListener(Actor* Listener)
 	{
 		if (Listener->IsPendingDestroy()) { return nullptr; }

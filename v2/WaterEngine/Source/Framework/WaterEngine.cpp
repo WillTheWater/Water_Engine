@@ -107,13 +107,13 @@ namespace we
         const EngineConfig& Config = EngineConfigManager::Get();
         
         // Create all subsystems with their config dependencies
-        Subsystem.Window = make_unique<WindowSubsystem>(Config.Window);
-        Subsystem.Camera = make_unique<CameraSubsystem>();
-        Subsystem.World  = make_unique<WorldSubsystem>(Subsystem);
-        Subsystem.Audio  = make_unique<AudioSubsystem>(Config.Audio, *Subsystem.Resources);
-        Subsystem.Input  = make_unique<InputSubsystem>();
-        Subsystem.Render = make_unique<RenderSubsystem>(Config.Render, *Subsystem.Window);
-        Subsystem.Time   = make_unique<TimeSubsystem>();
+        Subsystem.Window  = make_unique<WindowSubsystem>(Config.Window);
+        Subsystem.Camera  = make_unique<CameraSubsystem>();
+        Subsystem.World   = make_unique<WorldSubsystem>(Subsystem);
+        Subsystem.Audio   = make_unique<AudioSubsystem>(Config.Audio, *Subsystem.Resources);
+        Subsystem.Input   = make_unique<InputSubsystem>();
+        Subsystem.Render  = make_unique<RenderSubsystem>(Config.Render, *Subsystem.Window);
+        Subsystem.Time    = make_unique<TimeSubsystem>();
         Subsystem.Physics = make_unique<PhysicsSubsystem>(Config.Physics);
     }
 

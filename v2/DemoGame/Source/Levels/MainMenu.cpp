@@ -6,7 +6,7 @@
 #include "Levels/MainMenu.h"
 #include "Framework/World/Actor.h"
 #include "Framework/EngineSubsystem.h"
-#include "InputActions.h"
+#include "Input/InputActions.h"
 #include "Input/InputBinding.h"
 #include "Utility/Log.h"
 
@@ -49,6 +49,42 @@ namespace we
 				shape->SetAsRectangle({ 100.0f, 100.0f }, color(100 + i * 30, 150, 200));
 				shape->SetPosition({ x, y });
 			}
+		}
+
+		// =============================================================================
+		// PHYSICS TEST - Spawn dynamic and static bodies
+		// =============================================================================
+		LOG("[PHYSICS TEST] Setting up physics test scene in PreConstruct...");
+
+		// Create ground platform (static - doesn't move)
+		auto GroundActor = SpawnActor<Actor>();
+		if (auto ground = GroundActor.lock())
+		{
+			ground->SetAsRectangle({ 800.0f, 50.0f }, color(80, 80, 80));  // Wide grey platform
+			ground->SetPosition({ 960.0f, 900.0f });  // Near bottom of screen
+			ground->SetPhysicsType(PhysicsType::Static);  // Static body
+			LOG("[PHYSICS TEST] Created static ground platform");
+		}
+
+		// Create falling box (dynamic - affected by gravity)
+		auto FallingBox = SpawnActor<Actor>();
+		if (auto box = FallingBox.lock())
+		{
+			box->SetAsRectangle({ 80.0f, 80.0f }, color(220, 100, 100));  // Red box
+			box->SetPosition({ 960.0f, 200.0f });  // Start high above ground
+			box->SetPhysicsType(PhysicsType::Dynamic);  // Dynamic body - will fall!
+			PhysicsBox = box;
+			LOG("[PHYSICS TEST] Created dynamic falling box at (960, 200)");
+		}
+
+		// Create a second falling box offset to the side
+		auto FallingBox2 = SpawnActor<Actor>();
+		if (auto box2 = FallingBox2.lock())
+		{
+			box2->SetAsRectangle({ 60.0f, 60.0f }, color(100, 220, 100));  // Green box
+			box2->SetPosition({ 760.0f, 100.0f });  // Higher and to the left
+			box2->SetPhysicsType(PhysicsType::Dynamic);
+			LOG("[PHYSICS TEST] Created second dynamic box at (760, 100)");
 		}
 	}
 

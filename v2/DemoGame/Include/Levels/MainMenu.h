@@ -38,5 +38,6 @@ namespace we
 	private:
 		weak<Actor> Background;
 		weak<Actor> TitleCard;
+		weak<Actor> PhysicsBox;  // Track the falling box for debug
 	};
 }

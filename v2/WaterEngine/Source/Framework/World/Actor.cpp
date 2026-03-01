@@ -27,7 +27,7 @@ namespace we
 		// Clean up physics body
 		if (PhysicsBody && OwningWorld)
 		{
-			// TODO: Need access to subsystem - will be handled in actor destruction path
+			OwningWorld->GetSubsystem().Physics->RemoveListener(PhysicsBody);
 		}
 	}
 
@@ -45,9 +45,7 @@ namespace we
 		// Static bodies never move, so they don't need tick updates
 		if (PhysicsBody && PhysicsBodyType != PhysicsType::Static)
 		{
-			// TODO: Get physics scale from EngineConfig (Physics.PhysicsScale)
-			// For now, hardcode to match EngineConfig default (0.01f = 1/100)
-			float PhysicsScale = 0.01f;
+			float PhysicsScale = GetPhysicsScale();
 			
 			b2Vec2 Pos = PhysicsBody->GetPosition();
 			float Rot = PhysicsBody->GetAngle();
@@ -139,13 +137,7 @@ namespace we
 		// Clean up old body if exists
 		if (PhysicsBody && OwningWorld)
 		{
-			// Access subsystem through world -> engine subsystem
-			auto* Subsystem = reinterpret_cast<EngineSubsystem*>(
-				reinterpret_cast<char*>(OwningWorld) - offsetof(EngineSubsystem, World));
-			if (Subsystem && Subsystem->Physics)
-			{
-				Subsystem->Physics->RemoveListener(PhysicsBody);
-			}
+			OwningWorld->GetSubsystem().Physics->RemoveListener(PhysicsBody);
 			PhysicsBody = nullptr;
 		}
 		
@@ -154,13 +146,7 @@ namespace we
 		// Create new body if not None
 		if (Type != PhysicsType::None && OwningWorld)
 		{
-			// Access subsystem through world
-			auto* Subsystem = reinterpret_cast<EngineSubsystem*>(
-				reinterpret_cast<char*>(OwningWorld) - offsetof(EngineSubsystem, World));
-			if (Subsystem && Subsystem->Physics)
-			{
-				PhysicsBody = Subsystem->Physics->AddListener(this);
-			}
+			PhysicsBody = OwningWorld->GetSubsystem().Physics->AddListener(this);
 		}
 	}
 
@@ -168,12 +154,7 @@ namespace we
 	{
 		if (OwningWorld)
 		{
-			auto* Subsystem = reinterpret_cast<EngineSubsystem*>(
-				reinterpret_cast<char*>(OwningWorld) - offsetof(EngineSubsystem, World));
-			if (Subsystem && Subsystem->Physics)
-			{
-				return Subsystem->Physics->GetPhysicsScale();
-			}
+			return OwningWorld->GetSubsystem().Physics->GetPhysicsScale();
 		}
 		// Fallback to default
 		return 0.01f;

@@ -32,6 +32,9 @@ namespace we
         void RemoveListener(b2Body* LisenterBody);
         void UpdateBodyCollision(Actor* Listener);
         float GetPhysicsScale() const { return PhysicsScale; }
+        
+        // Set world gravity (for top-down games use {0, 0})
+        void SetGravity(const vec2f& Gravity);
 
     private:
         void RemovePendingListeners();

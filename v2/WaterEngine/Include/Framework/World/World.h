@@ -42,6 +42,9 @@ namespace we
 
 		const vector<shared<Actor>>& GetActors() const { return Actors; }
 
+		// Subsystem access for actors/components
+		EngineSubsystem& GetSubsystem() const { return Subsystem; }
+
 	protected:
 		// Direct subsystem access for derived worlds
 		EngineSubsystem& Subsystem;
