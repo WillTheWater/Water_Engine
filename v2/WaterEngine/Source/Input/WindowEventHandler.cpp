@@ -35,22 +35,22 @@ namespace we
     // =========================================================================
     // Gamepad Events
     // =========================================================================
-    void WindowEventHandler::operator()(const sf::Event::JoystickConnected& e)
-    {
-        LOG("Gamepad connected: ID {}", e.joystickId);
-    }
-
-    void WindowEventHandler::operator()(const sf::Event::JoystickDisconnected& e)
-    {
-        LOG("Gamepad disconnected: ID {}", e.joystickId);
-    }
-
-    void WindowEventHandler::operator()(const sf::Event::JoystickButtonPressed& e)
+    void WindowEventHandler::operator()(const sf::Event::JoystickConnected&)
     {
         // Handled by InputSubsystem
     }
 
-    void WindowEventHandler::operator()(const sf::Event::JoystickButtonReleased& e)
+    void WindowEventHandler::operator()(const sf::Event::JoystickDisconnected&)
+    {
+        // Handled by InputSubsystem
+    }
+
+    void WindowEventHandler::operator()(const sf::Event::JoystickButtonPressed&)
+    {
+        // Handled by InputSubsystem
+    }
+
+    void WindowEventHandler::operator()(const sf::Event::JoystickButtonReleased&)
     {
         // Handled by InputSubsystem
     }
@@ -58,12 +58,16 @@ namespace we
     // =========================================================================
     // Keyboard Events
     // =========================================================================
-    void WindowEventHandler::operator()(const sf::Event::KeyPressed& e)
+    void WindowEventHandler::operator()(const sf::Event::KeyPressed& Key)
     {
-        // Handled by InputSubsystem
+        // F11: Toggle fullscreen
+        if (Key.scancode == sf::Keyboard::Scan::F11)
+        {
+            Window.EventToggleBorderlessFullscreen();
+        }
     }
 
-    void WindowEventHandler::operator()(const sf::Event::KeyReleased& e)
+    void WindowEventHandler::operator()(const sf::Event::KeyReleased&)
     {
         // Handled by InputSubsystem
     }
@@ -71,17 +75,17 @@ namespace we
     // =========================================================================
     // Mouse Events
     // =========================================================================
-    void WindowEventHandler::operator()(const sf::Event::MouseMoved& e)
+    void WindowEventHandler::operator()(const sf::Event::MouseMoved&)
     {
         // Handled by InputSubsystem or Editor
     }
 
-    void WindowEventHandler::operator()(const sf::Event::MouseButtonPressed& e)
+    void WindowEventHandler::operator()(const sf::Event::MouseButtonPressed&)
     {
         // Handled by InputSubsystem
     }
 
-    void WindowEventHandler::operator()(const sf::Event::MouseButtonReleased& e)
+    void WindowEventHandler::operator()(const sf::Event::MouseButtonReleased&)
     {
         // Handled by InputSubsystem
     }

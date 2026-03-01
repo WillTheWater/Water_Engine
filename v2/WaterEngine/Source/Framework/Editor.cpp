@@ -10,6 +10,7 @@
 #include "Framework/World/Actor.h"
 #include "Subsystem/RenderSubsystem.h"
 #include "Subsystem/WindowSubsystem.h"
+#include "Input/EditorEventHandler.h"
 #include "Utility/Log.h"
 
 // ImGui-SFML
@@ -307,15 +308,23 @@ namespace we
         ImGui::SetNextWindowSize(ImVec2(leftPanelWidth, viewportHeight));
         DrawViewport(bIsPlaying);
 
-        // WORLD (below viewport)
+        // OBJECTS (below viewport)
         ImGui::SetNextWindowPos(ImVec2(workPos.x, workPos.y + menuBarHeight + viewportHeight + resizeHandleWidth));
         ImGui::SetNextWindowSize(ImVec2(leftPanelWidth, worldHeight));
-        DrawWorld();
+        DrawObjects();
 
-        // DETAILS (right side)
+        // EDITOR TOOLS (top right - buttons + mouse pos, no title bar)
+        float toolsHeight = 100.0f;  // Fixed height for buttons + mouse
         ImGui::SetNextWindowPos(ImVec2(workPos.x + leftPanelWidth + resizeHandleWidth, workPos.y + menuBarHeight));
-        ImGui::SetNextWindowSize(ImVec2(DetailsPanelWidth, remainingHeight));
-        DrawDetails();
+        ImGui::SetNextWindowSize(ImVec2(DetailsPanelWidth, toolsHeight));
+        DrawEditorTools(bIsPlaying);
+
+        // DETAILS (below tools - actor info)
+        float detailsStartY = workPos.y + menuBarHeight + toolsHeight + resizeHandleWidth;
+        float detailsHeight = remainingHeight - toolsHeight - resizeHandleWidth;
+        ImGui::SetNextWindowPos(ImVec2(workPos.x + leftPanelWidth + resizeHandleWidth, detailsStartY));
+        ImGui::SetNextWindowSize(ImVec2(DetailsPanelWidth, detailsHeight));
+        DrawDetails(bIsPlaying);
     }
 
     void Editor::DrawViewport(bool bIsPlaying)
@@ -327,9 +336,10 @@ namespace we
         
         ImGuiWindowFlags flags = 
             ImGuiWindowFlags_NoCollapse |
+            ImGuiWindowFlags_NoTitleBar |  // Remove title bar - don't cover render
             ImGuiWindowFlags_NoScrollbar |
             ImGuiWindowFlags_NoScrollWithMouse |
-            ImGuiWindowFlags_NoResize |  // Disable native resize
+            ImGuiWindowFlags_NoResize |
             ImGuiWindowFlags_NoBringToFrontOnFocus;
 
         if (ImGui::Begin("Viewport", nullptr, flags))
@@ -372,55 +382,6 @@ namespace we
             ImTextureID texID = (ImTextureID)(intptr_t)worldTex.getNativeHandle();
             ImGui::Image(texID, displaySize, ImVec2(0, 1), ImVec2(1, 0));
 
-            // Overlay: resolution info (top-left) - ORIGINAL POSITION
-            ImVec2 windowPos = ImGui::GetWindowPos();
-            ImVec2 absPos(windowPos.x + cursorPos.x + 5, windowPos.y + cursorPos.y + 5);
-            std::string info = std::to_string(renderRes.x) + "x" + std::to_string(renderRes.y);
-            ImGui::GetForegroundDrawList()->AddText(absPos, IM_COL32(255, 255, 255, 200), info.c_str());
-
-            // === PLAY/STOP + RECENTER BUTTONS (Top-Right of Viewport) ===
-            ImVec2 buttonSize(80, 35);
-            float buttonSpacing = 8.0f;
-            
-            // Calculate button positions (absolute screen coords)
-            float buttonsRight = windowPos.x + cursorPos.x + displaySize.x - 10;
-            float buttonsTop = windowPos.y + cursorPos.y + 10;
-            
-            // Recenter button position (rightmost)
-            ImVec2 recenterPos(buttonsRight - buttonSize.x, buttonsTop);
-            // Play/Stop button position (left of Recenter)
-            ImVec2 playPos(buttonsRight - buttonSize.x * 2 - buttonSpacing, buttonsTop);
-            
-            // Draw buttons using ImGui's button API with absolute positioning
-            // Need to use SetCursorScreenPos for absolute positioning
-            ImGui::SetCursorScreenPos(playPos);
-            
-            // Play/Stop button
-            if (!bIsPlaying)
-            {
-                if (ImGui::Button("Play", buttonSize))
-                {
-                    if (OnRequestPlayStop) OnRequestPlayStop(true);
-                }
-            }
-            else
-            {
-                if (ImGui::Button("Stop", buttonSize))
-                {
-                    if (OnRequestPlayStop) OnRequestPlayStop(false);
-                }
-            }
-            
-            // Recenter button - only active in Edit mode
-            ImGui::SetCursorScreenPos(recenterPos);
-            ImGui::BeginDisabled(bIsPlaying);
-            if (ImGui::Button("Recenter", buttonSize))
-            {
-                Subsystem.Render->SetEditorCameraOffset({0,0});
-                Subsystem.Render->SetEditorZoom(1.0f);
-            }
-            ImGui::EndDisabled();
-
             if (bViewportHovered)
             {
                 HandleViewportInput();
@@ -447,10 +408,10 @@ namespace we
         ImGui::PopStyleVar();
     }
 
-    void Editor::DrawWorld()
+    void Editor::DrawObjects()
     {
         ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.15f, 0.15f, 0.15f, 1.0f));
-        if (ImGui::Begin("World", nullptr, 
+        if (ImGui::Begin("Objects", nullptr, 
             ImGuiWindowFlags_NoCollapse | 
             ImGuiWindowFlags_NoResize))
         {
@@ -473,7 +434,7 @@ namespace we
 
                 if (actors.empty())
                 {
-                    ImGui::TextDisabled("No actors in world");
+                    ImGui::TextDisabled("No objects in world");
                 }
             }
             else
@@ -485,7 +446,57 @@ namespace we
         ImGui::PopStyleColor();
     }
 
-    void Editor::DrawDetails()
+    void Editor::DrawEditorTools(bool bIsPlaying)
+    {
+        ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.15f, 0.15f, 0.15f, 1.0f));
+        
+        ImGuiWindowFlags flags = 
+            ImGuiWindowFlags_NoCollapse | 
+            ImGuiWindowFlags_NoTitleBar |  // No title bar
+            ImGuiWindowFlags_NoResize;
+        
+        if (ImGui::Begin("EditorTools", nullptr, flags))
+        {
+            // === PLAY/STOP + RECENTER BUTTONS ===
+            ImVec2 buttonSize(120, 35);  // Wider for 2x font
+            float buttonSpacing = 8.0f;
+            
+            // Play/Stop button
+            if (!bIsPlaying)
+            {
+                if (ImGui::Button("Play", buttonSize))
+                {
+                    if (OnRequestPlayStop) OnRequestPlayStop(true);
+                }
+            }
+            else
+            {
+                if (ImGui::Button("Stop", buttonSize))
+                {
+                    if (OnRequestPlayStop) OnRequestPlayStop(false);
+                }
+            }
+            
+            ImGui::SameLine(0, buttonSpacing);
+            
+            // Recenter button - only active in Edit mode
+            ImGui::BeginDisabled(bIsPlaying);
+            if (ImGui::Button("Recenter", buttonSize))
+            {
+                Subsystem.Render->SetEditorCameraOffset({ 0,0 });
+                Subsystem.Render->SetEditorZoom(1.0f);
+            }
+            ImGui::EndDisabled();
+            
+            // Mouse Position - always visible below buttons
+            ImGui::Separator();
+            ImGui::Text("Mouse: %.1f, %.1f", MouseWorldPos.x, MouseWorldPos.y);
+        }
+        ImGui::End();
+        ImGui::PopStyleColor();
+    }
+
+    void Editor::DrawDetails(bool bIsPlaying)
     {
         ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.15f, 0.15f, 0.15f, 1.0f));
         if (ImGui::Begin("Details", nullptr, 
@@ -518,29 +529,23 @@ namespace we
             {
                 ImGui::TextDisabled("Select an actor to view details");
             }
-
-            // Mouse Position
-            ImGui::SeparatorText("Mouse");
-            ImGui::Text("World: %.1f, %.1f", MouseWorldPos.x, MouseWorldPos.y);
         }
         ImGui::End();
         ImGui::PopStyleColor();
     }
 
     // ============================================================================
-    // Input Handling
+    // Input Handling - Visitor Pattern via EditorEventHandler
     // ============================================================================
 
-    bool Editor::ProcessEvent(const sf::Event& e)
+    void Editor::HandleEvent(const sf::Event& Event)
     {
-        ImGui::SFML::ProcessEvent(*Subsystem.Window, e);
+        // Process event through ImGui-SFML first
+        ImGui::SFML::ProcessEvent(*Subsystem.Window, Event);
 
-        if (ImGui::GetIO().WantCaptureMouse || ImGui::GetIO().WantCaptureKeyboard)
-        {
-            return true;
-        }
-
-        return false;
+        // Use visitor pattern for editor-specific event handling
+        EditorEventHandler Handler{ *this };
+        Event.visit(Handler);
     }
 
     void Editor::HandleViewportInput()

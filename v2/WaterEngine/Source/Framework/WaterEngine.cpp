@@ -311,34 +311,36 @@ namespace we
     {
         while (const auto Event = Subsystem.Window->pollEvent())
         {
-            // Window Event Handling
+            // 1. Window Event Handling (always first)
             Subsystem.Window->HandleEvent(*Event);
+
 #ifndef WE_RELEASE
-            // Editor gets first dibs (except in Play mode)
+            // 2. Editor Event Handling (Edit mode only)
             if (CurrentMode != EngineMode::Play)
             {
-                if (EditorInstance->ProcessEvent(*Event))
+                EditorInstance->HandleEvent(*Event);
+                
+                // Editor consumed the event via ImGui
+                if (ImGui::GetIO().WantCaptureMouse || ImGui::GetIO().WantCaptureKeyboard)
+                {
                     continue;
+                }
             }
-#endif
-
-
-#ifndef WE_RELEASE
-            // ESC to exit Play mode and return to Editor
-            if (CurrentMode == EngineMode::Play)
+            else
             {
+                // 3. Play Mode: ESC to return to Editor
                 if (const auto* keyPressed = Event->getIf<sf::Event::KeyPressed>())
                 {
                     if (keyPressed->code == sf::Keyboard::Key::Escape)
                     {
                         SetMode(EngineMode::Editor);
-                        continue;  // Don't pass ESC to Input subsystem
+                        continue;
                     }
                 }
             }
 #endif
 
-            // Game input only in Play mode with window focus
+            // 4. Game Input Handling (Play mode only, window must have focus)
             if (Subsystem.Input && CurrentMode == EngineMode::Play && Subsystem.Window->hasFocus())
             {
                 Subsystem.Input->HandleEvent(*Event);

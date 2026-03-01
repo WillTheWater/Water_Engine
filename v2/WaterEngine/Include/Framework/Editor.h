@@ -14,6 +14,7 @@ namespace we
     class WaterEngine;
     class World;
     class Actor;
+    struct EditorEventHandler;
 
     enum class EditorMode { Edit, Play };
 
@@ -48,8 +49,8 @@ namespace we
         void OnPlay();      // Called when entering Play mode
         void OnStop();      // Called when returning to Edit mode
 
-        // Input handling - returns true if consumed
-        bool ProcessEvent(const sf::Event& e);
+        // Input handling - visitor pattern via EditorEventHandler
+        void HandleEvent(const sf::Event& Event);
 
         // World state snapshot for play/stop
         void SaveWorldState();
@@ -59,12 +60,14 @@ namespace we
         void DrawMainDockSpace();   // Root docking area
         void DrawMainMenuBar();     // File, Edit, View menus
         void DrawViewport(bool bIsPlaying);        // Game view at render resolution
-        void DrawWorld();           // Actor list (was Hierarchy)
-        void DrawDetails();         // Selected actor properties (was Inspector)
+        void DrawObjects();           // Actor list (was Hierarchy)
+        void DrawEditorTools(bool bIsPlaying);
+        void DrawDetails(bool bIsPlaying);         // Selected actor properties (was Inspector)
 
         void HandleViewportInput(); // Camera pan, selection
 
     private:
+        friend EditorEventHandler;
         EngineSubsystem& Subsystem;
 
         // World state snapshot
