@@ -25,16 +25,16 @@ namespace we
 {
 	struct EngineSubsystem
 	{
-		unique<ResourceSubsystem> Resources;
-		unique<WorldSubsystem> World;
-		unique<CameraSubsystem> Camera;
-		unique<AudioSubsystem> Audio;
-		unique<InputSubsystem> Input;
-		unique<TimeSubsystem> Time;
-		unique<RenderSubsystem> Render;
-		unique<WindowSubsystem> Window;
-		unique<PhysicsSubsystem> Physics;
-		unique<GUISubsystem> GUI;
-		unique<CursorSubsytem> Cursor;
+		unique<ResourceSubsystem>	Resources;
+		unique<WorldSubsystem>		World;
+		unique<CameraSubsystem>		Camera;
+		unique<AudioSubsystem>		Audio;
+		unique<InputSubsystem>		Input;
+		unique<TimeSubsystem>		Time;
+		unique<RenderSubsystem>		Render;
+		unique<WindowSubsystem>		Window;
+		unique<PhysicsSubsystem>	Physics;
+		unique<GUISubsystem>		GUI;
+		unique<CursorSubsytem>		Cursor;
 	};
 }

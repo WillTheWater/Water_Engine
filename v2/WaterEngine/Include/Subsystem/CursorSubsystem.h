@@ -6,13 +6,16 @@
 #pragma once
 
 #include "Core/CoreMinimal.h"
+#include "Core/EngineConfig.h"
 
 namespace we
 {
 	class CursorSubsytem
 	{
 	public:
-		explicit CursorSubsytem();
-		~CursorSubsytem();
+		explicit CursorSubsytem(const EngineConfig::CursorConfig& Config);
+
+	private:
+		EngineConfig::CursorConfig Config;
 	};
 }

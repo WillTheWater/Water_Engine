@@ -7,12 +7,8 @@
 
 namespace we
 {
-	CursorSubsytem::CursorSubsytem()
-	{
-
-	}
-
-	CursorSubsytem::~CursorSubsytem()
+	CursorSubsytem::CursorSubsytem(const EngineConfig::CursorConfig& Config)
+		: Config{Config}
 	{
 
 	}
