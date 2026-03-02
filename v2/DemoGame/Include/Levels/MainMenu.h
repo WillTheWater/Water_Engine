@@ -15,29 +15,23 @@ namespace we
 	public:
 		MainMenu(EngineSubsystem& Subsystem);
 
-		// World overrides
 		virtual void PreConstruct() override;
 		virtual void BeginPlay() override;
 		virtual void EndPlay() override;
 		virtual void Tick(float DeltaTime) override;
 
 	private:
-		// =============================================================================
-		// INPUT SYSTEM TESTS - REMOVE AFTER TESTING
-		// =============================================================================
-		void SetupInputTests();  // Binds all test inputs
-		void CleanupInputTests(); // Unbinds test inputs
+		void SetupInputTests();
+		void CleanupInputTests();
 		
-		// Test state tracking
 		bool bTestJumpTriggered = false;
-		bool bTestFireHeld = false;
 		float TestMovementX = 0.0f;
 		float TestMovementY = 0.0f;
-		// END INPUT TESTS
 
-	private:
 		weak<Actor> Background;
 		weak<Actor> TitleCard;
-		weak<Actor> PhysicsBox;  // Track the falling box for debug
+		weak<Actor> GroundPlatform;
+		weak<Actor> DynamicBox;
+		weak<Actor> SensorZone;
 	};
 }

@@ -92,14 +92,12 @@ namespace we
 			if (toml::node_view paths = tbl["Paths"])
 			{
 				CurrentConfig.Paths.AssetDirectory = paths["AssetDirectory"].value_or("Content");
-				CurrentConfig.Paths.DefaultFont = paths["DefaultFont"].value_or("Fonts/Default.ttf");
 			}
 
 			if (toml::node_view debug = tbl["Debug"])
 			{
 				CurrentConfig.Debug.EnableHotReload = debug["EnableHotReload"].value_or(true);
 				CurrentConfig.Debug.EnableConsole = debug["EnableConsole"].value_or(true);
-				CurrentConfig.Debug.LogLevel = debug["LogLevel"].value_or("debug");
 			}
 
 			if (toml::node_view physics = tbl["Physics"])
@@ -211,14 +209,12 @@ namespace we
 			if (toml::node_view paths = tbl["Paths"])
 			{
 				CurrentConfig.Paths.AssetDirectory = paths["AssetDirectory"].value_or("Content");
-				CurrentConfig.Paths.DefaultFont = paths["DefaultFont"].value_or("Fonts/Default.ttf");
 			}
 
 			if (toml::node_view debug = tbl["Debug"])
 			{
 				CurrentConfig.Debug.EnableHotReload = debug["EnableHotReload"].value_or(true);
 				CurrentConfig.Debug.EnableConsole = debug["EnableConsole"].value_or(true);
-				CurrentConfig.Debug.LogLevel = debug["LogLevel"].value_or("debug");
 			}
 
 			if (toml::node_view physics = tbl["Physics"])

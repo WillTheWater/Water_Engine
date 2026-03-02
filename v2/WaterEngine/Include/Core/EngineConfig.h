@@ -41,7 +41,6 @@ namespace we
 		struct PathConfig
 		{
 			string AssetDirectory = "Content";
-			string DefaultFont = "Fonts/Default.ttf";
 		} Paths;
 
 		// Debug Settings
@@ -49,7 +48,6 @@ namespace we
 		{
 			bool EnableHotReload = true;
 			bool EnableConsole = true;
-			string LogLevel = "debug";
 		} Debug;
 
 		// Physics Settings

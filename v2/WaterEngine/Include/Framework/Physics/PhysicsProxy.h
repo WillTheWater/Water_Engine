@@ -13,6 +13,9 @@ class b2Body;
 class b2Fixture;
 class b2World;
 
+// Forward declare SFML
+namespace sf { class RenderTarget; }
+
 namespace we
 {
 	// Forward declare
@@ -121,6 +124,25 @@ namespace we
 		void WakeUp();
 		void PutToSleep();
 		bool IsSleeping() const;
+		
+		// Get body mass (kg) - useful for calculating impulses
+		float GetMass() const;
+		
+		// -------------------------------------------------------------------------
+		// Character Movement Settings
+		// -------------------------------------------------------------------------
+		// Linear damping: Higher = more friction, stops faster (0-20 range typical)
+		// For character movement: 5-10 for snappy stop, 0-2 for floaty/ice physics
+		void SetLinearDamping(float damping);
+		float GetLinearDamping() const;
+		
+		// Angular damping: Higher = less rotation (0-20 range typical)
+		void SetAngularDamping(float damping);
+		float GetAngularDamping() const;
+		
+		// Fixed rotation: Prevents body from rotating (good for top-down characters)
+		void SetFixedRotation(bool bFixed);
+		bool IsFixedRotation() const;
 
 		// -------------------------------------------------------------------------
 		// Transform (world space)
@@ -167,6 +189,8 @@ namespace we
 		// Raycast against this proxy only
 		bool Raycast(const vec2f& start, const vec2f& end, vec2f& outHit, float& outFraction) const;
 
+
+
 		// -------------------------------------------------------------------------
 		// Internal (PhysicsSubsystem use only)
 		// -------------------------------------------------------------------------
@@ -193,5 +217,10 @@ namespace we
 		
 		// Overlap tracking (for end overlap events)
 		set<PhysicsProxy*> OverlappingProxies;
+		
+		// Debug drawing state (cleared each frame)
+		mutable bool bDebugDrawEnabled = false;
+		color DebugColor = color::Green;
+		float DebugLineThickness = 20.0f;
 	};
 }

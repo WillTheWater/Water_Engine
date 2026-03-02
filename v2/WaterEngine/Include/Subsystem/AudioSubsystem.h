@@ -11,7 +11,6 @@
 
 namespace we
 {
-    // Forward declaration
     class ResourceSubsystem;
 
     // =========================================================================
@@ -23,7 +22,6 @@ namespace we
         AudioSubsystem(const EngineConfig::AudioConfig& Config, ResourceSubsystem& Resources);
         ~AudioSubsystem();
 
-        // Called once per frame
         void Update(float DeltaTime);
 
         // =====================================================================

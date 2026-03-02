@@ -61,14 +61,6 @@ namespace we
 				});
 		}
 
-		// Alternative syntax: operator+= for lambdas
-		template<typename Callable>
-		Delegate& operator+=(Callable Func)
-		{
-			Bind(std::move(Func));
-			return *this;
-		}
-
 		// Invoke all bound callbacks (stale weak_ptrs auto-remove)
 		void Broadcast(Args... args)
 		{
@@ -84,9 +76,6 @@ namespace we
 				}
 			}
 		}
-
-		// Invoke operator (alternative to Broadcast)
-		void operator()(Args... args) { Broadcast(std::forward<Args>(args)...); }
 
 		void Clear() { Callbacks.clear(); }
 		bool IsEmpty() const { return Callbacks.empty(); }

@@ -104,6 +104,10 @@ namespace we
 		
 		// Sensors don't generate contact responses
 		fixtureDef.isSensor = bSensor;
+		
+		// Density for mass calculation (1.0f = default, 0.0f = static)
+		fixtureDef.density = bSensor ? 0.0f : 1.0f;
+		fixtureDef.friction = 0.3f;
 
 		switch (shapeDef.ShapeType)
 		{
@@ -311,6 +315,55 @@ namespace we
 		return !Body->IsAwake();
 	}
 
+	float PhysicsProxy::GetMass() const
+	{
+		if (!Body)
+			return 0.0f;
+		return Body->GetMass();
+	}
+
+	// =========================================================================
+	// Character Movement Settings
+	// =========================================================================
+	void PhysicsProxy::SetLinearDamping(float damping)
+	{
+		if (Body)
+			Body->SetLinearDamping(damping);
+	}
+
+	float PhysicsProxy::GetLinearDamping() const
+	{
+		if (!Body)
+			return 0.0f;
+		return Body->GetLinearDamping();
+	}
+
+	void PhysicsProxy::SetAngularDamping(float damping)
+	{
+		if (Body)
+			Body->SetAngularDamping(damping);
+	}
+
+	float PhysicsProxy::GetAngularDamping() const
+	{
+		if (!Body)
+			return 0.0f;
+		return Body->GetAngularDamping();
+	}
+
+	void PhysicsProxy::SetFixedRotation(bool bFixed)
+	{
+		if (Body)
+			Body->SetFixedRotation(bFixed);
+	}
+
+	bool PhysicsProxy::IsFixedRotation() const
+	{
+		if (!Body)
+			return false;
+		return Body->IsFixedRotation();
+	}
+
 	// =========================================================================
 	// Transform
 	// =========================================================================
@@ -511,4 +564,6 @@ namespace we
 
 		return hit;
 	}
+
+
 }

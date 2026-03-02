@@ -22,7 +22,6 @@ namespace we
 
         void SetData(shared<vector<uint8>> Data);
 
-        // sf::InputStream implementation
         std::optional<std::size_t> read(void* data, std::size_t size) override;
         std::optional<std::size_t> seek(std::size_t position) override;
         std::optional<std::size_t> tell() override;

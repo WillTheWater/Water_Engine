@@ -9,7 +9,7 @@
 #include "Core/EngineConfig.h"
 #include "Framework/EngineSubsystem.h"
 
-// Editor only exists in Debug builds
+// Editor only exists in Debug
 #ifndef WE_RELEASE
 namespace we { class Editor; }
 #endif
@@ -36,7 +36,7 @@ namespace we
         bool IsPlaying() const { return CurrentMode == EngineMode::Play; }
 
     protected:
-        // Subsystems - accessible to derived Game classes
+        // Subsystems - accessible to derived Game class
         EngineSubsystem Subsystem;
         
         // Override hooks for game
@@ -58,7 +58,7 @@ namespace we
 
         void PreConstruct();
         void CreateResourceSubsystem();  // Creates Resources and mounts pak (Release)
-        void CreateSubsystems();         // Creates all other subsystems
+        void CreateSubsystems();
         void LoadEngineConfig();
     };
 }

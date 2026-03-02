@@ -97,7 +97,6 @@ namespace we
         shared<IAssetDirector> GetAssetDirectory() const { return AssetDirector; }
         void Shutdown();
 
-        // Called once per frame from main thread
         void PollCompletedRequests();
 
         // =========================================================================

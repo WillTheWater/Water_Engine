@@ -7,7 +7,7 @@
 
 #include "Core/CoreMinimal.h"
 #include "Framework/World/Object.h"
-#include "Framework/World/RenderTypes.h"
+#include "Core/RenderTypes.h"
 
 namespace we
 {
@@ -46,11 +46,8 @@ namespace we
 		EngineSubsystem& GetSubsystem() const { return Subsystem; }
 
 	protected:
-		// Direct subsystem access for derived worlds
 		EngineSubsystem& Subsystem;
-		// Register a manual drawable for rendering (not an actor)
-		// Use this for debug overlays, effects, etc. that aren't actors
-		// For actors, use Actor::SetCustomRenderDepth() instead
+
 		void AddRenderDepth(const drawable* Drawable, float Depth);
 		void ClearManualRenderDepths();
 

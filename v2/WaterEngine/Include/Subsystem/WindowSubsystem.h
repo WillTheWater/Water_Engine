@@ -15,11 +15,9 @@ namespace we
     class WindowSubsystem : public sf::RenderWindow
     {
     public:
-        // Create window using config values
         explicit WindowSubsystem(const EngineConfig::WindowConfig& Config);
         
         void HandleEvent(const sf::Event& Event);
-        // Handle resize events - enforces aspect ratio and minimum size
         void onResize() override;
         
         // Toggle fullscreen mode
@@ -39,7 +37,6 @@ namespace we
         // Calculate size that maintains aspect ratio
         vec2u CalculateAspectRatioSize(const vec2u& Size) const;
         
-        // Window creation helpers
         void CreateGameWindow(const sf::VideoMode& Mode, uint Style, sf::State State);
         void ApplyWindowSettings();
         void SetWindowIcon();
@@ -51,7 +48,7 @@ namespace we
     private:
         friend WindowEventHandler;
         bool bIsFullscreen = false;
-        bool bIsResizing = false;  // Prevent recursive resize events
+        bool bIsResizing = false;
         EngineConfig::WindowConfig Config;
     };
 }

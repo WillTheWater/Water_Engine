@@ -90,7 +90,6 @@ namespace we
 
 	void RenderSubsystem::Draw(const drawable& Object, ERenderLayer Layer)
 	{
-		// Default view space based on layer
 		EViewSpace DefaultSpace = (Layer == ERenderLayer::World || Layer == ERenderLayer::WorldUI)
 			? EViewSpace::World
 			: EViewSpace::Screen;
@@ -174,7 +173,6 @@ namespace we
 		// Draw grid lines
 		if (bGridEnabled)
 		{
-			// Round to nearest grid line
 			float startX = std::floor(left / GridSpacing) * GridSpacing;
 			float endX = std::ceil(right / GridSpacing) * GridSpacing;
 			float startY = std::floor(top / GridSpacing) * GridSpacing;
@@ -182,7 +180,6 @@ namespace we
 			
 			sf::VertexArray lines(sf::PrimitiveType::Lines);
 			
-			// Vertical grid lines
 			for (float x = startX; x <= endX; x += GridSpacing)
 			{
 				bool isAxis = (std::abs(x) < 0.001f);
@@ -192,7 +189,6 @@ namespace we
 				lines.append(sf::Vertex(vec2f(x, bottom), lineColor));
 			}
 			
-			// Horizontal grid lines  
 			for (float y = startY; y <= endY; y += GridSpacing)
 			{
 				bool isAxis = (std::abs(y) < 0.001f);
@@ -202,26 +198,17 @@ namespace we
 				lines.append(sf::Vertex(vec2f(right, y), lineColor));
 			}
 			
-			// Draw to world target
 			WorldRenderTarget.draw(lines);
 		}
 		
-		// Draw origin point
 		if (bGridOriginEnabled)
 		{
 			if (left <= 0 && right >= 0 && top <= 0 && bottom >= 0)
 			{
-				// Draw white circle at origin
 				circle originCircle(8.0f / EditorZoom);
 				originCircle.setFillColor(color::White);
 				originCircle.setOrigin({ 8.0f / EditorZoom, 8.0f / EditorZoom });
 				originCircle.setPosition({ 0, 0 });
-				WorldRenderTarget.draw(originCircle);
-				
-				// Draw black outline
-				originCircle.setFillColor(color::Transparent);
-				originCircle.setOutlineColor(color::Black);
-				originCircle.setOutlineThickness(2.0f / EditorZoom);
 				WorldRenderTarget.draw(originCircle);
 			}
 		}
@@ -352,7 +339,6 @@ namespace we
 		CompositeLayers();
 
 		// Calculate letterbox/pillarbox to fit render resolution into window
-		// Get FRESH window size (may have changed due to resize/fullscreen)
 		vec2u CurrentWindowSize = RenderWindow.getSize();
 		float ScaleX = static_cast<float>(CurrentWindowSize.x) / RenderResolution.x;
 		float ScaleY = static_cast<float>(CurrentWindowSize.y) / RenderResolution.y;

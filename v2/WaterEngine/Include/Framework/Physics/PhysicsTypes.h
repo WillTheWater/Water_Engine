@@ -10,8 +10,7 @@
 namespace we
 {
 	// =============================================================================
-	// PhysicsType - Simulation behavior (matches Box2D body types)
-	// Moved from Actor.h to share with PhysicsProxy
+	// PhysicsType - Simulation behavior
 	// =============================================================================
 	enum class PhysicsType { None, Static, Kinematic, Dynamic };
 
@@ -71,7 +70,8 @@ namespace we
 		                                      | static_cast<uint>(CollisionChannel::Hurtbox);
 		
 		constexpr uint Sensor_Mask         = static_cast<uint>(CollisionChannel::Pawn)
-		                                      | static_cast<uint>(CollisionChannel::Item);
+		                                      | static_cast<uint>(CollisionChannel::Item)
+		                                      | static_cast<uint>(CollisionChannel::PhysicsBody);
 		
 		constexpr uint Hitbox_Mask         = static_cast<uint>(CollisionChannel::Hurtbox);
 		

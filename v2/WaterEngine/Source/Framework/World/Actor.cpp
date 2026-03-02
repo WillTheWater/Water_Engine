@@ -6,12 +6,16 @@
 #include "Framework/World/Actor.h"
 #include "Framework/World/World.h"
 #include "Framework/EngineSubsystem.h"
+#include "Framework/Physics/PhysicsProxy.h"
 #include "Subsystem/PhysicsSubsystem.h"
 #include "Utility/Math.h"
-#include "box2d/b2_body.h"
+#include "Utility/Log.h"
 
 namespace we
 {
+	// =========================================================================
+	// Constructor / Destructor
+	// =========================================================================
 	Actor::Actor(World* InWorld)
 		: Object()
 		, OwningWorld{ InWorld }
@@ -24,10 +28,19 @@ namespace we
 
 	Actor::~Actor()
 	{
-		// Clean up physics body
-		if (PhysicsBody && OwningWorld)
+		// Clean up physics proxies
+		if (OwningWorld && PrimaryProxy)
 		{
-			OwningWorld->GetSubsystem().Physics->RemoveListener(PhysicsBody);
+			// Destroy all extra proxies first
+			for (auto* proxy : ExtraProxies)
+			{
+				OwningWorld->GetSubsystem().Physics->DestroyProxy(proxy);
+			}
+			ExtraProxies.clear();
+
+			// Destroy primary
+			OwningWorld->GetSubsystem().Physics->DestroyProxy(PrimaryProxy);
+			PrimaryProxy = nullptr;
 		}
 	}
 
@@ -37,27 +50,26 @@ namespace we
 		bHasBegunPlay = true;
 	}
 
+	// =========================================================================
+	// Tick - Sync physics to actor
+	// =========================================================================
 	void Actor::Tick(float DeltaTime)
 	{
 		if (!bHasBegunPlay) return;
 
-		// Tick physics bodies that can move (Kinematic or Dynamic)
-		// Static bodies never move, so they don't need tick updates
-		if (PhysicsBody && PhysicsBodyType != PhysicsType::Static)
+		// Read from PhysicsProxy
+		if (PrimaryProxy && PrimaryProxy->GetSimulationType() != PhysicsType::Static)
 		{
 			float PhysicsScale = GetPhysicsScale();
 			
-			b2Vec2 Pos = PhysicsBody->GetPosition();
-			float Rot = PhysicsBody->GetAngle();
+			vec2f Pos = PrimaryProxy->GetPosition();
+			float Rot = PrimaryProxy->GetRotation();
 
-			// Update actor transform from physics
 			ActorPosition = { Pos.x / PhysicsScale, Pos.y / PhysicsScale };
 			ActorRotation = sf::radians(Rot);
 
-			// Update visual representation
 			UpdateTransform();
 
-			// Mark world render dirty
 			if (OwningWorld)
 			{
 				OwningWorld->MarkRenderDirty();
@@ -65,32 +77,21 @@ namespace we
 		}
 	}
 
-	const drawable* Actor::GetDrawable() const
-	{
-		if (!bIsVisible) return nullptr;
-		
-		// Prefer shape for grey boxing, fallback to sprite
-		if (ActorShape) return ActorShape.get();
-		if (ActorSprite.has_value()) return &ActorSprite.value();
-		
-		return nullptr;
-	}
-
+	// =========================================================================
+	// Transform
+	// =========================================================================
 	void Actor::SetPosition(const vec2f& NewPosition)
 	{
 		ActorPosition = NewPosition;
 		
-		// If physics is enabled, update physics body transform
-		if (PhysicsBodyType != PhysicsType::None && PhysicsBody)
+		if (PrimaryProxy)
 		{
 			float PhysicsScale = GetPhysicsScale();
-			b2Vec2 Pos{ ActorPosition.x * PhysicsScale, ActorPosition.y * PhysicsScale };
-			PhysicsBody->SetTransform(Pos, ActorRotation.asRadians());
+			PrimaryProxy->SetPosition({ ActorPosition.x * PhysicsScale, ActorPosition.y * PhysicsScale });
 		}
 		
 		UpdateTransform();
 		
-		// Notify world that render order may need update
 		if (OwningWorld)
 		{
 			OwningWorld->MarkRenderDirty();
@@ -101,13 +102,9 @@ namespace we
 	{
 		ActorRotation = NewRotation;
 		
-		// If physics is enabled, update physics body transform
-		if (PhysicsBodyType != PhysicsType::None && PhysicsBody)
+		if (PrimaryProxy)
 		{
-			// TODO: Get physics scale from EngineConfig (Physics.PhysicsScale = 0.01f)
-			float PhysicsScale = 0.01f;
-			b2Vec2 Pos{ ActorPosition.x * PhysicsScale, ActorPosition.y * PhysicsScale };
-			PhysicsBody->SetTransform(Pos, ActorRotation.asRadians());
+			PrimaryProxy->SetRotation(ActorRotation.asRadians());
 		}
 		
 		UpdateTransform();
@@ -117,36 +114,55 @@ namespace we
 	{
 		ActorScale = NewScale;
 		
-		// If physics is enabled, update collision shape
-		if (PhysicsBodyType != PhysicsType::None && PhysicsBody)
+		if (PrimaryProxy)
 		{
-			// TODO: Update fixture shape based on new scale
+			// Rebuild shapes with new scale
+			PrimaryProxy->ClearShapes();
+			auto Extents = GetActorExtents();
+			float PhysicsScale = GetPhysicsScale();
+			PrimaryProxy->AddBox({ Extents.x * PhysicsScale, Extents.y * PhysicsScale });
 		}
 		
 		UpdateTransform();
 	}
 
+	void Actor::UpdateTransform()
+	{
+		if (ActorShape)
+		{
+			ActorShape->setPosition(ActorPosition);
+			ActorShape->setRotation(ActorRotation);
+			ActorShape->setScale(ActorScale);
+		}
+
+		if (ActorSprite)
+		{
+			ActorSprite->setPosition(ActorPosition);
+			ActorSprite->setRotation(ActorRotation);
+			ActorSprite->setScale(ActorScale);
+		}
+	}
+
 	// =========================================================================
 	// Physics
 	// =========================================================================
-
 	void Actor::SetPhysicsType(PhysicsType Type)
 	{
 		if (PhysicsBodyType == Type) return;
 		
-		// Clean up old body if exists
-		if (PhysicsBody && OwningWorld)
+		// Clean up proxy if exists
+		if (PrimaryProxy && OwningWorld)
 		{
-			OwningWorld->GetSubsystem().Physics->RemoveListener(PhysicsBody);
-			PhysicsBody = nullptr;
+			OwningWorld->GetSubsystem().Physics->DestroyProxy(PrimaryProxy);
+			PrimaryProxy = nullptr;
 		}
 		
 		PhysicsBodyType = Type;
 		
-		// Create new body if not None
+		// Create new physics proxy if needed
 		if (Type != PhysicsType::None && OwningWorld)
 		{
-			PhysicsBody = OwningWorld->GetSubsystem().Physics->AddListener(this);
+			GetOrCreatePhysicsProxy();
 		}
 	}
 
@@ -154,26 +170,123 @@ namespace we
 	{
 		if (OwningWorld)
 		{
-			return OwningWorld->GetSubsystem().Physics->GetPhysicsScale();
+			PhysicsSubsystem* Subsystem = OwningWorld->GetSubsystem().Physics.get();
+			if (Subsystem)
+			{
+				return Subsystem->GetPhysicsScale();
+			}
 		}
-		// Fallback to default
 		return 0.01f;
+	}
+
+	PhysicsProxy* Actor::GetOrCreatePhysicsProxy()
+	{
+		if (PrimaryProxy)
+			return PrimaryProxy;
+		
+		if (!OwningWorld)
+			return nullptr;
+		
+		PhysicsSubsystem* Subsystem = OwningWorld->GetSubsystem().Physics.get();
+		if (!Subsystem)
+			return nullptr;
+		
+		// Create default proxy
+		PhysicsProxyConfig config;
+		config.BodyType = PhysicsBodyType != PhysicsType::None ? PhysicsBodyType : PhysicsType::Dynamic;
+		
+		PrimaryProxy = Subsystem->CreateProxy(this, config);
+		if (PrimaryProxy)
+		{
+			// Note: We don't add a default shape here because the caller
+			// should configure the proxy (simulation type, etc.) first,
+			// then add shapes. This ensures proper mass calculation.
+			PrimaryProxy->SetCallback(this);
+			
+			// Set initial position from actor
+			float Scale = GetPhysicsScale();
+			PrimaryProxy->SetPosition({ ActorPosition.x * Scale, ActorPosition.y * Scale });
+			PrimaryProxy->SetRotation(ActorRotation.asRadians());
+			PrimaryProxy->WakeUp();
+			
+			LOG("[ACTOR] Created PhysicsProxy for {} at [{}, {}]", 
+			    typeid(*this).name(), ActorPosition.x, ActorPosition.y);
+		}
+		
+		return PrimaryProxy;
+	}
+
+	PhysicsProxy* Actor::CreatePhysicsProxy(PhysicsType Type, CollisionChannel Channel)
+	{
+		if (!OwningWorld)
+			return nullptr;
+		
+		PhysicsSubsystem* Subsystem = OwningWorld->GetSubsystem().Physics.get();
+		if (!Subsystem)
+			return nullptr;
+		
+		PhysicsProxyConfig config;
+		config.BodyType = Type;
+		config.CollisionChannel = Channel;
+		
+		auto* proxy = Subsystem->CreateProxy(this, config);
+		if (proxy)
+		{
+			proxy->SetCallback(this);
+			ExtraProxies.push_back(proxy);
+			LOG("[ACTOR] Created extra PhysicsProxy for {} on channel {}", 
+			    typeid(*this).name(), static_cast<uint>(Channel));
+		}
+		
+		return proxy;
+	}
+
+	void Actor::DestroyPhysicsProxy(PhysicsProxy* Proxy)
+	{
+		if (!Proxy || !OwningWorld)
+			return;
+		
+		// Remove from extra list
+		auto it = std::find(ExtraProxies.begin(), ExtraProxies.end(), Proxy);
+		if (it != ExtraProxies.end())
+		{
+			ExtraProxies.erase(it);
+		}
+		
+		// Destroy via subsystem
+		OwningWorld->GetSubsystem().Physics->DestroyProxy(Proxy);
+	}
+
+	// =========================================================================
+	// Collision Events - IPhysicsProxyCallback implementation
+	// =========================================================================
+	void Actor::OnBeginOverlap(PhysicsProxy* Self, PhysicsProxy* Other)
+	{
+		// Base class logs by default - derived classes override
+		LOG("[ACTOR] OnBeginOverlap: {} overlaps with {}", 
+		    typeid(*this).name(), 
+		    Other && Other->GetOwner() ? typeid(*Other->GetOwner()).name() : "unknown");
+	}
+
+	void Actor::OnEndOverlap(PhysicsProxy* Self, PhysicsProxy* Other)
+	{
+		// Base class logs by default - derived classes override
+		LOG("[ACTOR] OnEndOverlap: {} ended overlap with {}", 
+		    typeid(*this).name(),
+		    Other && Other->GetOwner() ? typeid(*Other->GetOwner()).name() : "unknown");
 	}
 
 	// =========================================================================
 	// Sprite
 	// =========================================================================
-
 	void Actor::SetTexture(shared<texture> NewTexture)
 	{
 		if (NewTexture)
 		{
 			ActorTexture = NewTexture;
 			
-			// Create sprite with new texture
 			ActorSprite.emplace(*ActorTexture);
 			
-			// Center origin
 			auto bounds = ActorSprite->getLocalBounds();
 			ActorSprite->setOrigin({ bounds.size.x / 2.0f, bounds.size.y / 2.0f });
 			
@@ -194,7 +307,6 @@ namespace we
 	// =========================================================================
 	// Shape (Grey Boxing)
 	// =========================================================================
-
 	void Actor::SetShape(unique<shape> NewShape)
 	{
 		ActorShape = std::move(NewShape);
@@ -232,62 +344,33 @@ namespace we
 	// =========================================================================
 	// Actor Extents
 	// =========================================================================
-
 	vec2f Actor::GetActorExtents() const
 	{
-		// If we have a shape, use its logical size (half-size)
 		if (ActorShape)
 		{
-			// Get local bounds and return half-size
 			auto bounds = ActorShape->getLocalBounds();
 			return { bounds.size.x * 0.5f, bounds.size.y * 0.5f };
 		}
 
-		// If we have a sprite, use its bounds (half-size)
 		if (ActorSprite.has_value())
 		{
 			auto bounds = ActorSprite->getLocalBounds();
 			return { bounds.size.x * 0.5f, bounds.size.y * 0.5f };
 		}
 
-		// Default fallback - no visual = no collision
-		return { 0.0f, 0.0f };
+		return { 32.0f, 32.0f };
 	}
 
 	// =========================================================================
-	// Physics
+	// Drawable
 	// =========================================================================
-
-	void Actor::UpdatePhysicsBodyTransform()
+	const drawable* Actor::GetDrawable() const
 	{
-		if (PhysicsBodyType != PhysicsType::None && PhysicsBody)
-		{
-			float PhysicsScale = GetPhysicsScale();
-			b2Vec2 Pos{ ActorPosition.x * PhysicsScale, ActorPosition.y * PhysicsScale };
-			PhysicsBody->SetTransform(Pos, ActorRotation.asRadians());
-		}
-	}
-
-	// =========================================================================
-	// Transform Update
-	// =========================================================================
-
-	void Actor::UpdateTransform()
-	{
-		// Update shape
-		if (ActorShape)
-		{
-			ActorShape->setPosition(ActorPosition);
-			ActorShape->setRotation(ActorRotation);
-			ActorShape->setScale(ActorScale);
-		}
+		if (!bIsVisible) return nullptr;
 		
-		// Update sprite
-		if (ActorSprite)
-		{
-			ActorSprite->setPosition(ActorPosition);
-			ActorSprite->setRotation(ActorRotation);
-			ActorSprite->setScale(ActorScale);
-		}
+		if (ActorShape) return ActorShape.get();
+		if (ActorSprite.has_value()) return &ActorSprite.value();
+		
+		return nullptr;
 	}
 }

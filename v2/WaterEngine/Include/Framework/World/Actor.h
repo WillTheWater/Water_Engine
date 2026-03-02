@@ -8,32 +8,37 @@
 #include "Core/CoreMinimal.h"
 #include "Framework/World/Object.h"
 #include "Framework/Physics/PhysicsTypes.h"
+#include "Framework/Physics/PhysicsProxy.h"
 #include <optional>
-
-// Forward declare Box2D body
-class b2Body;
 
 namespace we
 {
 	class World;
+	class PhysicsProxy;
 
 	// Actor can render as sprite, shape, or both
 	enum class EActorRenderMode { None, Sprite, Shape, Both };
-	
-	// PhysicsType is now in Framework/Physics/PhysicsTypes.h
 
-	class Actor : public Object
+	// =============================================================================
+	// Actor - Base class for all game objects
+	// Implements IPhysicsProxyCallback to receive collision events
+	// =============================================================================
+	class Actor : public Object, public IPhysicsProxyCallback
 	{
 	public:
 		Actor(World* OwningWorld);
 		virtual ~Actor();
 
+		// =================================================================
 		// Lifecycle
+		// =================================================================
 		virtual void BeginPlay();
 		virtual void Tick(float DeltaTime);
 		bool HasBegunPlay() const { return bHasBegunPlay; }
 
+		// =================================================================
 		// Transform
+		// =================================================================
 		void SetPosition(const vec2f& Position);
 		vec2f GetActorPosition() const { return ActorPosition; }
 
@@ -43,19 +48,41 @@ namespace we
 		void SetScale(const vec2f& Scale);
 		vec2f GetScale() const { return ActorScale; }
 
-		// Physics
+		// =================================================================
+		// Physics Type - Convenience wrapper around PhysicsProxy
+		// =================================================================
 		void SetPhysicsType(PhysicsType Type);
 		PhysicsType GetPhysicsType() const { return PhysicsBodyType; }
-		b2Body* GetPhysicsBody() const { return PhysicsBody; }
 		float GetPhysicsScale() const;
 
-		// Rendering - returns primary drawable (shape or sprite)
-		virtual const drawable* GetDrawable() const;
+		// =================================================================
+		// Physics Proxy Access
+		// =================================================================
+		// Get the primary physics proxy (returns null if not created)
+		PhysicsProxy* GetPhysicsProxy() const { return PrimaryProxy; }
 		
-		// Render depth - returns custom depth if set, otherwise Y position
+		// Ensure the primary physics proxy exists (creates one if needed)
+		PhysicsProxy* GetOrCreatePhysicsProxy();
+		
+		bool HasPhysicsProxy() const { return PrimaryProxy != nullptr; }
+		
+		// Create a new physics proxy (for compound shapes, sensors, etc.)
+		PhysicsProxy* CreatePhysicsProxy(PhysicsType Type, CollisionChannel Channel);
+		
+		void DestroyPhysicsProxy(PhysicsProxy* Proxy);
+
+		// =================================================================
+		// Collision Events
+		// =================================================================
+		virtual void OnBeginOverlap(PhysicsProxy* Self, PhysicsProxy* Other);
+		virtual void OnEndOverlap(PhysicsProxy* Self, PhysicsProxy* Other);
+
+		// =================================================================
+		// Rendering
+		// =================================================================
+		virtual const drawable* GetDrawable() const;
 		virtual float GetRenderDepth() const { return CustomRenderDepth.value_or(ActorPosition.y); }
 		
-		// Custom render depth - overrides Y-based sorting
 		void SetCustomRenderDepth(float Depth) { CustomRenderDepth = Depth; }
 		void ClearCustomRenderDepth() { CustomRenderDepth.reset(); }
 		bool HasCustomRenderDepth() const { return CustomRenderDepth.has_value(); }
@@ -63,38 +90,40 @@ namespace we
 		void SetVisible(bool bVisible) { bIsVisible = bVisible; }
 		bool IsVisible() const { return bIsVisible; }
 
-		// Sprite (optional - for textured actors)
+		// =================================================================
+		// Sprite
+		// =================================================================
 		void SetTexture(shared<texture> NewTexture);
 		void SetTextureRect(const recti& TexRect);
 		void SetSpriteOrigin(const vec2f& Origin);
 		bool HasSprite() const { return ActorSprite.has_value(); }
 
-		// Shape (optional - for prototyping/grey boxing)
+		// =================================================================
+		// Shape
+		// =================================================================
 		void SetShape(unique<shape> NewShape);
 		void SetShapeColor(const color& Color);
 		shape* GetShape() const { return ActorShape.get(); }
 		bool HasShape() const { return ActorShape != nullptr; }
-
-		// Utility for grey boxing - quick rectangle
 		void SetAsRectangle(vec2f Size, color FillColor = color::White);
 		void SetAsCircle(float Radius, color FillColor = color::White);
 
-		// Get actor extents (half-size) for physics/collision
+		// =================================================================
+		// Utility
+		// =================================================================
 		vec2f GetActorExtents() const;
-
 		World* GetWorld() const { return OwningWorld; }
 
 	protected:
 		void UpdateTransform();
-		void UpdatePhysicsBodyTransform();
 
 	private:
 		World* OwningWorld;
 		
-		// Render data - use shape OR sprite (or both with SetRenderMode)
-		unique<shape> ActorShape;        // For prototyping (rectangles, circles, etc.)
-		shared<texture> ActorTexture;    // For textured sprites
-		optional<sprite> ActorSprite;    // SFML sprite (requires texture)
+		// Render data
+		unique<shape> ActorShape;
+		shared<texture> ActorTexture;
+		optional<sprite> ActorSprite;
 		
 		// Transform
 		vec2f ActorPosition;
@@ -107,9 +136,10 @@ namespace we
 		
 		// Physics
 		PhysicsType PhysicsBodyType = PhysicsType::None;
-		b2Body* PhysicsBody = nullptr;
+		PhysicsProxy* PrimaryProxy = nullptr;
+		vector<PhysicsProxy*> ExtraProxies;
 		
-		// Custom render depth (overrides Y-based sorting)
+		// Custom render depth
 		std::optional<float> CustomRenderDepth;
 	};
 }

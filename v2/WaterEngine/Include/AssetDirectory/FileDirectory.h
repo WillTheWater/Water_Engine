@@ -12,7 +12,7 @@ namespace we
 {
     // =========================================================================
     // FileDirectory - Loose file asset directory for Debug mode
-    // Reads directly from filesystem (Content/ folder)
+    // Reads directly from filesystem (Content/)
     // =========================================================================
     class FileDirectory : public IAssetDirector
     {

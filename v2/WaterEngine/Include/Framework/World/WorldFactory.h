@@ -46,7 +46,6 @@ namespace we
 		// Create world by name (returns nullptr if not registered)
 		unique<World> Create(const string& Name, EngineSubsystem& Sub);
 
-		// Check if world type is registered
 		bool IsRegistered(const string& Name) const;
 
 		// Direct template creation (no registration needed)

@@ -10,7 +10,7 @@
 namespace we
 {
 	// =========================================================================
-	// CameraView - Output of a camera calculation, consumed by the renderer
+	// CameraView
 	// =========================================================================
 	struct CameraView
 	{
@@ -30,7 +30,7 @@ namespace we
 
 	// =========================================================================
 	// ICamera - Interface for anything that can provide a camera view
-	// Implemented by CameraActor or CameraComponent (future)
+	// Implemented by CameraActor or CameraComponent (TODO)
 	// =========================================================================
 	class ICamera
 	{

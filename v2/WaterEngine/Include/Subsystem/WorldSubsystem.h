@@ -53,12 +53,11 @@ namespace we
         World* GetCurrentWorld() const { return CurrentWorld.get(); }
         bool HasActiveWorld() const { return CurrentWorld != nullptr; }
 
-        // Delegates to current world
         void Tick(float DeltaTime);
         void Render();
 
     private:
-        WorldFactory Factory;  // Factory is part of world management, not a core subsystem
+        WorldFactory Factory;
         EngineSubsystem& Subsystem;
         unique<World> CurrentWorld;
     };

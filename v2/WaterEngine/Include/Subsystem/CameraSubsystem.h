@@ -20,11 +20,10 @@ namespace we
 		CameraSubsystem() = default;
 		~CameraSubsystem() = default;
 
-		// Set active camera - stores weak_ptr (owner is Actor/Component)
+		// Set active camera
 		void SetActiveCamera(weak<ICamera> Camera) { Active = Camera; }
 		void ClearActiveCamera() { Active.reset(); }
 
-		// Check if we have a valid camera
 		bool HasActiveCamera() const;
 
 		// Get current view - returns nullopt if no valid camera

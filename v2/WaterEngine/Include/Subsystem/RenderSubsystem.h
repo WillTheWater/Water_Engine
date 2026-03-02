@@ -23,7 +23,6 @@ namespace we
 	class RenderSubsystem
 	{
 	public:
-		// Initialize with config and window (for cursor sizing & final output)
 		RenderSubsystem(const EngineConfig::RenderConfig& Config, WindowSubsystem& Window);
 		~RenderSubsystem();
 
@@ -79,7 +78,7 @@ namespace we
 		void AddPostProcessEffect(ERenderLayer Layer, unique<IPostProcessEffect> Effect);
 
 	private:
-		// Main render targets (stored directly like old code)
+		// Main render targets
 		renderTexture WorldRenderTarget;
 		renderTexture ScreenUIRenderTarget;
 		renderTexture WorldUIRenderTarget;

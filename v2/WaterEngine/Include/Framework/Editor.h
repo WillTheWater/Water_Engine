@@ -24,10 +24,9 @@ namespace we
     // Panel Overview:
     // - Viewport: Shows the game at actual render resolution (1920x1080 etc)
     //             scaled to fit while maintaining aspect ratio
-    // - World:    List of all actors in the current world (was "Hierarchy")
-    // - Details:  Properties of the selected actor (was "Inspector")
+    // - World:    List of all actors in the current world
+    // - Details:  Properties of the selected actor
     //
-    // Docking: Full dockspace enabled - panels can be rearranged
     // =============================================================================
 
     class Editor
@@ -39,7 +38,7 @@ namespace we
         void Initialize();
         void Shutdown();
 
-        // Main UI - called every frame
+        // Main UI
         void DrawUI(bool bIsPlaying);
 
         // Mode request callback - set by WaterEngine
@@ -52,28 +51,23 @@ namespace we
         // Input handling - visitor pattern via EditorEventHandler
         void HandleEvent(const sf::Event& Event);
 
-        // World state snapshot for play/stop
+        // World state
         void SaveWorldState();
         void RestoreWorldState();
 
     private:
-        void DrawMainDockSpace();   // Root docking area
-        void DrawMainMenuBar();     // File, Edit, View menus
-        void DrawViewport(bool bIsPlaying);        // Game view at render resolution
-        void DrawObjects();           // Actor list (was Hierarchy)
+        void DrawViewport(bool bIsPlaying);
+        void DrawObjects();
         void DrawEditorTools(bool bIsPlaying);
-        void DrawDetails(bool bIsPlaying);         // Selected actor properties (was Inspector)
+        void DrawDetails(bool bIsPlaying);
 
-        void HandleViewportInput(); // Camera pan, selection
+        void HandleViewportInput();
 
     private:
         friend EditorEventHandler;
         EngineSubsystem& Subsystem;
 
-        // World state snapshot
         vector<uint8> WorldSnapshot;
-
-        // Selection
         Actor* SelectedActor = nullptr;
 
         // Viewport state
