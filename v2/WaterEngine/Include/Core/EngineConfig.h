@@ -7,6 +7,7 @@
 
 #include "CoreMinimal.h"
 #include "Interface/IAssetDirector.h"
+#include <toml++/toml.hpp>
 
 namespace we
 {
@@ -43,13 +44,6 @@ namespace we
 			string AssetDirectory = "Content";
 		} Paths;
 
-		// Debug Settings
-		struct DebugConfig
-		{
-			bool EnableHotReload = true;
-			bool EnableConsole = true;
-		} Debug;
-
 		// Physics Settings
 		struct PhysicsConfig
 		{
@@ -71,6 +65,14 @@ namespace we
 			float UIVolume = 1.0f;
 			uint MaxSFXInstances = 32;
 		} Audio;
+
+		// Cursor Settings
+		struct CursorConfig
+		{
+			vec2u CursorSize;
+			float CursorSpeed;
+			float JoystickDeadzone;
+		} Cursor;
 
 	};
 
@@ -99,5 +101,8 @@ namespace we
 		static EngineConfig CurrentConfig;
 		static string LoadedPath;
 		static bool IsLoaded;
+
+	private:
+		static void ParseConfigTable(const toml::table& tbl);
 	};
 }

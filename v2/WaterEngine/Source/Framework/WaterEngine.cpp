@@ -9,8 +9,6 @@
 #include "AssetDirectory/FileDirectory.h"
 #include "Utility/Log.h"
 #include "Utility/Assert.h"
-#include <exception>
-#include <optional>
 
 // Editor only exists in Debug builds
 #ifndef WE_RELEASE
@@ -115,6 +113,8 @@ namespace we
         Subsystem.Render  = make_unique<RenderSubsystem>(Config.Render, *Subsystem.Window);
         Subsystem.Time    = make_unique<TimeSubsystem>();
         Subsystem.Physics = make_unique<PhysicsSubsystem>(Config.Physics);
+        Subsystem.GUI     = make_unique<GUISubsystem>();
+        Subsystem.Cursor  = make_unique<CursorSubsytem>();
     }
 
     void WaterEngine::Initialize()

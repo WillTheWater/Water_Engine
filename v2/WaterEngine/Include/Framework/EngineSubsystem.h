@@ -18,6 +18,8 @@
 #include "Subsystem/RenderSubsystem.h"
 #include "Subsystem/WindowSubsystem.h"
 #include "Subsystem/PhysicsSubsystem.h"
+#include "Subsystem/GUISubsystem.h"
+#include "Subsystem/CursorSubsystem.h"
 
 namespace we
 {
@@ -32,5 +34,7 @@ namespace we
 		unique<RenderSubsystem> Render;
 		unique<WindowSubsystem> Window;
 		unique<PhysicsSubsystem> Physics;
+		unique<GUISubsystem> GUI;
+		unique<CursorSubsytem> Cursor;
 	};
 }

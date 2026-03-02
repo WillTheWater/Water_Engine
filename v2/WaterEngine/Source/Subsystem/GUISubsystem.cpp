@@ -1,0 +1,19 @@
+// =============================================================================
+// Water Engine v2.0.0
+// Copyright(C) 2026 Will The Water
+// =============================================================================
+
+#include "Subsystem/GUISubsystem.h"
+
+namespace we
+{
+	GUISubsystem::GUISubsystem()
+	{
+
+	}
+
+	GUISubsystem::~GUISubsystem()
+	{
+	}
+
+}

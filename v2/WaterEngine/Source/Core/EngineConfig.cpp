@@ -5,7 +5,6 @@
 
 #include "Core/EngineConfig.h"
 #include "Utility/Log.h"
-#include <toml++/toml.hpp>
 #include <physfs.h>
 #include <filesystem>
 #include <fstream>
@@ -48,6 +47,89 @@ namespace we
 		return "";
 	}
 
+	void EngineConfigManager::ParseConfigTable(const toml::table& tbl)
+	{
+		if (auto window = tbl["Window"])
+		{
+			CurrentConfig.Window.Title = window["Title"].value_or("Water Engine");
+			CurrentConfig.Window.Fullscreen = window["Fullscreen"].value_or(false);
+			CurrentConfig.Window.VSync = window["VSync"].value_or(true);
+			CurrentConfig.Window.TargetFPS = window["TargetFPS"].value_or(60.0);
+
+			if (auto arr = window["DefaultSize"].as_array())
+			{
+				if (arr->size() >= 2)
+				{
+					CurrentConfig.Window.DefaultSize.x = arr->get(0)->value_or(1920u);
+					CurrentConfig.Window.DefaultSize.y = arr->get(1)->value_or(1080u);
+				}
+			}
+
+			if (auto arr = window["MinimumSize"].as_array())
+			{
+				if (arr->size() >= 2)
+				{
+					CurrentConfig.Window.MinimumSize.x = arr->get(0)->value_or(1280u);
+					CurrentConfig.Window.MinimumSize.y = arr->get(1)->value_or(720u);
+				}
+			}
+		}
+
+		if (auto paths = tbl["Paths"])
+		{
+			CurrentConfig.Paths.AssetDirectory = paths["AssetDirectory"].value_or("Content");
+		}
+
+		if (auto physics = tbl["Physics"])
+		{
+			if (auto arr = physics["Gravity"].as_array())
+			{
+				if (arr->size() >= 2)
+				{
+					CurrentConfig.Physics.Gravity.x = arr->get(0)->value_or(0.0);
+					CurrentConfig.Physics.Gravity.y = arr->get(1)->value_or(9.8);
+				}
+			}
+			CurrentConfig.Physics.TimeStep = static_cast<float>(physics["TimeStep"].value_or(0.016));
+		}
+
+		if (auto audio = tbl["Audio"])
+		{
+			CurrentConfig.Audio.MasterVolume = static_cast<float>(audio["MasterVolume"].value_or(1.0));
+			CurrentConfig.Audio.MusicVolume = static_cast<float>(audio["MusicVolume"].value_or(0.8));
+			CurrentConfig.Audio.AmbientVolume = static_cast<float>(audio["AmbientVolume"].value_or(0.8));
+			CurrentConfig.Audio.SFXVolume = static_cast<float>(audio["SFXVolume"].value_or(0.8));
+			CurrentConfig.Audio.VoiceVolume = static_cast<float>(audio["VoiceVolume"].value_or(1.0));
+			CurrentConfig.Audio.UIVolume = static_cast<float>(audio["UIVolume"].value_or(1.0));
+			CurrentConfig.Audio.MaxSFXInstances = audio["MaxSFXInstances"].value_or(32u);
+		}
+
+		if (auto render = tbl["Render"])
+		{
+			CurrentConfig.Render.ResolutionX = render["ResolutionX"].value_or(1920u);
+			CurrentConfig.Render.ResolutionY = render["ResolutionY"].value_or(1080u);
+			CurrentConfig.Render.WorldSmooth = render["WorldSmooth"].value_or(true);
+			CurrentConfig.Render.WorldUISmooth = render["WorldUISmooth"].value_or(false);
+			CurrentConfig.Render.ScreenUISmooth = render["ScreenUISmooth"].value_or(false);
+			CurrentConfig.Render.CursorSmooth = render["CursorSmooth"].value_or(false);
+		}
+
+		if (auto cursor = tbl["Cursor"])
+		{
+			if (auto arr = cursor["CursorSize"].as_array())
+			{
+				if (arr->size() >= 2)
+				{
+					CurrentConfig.Cursor.CursorSize.x = arr->get(0)->value_or(32u);
+					CurrentConfig.Cursor.CursorSize.y = arr->get(1)->value_or(32u);
+				}
+
+			}
+			CurrentConfig.Cursor.CursorSpeed = cursor["CursorSpeed"].value_or(100);
+			CurrentConfig.Cursor.JoystickDeadzone = cursor["JoystickDeadzone"].value_or(0.15);
+		}
+	}
+
 	bool EngineConfigManager::LoadFromFile(const string& FilePath)
 	{
 		try
@@ -59,81 +141,7 @@ namespace we
 				return false;
 			}
 
-			toml::table tbl = toml::parse(Content);
-			
-			if (toml::node_view window = tbl["Window"])
-			{
-				CurrentConfig.Window.Title = window["Title"].value_or("Water Engine");
-				CurrentConfig.Window.Fullscreen = window["Fullscreen"].value_or(false);
-				CurrentConfig.Window.VSync = window["VSync"].value_or(true);
-				CurrentConfig.Window.TargetFPS = window["TargetFPS"].value_or(60.0);
-				
-				// DefaultSize as array [width, height]
-				if (auto arr = window["DefaultSize"].as_array())
-				{
-					if (arr->size() >= 2)
-					{
-						CurrentConfig.Window.DefaultSize.x = arr->get(0)->value_or(1920u);
-						CurrentConfig.Window.DefaultSize.y = arr->get(1)->value_or(1080u);
-					}
-				}
-				
-				// MinimumSize as array [width, height]
-				if (auto arr = window["MinimumSize"].as_array())
-				{
-					if (arr->size() >= 2)
-					{
-						CurrentConfig.Window.MinimumSize.x = arr->get(0)->value_or(1280u);
-						CurrentConfig.Window.MinimumSize.y = arr->get(1)->value_or(720u);
-					}
-				}
-			}
-
-			if (toml::node_view paths = tbl["Paths"])
-			{
-				CurrentConfig.Paths.AssetDirectory = paths["AssetDirectory"].value_or("Content");
-			}
-
-			if (toml::node_view debug = tbl["Debug"])
-			{
-				CurrentConfig.Debug.EnableHotReload = debug["EnableHotReload"].value_or(true);
-				CurrentConfig.Debug.EnableConsole = debug["EnableConsole"].value_or(true);
-			}
-
-			if (toml::node_view physics = tbl["Physics"])
-			{
-				// Gravity as array [x, y]
-				if (auto arr = physics["Gravity"].as_array())
-				{
-					if (arr->size() >= 2)
-					{
-						CurrentConfig.Physics.Gravity.x = arr->get(0)->value_or(0.0);
-						CurrentConfig.Physics.Gravity.y = arr->get(1)->value_or(9.8);
-					}
-				}
-				CurrentConfig.Physics.TimeStep = static_cast<float>(physics["TimeStep"].value_or(0.016));
-			}
-
-			if (toml::node_view audio = tbl["Audio"])
-			{
-				CurrentConfig.Audio.MasterVolume = static_cast<float>(audio["MasterVolume"].value_or(1.0));
-				CurrentConfig.Audio.MusicVolume = static_cast<float>(audio["MusicVolume"].value_or(0.8));
-				CurrentConfig.Audio.AmbientVolume = static_cast<float>(audio["AmbientVolume"].value_or(0.8));
-				CurrentConfig.Audio.SFXVolume = static_cast<float>(audio["SFXVolume"].value_or(0.8));
-				CurrentConfig.Audio.VoiceVolume = static_cast<float>(audio["VoiceVolume"].value_or(1.0));
-				CurrentConfig.Audio.UIVolume = static_cast<float>(audio["UIVolume"].value_or(1.0));
-				CurrentConfig.Audio.MaxSFXInstances = audio["MaxSFXInstances"].value_or(32u);
-			}
-
-			if (toml::node_view render = tbl["Render"])
-			{
-				CurrentConfig.Render.ResolutionX = render["ResolutionX"].value_or(1920u);
-				CurrentConfig.Render.ResolutionY = render["ResolutionY"].value_or(1080u);
-				CurrentConfig.Render.WorldSmooth = render["WorldSmooth"].value_or(true);
-				CurrentConfig.Render.WorldUISmooth = render["WorldUISmooth"].value_or(false);
-				CurrentConfig.Render.ScreenUISmooth = render["ScreenUISmooth"].value_or(false);
-				CurrentConfig.Render.CursorSmooth = render["CursorSmooth"].value_or(false);
-			}
+			ParseConfigTable(toml::parse(Content));
 
 			LoadedPath = FilePath;
 			IsLoaded = true;
@@ -155,6 +163,14 @@ namespace we
 	{
 		if (LoadedPath.empty())
 			return false;
+
+		if (LoadedPath.find("pak://") == 0)
+		{
+			// Handle reloading from asset director if needed, 
+			// though usually re-pointing to LoadFromFile is standard.
+			return false;
+		}
+
 		return LoadFromFile(LoadedPath);
 	}
 
@@ -176,81 +192,7 @@ namespace we
 				return false;
 			}
 
-			toml::table tbl = toml::parse(Content);
-			
-			if (toml::node_view window = tbl["Window"])
-			{
-				CurrentConfig.Window.Title = window["Title"].value_or("Water Engine");
-				CurrentConfig.Window.Fullscreen = window["Fullscreen"].value_or(false);
-				CurrentConfig.Window.VSync = window["VSync"].value_or(true);
-				CurrentConfig.Window.TargetFPS = window["TargetFPS"].value_or(60.0);
-				
-				// DefaultSize as array [width, height]
-				if (auto arr = window["DefaultSize"].as_array())
-				{
-					if (arr->size() >= 2)
-					{
-						CurrentConfig.Window.DefaultSize.x = arr->get(0)->value_or(1920u);
-						CurrentConfig.Window.DefaultSize.y = arr->get(1)->value_or(1080u);
-					}
-				}
-				
-				// MinimumSize as array [width, height]
-				if (auto arr = window["MinimumSize"].as_array())
-				{
-					if (arr->size() >= 2)
-					{
-						CurrentConfig.Window.MinimumSize.x = arr->get(0)->value_or(1280u);
-						CurrentConfig.Window.MinimumSize.y = arr->get(1)->value_or(720u);
-					}
-				}
-			}
-
-			if (toml::node_view paths = tbl["Paths"])
-			{
-				CurrentConfig.Paths.AssetDirectory = paths["AssetDirectory"].value_or("Content");
-			}
-
-			if (toml::node_view debug = tbl["Debug"])
-			{
-				CurrentConfig.Debug.EnableHotReload = debug["EnableHotReload"].value_or(true);
-				CurrentConfig.Debug.EnableConsole = debug["EnableConsole"].value_or(true);
-			}
-
-			if (toml::node_view physics = tbl["Physics"])
-			{
-// Gravity as array [x, y]
-				if (auto arr = physics["Gravity"].as_array())
-				{
-					if (arr->size() >= 2)
-					{
-						CurrentConfig.Physics.Gravity.x = arr->get(0)->value_or(0.0);
-						CurrentConfig.Physics.Gravity.y = arr->get(1)->value_or(9.8);
-					}
-				}
-				CurrentConfig.Physics.TimeStep = static_cast<float>(physics["TimeStep"].value_or(0.016));
-			}
-
-			if (toml::node_view audio = tbl["Audio"])
-			{
-				CurrentConfig.Audio.MasterVolume = static_cast<float>(audio["MasterVolume"].value_or(1.0));
-				CurrentConfig.Audio.MusicVolume = static_cast<float>(audio["MusicVolume"].value_or(0.8));
-				CurrentConfig.Audio.AmbientVolume = static_cast<float>(audio["AmbientVolume"].value_or(0.8));
-				CurrentConfig.Audio.SFXVolume = static_cast<float>(audio["SFXVolume"].value_or(0.8));
-				CurrentConfig.Audio.VoiceVolume = static_cast<float>(audio["VoiceVolume"].value_or(1.0));
-				CurrentConfig.Audio.UIVolume = static_cast<float>(audio["UIVolume"].value_or(1.0));
-				CurrentConfig.Audio.MaxSFXInstances = audio["MaxSFXInstances"].value_or(32u);
-			}
-
-			if (toml::node_view render = tbl["Render"])
-			{
-				CurrentConfig.Render.ResolutionX = render["ResolutionX"].value_or(1920u);
-				CurrentConfig.Render.ResolutionY = render["ResolutionY"].value_or(1080u);
-				CurrentConfig.Render.WorldSmooth = render["WorldSmooth"].value_or(true);
-				CurrentConfig.Render.WorldUISmooth = render["WorldUISmooth"].value_or(false);
-				CurrentConfig.Render.ScreenUISmooth = render["ScreenUISmooth"].value_or(false);
-				CurrentConfig.Render.CursorSmooth = render["CursorSmooth"].value_or(false);
-			}
+			ParseConfigTable(toml::parse(Content));
 
 			LoadedPath = "pak://" + FilePath;
 			IsLoaded = true;
