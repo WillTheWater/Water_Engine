@@ -198,9 +198,6 @@ namespace we
 		PrimaryProxy = Subsystem->CreateProxy(this, config);
 		if (PrimaryProxy)
 		{
-			// Note: We don't add a default shape here because the caller
-			// should configure the proxy (simulation type, etc.) first,
-			// then add shapes. This ensures proper mass calculation.
 			PrimaryProxy->SetCallback(this);
 			
 			// Set initial position from actor

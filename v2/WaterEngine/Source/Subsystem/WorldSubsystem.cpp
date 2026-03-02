@@ -58,7 +58,7 @@ namespace we
     {
         if (CurrentWorld)
         {
-            CurrentWorld = nullptr;
+            CurrentWorld.reset();
             LOG("Unloaded world");
         }
     }

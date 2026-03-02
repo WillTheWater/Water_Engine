@@ -110,6 +110,9 @@ namespace we
 		Subsystem.Audio->PlayAmbient("Assets/Audio/Default/defaultAmbient.ogg");
 
 		SetupInputTests();
+		
+		// Set up 2-second looped timer test on DynamicBox
+		TestTimer = TimerManager::Get().SetTimer(GetObject(), &MainMenu::TimerTestCallback, 2.0f, true);
 	}
 
 	void MainMenu::EndPlay()
@@ -283,5 +286,10 @@ namespace we
 	{
 		if (Subsystem.Input)
 			Subsystem.Input->UnbindAll();
+	}
+
+	void MainMenu::TimerTestCallback()
+	{
+		LOG("Working Timer!");
 	}
 }

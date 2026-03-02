@@ -59,6 +59,6 @@ namespace we
     private:
         WorldFactory Factory;
         EngineSubsystem& Subsystem;
-        unique<World> CurrentWorld;
+        shared<World> CurrentWorld;
     };
 }

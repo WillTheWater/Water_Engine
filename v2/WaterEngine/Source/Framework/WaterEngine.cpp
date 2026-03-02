@@ -7,6 +7,7 @@
 #include "Framework/World/World.h"
 #include "AssetDirectory/PakDirectory.h"
 #include "AssetDirectory/FileDirectory.h"
+#include "Utility/Timer.h"
 #include "Utility/Log.h"
 #include "Utility/Assert.h"
 
@@ -114,7 +115,7 @@ namespace we
         Subsystem.Time    = make_unique<TimeSubsystem>();
         Subsystem.Physics = make_unique<PhysicsSubsystem>(Config.Physics);
         Subsystem.GUI     = make_unique<GUISubsystem>();
-        Subsystem.Cursor  = make_unique<CursorSubsytem>();
+        Subsystem.Cursor  = make_unique<CursorSubsytem>(Config.Cursor);
     }
 
     void WaterEngine::Initialize()
@@ -195,6 +196,7 @@ namespace we
         Subsystem.Time->Tick();
         auto DeltaTime = Subsystem.Time->GetDeltaTime();
         Subsystem.Resources->PollCompletedRequests();
+        TimerManager::Get().UpdateTimer(DeltaTime);
 
         // Update Audio
         if (Subsystem.Audio)

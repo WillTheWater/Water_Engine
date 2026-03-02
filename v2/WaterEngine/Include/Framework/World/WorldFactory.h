@@ -12,7 +12,7 @@ namespace we
 	struct EngineSubsystem;
 	class World;
 
-	using WorldFactoryFunc = std::function<unique<World>(EngineSubsystem&)>;
+	using WorldFactoryFunc = std::function<shared<World>(EngineSubsystem&)>;
 
 	// =========================================================================
 	// WorldFactory - Template-based world registration
@@ -27,7 +27,7 @@ namespace we
 		{
 			static_assert(std::is_base_of_v<World, WorldType>, "Must derive from World");
 			Factories[Name] = [](EngineSubsystem& Sub) {
-				return make_unique<WorldType>(Sub);
+				return make_shared<WorldType>(Sub);
 			};
 		}
 
@@ -36,24 +36,24 @@ namespace we
 		void Register(const string& Name, std::function<void(WorldType&)> Setup)
 		{
 			static_assert(std::is_base_of_v<World, WorldType>, "Must derive from World");
-			Factories[Name] = [Setup](EngineSubsystem& Sub) -> unique<World> {
-				auto world = make_unique<WorldType>(Sub);
+			Factories[Name] = [Setup](EngineSubsystem& Sub) -> shared<World> {
+				auto world = make_shared<WorldType>(Sub);
 				if (Setup) Setup(*world);
 				return world;
 			};
 		}
 
 		// Create world by name (returns nullptr if not registered)
-		unique<World> Create(const string& Name, EngineSubsystem& Sub);
+		shared<World> Create(const string& Name, EngineSubsystem& Sub);
 
 		bool IsRegistered(const string& Name) const;
 
 		// Direct template creation (no registration needed)
 		template<typename WorldType>
-		static unique<World> Create(EngineSubsystem& Sub)
+		static shared<World> Create(EngineSubsystem& Sub)
 		{
 			static_assert(std::is_base_of_v<World, WorldType>, "Must derive from World");
-			return make_unique<WorldType>(Sub);
+			return make_shared<WorldType>(Sub);
 		}
 
 	private:

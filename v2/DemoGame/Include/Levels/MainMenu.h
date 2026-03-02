@@ -7,6 +7,7 @@
 
 #include "Core/CoreMinimal.h"
 #include "Framework/World/World.h"
+#include "Utility/Timer.h"
 
 namespace we
 {
@@ -33,5 +34,8 @@ namespace we
 		weak<Actor> GroundPlatform;
 		weak<Actor> DynamicBox;
 		weak<Actor> SensorZone;
+		
+		TimerHandle TestTimer;
+		void TimerTestCallback();
 	};
 }

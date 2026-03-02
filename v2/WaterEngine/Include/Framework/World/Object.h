@@ -18,6 +18,9 @@ namespace we
 
 		bool IsPendingDestroy() const;
 
+		weak<Object> GetObject();
+		weak<const Object> GetObject() const;
+
 		Delegate<Object*> OnDestroy;
 
 	protected:

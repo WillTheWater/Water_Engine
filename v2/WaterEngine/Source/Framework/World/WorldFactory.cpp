@@ -9,7 +9,7 @@
 
 namespace we
 {
-	unique<World> WorldFactory::Create(const string& Name, EngineSubsystem& Sub)
+	shared<World> WorldFactory::Create(const string& Name, EngineSubsystem& Sub)
 	{
 		auto it = Factories.find(Name);
 		if (it == Factories.end())

@@ -146,6 +146,9 @@ namespace we
 	template<typename T>
 	using set = std::unordered_set<T>;
 
+	template<typename T1, typename T2>
+	using pair = std::pair<T1, T2>;
+
 	template<typename Key, typename Type, typename P = std::less<Key>>
 	using map = std::map<Key, Type, P>;
 
