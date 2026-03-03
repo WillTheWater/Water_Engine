@@ -4,14 +4,16 @@
 // =============================================================================
 
 #include "Subsystem/WindowSubsystem.h"
+#include "Subsystem/ResourceSubsystem.h"
 #include "Core/EngineConfig.h"
 #include "Utility/Log.h"
 
 namespace we
 {
-    WindowSubsystem::WindowSubsystem(const EngineConfig::WindowConfig& InConfig)
-        : bIsFullscreen{ InConfig.Fullscreen }
-        , Config{ InConfig }
+    WindowSubsystem::WindowSubsystem(const EngineConfig::WindowConfig& Config, ResourceSubsystem& Resources)
+        : Resources{Resources}
+        , bIsFullscreen{ Config.Fullscreen }
+        , Config{ Config }
     {
         const sf::VideoMode Mode(Config.DefaultSize);
         const sf::State State = Config.Fullscreen ? sf::State::Fullscreen : sf::State::Windowed;
@@ -35,6 +37,10 @@ namespace we
         setKeyRepeatEnabled(false);
         // Configure VSync / FPS limit
         ConfigureFrameLimit(Config);
+
+        auto Tex = Resources.LoadTextureSync(Config.WindowIcon);
+        auto Icon = Tex->copyToImage();
+        setIcon(Icon);
     }
 
     void WindowSubsystem::ConfigureFrameLimit(const EngineConfig::WindowConfig& Config)

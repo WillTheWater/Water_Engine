@@ -7,7 +7,8 @@
 
 namespace we
 {
-	GUISubsystem::GUISubsystem()
+	GUISubsystem::GUISubsystem(ResourceSubsystem& Resources)
+		: Resources{Resources}
 	{
 
 	}

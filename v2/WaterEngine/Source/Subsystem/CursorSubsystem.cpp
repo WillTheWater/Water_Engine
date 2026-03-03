@@ -4,11 +4,13 @@
 // =============================================================================
 
 #include "Subsystem/CursorSubsystem.h"
+#include "Subsystem/ResourceSubsystem.h"
 
 namespace we
 {
-	CursorSubsytem::CursorSubsytem(const EngineConfig::CursorConfig& Config)
+	CursorSubsytem::CursorSubsytem(const EngineConfig::CursorConfig& Config, ResourceSubsystem& Resources)
 		: Config{Config}
+		, Resources{Resources}
 		, CursorSize{Config.CursorSize}
 		, CursorSpeed{Config.CursorSpeed}
 		, bIsVisible{true}
@@ -19,6 +21,7 @@ namespace we
 		DefaultShape.setFillColor(color::White);
 		DefaultShape.setOrigin({10.0f, 10.0f});  // Center the circle
 		DefaultShape.setPosition(CurrentPosition);
+		SetTexture();
 	}
 
 	void CursorSubsytem::Update(float DeltaTime)
@@ -83,22 +86,21 @@ namespace we
 		DefaultShape.setFillColor(Color);
 	}
 
-	void CursorSubsytem::SetTexture(shared<texture> Tex)
+	void CursorSubsytem::SetTexture()
 	{
+		auto Tex = Resources.LoadTextureSync(Config.CursorTexturePath);
 		if (!Tex) return;
 		
-		SpriteTexture = Tex;
+		CursorTexture = Tex;
 		CursorSprite.emplace(*Tex);
+
+		auto ScaleX = static_cast<float>(Config.CursorSize.x) / static_cast<float>(Tex->getSize().x);
+		auto ScaleY = static_cast<float>(Config.CursorSize.y) / static_cast<float>(Tex->getSize().y);
+
+		CursorSprite->setScale({ ScaleX, ScaleY });
 		CursorSprite->setPosition(CurrentPosition);
 		
 		Mode = CursorMode::Sprite;
-	}
-
-	void CursorSubsytem::ClearTexture()
-	{
-		CursorSprite.reset();
-		SpriteTexture.reset();
-		Mode = CursorMode::Shape;
 	}
 
 	bool CursorSubsytem::HasTexture() const

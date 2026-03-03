@@ -22,6 +22,7 @@ namespace we
 			string Title = "Water Engine";
 			vec2u DefaultSize = { 1920, 1080 };
 			vec2u MinimumSize = { 1280, 720 };
+			string WindowIcon;
 			bool Fullscreen = false;
 			bool VSync = true;
 			uint TargetFPS = 120;
@@ -72,6 +73,7 @@ namespace we
 			vec2u CursorSize;
 			float CursorSpeed;
 			float JoystickDeadzone;
+			string CursorTexturePath;
 		} Cursor;
 
 	};

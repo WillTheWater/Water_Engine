@@ -67,9 +67,9 @@ namespace we
         }
 #else
         // Debug: Use loose files from Content directory
-        auto fileDir = make_shared<FileDirectory>("Content");
+        auto fileDir = make_shared<FileDirectory>(".");
         Subsystem.Resources->SetAssetDirectory(fileDir);
-        LOG("Debug mode: Using loose files from Content/");
+        LOG("Debug mode: Using loose files");
 #endif
     }
 
@@ -106,7 +106,7 @@ namespace we
         const EngineConfig& Config = EngineConfigManager::Get();
         
         // Create all subsystems with their config dependencies
-        Subsystem.Window  = make_unique<WindowSubsystem>(Config.Window);
+        Subsystem.Window  = make_unique<WindowSubsystem>(Config.Window, *Subsystem.Resources);
         Subsystem.Camera  = make_unique<CameraSubsystem>();
         Subsystem.World   = make_unique<WorldSubsystem>(Subsystem);
         Subsystem.Audio   = make_unique<AudioSubsystem>(Config.Audio, *Subsystem.Resources);
@@ -114,8 +114,8 @@ namespace we
         Subsystem.Render  = make_unique<RenderSubsystem>(Config.Render, *Subsystem.Window);
         Subsystem.Time    = make_unique<TimeSubsystem>();
         Subsystem.Physics = make_unique<PhysicsSubsystem>(Config.Physics);
-        Subsystem.GUI     = make_unique<GUISubsystem>();
-        Subsystem.Cursor  = make_unique<CursorSubsytem>(Config.Cursor);
+        Subsystem.GUI     = make_unique<GUISubsystem>(*Subsystem.Resources);
+        Subsystem.Cursor  = make_unique<CursorSubsytem>(Config.Cursor, *Subsystem.Resources);
     }
 
     void WaterEngine::Initialize()

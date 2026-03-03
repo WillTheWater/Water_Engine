@@ -9,10 +9,15 @@
 
 namespace we
 {
+	class ResourceSubsystem;
+
 	class GUISubsystem
 	{
 	public:
-		explicit GUISubsystem();
+		explicit GUISubsystem(ResourceSubsystem& Resources);
 		~GUISubsystem();
+
+	private:
+		ResourceSubsystem& Resources;
 	};
 }

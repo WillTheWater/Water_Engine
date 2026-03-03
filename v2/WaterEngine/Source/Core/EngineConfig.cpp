@@ -52,6 +52,7 @@ namespace we
 		if (auto window = tbl["Window"])
 		{
 			CurrentConfig.Window.Title = window["Title"].value_or("Water Engine");
+			CurrentConfig.Window.WindowIcon = window["WindowIcon"].value_or("Content/Assets/Icon/icon.png");
 			CurrentConfig.Window.Fullscreen = window["Fullscreen"].value_or(false);
 			CurrentConfig.Window.VSync = window["VSync"].value_or(true);
 			CurrentConfig.Window.TargetFPS = window["TargetFPS"].value_or(60.0);
@@ -120,13 +121,14 @@ namespace we
 			{
 				if (arr->size() >= 2)
 				{
-					CurrentConfig.Cursor.CursorSize.x = arr->get(0)->value_or(32u);
-					CurrentConfig.Cursor.CursorSize.y = arr->get(1)->value_or(32u);
+					CurrentConfig.Cursor.CursorSize.x = arr->get(0)->value_or(42u);
+					CurrentConfig.Cursor.CursorSize.y = arr->get(1)->value_or(42u);
 				}
 
 			}
 			CurrentConfig.Cursor.CursorSpeed = cursor["CursorSpeed"].value_or(100);
 			CurrentConfig.Cursor.JoystickDeadzone = cursor["JoystickDeadzone"].value_or(0.15);
+			CurrentConfig.Cursor.CursorTexturePath = cursor["CursorTexturePath"].value_or("Content/Assets/Textures/Default/defaultCursor.png");
 		}
 	}
 

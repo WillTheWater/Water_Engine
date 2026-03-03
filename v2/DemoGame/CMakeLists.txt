@@ -75,14 +75,15 @@ if(CMAKE_BUILD_TYPE STREQUAL "Release")
 file(REMOVE_RECURSE \"${STAGING_DIR}\")
 file(MAKE_DIRECTORY \"${STAGING_DIR}\")
 
-# Copy content
-file(COPY \"${CONTENT_SRC_DIR}/\" DESTINATION \"${STAGING_DIR}\")
+# Create Content folder and copy everything under it
+file(MAKE_DIRECTORY \"${STAGING_DIR}/Content\")
+file(COPY \"${CONTENT_SRC_DIR}/\" DESTINATION \"${STAGING_DIR}/Content\")
 
-# Copy configs
-file(MAKE_DIRECTORY \"${STAGING_DIR}/Config\")
-file(COPY \"${ENGINE_CONFIG_SOURCE}\" DESTINATION \"${STAGING_DIR}/Config\")
+# Copy configs under Content
+file(MAKE_DIRECTORY \"${STAGING_DIR}/Content/Config\")
+file(COPY \"${ENGINE_CONFIG_SOURCE}\" DESTINATION \"${STAGING_DIR}/Content/Config\")
 
-# Create pak (Assets/ will be at root)
+# Create pak (Content/ will be at root)
 execute_process(
     COMMAND \${CMAKE_COMMAND} -E tar cf \"${PAK_OUTPUT}\" --format=zip .
     WORKING_DIRECTORY \"${STAGING_DIR}\"

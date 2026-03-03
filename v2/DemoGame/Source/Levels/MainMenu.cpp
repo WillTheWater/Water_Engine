@@ -106,8 +106,8 @@ namespace we
 	void MainMenu::BeginPlay()
 	{
 		
-		Subsystem.Audio->PlayMusic("Assets/Audio/Default/defaultMusic.ogg");
-		Subsystem.Audio->PlayAmbient("Assets/Audio/Default/defaultAmbient.ogg");
+		Subsystem.Audio->PlayMusic("Content/Assets/Audio/Default/defaultMusic.ogg");
+		Subsystem.Audio->PlayAmbient("Content/Assets/Audio/Default/defaultAmbient.ogg");
 
 		SetupInputTests();
 		
@@ -119,6 +119,7 @@ namespace we
 	{
 		Subsystem.Audio->StopAll();
 		CleanupInputTests();
+		TimerManager::Get().ClearTimer(TestTimer);
 	}
 
 	void MainMenu::Tick(float DeltaTime)

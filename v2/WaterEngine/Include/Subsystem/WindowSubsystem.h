@@ -12,10 +12,12 @@
 
 namespace we
 {
+    class ResourceSubsystem;
+
     class WindowSubsystem : public sf::RenderWindow
     {
     public:
-        explicit WindowSubsystem(const EngineConfig::WindowConfig& Config);
+        explicit WindowSubsystem(const EngineConfig::WindowConfig& Config, ResourceSubsystem& Resources);
         
         void HandleEvent(const sf::Event& Event);
         void onResize() override;
@@ -47,6 +49,7 @@ namespace we
 
     private:
         friend WindowEventHandler;
+        ResourceSubsystem& Resources;
         bool bIsFullscreen = false;
         bool bIsResizing = false;
         EngineConfig::WindowConfig Config;

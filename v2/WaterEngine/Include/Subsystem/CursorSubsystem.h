@@ -10,10 +10,12 @@
 
 namespace we
 {
+	class ResourceSubsystem;
+
 	class CursorSubsytem
 	{
 	public:
-		explicit CursorSubsytem(const EngineConfig::CursorConfig& Config);
+		explicit CursorSubsytem(const EngineConfig::CursorConfig& Config, ResourceSubsystem& Resources);
 
 		void Update(float DeltaTime);
 
@@ -39,8 +41,7 @@ namespace we
 		void SetShapeColor(const color& Color);
 
 		// Sprite mode
-		void SetTexture(shared<texture> Tex);
-		void ClearTexture();
+		void SetTexture();
 		bool HasTexture() const;
 
 	private:
@@ -49,13 +50,14 @@ namespace we
 
 	private:
 		EngineConfig::CursorConfig Config;
+		ResourceSubsystem& Resources;
 
 		// Default circle shape (fallback when no texture)
 		circle DefaultShape;
 
 		// Optional sprite mode
 		optional<sprite> CursorSprite;
-		shared<texture> SpriteTexture;
+		shared<texture> CursorTexture;
 
 		// Current position
 		vec2f CurrentPosition;
