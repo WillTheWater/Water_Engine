@@ -65,7 +65,6 @@ namespace we
 
 		// Final output
 		sprite FinishComposite();  // Returns final composited frame with letterboxing
-		void PresentCursor();      // Draw cursor separately (1:1 with window)
 
 		// For Editor viewport
 		const texture& GetWorldTexture() const;

@@ -196,6 +196,7 @@ namespace we
         Subsystem.Time->Tick();
         auto DeltaTime = Subsystem.Time->GetDeltaTime();
         Subsystem.Resources->PollCompletedRequests();
+        Subsystem.Cursor->SetPosition(Subsystem.Window->GetMousePosition());
         TimerManager::Get().UpdateTimer(DeltaTime);
 
         // Update Audio
@@ -296,11 +297,13 @@ namespace we
         if (CurrentMode == EngineMode::Play)
         {
             // Full game rendering - get composited output with letterboxing
+            Subsystem.Window->setMouseCursorVisible(false);
+            
+            // Draw cursor
+            Subsystem.Render->Draw(*Subsystem.Cursor->GetDrawable(), ERenderLayer::Cursor);
+
             sprite FinalFrame = Subsystem.Render->FinishComposite();
             Subsystem.Window->draw(FinalFrame);
-            
-            // Draw cursor on top (1:1 with window)
-            Subsystem.Render->PresentCursor();
         }
 #ifndef WE_RELEASE
         else

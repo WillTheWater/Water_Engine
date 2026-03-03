@@ -31,15 +31,39 @@ namespace we
 
 		void UpdateFromMouse(vec2f MousePosition);
 
+		// Drawable access for rendering
+		const drawable* GetDrawable() const;
+
+		// Visual style
+		void SetShapeRadius(float Radius);
+		void SetShapeColor(const color& Color);
+
+		// Sprite mode
+		void SetTexture(shared<texture> Tex);
+		void ClearTexture();
+		bool HasTexture() const;
+
 	private:
 		void ApplyCursorSize();
 		void CenterCursor();
-		vec2f GetWindowSize() const;
 
 	private:
 		EngineConfig::CursorConfig Config;
-		//texture CursorTexture;
-		//optional<sprite> CursorSprite;
+
+		// Default circle shape (fallback when no texture)
+		circle DefaultShape;
+
+		// Optional sprite mode
+		optional<sprite> CursorSprite;
+		shared<texture> SpriteTexture;
+
+		// Current position
+		vec2f CurrentPosition;
+
+		// Mode tracking
+		enum class CursorMode { Shape, Sprite };
+		CursorMode Mode = CursorMode::Shape;
+
 		vec2f CursorSize;
 		float CursorSpeed;
 		bool bIsVisible;

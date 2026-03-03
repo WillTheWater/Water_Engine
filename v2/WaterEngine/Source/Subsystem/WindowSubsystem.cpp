@@ -33,7 +33,6 @@ namespace we
     {
         // Disable key repeat - InputSubsystem handles held keys via OnHeld callbacks
         setKeyRepeatEnabled(false);
-        
         // Configure VSync / FPS limit
         ConfigureFrameLimit(Config);
     }

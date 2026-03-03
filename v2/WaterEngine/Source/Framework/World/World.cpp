@@ -52,8 +52,6 @@ namespace we
 
     void World::Render()
     {
-        // Ensure pending actors are added before rendering
-        // (In edit mode without tick, actors would stay pending otherwise)
         if (!PendingActors.empty())
         {
             bRenderOrderDirty = true;

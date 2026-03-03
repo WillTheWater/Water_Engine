@@ -314,6 +314,7 @@ namespace we
 		const texture& WorldTex = GetLayerTexture(ERenderLayer::World);
 		const texture& WorldUITex = GetLayerTexture(ERenderLayer::WorldUI);
 		const texture& ScreenUITex = GetLayerTexture(ERenderLayer::ScreenUI);
+		const texture& CursorTex = GetLayerTexture(ERenderLayer::Cursor);
 
 		// Composite to final target
 		CompositeTarget.clear(color::Transparent);
@@ -330,6 +331,9 @@ namespace we
 		// Screen UI (fixed to screen)
 		sprite ScreenUISprite(ScreenUITex);
 		CompositeTarget.draw(ScreenUISprite, sf::BlendAlpha);
+
+		sprite CursorSprite(CursorTex);
+		CompositeTarget.draw(CursorSprite, sf::BlendAlpha);
 
 		CompositeTarget.display();
 	}
@@ -372,27 +376,6 @@ namespace we
 			{ PosX / CurrentWindowSize.x, PosY / CurrentWindowSize.y },
 			{ (RenderResolution.x * Scale) / CurrentWindowSize.x, (RenderResolution.y * Scale) / CurrentWindowSize.y }
 		});
-	}
-
-	void RenderSubsystem::PresentCursor()
-	{
-		CursorRenderTarget.display();
-
-		// Get current window size for 1:1 cursor rendering
-		vec2u CurrentWindowSize = RenderWindow.getSize();
-
-		// Resize cursor target if window size changed
-		if (CursorRenderTarget.getSize() != CurrentWindowSize)
-		{
-			(void)CursorRenderTarget.resize(CurrentWindowSize);
-		}
-
-		// Draw cursor 1:1 to window (no scaling)
-		view WindowView(sf::FloatRect({ 0.f, 0.f }, vec2f(CurrentWindowSize)));
-		RenderWindow.setView(WindowView);
-
-		sprite CursorSprite(CursorRenderTarget.getTexture());
-		RenderWindow.draw(CursorSprite, sf::BlendAlpha);
 	}
 
 	const texture& RenderSubsystem::GetWorldTexture() const

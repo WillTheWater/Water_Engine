@@ -19,7 +19,6 @@ namespace we
 		static constexpr const char* StartupLevel = "MainMenu";
 
 		// Physics Settings (top-down 2D = no gravity)
-		static constexpr vec2f Gravity = { 0.0f, 0.0f };
-		
+		static constexpr vec2f Gravity = { 0.0f, 0.0f };	
 	};
 }
