@@ -46,15 +46,44 @@ namespace we
 
 	void RenderSubsystem::BeginFrame()
 	{
-		// Resize cursor target if window size changed
-		vec2u NewWindowSize = RenderWindow.getSize();
-		if (CursorRenderTarget.getSize() != NewWindowSize)
+		WindowSize = RenderWindow.getSize();
+		
+		// Resize cursor target if needed
+		if (CursorRenderTarget.getSize() != WindowSize)
 		{
-			WindowSize = NewWindowSize;
 			(void)CursorRenderTarget.resize(WindowSize);
 		}
 
 		ClearRenderTargets();
+		
+		// Reset views to default - critical for window resize
+		ResetWorldViewToDefault();
+		ResetToDefaultViews();
+	}
+
+	void RenderSubsystem::ResetWorldViewToDefault()
+	{
+		view DefaultView = WorldRenderTarget.getDefaultView();
+		DefaultView.setViewport(rectf({ 0.f, 0.f }, { 1.f, 1.f }));
+
+		WorldRenderTarget.setView(DefaultView);
+		WorldPostProcessTarget.setView(DefaultView);
+		WorldUIRenderTarget.setView(DefaultView);
+		WorldUIPostProcessTarget.setView(DefaultView);
+
+		CurrentWorldView = DefaultView;
+	}
+
+	void RenderSubsystem::ResetToDefaultViews()
+	{
+		view DefaultView = WorldRenderTarget.getDefaultView();
+		DefaultView.setViewport(rectf({ 0.f, 0.f }, { 1.f, 1.f }));
+
+		// Screen UI and Cursor use default view
+		ScreenUIRenderTarget.setView(DefaultView);
+		ScreenUIPostProcessTarget.setView(DefaultView);
+		CursorRenderTarget.setView(DefaultView);
+		CursorPostProcessTarget.setView(DefaultView);
 	}
 
 	void RenderSubsystem::EndFrame()
@@ -133,7 +162,7 @@ namespace we
 			// Use provided camera view
 			float AspectRatio = static_cast<float>(RenderResolution.x) / RenderResolution.y;
 			vec2f ViewSize = View->GetViewSize(AspectRatio);
-
+			
 			WorldView.setCenter(View->Position);
 			WorldView.setSize(ViewSize);
 			WorldView.setRotation(sf::radians(View->Rotation));
@@ -141,8 +170,10 @@ namespace we
 		else
 		{
 			// Default view centered at screen center with editor offset and zoom
+			vec2f ViewSize = vec2f(RenderResolution) / EditorZoom;
+			
 			WorldView.setCenter((vec2f(RenderResolution) / 2.0f) + EditorCameraOffset);
-			WorldView.setSize(vec2f(RenderResolution) / EditorZoom);
+			WorldView.setSize(ViewSize);
 		}
 
 		WorldView.setViewport(rectf({ 0.f, 0.f }, { 1.f, 1.f }));
@@ -314,9 +345,8 @@ namespace we
 		const texture& WorldTex = GetLayerTexture(ERenderLayer::World);
 		const texture& WorldUITex = GetLayerTexture(ERenderLayer::WorldUI);
 		const texture& ScreenUITex = GetLayerTexture(ERenderLayer::ScreenUI);
-		const texture& CursorTex = GetLayerTexture(ERenderLayer::Cursor);
 
-		// Composite to final target
+		// Composite to final target (World + UI only, NOT cursor)
 		CompositeTarget.clear(color::Transparent);
 		CompositeTarget.setView(CompositeTarget.getDefaultView());
 
@@ -332,9 +362,6 @@ namespace we
 		sprite ScreenUISprite(ScreenUITex);
 		CompositeTarget.draw(ScreenUISprite, sf::BlendAlpha);
 
-		sprite CursorSprite(CursorTex);
-		CompositeTarget.draw(CursorSprite, sf::BlendAlpha);
-
 		CompositeTarget.display();
 	}
 
@@ -342,12 +369,11 @@ namespace we
 	{
 		CompositeLayers();
 
-		// Calculate letterbox/pillarbox to fit render resolution into window
 		vec2u CurrentWindowSize = RenderWindow.getSize();
+
+		// Calculate scale to fit render resolution into window
 		float ScaleX = static_cast<float>(CurrentWindowSize.x) / RenderResolution.x;
 		float ScaleY = static_cast<float>(CurrentWindowSize.y) / RenderResolution.y;
-
-		// Maintain aspect ratio (fit inside window)
 		float Scale = std::min(ScaleX, ScaleY);
 
 		// Center the sprite
@@ -359,28 +385,33 @@ namespace we
 		FinalSprite.setScale({ Scale, Scale });
 		FinalSprite.setPosition({ PosX, PosY });
 
-		// Cache the letterbox view for coordinate mapping
-		UpdateLetterboxView(Scale, PosX, PosY);
+		// Update the letterbox view for coordinate mapping
+		UpdateLetterboxView(CurrentWindowSize, Scale, PosX, PosY);
 
 		return FinalSprite;
 	}
 
-	void RenderSubsystem::UpdateLetterboxView(float Scale, float PosX, float PosY)
+	void RenderSubsystem::UpdateLetterboxView(const vec2u& WindowSize, float Scale, float PosX, float PosY)
 	{
 		LetterboxView.setSize(vec2f(RenderResolution));
 		LetterboxView.setCenter(vec2f(RenderResolution) / 2.0f);
 		
 		// Calculate viewport in normalized coordinates (0-1 range)
-		vec2u CurrentWindowSize = RenderWindow.getSize();
 		LetterboxView.setViewport({
-			{ PosX / CurrentWindowSize.x, PosY / CurrentWindowSize.y },
-			{ (RenderResolution.x * Scale) / CurrentWindowSize.x, (RenderResolution.y * Scale) / CurrentWindowSize.y }
+			{ PosX / WindowSize.x, PosY / WindowSize.y },
+			{ (RenderResolution.x * Scale) / WindowSize.x, (RenderResolution.y * Scale) / WindowSize.y }
 		});
 	}
 
 	const texture& RenderSubsystem::GetWorldTexture() const
 	{
 		return WorldRenderTarget.getTexture();
+	}
+
+	const texture& RenderSubsystem::GetCursorTexture()
+	{
+		CursorRenderTarget.display();
+		return CursorRenderTarget.getTexture();
 	}
 
 	vec2f RenderSubsystem::MapPixelToCoords(vec2i PixelPos) const

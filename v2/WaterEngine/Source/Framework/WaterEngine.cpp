@@ -291,19 +291,26 @@ namespace we
         // End frame (display targets)
         Subsystem.Render->EndFrame();
 
-        // Clear window
+        // Clear window and set view to match actual window size (critical after resize)
         Subsystem.Window->clear(color::Black);
+        vec2u WindowSize = Subsystem.Window->getSize();
+        Subsystem.Window->setView(Subsystem.Window->getView()); //(sf::View(sf::FloatRect({0.f, 0.f}, sf::Vector2f(WindowSize))));
 
         if (CurrentMode == EngineMode::Play)
         {
             // Full game rendering - get composited output with letterboxing
             Subsystem.Window->setMouseCursorVisible(false);
             
-            // Draw cursor
+            // Draw cursor to its render target (window resolution)
             Subsystem.Render->Draw(*Subsystem.Cursor->GetDrawable(), ERenderLayer::Cursor);
 
+            // Composite world + UI layers (render resolution)
             sprite FinalFrame = Subsystem.Render->FinishComposite();
             Subsystem.Window->draw(FinalFrame);
+
+            // Draw cursor directly to window (1:1, no scaling)
+            sf::Sprite CursorSprite(Subsystem.Render->GetCursorTexture());
+            Subsystem.Window->draw(CursorSprite);
         }
 #ifndef WE_RELEASE
         else

@@ -66,6 +66,9 @@ namespace we
 		// Final output
 		sprite FinishComposite();  // Returns final composited frame with letterboxing
 
+		// Present cursor directly to window (1:1 scale, not composited)
+		const texture& GetCursorTexture();
+
 		// For Editor viewport
 		const texture& GetWorldTexture() const;
 		vec2u GetRenderResolution() const { return RenderResolution; }
@@ -119,7 +122,9 @@ namespace we
 		
 		void ClearRenderTargets();
 		void CompositeLayers();
-		void UpdateLetterboxView(float Scale, float PosX, float PosY);
+		void UpdateLetterboxView(const vec2u& WindowSize, float Scale, float PosX, float PosY);
+		void ResetWorldViewToDefault();
+		void ResetToDefaultViews();
 		const texture& GetLayerTexture(ERenderLayer Layer);
 		renderTexture& ProcessPostEffects(renderTexture& Input, renderTexture& Output, 
 			vector<unique<IPostProcessEffect>>& Effects);
