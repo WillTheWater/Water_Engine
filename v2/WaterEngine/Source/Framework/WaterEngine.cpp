@@ -15,6 +15,7 @@ namespace we
     void WaterEngine::Initialize()
     {
         Subsystem.Window = make_unique<WindowSubsystem>();
+        Subsystem.Clock  = make_unique<ClockSubsystem>();
     }
 
     bool WaterEngine::IsRunning() const
@@ -37,6 +38,7 @@ namespace we
 
     void WaterEngine::Update()
     {
+        Subsystem.Clock->Tick();
     }
 
     void WaterEngine::Render()

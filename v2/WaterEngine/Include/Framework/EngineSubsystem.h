@@ -7,11 +7,13 @@
 
 #include "Core/CoreMinimal.h"
 #include "Subsystem/WindowSubsystem.h"
+#include "Subsystem/ClockSubsystem.h"
 
 namespace we
 {
 	struct EngineSubsystem
 	{
 		unique<WindowSubsystem> Window;
+		unique<ClockSubsystem> Clock;
 	};
 }
