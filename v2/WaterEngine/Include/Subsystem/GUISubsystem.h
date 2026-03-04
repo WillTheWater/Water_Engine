@@ -15,7 +15,6 @@ namespace we
 	{
 	public:
 		explicit GUISubsystem(ResourceSubsystem& Resources);
-		~GUISubsystem();
 
 	private:
 		ResourceSubsystem& Resources;

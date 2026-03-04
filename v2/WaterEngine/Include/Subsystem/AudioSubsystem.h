@@ -19,8 +19,7 @@ namespace we
     class AudioSubsystem
     {
     public:
-        AudioSubsystem(const EngineConfig::AudioConfig& Config, ResourceSubsystem& Resources);
-        ~AudioSubsystem();
+        explicit AudioSubsystem(const EngineConfig::AudioConfig& Config, ResourceSubsystem& Resources);
 
         void Update(float DeltaTime);
 

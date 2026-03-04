@@ -18,7 +18,6 @@ namespace we
 	{
 	public:
 		CameraSubsystem() = default;
-		~CameraSubsystem() = default;
 
 		// Set active camera
 		void SetActiveCamera(weak<ICamera> Camera) { Active = Camera; }

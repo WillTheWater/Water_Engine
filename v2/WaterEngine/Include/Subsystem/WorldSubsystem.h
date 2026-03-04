@@ -20,7 +20,6 @@ namespace we
     {
     public:
         WorldSubsystem(EngineSubsystem& Sub);
-        ~WorldSubsystem();
 
         // Access factory for registration
         WorldFactory& GetFactory() { return Factory; }

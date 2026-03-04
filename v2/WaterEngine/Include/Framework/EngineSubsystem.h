@@ -25,15 +25,22 @@ namespace we
 {
 	struct EngineSubsystem
 	{
+		// Members destroyed in REVERSE declaration order.
+		// If X uses Y during destruction, Y must be declared BEFORE X.
+		
 		unique<ResourceSubsystem>	Resources;
+		
+		unique<WindowSubsystem>		Window;
+		unique<RenderSubsystem>		Render;
+		
+		// Physics used by Actor during destruction, so Physics must outlive World
+		unique<PhysicsSubsystem>	Physics;
 		unique<WorldSubsystem>		World;
+		
 		unique<CameraSubsystem>		Camera;
 		unique<AudioSubsystem>		Audio;
 		unique<InputSubsystem>		Input;
 		unique<TimeSubsystem>		Time;
-		unique<RenderSubsystem>		Render;
-		unique<WindowSubsystem>		Window;
-		unique<PhysicsSubsystem>	Physics;
 		unique<GUISubsystem>		GUI;
 		unique<CursorSubsytem>		Cursor;
 	};

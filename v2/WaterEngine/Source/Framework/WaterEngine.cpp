@@ -27,7 +27,10 @@ namespace we
         PreConstruct();
     }
 
-    WaterEngine::~WaterEngine() = default;
+    WaterEngine::~WaterEngine()
+    {
+        ImGui::SFML::Shutdown();
+    }
 
     void WaterEngine::PreConstruct()
     {
@@ -105,17 +108,16 @@ namespace we
     {
         const EngineConfig& Config = EngineConfigManager::Get();
         
-        // Create all subsystems with their config dependencies
-        Subsystem.Window  = make_unique<WindowSubsystem>(Config.Window, *Subsystem.Resources);
-        Subsystem.Camera  = make_unique<CameraSubsystem>();
-        Subsystem.World   = make_unique<WorldSubsystem>(Subsystem);
-        Subsystem.Audio   = make_unique<AudioSubsystem>(Config.Audio, *Subsystem.Resources);
-        Subsystem.Input   = make_unique<InputSubsystem>();
-        Subsystem.Render  = make_unique<RenderSubsystem>(Config.Render, *Subsystem.Window);
-        Subsystem.Time    = make_unique<TimeSubsystem>();
-        Subsystem.Physics = make_unique<PhysicsSubsystem>(Config.Physics);
-        Subsystem.GUI     = make_unique<GUISubsystem>(*Subsystem.Resources);
-        Subsystem.Cursor  = make_unique<CursorSubsytem>(Config.Cursor, *Subsystem.Resources);
+        Subsystem.Window    = make_unique<WindowSubsystem>(Config.Window, *Subsystem.Resources);
+        Subsystem.Render    = make_unique<RenderSubsystem>(Config.Render, *Subsystem.Window);
+        Subsystem.Physics   = make_unique<PhysicsSubsystem>(Config.Physics);
+        Subsystem.World     = make_unique<WorldSubsystem>(Subsystem);
+        Subsystem.Camera    = make_unique<CameraSubsystem>();
+        Subsystem.Audio     = make_unique<AudioSubsystem>(Config.Audio, *Subsystem.Resources);
+        Subsystem.Input     = make_unique<InputSubsystem>();
+        Subsystem.Time      = make_unique<TimeSubsystem>();
+        Subsystem.GUI       = make_unique<GUISubsystem>(*Subsystem.Resources);
+        Subsystem.Cursor    = make_unique<CursorSubsytem>(Config.Cursor, *Subsystem.Resources);
     }
 
     void WaterEngine::Initialize()
@@ -294,7 +296,7 @@ namespace we
         // Clear window and set view to match actual window size (critical after resize)
         Subsystem.Window->clear(color::Black);
         vec2u WindowSize = Subsystem.Window->getSize();
-        Subsystem.Window->setView(Subsystem.Window->getView()); //(sf::View(sf::FloatRect({0.f, 0.f}, sf::Vector2f(WindowSize))));
+        Subsystem.Window->setView(sf::View(sf::FloatRect({0.f, 0.f}, sf::Vector2f(WindowSize))));
 
         if (CurrentMode == EngineMode::Play)
         {

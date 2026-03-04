@@ -38,8 +38,6 @@ namespace we
 		LOG("RenderSubsystem initialized: {}x{}", Config.ResolutionX, Config.ResolutionY);
 	}
 
-	RenderSubsystem::~RenderSubsystem() = default;
-
 	// =========================================================================
 	// Frame Management
 	// =========================================================================

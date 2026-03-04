@@ -15,8 +15,6 @@ namespace we
         LOG("WorldSubsystem initialized");
     }
 
-    WorldSubsystem::~WorldSubsystem() = default;
-
     void WorldSubsystem::LoadWorld(const string& Name)
     {
         UnloadWorld();

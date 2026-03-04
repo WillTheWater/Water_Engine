@@ -24,7 +24,6 @@ namespace we
 	{
 	public:
 		RenderSubsystem(const EngineConfig::RenderConfig& Config, WindowSubsystem& Window);
-		~RenderSubsystem();
 
 		// Frame management
 		void BeginFrame();

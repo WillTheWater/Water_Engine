@@ -37,8 +37,6 @@ namespace we
         LOG("AudioSubsystem initialized");
     }
 
-    AudioSubsystem::~AudioSubsystem() = default;
-
     // ========================================================================
     // Update
     // ========================================================================

@@ -12,9 +12,4 @@ namespace we
 	{
 
 	}
-
-	GUISubsystem::~GUISubsystem()
-	{
-	}
-
 }
