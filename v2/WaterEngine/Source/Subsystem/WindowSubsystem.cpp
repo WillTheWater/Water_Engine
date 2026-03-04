@@ -10,6 +10,7 @@ namespace we
 	WindowSubsystem::WindowSubsystem()
 	{
 		create(window({ 1920, 1080 }), "Water Engine");
+		setVerticalSyncEnabled(true);
 	}
 
 	void WindowSubsystem::HandleEvent(const event& Event)

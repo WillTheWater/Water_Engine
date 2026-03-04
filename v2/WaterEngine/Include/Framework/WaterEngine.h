@@ -26,6 +26,5 @@ namespace we
 
     private:
         EngineSubsystem Subsystem;
-
     };
 }

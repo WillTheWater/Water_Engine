@@ -8,6 +8,7 @@
 #include "Core/CoreMinimal.h"
 #include "Subsystem/WindowSubsystem.h"
 #include "Subsystem/ClockSubsystem.h"
+#include "Subsystem/RenderSubsystem.h"
 
 namespace we
 {
@@ -15,5 +16,6 @@ namespace we
 	{
 		unique<WindowSubsystem> Window;
 		unique<ClockSubsystem> Clock;
+		unique<RenderSubsystem> Render;
 	};
 }

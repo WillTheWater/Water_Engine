@@ -41,16 +41,6 @@ namespace we
         return (Value < MinVal) ? MinVal : (Value > MaxVal) ? MaxVal : Value;
     }
 
-    template<typename T>
-    inline T Clamp01(T Value) { return Clamp(Value, T(0), T(1)); }
-
-    template<typename T>
-    inline T Wrap(T Value, T Max)
-    {
-        T Result = std::fmod(Value, Max);
-        return (Result < 0) ? Result + Max : Result;
-    }
-
     // =========================================================================
     // Interpolation
     // =========================================================================
@@ -61,12 +51,12 @@ namespace we
 
     inline color LerpColor(const color& Start, const color& Target, float Alpha)
     {
-        Alpha = Clamp01(Alpha);
+        Alpha = Clamp(Alpha, 0.0f, 1.0f);
         return color{
-            static_cast<uint8_t>(Lerp(static_cast<float>(Start.r), static_cast<float>(Target.r), Alpha)),
-            static_cast<uint8_t>(Lerp(static_cast<float>(Start.g), static_cast<float>(Target.g), Alpha)),
-            static_cast<uint8_t>(Lerp(static_cast<float>(Start.b), static_cast<float>(Target.b), Alpha)),
-            static_cast<uint8_t>(Lerp(static_cast<float>(Start.a), static_cast<float>(Target.a), Alpha))
+            static_cast<uint8>(Lerp(static_cast<float>(Start.r), static_cast<float>(Target.r), Alpha)),
+            static_cast<uint8>(Lerp(static_cast<float>(Start.g), static_cast<float>(Target.g), Alpha)),
+            static_cast<uint8>(Lerp(static_cast<float>(Start.b), static_cast<float>(Target.b), Alpha)),
+            static_cast<uint8>(Lerp(static_cast<float>(Start.a), static_cast<float>(Target.a), Alpha))
         };
     }
 
@@ -80,27 +70,27 @@ namespace we
 
     inline float SmoothStep(float Start, float Target, float Alpha)
     {
-        Alpha = Clamp01(Alpha);
+         Alpha = Clamp(Alpha, 0.0f, 1.0f);
         Alpha = Alpha * Alpha * (3.0f - 2.0f * Alpha);
         return Lerp(Start, Target, Alpha);
     }
 
     inline float SmootherStep(float Start, float Target, float Alpha)
     {
-        Alpha = Clamp01(Alpha);
+         Alpha = Clamp(Alpha, 0.0f, 1.0f);
         Alpha = Alpha * Alpha * Alpha * (Alpha * (Alpha * 6.0f - 15.0f) + 10.0f);
         return Lerp(Start, Target, Alpha);
     }
 
     inline float EaseIn(float Start, float Target, float Alpha)
     {
-        Alpha = Clamp01(Alpha);
+         Alpha = Clamp(Alpha, 0.0f, 1.0f);
         return Lerp(Start, Target, Alpha * Alpha);
     }
 
     inline float EaseOut(float Start, float Target, float Alpha)
     {
-        Alpha = Clamp01(Alpha);
+         Alpha = Clamp(Alpha, 0.0f, 1.0f);
         return Lerp(Start, Target, 1.0f - (1.0f - Alpha) * (1.0f - Alpha));
     }
 

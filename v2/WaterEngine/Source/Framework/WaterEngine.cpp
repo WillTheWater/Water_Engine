@@ -17,6 +17,7 @@ namespace we
     {
         Subsystem.Window = make_unique<WindowSubsystem>();
         Subsystem.Clock  = make_unique<ClockSubsystem>();
+        Subsystem.Render = make_unique<RenderSubsystem>();
     }
 
     bool WaterEngine::IsRunning() const
@@ -44,5 +45,12 @@ namespace we
 
     void WaterEngine::Render()
     {
+        Subsystem.Render->BeginFrame();
+
+        // TODO: Draw Call
+
+        Subsystem.Render->EndFrame();
+        Subsystem.Window->draw(Subsystem.Render->GetCompositeSprite());
+        Subsystem.Window->display();
     }
 }
