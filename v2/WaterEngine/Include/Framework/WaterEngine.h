@@ -6,59 +6,26 @@
 #pragma once
 
 #include "Core/CoreMinimal.h"
-#include "Core/EngineConfig.h"
 #include "Framework/EngineSubsystem.h"
-
-// Editor only exists in Debug
-#ifndef WE_RELEASE
-namespace we { class Editor; }
-#endif
 
 namespace we
 {
-    enum class EngineMode { Editor, Play };
-
     class WaterEngine
     {
     public:
         WaterEngine();
-        ~WaterEngine();
 
-        // Main loop functions
-        void Tick();
-        void Render();
-        void ProcessEvents();
         bool IsRunning() const;
+        bool HasFocus() const;
+        void ProcessEvents();
+        void Update();
+        void Render();
 
-        // Mode control
-        void SetMode(EngineMode NewMode);
-        bool IsInEditor() const { return CurrentMode == EngineMode::Editor; }
-        bool IsPlaying() const { return CurrentMode == EngineMode::Play; }
-
-    protected:
-        // Subsystems - accessible to derived Game class
-        EngineSubsystem Subsystem;
-        
-        // Override hooks for game
-        virtual void Construct() {}
-
-#ifndef WE_RELEASE
-        unique<Editor> EditorInstance;
-        EngineMode CurrentMode = EngineMode::Editor;
-#else
-        EngineMode CurrentMode = EngineMode::Play;  // Release always starts in Play mode
-#endif
-
-    public:
+    private:
         void Initialize();
-        void TickGame(float DeltaTime);
-#ifndef WE_RELEASE
-        void TickEditor(float DeltaTime);
-#endif
 
-        void PreConstruct();
-        void CreateResourceSubsystem();  // Creates Resources and mounts pak (Release)
-        void CreateSubsystems();
-        void LoadEngineConfig();
+    private:
+        EngineSubsystem Subsystem;
+
     };
 }

@@ -3,6 +3,7 @@
 // Copyright(C) 2026 Will The Water
 // =============================================================================
 
+#include <SFML/System/Sleep.hpp>
 #include <SFML/GpuPreference.hpp>
 
 #include "Entry.h"
@@ -13,14 +14,19 @@ SFML_DEFINE_DISCRETE_GPU_PREFERENCE
 int main()
 {
 	auto Engine = we::GetEngine();
-	Engine->Initialize();
 
 	while (Engine->IsRunning())
 	{
 		Engine->ProcessEvents();
-		Engine->Tick();
+
+		if (!Engine->HasFocus())
+		{
+			sf::sleep(sf::microseconds(10));
+			continue;
+		}
+
+		Engine->Update();
 		Engine->Render();
 	}
-
 	return 0;
 }

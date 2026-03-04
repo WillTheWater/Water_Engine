@@ -8,14 +8,6 @@
 # WaterEngine/CMakesLists.txt
 # =============================================================================
 
-cmake_minimum_required(VERSION 3.16)
-
-# ========================== PROJECT SETUP ==========================
-project(WaterEngine VERSION 2.0.0 LANGUAGES CXX)
-
-set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
 # ========================== LIBRARY OPTIONS ==========================
 set(SFML_BUILD_NETWORK OFF)
 set(SPDLOG_USE_STD_FORMAT ON)
@@ -53,22 +45,6 @@ FetchContent_Declare(
     URL https://github.com/marzer/tomlplusplus/archive/refs/tags/v3.4.0.tar.gz
 )
 
-# --- ImGui ---
-FetchContent_Declare(
-    imgui
-    URL https://github.com/ocornut/imgui/archive/refs/tags/v1.91.9.tar.gz
-)
-
-FetchContent_MakeAvailable(imgui)
-
-set(IMGUI_DIR ${imgui_SOURCE_DIR})
-
-# --- ImGui-SFML ---
-FetchContent_Declare(
-    imgui_sfml
-    URL https://github.com/SFML/imgui-sfml/archive/refs/tags/v3.0.tar.gz
-)
-
 # --- PhysicsFS ---
 set(PHYSFS_BUILD_SHARED OFF CACHE BOOL "" FORCE)
 set(PHYSFS_BUILD_TEST OFF CACHE BOOL "" FORCE)
@@ -77,13 +53,9 @@ FetchContent_Declare(
     URL https://github.com/icculus/physfs/archive/refs/tags/release-3.2.0.tar.gz
 )
 
-# Disable find_package(SFML)
-set(IMGUI_SFML_FIND_SFML OFF CACHE BOOL "" FORCE)
-
 # Remaining Dependencies
 FetchContent_MakeAvailable(
     sfml
-    imgui_sfml
     box2d
     logs
     enum
@@ -120,6 +92,11 @@ target_compile_definitions(WaterEngine PUBLIC
     $<$<CONFIG:Release>:WE_RELEASE>
 )
 
+# Precompiled Header
+target_precompile_headers(WaterEngine PUBLIC
+    "${CMAKE_CURRENT_SOURCE_DIR}/Include/Core/CoreMinimal.h"
+)
+
 # Link libraries
 target_link_libraries(WaterEngine PUBLIC
     SFML::Graphics
@@ -129,13 +106,12 @@ target_link_libraries(WaterEngine PUBLIC
     spdlog::spdlog
     magic_enum::magic_enum
     tomlplusplus::tomlplusplus
-    ImGui-SFML::ImGui-SFML
     physfs-static
 )
 
-# Platform-specific settings
+# Console Settings
 if(WIN32)
-    target_link_libraries(WaterEngine PUBLIC kernel32 user32)
+    target_link_libraries(WaterEngine PUBLIC)
 
     target_link_options(WaterEngine PUBLIC
         $<$<CONFIG:Debug>:/SUBSYSTEM:CONSOLE>

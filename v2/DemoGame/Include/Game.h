@@ -14,8 +14,5 @@ namespace we
 	{
 	public:
 		Game();
-
-	protected:
-		void Construct() override;
 	};
 }

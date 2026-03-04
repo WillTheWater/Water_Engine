@@ -6,52 +6,19 @@
 #pragma once
 
 #include "Core/CoreMinimal.h"
-#include "Core/EngineConfig.h"
 #include <SFML/Graphics.hpp>
-#include "Input/WindowEventHandler.h"
+#include "EventHandler/WindowEventHandler.h"
 
 namespace we
 {
-    class ResourceSubsystem;
-
     class WindowSubsystem : public sf::RenderWindow
     {
     public:
-        explicit WindowSubsystem(const EngineConfig::WindowConfig& Config, ResourceSubsystem& Resources);
-        
-        void HandleEvent(const sf::Event& Event);
-        void onResize() override;
-        
-        // Toggle fullscreen mode
-        void SetFullscreen(bool bFullscreen);
-        bool IsFullscreen() const { return bIsFullscreen; }
-        
-        // Toggle VSync
-        void SetVSync(bool bEnabled);
-        
-        // Get mouse position in window coordinates
-        vec2f GetMousePosition() const;
+        explicit WindowSubsystem();
 
-    private:
-        // VSync takes precedence: if enabled, TargetFPS is ignored
-        void ConfigureFrameLimit(const EngineConfig::WindowConfig& Config);
-        
-        // Calculate size that maintains aspect ratio
-        vec2u CalculateAspectRatioSize(const vec2u& Size) const;
-        
-        void CreateGameWindow(const sf::VideoMode& Mode, uint Style, sf::State State);
-        void ApplyWindowSettings();
-        void SetWindowIcon();
-        
-        // Event handlers
-        void EventToggleBorderlessFullscreen();
-        void EventWindowClose() { close(); }
+        void HandleEvent(const event& Event);
 
     private:
         friend WindowEventHandler;
-        ResourceSubsystem& Resources;
-        bool bIsFullscreen = false;
-        bool bIsResizing = false;
-        EngineConfig::WindowConfig Config;
     };
 }

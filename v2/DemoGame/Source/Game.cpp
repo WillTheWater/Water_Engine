@@ -5,9 +5,7 @@
 
 #include "Game.h"
 #include "Entry.h"
-#include "Levels/MainMenu.h"
 #include "Config/GameConfig.h"
-#include "Utility/Log.h"
 
 namespace we
 {
@@ -19,14 +17,5 @@ namespace we
 	Game::Game()
 		: WaterEngine{}
 	{
-		Construct();
-	}
-
-	void Game::Construct()
-	{
-		
-		Subsystem.Physics->SetGravity(GameConfig::Gravity);
-		
-		Subsystem.World->LoadWorld<MainMenu>();
 	}
 }

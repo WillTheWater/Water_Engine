@@ -85,10 +85,8 @@ namespace we
 	using renderTarget  = sf::RenderTarget;
 	using renderTexture = sf::RenderTexture;
 	using shader        = sf::Shader;
-
-	// =========================================================================
-	// SFML Audio Types
-	// =========================================================================
+	using event			= sf::Event;
+	using window		= sf::VideoMode;
 	using soundBuffer   = sf::SoundBuffer;
 	using sound         = sf::Sound;
 	using music         = sf::Music;
