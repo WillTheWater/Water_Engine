@@ -4,6 +4,7 @@
 // =============================================================================
 
 #include "Framework/WaterEngine.h"
+#include "Utility/Log.h"
 
 namespace we
 {

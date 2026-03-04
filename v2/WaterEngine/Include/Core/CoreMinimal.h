@@ -98,6 +98,9 @@ namespace we
 	constexpr float PI_2 = PI / 2.0f;
 	constexpr float PI_4 = PI / 4.0f;
 	constexpr float TAU  = 2.0f * PI;
+	constexpr float DEG_TO_RAD = PI / 180.0f;
+	constexpr float RAD_TO_DEG = 180.0f / PI;
+	constexpr float EPSILON = 1e-6f;
 
 	// =========================================================================
 	// Memory
