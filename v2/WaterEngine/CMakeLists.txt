@@ -85,11 +85,19 @@ target_include_directories(WaterEngine PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/Include
 )
 
+# Asset paths (Debug: raw folder, Release: packed pak)
+set(ASSET_ROOT_PATH "${CMAKE_SOURCE_DIR}/Content/")
+set(ASSET_PACK_PATH "Content.pak")
+
 # Compile definitions
 target_compile_definitions(WaterEngine PUBLIC
     SFML_STATIC
     $<$<CONFIG:Debug>:WE_DEBUG>
     $<$<CONFIG:Release>:WE_RELEASE>
+    $<$<CONFIG:Debug>:USE_RAW_ASSETS>
+    $<$<CONFIG:Release>:USE_PACKED_ASSETS>
+    $<$<CONFIG:Debug>:ASSET_ROOT_PATH="${ASSET_ROOT_PATH}">
+    $<$<CONFIG:Release>:ASSET_PACK_PATH="${ASSET_PACK_PATH}">
 )
 
 # Precompiled Header
@@ -111,10 +119,49 @@ target_link_libraries(WaterEngine PUBLIC
 
 # Console Settings
 if(WIN32)
-    target_link_libraries(WaterEngine PUBLIC)
-
     target_link_options(WaterEngine PUBLIC
         $<$<CONFIG:Debug>:/SUBSYSTEM:CONSOLE>
         $<$<CONFIG:Release>:/SUBSYSTEM:CONSOLE>
+    )
+endif()
+
+# =============================================================================
+# Asset Handling
+# =============================================================================
+
+# Debug: Copy Content folder to output directory
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    add_custom_command(
+        TARGET WaterEngine POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+            ${CMAKE_SOURCE_DIR}/Content
+            $<TARGET_FILE_DIR:${DEMO_GAME}>/Content
+        COMMENT "Copying Content folder to output directory"
+    )
+endif()
+
+# Release: Pack Content into Content.pak and copy to output
+if(CMAKE_BUILD_TYPE STREQUAL "Release")
+    set(CONTENT_PAK_OUTPUT "$<TARGET_FILE_DIR:${DEMO_GAME}>/${ASSET_PACK_PATH}")
+    set(CONTENT_SRC_DIR "${CMAKE_SOURCE_DIR}/Content")
+    
+    # Pack Content folder into Content.pak (Content folder is root in archive)
+    add_custom_command(
+        TARGET WaterEngine POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E tar cf 
+            ${CMAKE_CURRENT_BINARY_DIR}/${ASSET_PACK_PATH}
+            --format=zip
+            Content/
+        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+        COMMENT "Packing Content.pak"
+    )
+    
+    # Copy pak to DemoGame output directory
+    add_custom_command(
+        TARGET WaterEngine POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            ${CMAKE_CURRENT_BINARY_DIR}/${ASSET_PACK_PATH}
+            ${CONTENT_PAK_OUTPUT}
+        COMMENT "Copying Content.pak to output directory"
     )
 endif()

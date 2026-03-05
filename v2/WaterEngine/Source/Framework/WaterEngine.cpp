@@ -17,10 +17,11 @@ namespace we
 
     void WaterEngine::Initialize()
     {
-        Subsystem.Window = make_unique<WindowSubsystem>();
-        Subsystem.Clock  = make_unique<ClockSubsystem>();
-        Subsystem.Render = make_unique<RenderSubsystem>();
-        Subsystem.Camera = make_unique<CameraSubsystem>();
+        Subsystem.Resource = make_unique<ResourceSubsystem>();
+        Subsystem.Window   = make_unique<WindowSubsystem>();
+        Subsystem.Clock    = make_unique<ClockSubsystem>();
+        Subsystem.Render   = make_unique<RenderSubsystem>();
+        Subsystem.Camera   = make_unique<CameraSubsystem>();
 
         BindDelegates();
     }

@@ -12,6 +12,7 @@ namespace we
 	class ClockSubsystem
 	{
 	public:
+		void Tick();
 		float GetDeltaTime() const;
 		float GetElapsedTime() const;
 
@@ -25,9 +26,5 @@ namespace we
 		time DeltaTime;
 		time PreviousTick;
 		bool bPaused = false;
-
-	private:
-		friend class WaterEngine;
-		void Tick();
 	};
 }
