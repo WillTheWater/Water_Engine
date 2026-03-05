@@ -6,6 +6,7 @@
 #include "Levels/MainMenu.h"
 #include "Framework/World/Actor.h"
 #include "Subsystem/TimerSubsystem.h"
+#include "Subsystem/ResourceSubsystem.h"
 #include "Utility/Log.h"
 
 namespace we
@@ -18,7 +19,9 @@ namespace we
     void MainMenu::BeginPlay()
     {
         LOG("MainMenu::BeginPlay")
-        TestActor = SpawnActor<Actor>().lock();
+        //TestActor = SpawnActor<Actor>().lock();
+        //auto Tex = LoadAsset().LoadTexture("Assets/Textures/Game/idle.png");
+        TestActor->SetSprite(Tex);
         
         DestroyTimerHandle = GetTimer().SetTimer(GetObject(), &MainMenu::DestroyTestActor, 1.0f, false);
     }

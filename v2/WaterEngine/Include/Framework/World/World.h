@@ -7,11 +7,11 @@
 
 #include "Core/CoreMinimal.h"
 #include "Framework/World/Object.h"
+#include "Framework/World/Actor.h"
 #include "Subsystem/WorldSubsystem.h"
 
 namespace we
 {
-	class Actor;
 
 	class World : public Object
 	{
@@ -25,10 +25,15 @@ namespace we
 		void GarbageCollection();
 
 		template<typename ActorType, typename... Args>
-		weak<ActorType> SpawnActor(Args... args);
+		weak<ActorType> SpawnActor(Args&&... args);
+
+		template<typename Func>
+		void OrderActorDrawables(Func&& Callback);
 
 		template<typename WorldType>
 		void LoadWorld() { Subsystem.CreateWorld<WorldType>(); }
+
+		const vector<shared<Actor>>& GetActors() const { return Actors; }
 
 	protected:
 		WorldSubsystem& Subsystem;
@@ -44,10 +49,35 @@ namespace we
 	};
 
 	template<typename ActorType, typename... Args>
-	weak<ActorType> World::SpawnActor(Args... args)
+	inline weak<ActorType> World::SpawnActor(Args&&... args)
 	{
-		shared<ActorType> NewActor = make_shared<ActorType>(this, args...);
+		auto NewActor = make_shared<ActorType>(*this, std::forward<Args>(args)...);
 		PendingActors.push_back(NewActor);
 		return NewActor;
+	}
+
+	template<typename Func>
+	inline void World::OrderActorDrawables(Func&& Callback)
+	{
+		static vector<pair<uint32_t, float>> Indices;
+		Indices.clear();
+		Indices.reserve(Actors.size());
+
+		for (uint32_t i = 0; i < Actors.size(); ++i)
+		{
+			const auto& Actor = Actors[i];
+			if (Actor->IsVisible() && Actor->GetDrawable())
+			{
+				Indices.emplace_back(i, Actor->GetRenderDepth());
+			}
+		}
+
+		std::sort(Indices.begin(), Indices.end(),
+			[](const auto& A, const auto& B) { return A.second < B.second; });
+
+		for (const auto& [Index, Depth] : Indices)
+		{
+			std::forward<Func>(Callback)(Actors[Index]->GetDrawable());
+		}
 	}
 }

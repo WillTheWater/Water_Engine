@@ -64,10 +64,10 @@ namespace we
     {
         Subsystem.Render->BeginFrame();
 
-        // TODO: Draw Call
-        // Render will take all sprites from WorldSubsystem
-        // Render calls Draw
-        //
+        for (const auto* Sprite : Subsystem.World->GetOrderedDrawables())
+        {
+            Subsystem.Render->Draw(*Sprite, ERenderLayer::World);
+        }
 
         Subsystem.Render->EndFrame();
 
