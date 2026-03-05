@@ -4,7 +4,9 @@
 // =============================================================================
 
 #include "Framework/WaterEngine.h"
+#include "Utility/Delegate.h"
 #include "Utility/Log.h"
+#include "Utility/Math.h"
 
 namespace we
 {
@@ -18,6 +20,14 @@ namespace we
         Subsystem.Window = make_unique<WindowSubsystem>();
         Subsystem.Clock  = make_unique<ClockSubsystem>();
         Subsystem.Render = make_unique<RenderSubsystem>();
+        Subsystem.Camera = make_unique<CameraSubsystem>();
+
+        BindDelegates();
+    }
+
+    void WaterEngine::BindDelegates()
+    {
+        Subsystem.Window->OnResize.Bind(this, &WaterEngine::SetCameraView);
     }
 
     bool WaterEngine::IsRunning() const
@@ -50,7 +60,16 @@ namespace we
         // TODO: Draw Call
 
         Subsystem.Render->EndFrame();
+
+        Subsystem.Window->setView(Subsystem.Camera->GetView());
+        
+        Subsystem.Window->clear(color::Black);
         Subsystem.Window->draw(Subsystem.Render->GetCompositeSprite());
         Subsystem.Window->display();
+    }
+
+    void WaterEngine::SetCameraView(vec2u WindowSize)
+    {
+        Subsystem.Camera->Update(WindowSize);
     }
 }

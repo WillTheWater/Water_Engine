@@ -4,6 +4,7 @@
 // =============================================================================
 
 #include "Subsystem/WindowSubsystem.h"
+#include "Utility/Log.h"
 
 namespace we
 {
@@ -17,5 +18,10 @@ namespace we
 	{
 		WindowEventHandler Handler{ *this };
 		Event.visit(Handler);
+	}
+
+	void WindowSubsystem::EventResize()
+	{
+		OnResize.Broadcast(getSize());
 	}
 }

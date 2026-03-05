@@ -9,13 +9,15 @@
 #include "Subsystem/WindowSubsystem.h"
 #include "Subsystem/ClockSubsystem.h"
 #include "Subsystem/RenderSubsystem.h"
+#include "Subsystem/CameraSubsystem.h"
 
 namespace we
 {
 	struct EngineSubsystem
 	{
-		unique<WindowSubsystem> Window;
-		unique<ClockSubsystem> Clock;
-		unique<RenderSubsystem> Render;
+		unique<WindowSubsystem>		Window;
+		unique<ClockSubsystem>		Clock;
+		unique<RenderSubsystem>		Render;
+		unique<CameraSubsystem>		Camera;
 	};
 }

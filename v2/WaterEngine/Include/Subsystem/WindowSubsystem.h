@@ -8,6 +8,7 @@
 #include "Core/CoreMinimal.h"
 #include <SFML/Graphics.hpp>
 #include "EventHandler/WindowEventHandler.h"
+#include "Utility/Delegate.h"
 
 namespace we
 {
@@ -18,7 +19,13 @@ namespace we
 
         void HandleEvent(const event& Event);
 
+    public:
+        Delegate<vec2u> OnResize;
+
     private:
         friend WindowEventHandler;
+
+    private:
+        void EventResize();
     };
 }

@@ -27,6 +27,7 @@ namespace we
         void EndFrame();
         
         sprite GetCompositeSprite() const;
+        vec2u GetRenderResolution() const { return RenderResolution; }
 
         void SetTargetSize(vec2u Size);
 

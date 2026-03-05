@@ -18,7 +18,7 @@ namespace we
 
     void WindowEventHandler::operator()(const event::Resized&)
     {
-        Window.onResize();
+        Window.EventResize();
     }
 
     void WindowEventHandler::operator()(const event::FocusLost&)
