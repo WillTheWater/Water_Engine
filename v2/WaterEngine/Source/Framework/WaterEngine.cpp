@@ -20,6 +20,7 @@ namespace we
         Subsystem.Resource = make_unique<ResourceSubsystem>();
         Subsystem.Window   = make_unique<WindowSubsystem>();
         Subsystem.Clock    = make_unique<ClockSubsystem>();
+        Subsystem.World    = make_unique<WorldSubsystem>();
         Subsystem.Render   = make_unique<RenderSubsystem>();
         Subsystem.Camera   = make_unique<CameraSubsystem>();
 
@@ -52,6 +53,7 @@ namespace we
     void WaterEngine::Update()
     {
         Subsystem.Clock->Tick();
+        Subsystem.World->Tick(Subsystem.Clock->GetDeltaTime());
     }
 
     void WaterEngine::Render()
@@ -59,6 +61,9 @@ namespace we
         Subsystem.Render->BeginFrame();
 
         // TODO: Draw Call
+        // Render will take all sprites from WorldSubsystem
+        // Render calls Draw
+        //
 
         Subsystem.Render->EndFrame();
 

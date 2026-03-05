@@ -7,6 +7,7 @@
 
 #include "Core/CoreMinimal.h"
 #include "Framework/World/Object.h"
+#include "Subsystem/WorldSubsystem.h"
 
 namespace we
 {
@@ -15,22 +16,26 @@ namespace we
 	class World : public Object
 	{
 	public:
-		World();
+		World(WorldSubsystem& Subsystem);
 		virtual ~World();
 
 		void StartPlay();
 		void StartTick(float DeltaTime);
-
-		virtual void PreConstruct();
-		virtual void BeginPlay();
-		virtual void EndPlay();
-		virtual void Tick(float DeltaTime);
+		void EndPlay();
+		void GarbageCollection();
 
 		template<typename ActorType, typename... Args>
 		weak<ActorType> SpawnActor(Args&&... args);
 
-	private:
-		void GarbageCollection();
+		template<typename WorldType>
+		void LoadWorld() { Subsystem.CreateWorld<WorldType>(); }
+
+	protected:
+		WorldSubsystem& Subsystem;
+
+		virtual void PreConstruct() {}
+		virtual void BeginPlay() {}
+		virtual void Tick(float DeltaTime) {}
 
 	private:
 		bool bHasBegunPlay;

@@ -8,8 +8,9 @@
 
 namespace we
 {
-	World::World()
-		: bHasBegunPlay{false}
+	World::World(WorldSubsystem& Subsystem)
+		: Subsystem{Subsystem}
+		, bHasBegunPlay{false}
 		, PendingActors{}
 		, Actors{}
 	{
@@ -52,23 +53,8 @@ namespace we
 		}
 	}
 
-	void World::PreConstruct()
-	{
-
-	}
-
-	void World::BeginPlay()
-	{
-
-	}
-
 	void World::EndPlay()
 	{
-	}
-
-	void  World::Tick(float DeltaTime)
-	{
-
 	}
 
 	void World::GarbageCollection()

@@ -6,11 +6,12 @@
 #pragma once
 
 #include "Core/CoreMinimal.h"
+#include "Subsystem/ResourceSubsystem.h"
 #include "Subsystem/WindowSubsystem.h"
 #include "Subsystem/ClockSubsystem.h"
 #include "Subsystem/RenderSubsystem.h"
 #include "Subsystem/CameraSubsystem.h"
-#include "Subsystem/ResourceSubsystem.h"
+#include "Subsystem/WorldSubsystem.h"
 
 namespace we
 {
@@ -19,6 +20,7 @@ namespace we
 		unique<ResourceSubsystem>	Resource;
 		unique<WindowSubsystem>		Window;
 		unique<ClockSubsystem>		Clock;
+		unique<WorldSubsystem>		World;
 		unique<RenderSubsystem>		Render;
 		unique<CameraSubsystem>		Camera;
 	};
