@@ -195,4 +195,24 @@ namespace we
         static ResourceSubsystem Instance;
         return Instance;
     }
+
+    template<typename T>
+    bool ResourceSubsystem::Verify(const shared<T>& Resource, const string& Name) const
+    {
+        if (!Resource)
+        {
+            ERROR("ResourceSubsystem: VERIFY FAILED - '{}' not loaded! Check:", Name);
+            ERROR("  - File exists: {}<Filename>", ASSET_ROOT_PATH);
+            ERROR("  - Path is correct (use relative to Content folder)");
+            ERROR("  - File format is valid (PNG, JPG for textures)");
+            return false;
+        }
+        return true;
+    }
+
+    // Explicit instantiations
+    template bool ResourceSubsystem::Verify<texture>(const shared<texture>&, const string&) const;
+    template bool ResourceSubsystem::Verify<soundBuffer>(const shared<soundBuffer>&, const string&) const;
+    template bool ResourceSubsystem::Verify<font>(const shared<font>&, const string&) const;
+    template bool ResourceSubsystem::Verify<music>(const shared<music>&, const string&) const;
 }

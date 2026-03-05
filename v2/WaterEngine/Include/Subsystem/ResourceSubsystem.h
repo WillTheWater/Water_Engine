@@ -22,6 +22,13 @@ namespace we
         shared<font>        LoadFont(const string& Filename);
         shared<music>       LoadMusic(const string& Filename);
 
+        template<typename T>
+        void GarbageCollect(dictionary<std::string, shared<T>>& container);
+
+        // Verify a resource loaded correctly, logs detailed error if not
+        template<typename T>
+        bool Verify(const shared<T>& Resource, const string& Name) const;
+
     private:
         dictionary<string, shared<texture>>     Textures;
         dictionary<string, shared<soundBuffer>> Sounds;
@@ -37,4 +44,21 @@ namespace we
     };
 
     inline ResourceSubsystem& LoadAsset() { return ResourceSubsystem::Get(); }
+
+    template<typename T>
+    inline void ResourceSubsystem::GarbageCollect(dictionary<std::string, shared<T>>& container)
+    {
+        for (auto i = container.begin(); i != container.end();)
+        {
+            if (i->second.unique())
+            {
+                LOG("cleaning: %s", i->first.c_str());
+                i = container.erase(i);
+            }
+            else
+            {
+                ++i;
+            }
+        }
+    }
 }

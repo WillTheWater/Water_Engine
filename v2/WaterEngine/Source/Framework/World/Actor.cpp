@@ -49,7 +49,6 @@ namespace we
 
 	void Actor::Tick(float DeltaTime)
 	{
-		LOG("Actor Tick")
 	}
 
 	void Actor::UpdateTransform()
@@ -64,7 +63,14 @@ namespace we
 
 	void Actor::SetSprite(shared<texture> Texture)
 	{
-		ActorSprite->setTexture(*Texture);
+		if (!Texture)
+		{
+			ERROR("Actor::SetSprite: Texture is null");
+			return;
+		}
+		
+		// SFML 3: Sprite requires texture at construction
+		ActorSprite.emplace(*Texture);
 	}
 
 	void Actor::SetSpriteOrigin(const vec2f& Origin)

@@ -19,11 +19,11 @@ namespace we
     void MainMenu::BeginPlay()
     {
         LOG("MainMenu::BeginPlay")
-        //TestActor = SpawnActor<Actor>().lock();
-        //auto Tex = LoadAsset().LoadTexture("Assets/Textures/Game/idle.png");
-        TestActor->SetSprite(Tex);
-        
+        TestActor = SpawnActor<Actor>().lock();
         DestroyTimerHandle = GetTimer().SetTimer(GetObject(), &MainMenu::DestroyTestActor, 1.0f, false);
+       
+        auto Tex = LoadAsset().LoadTexture("Assets/Textures/Game/idle.png");
+        TestActor->SetSprite(Tex);
     }
 
     void MainMenu::Tick(float DeltaTime)
