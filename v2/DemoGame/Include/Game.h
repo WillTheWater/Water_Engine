@@ -14,5 +14,7 @@ namespace we
 	{
 	public:
 		Game();
+
+		void StartPlay() override;
 	};
 }

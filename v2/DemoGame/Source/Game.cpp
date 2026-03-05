@@ -6,6 +6,7 @@
 #include "Game.h"
 #include "Entry.h"
 #include "Config/GameConfig.h"
+#include "Utility/Log.h"
 
 namespace we
 {
@@ -17,5 +18,10 @@ namespace we
 	Game::Game()
 		: WaterEngine{}
 	{
+	}
+
+	void Game::StartPlay()
+	{
+		LOG("Start Play")
 	}
 }

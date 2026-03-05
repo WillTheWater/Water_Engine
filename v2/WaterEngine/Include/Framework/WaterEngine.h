@@ -15,6 +15,8 @@ namespace we
     public:
         WaterEngine();
 
+        virtual void StartPlay() {}
+
         bool IsRunning() const;
         bool HasFocus() const;
         void ProcessEvents();
