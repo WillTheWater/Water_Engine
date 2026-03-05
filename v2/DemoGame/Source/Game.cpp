@@ -8,6 +8,8 @@
 #include "Config/GameConfig.h"
 #include "Utility/Log.h"
 
+#include "Levels/MainMenu.h"
+
 namespace we
 {
 	unique<WaterEngine> GetEngine()
@@ -22,6 +24,6 @@ namespace we
 
 	void Game::StartPlay()
 	{
-		LOG("Start Play")
+		Subsystem.World->CreateWorld<MainMenu>();
 	}
 }

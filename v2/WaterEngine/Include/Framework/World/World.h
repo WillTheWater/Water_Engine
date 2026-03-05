@@ -25,7 +25,7 @@ namespace we
 		void GarbageCollection();
 
 		template<typename ActorType, typename... Args>
-		weak<ActorType> SpawnActor(Args&&... args);
+		weak<ActorType> SpawnActor(Args... args);
 
 		template<typename WorldType>
 		void LoadWorld() { Subsystem.CreateWorld<WorldType>(); }
@@ -44,9 +44,9 @@ namespace we
 	};
 
 	template<typename ActorType, typename... Args>
-	inline weak<ActorType> World::SpawnActor(Args&&... args)
+	weak<ActorType> World::SpawnActor(Args... args)
 	{
-		shared<ActorType> NewActor = make_shared<ActorType>(this, std::forward<Args>(args)...);
+		shared<ActorType> NewActor = make_shared<ActorType>(this, args...);
 		PendingActors.push_back(NewActor);
 		return NewActor;
 	}

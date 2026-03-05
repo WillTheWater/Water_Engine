@@ -39,9 +39,11 @@ namespace we
 
 	void Actor::BeginPlay()
 	{
+		LOG("Actor BeginPlay")
 	}
 
 	void Actor::Tick(float DeltaTime)
 	{
+		LOG("Actor Tick")
 	}
 }

@@ -23,12 +23,12 @@ namespace we
         void Update();
         void Render();
 
+    protected:
+        EngineSubsystem Subsystem;
+
     private:
         void Initialize();
         void BindDelegates();
         void SetCameraView(vec2u WindowSize);
-
-    private:
-        EngineSubsystem Subsystem;
     };
 }

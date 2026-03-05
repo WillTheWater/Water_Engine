@@ -8,13 +8,6 @@
 
 namespace we
 {
-	void WorldSubsystem::BeginPlay()
-	{
-		CurrentWorld = PendingWorld;
-		PendingWorld = nullptr;
-		CurrentWorld->StartPlay();
-	}
-
 	void WorldSubsystem::Tick(float DeltaTime)
 	{
         if (PendingWorld)

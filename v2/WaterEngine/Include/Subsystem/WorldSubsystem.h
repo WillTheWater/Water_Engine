@@ -14,7 +14,6 @@ namespace we
     class WorldSubsystem
     {
     public:
-        void BeginPlay();
         void Tick(float DeltaTime);
 
         shared<World> GetCurrentWorld() const { return CurrentWorld; }
