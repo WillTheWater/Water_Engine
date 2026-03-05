@@ -30,5 +30,6 @@ namespace we
         void Initialize();
         void BindDelegates();
         void SetCameraView(vec2u WindowSize);
+
     };
 }

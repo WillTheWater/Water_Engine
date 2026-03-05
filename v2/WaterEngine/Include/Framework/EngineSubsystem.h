@@ -12,6 +12,7 @@
 #include "Subsystem/RenderSubsystem.h"
 #include "Subsystem/CameraSubsystem.h"
 #include "Subsystem/WorldSubsystem.h"
+#include "Subsystem/TimerSubsystem.h"
 
 namespace we
 {
@@ -20,6 +21,7 @@ namespace we
 		unique<ResourceSubsystem>	Resource;
 		unique<WindowSubsystem>		Window;
 		unique<ClockSubsystem>		Clock;
+		unique<TimerSubsystem>		Timer;
 		unique<WorldSubsystem>		World;
 		unique<RenderSubsystem>		Render;
 		unique<CameraSubsystem>		Camera;

@@ -5,6 +5,7 @@
 
 #include "Levels/MainMenu.h"
 #include "Framework/World/Actor.h"
+#include "Subsystem/TimerSubsystem.h"
 #include "Utility/Log.h"
 
 namespace we
@@ -17,10 +18,22 @@ namespace we
     void MainMenu::BeginPlay()
     {
         LOG("MainMenu::BeginPlay")
-        auto TestActor = SpawnActor<Actor>();
+        TestActor = SpawnActor<Actor>().lock();
+        
+        DestroyTimerHandle = GetTimer().SetTimer(GetObject(), &MainMenu::DestroyTestActor, 1.0f, false);
     }
 
     void MainMenu::Tick(float DeltaTime)
     {
+    }
+
+    void MainMenu::DestroyTestActor()
+    {
+        LOG("Destroying TestActor!")
+        if (TestActor)
+        {
+            TestActor->Destroy();
+            TestActor = nullptr;
+        }
     }
 }

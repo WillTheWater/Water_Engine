@@ -20,6 +20,7 @@ namespace we
         Subsystem.Resource = make_unique<ResourceSubsystem>();
         Subsystem.Window   = make_unique<WindowSubsystem>();
         Subsystem.Clock    = make_unique<ClockSubsystem>();
+        Subsystem.Timer    = make_unique<TimerSubsystem>();
         Subsystem.World    = make_unique<WorldSubsystem>();
         Subsystem.Render   = make_unique<RenderSubsystem>();
         Subsystem.Camera   = make_unique<CameraSubsystem>();
@@ -53,7 +54,10 @@ namespace we
     void WaterEngine::Update()
     {
         Subsystem.Clock->Tick();
-        Subsystem.World->Tick(Subsystem.Clock->GetDeltaTime());
+        float DeltaTime = Subsystem.Clock->GetDeltaTime();
+        
+        GetTimer().Update(DeltaTime);
+        Subsystem.World->Tick(DeltaTime);
     }
 
     void WaterEngine::Render()

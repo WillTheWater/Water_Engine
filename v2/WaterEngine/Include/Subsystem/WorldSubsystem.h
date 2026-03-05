@@ -23,8 +23,13 @@ namespace we
         void CreateWorld();
 
     private:
+        void GarbageCollect(float DeltaTime);
+
+    private:
         shared<World> CurrentWorld;
         shared<World> PendingWorld;
+        float GCTimer = 0.0f;
+        static constexpr float GCInterval = 3.0f;
     };
 
     template<typename WorldType>

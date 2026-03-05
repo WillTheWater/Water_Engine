@@ -7,6 +7,7 @@
 
 #include "Core/CoreMinimal.h"
 #include "Framework/World/World.h"
+#include "Subsystem/TimerSubsystem.h"
 
 namespace we
 {
@@ -22,6 +23,9 @@ namespace we
         void Tick(float DeltaTime) override;
 
     private:
+        void DestroyTestActor();
+
         shared<Actor> TestActor;
+        TimerHandle DestroyTimerHandle;
     };
 }

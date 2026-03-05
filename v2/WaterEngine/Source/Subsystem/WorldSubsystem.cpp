@@ -25,6 +25,17 @@ namespace we
         if (CurrentWorld)
         {
             CurrentWorld->StartTick(DeltaTime);
+            GarbageCollect(DeltaTime);
         }
 	}
+
+    void WorldSubsystem::GarbageCollect(float DeltaTime)
+    {
+        GCTimer += DeltaTime;
+        if (GCTimer >= GCInterval)
+        {
+            GCTimer = 0.0f;
+            CurrentWorld->GarbageCollection();
+        }
+    }
 }

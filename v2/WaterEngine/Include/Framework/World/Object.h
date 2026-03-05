@@ -16,12 +16,12 @@ namespace we
 		virtual ~Object();
 
 		bool IsPendingDestroy() const;
+		void Destroy();
 
 		weak<Object> GetObject();
 		weak<const Object> GetObject() const;
 
 	protected:
-		virtual void Destroy();
 
 	private:
 		bool bIsPendingDestroy;
