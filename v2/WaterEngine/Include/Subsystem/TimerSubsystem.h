@@ -7,6 +7,7 @@
 
 #include "Core/CoreMinimal.h"
 #include "Framework/World/Object.h"
+#include "Utility/Delegate.h"
 
 namespace we
 {
@@ -66,8 +67,12 @@ namespace we
         void Update(float DeltaTime);
         void ClearTimer(TimerHandle Handle);
 
+        Delegate<> TriggerGarbageCollection;
+
     private:
         dictionary<TimerHandle, Timer, TimerHashFunction> Timers;
+        float GCTimer = 0.0f;
+        static constexpr float GCInterval = 3.0f;
     };
 
     inline TimerSubsystem& GetTimer() { return TimerSubsystem::Get(); }

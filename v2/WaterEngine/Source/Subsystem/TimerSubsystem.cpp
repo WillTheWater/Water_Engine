@@ -70,6 +70,13 @@ namespace we
                 ++Timer;
             }
         }
+        
+        GCTimer += DeltaTime;
+        if (GCTimer >= GCInterval)
+        {
+            GCTimer = 0.0f;
+            TriggerGarbageCollection.Broadcast();
+        }
     }
 
     void TimerSubsystem::ClearTimer(TimerHandle Handle)

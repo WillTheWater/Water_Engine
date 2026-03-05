@@ -6,6 +6,7 @@
 #pragma once
 
 #include "Core/CoreMinimal.h"
+#include "Utility/Log.h"
 
 namespace we
 {
@@ -22,12 +23,17 @@ namespace we
         shared<font>        LoadFont(const string& Filename);
         shared<music>       LoadMusic(const string& Filename);
 
-        template<typename T>
-        void GarbageCollect(dictionary<std::string, shared<T>>& container);
+        void GarbageCollect();
 
-        // Verify a resource loaded correctly, logs detailed error if not
-        template<typename T>
-        bool Verify(const shared<T>& Resource, const string& Name) const;
+    private:
+        template<typename MapType>
+        void CleanCache(MapType& Cache, const string& TypeName);
+
+        string ResolvePath(const string& Filename);
+        
+        #ifdef USE_PACKED_ASSETS
+        string LoadFileData(const string& Path);
+        #endif
 
     private:
         dictionary<string, shared<texture>>     Textures;
@@ -35,30 +41,7 @@ namespace we
         dictionary<string, shared<font>>        Fonts;
         dictionary<string, shared<music>>       Music;
         dictionary<string, string>              Data;
-
-        string ResolvePath(const string& Filename);
-        
-        #ifdef USE_PACKED_ASSETS
-        string LoadFileData(const string& Path);
-        #endif
     };
 
     inline ResourceSubsystem& LoadAsset() { return ResourceSubsystem::Get(); }
-
-    template<typename T>
-    inline void ResourceSubsystem::GarbageCollect(dictionary<std::string, shared<T>>& container)
-    {
-        for (auto i = container.begin(); i != container.end();)
-        {
-            if (i->second.unique())
-            {
-                LOG("cleaning: %s", i->first.c_str());
-                i = container.erase(i);
-            }
-            else
-            {
-                ++i;
-            }
-        }
-    }
 }

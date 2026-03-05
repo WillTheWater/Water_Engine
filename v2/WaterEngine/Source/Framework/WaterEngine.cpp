@@ -31,6 +31,7 @@ namespace we
     void WaterEngine::BindDelegates()
     {
         Subsystem.Window->OnResize.Bind(this, &WaterEngine::SetCameraView);
+        GetTimer().TriggerGarbageCollection.Bind(this, &WaterEngine::GarbageCollection);
     }
 
     bool WaterEngine::IsRunning() const
@@ -81,5 +82,10 @@ namespace we
     void WaterEngine::SetCameraView(vec2u WindowSize)
     {
         Subsystem.Camera->Update(WindowSize);
+    }
+
+    void WaterEngine::GarbageCollection()
+    {
+        LoadAsset().GarbageCollect();
     }
 }

@@ -196,23 +196,28 @@ namespace we
         return Instance;
     }
 
-    template<typename T>
-    bool ResourceSubsystem::Verify(const shared<T>& Resource, const string& Name) const
+    template<typename MapType>
+    void ResourceSubsystem::CleanCache(MapType& Cache, const string& TypeName)
     {
-        if (!Resource)
+        for (auto it = Cache.begin(); it != Cache.end();)
         {
-            ERROR("ResourceSubsystem: VERIFY FAILED - '{}' not loaded! Check:", Name);
-            ERROR("  - File exists: {}<Filename>", ASSET_ROOT_PATH);
-            ERROR("  - Path is correct (use relative to Content folder)");
-            ERROR("  - File format is valid (PNG, JPG for textures)");
-            return false;
+            if (it->second.use_count() == 1)
+            {
+                LOG("ResourceSubsystem GC: Unloading {} '{}'", TypeName, it->first);
+                it = Cache.erase(it);
+            }
+            else
+            {
+                ++it;
+            }
         }
-        return true;
     }
 
-    // Explicit instantiations
-    template bool ResourceSubsystem::Verify<texture>(const shared<texture>&, const string&) const;
-    template bool ResourceSubsystem::Verify<soundBuffer>(const shared<soundBuffer>&, const string&) const;
-    template bool ResourceSubsystem::Verify<font>(const shared<font>&, const string&) const;
-    template bool ResourceSubsystem::Verify<music>(const shared<music>&, const string&) const;
+    void ResourceSubsystem::GarbageCollect()
+    {
+        CleanCache(Textures, "texture");
+        CleanCache(Sounds, "sound");
+        CleanCache(Fonts, "font");
+        CleanCache(Music, "music");
+    }
 }
