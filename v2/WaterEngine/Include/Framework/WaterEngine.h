@@ -29,7 +29,5 @@ namespace we
     private:
         void Initialize();
         void BindDelegates();
-        void GarbageCollection();
-
     };
 }

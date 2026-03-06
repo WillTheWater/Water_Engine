@@ -34,7 +34,7 @@ namespace we
     {
         Subsystem.Window->OnResize.Bind(Subsystem.Camera.get(), &CameraSubsystem::SetCameraView);
         Subsystem.Window->OnMouseMove.Bind(Subsystem.Cursor.get(), &CursorSubsystem::SetPosition);
-        GetTimer().TriggerGarbageCollection.Bind(this, &WaterEngine::GarbageCollection);
+        GetTimer().TriggerGarbageCollection.Bind(Subsystem.Resource.get(), &ResourceSubsystem::GarbageCollect);
     }
 
     bool WaterEngine::IsRunning() const
@@ -86,10 +86,5 @@ namespace we
         Subsystem.Window->clear(color::Black);
         Subsystem.Window->draw(Subsystem.Render->GetCompositeSprite());
         Subsystem.Window->display();
-    }
-
-    void WaterEngine::GarbageCollection()
-    {
-        LoadAsset().GarbageCollect();
     }
 }

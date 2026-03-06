@@ -12,8 +12,12 @@
 
 namespace we
 {
+    ResourceSubsystem* ResourceSubsystem::Instance = nullptr;
+
     ResourceSubsystem::ResourceSubsystem()
     {
+        Instance = this;
+        
         #ifdef USE_PACKED_ASSETS
             if (!PHYSFS_init(nullptr))
             {
@@ -192,8 +196,7 @@ namespace we
 
     ResourceSubsystem& ResourceSubsystem::Get()
     {
-        static ResourceSubsystem Instance;
-        return Instance;
+        return *Instance;
     }
 
     template<typename MapType>

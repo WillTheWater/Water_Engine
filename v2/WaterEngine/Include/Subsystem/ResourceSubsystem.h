@@ -36,6 +36,8 @@ namespace we
         #endif
 
     private:
+        static ResourceSubsystem* Instance;
+        
         dictionary<string, shared<texture>>     Textures;
         dictionary<string, shared<soundBuffer>> Sounds;
         dictionary<string, shared<font>>        Fonts;

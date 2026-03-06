@@ -57,7 +57,7 @@ namespace we
         for (uint i = 0; i < Actors.size(); ++i)
         {
             const auto& Actor = Actors[i];
-            if (Actor->IsVisible() && Actor->GetDrawable())
+            if (!Actor->IsPendingDestroy() && Actor->IsVisible() && Actor->GetDrawable())
             {
                 Indices.emplace_back(i, Actor->GetRenderDepth());
             }
