@@ -25,6 +25,7 @@ namespace we
         Subsystem.Render   = make_unique<RenderSubsystem>();
         Subsystem.Camera   = make_unique<CameraSubsystem>();
         Subsystem.Cursor   = make_unique<CursorSubsystem>();
+        Subsystem.Input    = make_unique<InputSubsystem>();
 
         BindDelegates();
     }
@@ -51,6 +52,7 @@ namespace we
         while (const auto Event = Subsystem.Window->pollEvent())
         {
             Subsystem.Window->HandleEvent(*Event);
+            Subsystem.Input->HandleEvent(*Event);
         }
     }
 

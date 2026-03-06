@@ -20,14 +20,24 @@ namespace we
 
     namespace Input
     {
-        struct Keyboard { sf::Keyboard::Scan Key; };
-        struct Mouse { sf::Mouse::Button Button; };
-        struct Gamepad { GamepadButton Button; int id = 0; };
-        struct Axis { sf::Joystick::Axis Axis; float Threshold = 0.15f; int id = 0; };
+        struct Keyboard { sf::Keyboard::Scan Key; bool operator==(const Keyboard& OtherKey) const { return Key == OtherKey.Key; }};
+        struct Mouse { sf::Mouse::Button Button; bool operator==(const Mouse& OtherKey) const { return Button == OtherKey.Button; }};
+        struct Gamepad { GamepadButton Button; int GamepadID = 0; bool operator==(const Gamepad& OtherKey) const { return Button == OtherKey.Button && GamepadID == OtherKey.GamepadID; }};
+        struct JoystickAxis { sf::Joystick::Axis Axis; float AxisThreshold = 0.15f; int AxisID = 0; bool operator==(const JoystickAxis& OtherKey) const { return Axis == OtherKey.Axis && AxisID == OtherKey.AxisID; }};
 
-        using Binding = std::variant<Keyboard, Mouse, Gamepad, Axis>;
+        using Binding = std::variant<Keyboard, Mouse, Gamepad, JoystickAxis>;
 
         optional<int> LogicToHardware(GamepadButton Button, int HardwareID);
         optional<GamepadButton> HardwareToLogic(int Button, int HardwareID);
+
+        inline bool BindingsEqual(const Binding& A, const Binding& B)
+        {
+            return std::visit([](const auto& x, const auto& y) -> bool {
+                if constexpr (std::is_same_v<decltype(x), decltype(y)>) {
+                    return x == y;
+                }
+                return false;
+                }, A, B);
+        }
     }
 }
