@@ -50,10 +50,8 @@ namespace we
         if (!CurrentWorld)
             return Drawables;
         
-        // Get actors from world
         const auto& Actors = CurrentWorld->GetActors();
         
-        // Collect visible indices with depths
         for (uint i = 0; i < Actors.size(); ++i)
         {
             const auto& Actor = Actors[i];
@@ -63,11 +61,9 @@ namespace we
             }
         }
         
-        // Sort by depth
         std::sort(Indices.begin(), Indices.end(),
             [](const auto& A, const auto& B) { return A.second < B.second; });
         
-        // Fill drawables in sorted order
         Drawables.reserve(Indices.size());
         for (const auto& [Index, Depth] : Indices)
         {

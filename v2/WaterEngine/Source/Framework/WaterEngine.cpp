@@ -61,8 +61,10 @@ namespace we
         Subsystem.Clock->Tick();
         float DeltaTime = Subsystem.Clock->GetDeltaTime();
         
+        Subsystem.Input->ProcessHeld();
         GetTimer().Update(DeltaTime);
         Subsystem.World->Tick(DeltaTime);
+        Subsystem.Input->PostUpdate();
     }
 
     void WaterEngine::Render()

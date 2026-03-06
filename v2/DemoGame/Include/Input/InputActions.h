@@ -14,7 +14,7 @@
 enum InputActions : int
 {
 	// Movement (State-based testing)
-	TEST_MOVE_UP = 1,
+	TEST_MOVE_UP,
 	TEST_MOVE_DOWN,
 	TEST_MOVE_LEFT,
 	TEST_MOVE_RIGHT,

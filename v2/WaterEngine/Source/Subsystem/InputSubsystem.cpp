@@ -8,6 +8,18 @@
 
 namespace we
 {
+	InputSubsystem* InputSubsystem::Instance = nullptr;
+
+	InputSubsystem::InputSubsystem()
+	{
+		Instance = this;
+	}
+
+	InputSubsystem& InputSubsystem::Get()
+	{
+		return *Instance;
+	}
+
 	// =============================================================================
 	// STATE-BASED API
 	// =============================================================================
@@ -15,6 +27,8 @@ namespace we
 	void InputSubsystem::Bind(int InputAction, const Input::Binding& Binding)
 	{
 		InputBindings.emplace(InputAction, Binding);
+		ulong Hash = BindingHash{}(Binding);
+		BindingToActions[Hash].push_back(InputAction);
 	}
 
 	bool InputSubsystem::IsPressed(int InputAction) const
@@ -46,15 +60,19 @@ namespace we
 
 	void InputSubsystem::ProcessPressed(const Input::Binding& binding)
 	{
-		for (const auto& [actionId, boundBinding] : InputBindings)
+		ulong Hash = BindingHash{}(binding);
+		auto It = BindingToActions.find(Hash);
+		if (It != BindingToActions.end())
 		{
-			if (Input::BindingsEqual(binding, boundBinding))
+			for (int ActionID : It->second)
 			{
-				PressedOnFrame[actionId] = CurrentFrame;
-
-				if (auto it = PressedCallbacks.find(actionId); it != PressedCallbacks.end())
+				PressedOnFrame[ActionID] = CurrentFrame;
+				if (auto CBIt = PressedCallbacks.find(ActionID); CBIt != PressedCallbacks.end())
 				{
-					for (auto& cb : it->second) cb();
+					for (auto& cb : CBIt->second)
+					{
+						cb();
+					}
 				}
 			}
 		}
@@ -62,15 +80,19 @@ namespace we
 
 	void InputSubsystem::ProcessReleased(const Input::Binding& binding)
 	{
-		for (const auto& [actionId, boundBinding] : InputBindings)
+		ulong Hash = BindingHash{}(binding);
+		auto It = BindingToActions.find(Hash);
+		if (It != BindingToActions.end())
 		{
-			if (Input::BindingsEqual(binding, boundBinding))
+			for (int ActionID : It->second)
 			{
-				ReleasedOnFrame[actionId] = CurrentFrame;
-
-				if (auto it = ReleasedCallbacks.find(actionId); it != ReleasedCallbacks.end())
+				ReleasedOnFrame[ActionID] = CurrentFrame;
+				if (auto CBIt = ReleasedCallbacks.find(ActionID); CBIt != ReleasedCallbacks.end())
 				{
-					for (auto& cb : it->second) cb();
+					for (auto& cb : CBIt->second)
+					{
+						cb();
+					}
 				}
 			}
 		}
@@ -83,7 +105,9 @@ namespace we
 			if (IsPressed(actionId))
 			{
 				for (auto& cb : callbacks)
+				{
 					cb();
+				}
 			}
 		}
 	}
@@ -122,6 +146,13 @@ namespace we
 
 	void InputSubsystem::PostUpdate()
 	{
+		std::erase_if(PressedOnFrame, [this](const auto& pair) {
+			return pair.second < CurrentFrame;
+			});
+		std::erase_if(ReleasedOnFrame, [this](const auto& pair) {
+			return pair.second < CurrentFrame;
+			});
+
 		CurrentFrame++;
 	}
 

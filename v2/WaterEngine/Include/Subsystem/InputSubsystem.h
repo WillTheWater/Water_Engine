@@ -154,6 +154,10 @@ namespace we
 	class InputSubsystem
 	{
 	public:
+		InputSubsystem();
+
+		static InputSubsystem& Get();
+
 		// ============ STATE-BASED API ============
 		void Bind(int InputAction, const Input::Binding& Binding);
 		bool IsPressed(int InputAction) const;
@@ -179,8 +183,11 @@ namespace we
 		float GetAxisValue(int JoystickID, sf::Joystick::Axis Axis) const;
 
 	private:
+		static InputSubsystem* Instance;
+
 		library<int, Input::Binding> InputBindings;
 
+		dictionary<ulong, vector<int>> BindingToActions;
 		dictionary<int, int64> PressedOnFrame;
 		dictionary<int, int64> ReleasedOnFrame;
 		int64 CurrentFrame = 0;
@@ -194,5 +201,38 @@ namespace we
 		bool IsPressed(const Input::Mouse& Binding) const;
 		bool IsPressed(const Input::Gamepad& Binding) const;
 		bool IsPressed(const Input::JoystickAxis& Binding) const;
+	};
+
+	inline InputSubsystem& InputController() { return InputSubsystem::Get(); }
+
+	struct BindingHash 
+	{
+		ulong operator()(const Input::Binding& b) const 
+		{
+			return std::visit([](const auto& v) -> ulong
+			{
+				using T = std::decay_t<decltype(v)>;
+				if constexpr (std::is_same_v<T, Input::Keyboard>)
+				{
+					return std::hash<int>{}(static_cast<int>(v.Key));
+				}
+				else if constexpr (std::is_same_v<T, Input::Mouse>) 
+				{
+					return std::hash<int>{}(static_cast<int>(v.Button)) ^ 0x1000;
+				}
+				else if constexpr (std::is_same_v<T, Input::Gamepad>)
+				{
+					return std::hash<int>{}(static_cast<int>(v.Button))
+						^ (std::hash<int>{}(v.GamepadID) << 8)
+						^ 0x2000;
+				}
+				else if constexpr (std::is_same_v<T, Input::JoystickAxis>)
+				{
+					return std::hash<int>{}(static_cast<int>(v.Axis))
+						^ (std::hash<int>{}(v.AxisID) << 8)
+						^ 0x3000;
+				}
+			}, b);
+		}
 	};
 }

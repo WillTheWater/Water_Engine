@@ -25,6 +25,11 @@ namespace we
     private:
         void DestroyTestActor();
 
+        void SetupInputTests();
+        bool bTestJumpTriggered = false;
+        float TestMovementX = 0.0f;
+        float TestMovementY = 0.0f;
+
         shared<Actor> TestActor;
         TimerHandle DestroyTimerHandle;
     };
