@@ -12,6 +12,7 @@ namespace we
 	{
 		create(window({ 1920, 1080 }), "Water Engine");
 		setVerticalSyncEnabled(true);
+		setMouseCursorVisible(false);
 	}
 
 	void WindowSubsystem::HandleEvent(const event& Event)
@@ -23,5 +24,10 @@ namespace we
 	void WindowSubsystem::EventResize()
 	{
 		OnResize.Broadcast(getSize());
+	}
+
+	void WindowSubsystem::EventMouseMoved(vec2f NewPosition)
+	{
+		OnMouseMove.Broadcast(NewPosition);
 	}
 }

@@ -12,11 +12,13 @@ namespace we
     class CameraSubsystem
     {
     public:
-        void Update(vec2u WindowSize);
+        CameraSubsystem();
+
+        void SetCameraView(vec2u WindowSize);
         const view& GetView() const;
 
     private:
         view CameraView;
-        vec2u RenderResolution = { 1920, 1080 };
+        vec2f RenderResolution;
     };
 }

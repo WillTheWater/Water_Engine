@@ -29,7 +29,6 @@ namespace we
     private:
         void Initialize();
         void BindDelegates();
-        void SetCameraView(vec2u WindowSize);
         void GarbageCollection();
 
     };

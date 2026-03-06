@@ -7,10 +7,18 @@
 
 namespace we
 {
-	void CameraSubsystem::Update(vec2u WindowSize)
-	{
+    CameraSubsystem::CameraSubsystem()
+        : RenderResolution{ 1920,1080 }
+    {
+        SetCameraView(vec2u(RenderResolution));
+    }
+
+    void CameraSubsystem::SetCameraView(vec2u WindowSize)
+    {
+        CameraView.setSize({ (RenderResolution.x), (RenderResolution.y) });
+        CameraView.setCenter({ (RenderResolution.x) * 0.5f, (RenderResolution.y) * 0.5f });
         float WindowRatio = (float)WindowSize.x / (float)WindowSize.y;
-        float ViewRatio = (float)RenderResolution.x / (float)RenderResolution.y;
+        float ViewRatio = RenderResolution.x / RenderResolution.y;
 
         float SizeX = 1.f;
         float SizeY = 1.f;
@@ -29,10 +37,10 @@ namespace we
         }
 
         CameraView.setViewport({ {PosX, PosY}, {SizeX, SizeY} });
-	}
+    }
 
-	const view& CameraSubsystem::GetView() const
-	{
-		return CameraView;
-	}
+    const view& CameraSubsystem::GetView() const
+    {
+        return CameraView;
+    }
 }

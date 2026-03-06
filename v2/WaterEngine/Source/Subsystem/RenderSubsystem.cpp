@@ -9,6 +9,8 @@
 namespace we
 {
     RenderSubsystem::RenderSubsystem()
+        : RenderResolution{1920,1080}
+        , bNeedsComposite{false}
     {
         CreateRenderTargets();
     }
@@ -34,7 +36,7 @@ namespace we
         ScreenUIRenderTarget.setSmooth(false);
         WorldUIRenderTarget.setSmooth(false);
         CursorRenderTarget.setSmooth(false);
-        Composite.setSmooth(false);
+        Composite.setSmooth(true);
     }
 
     void RenderSubsystem::BeginFrame()

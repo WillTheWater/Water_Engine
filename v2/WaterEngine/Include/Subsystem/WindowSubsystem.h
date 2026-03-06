@@ -21,11 +21,13 @@ namespace we
 
     public:
         Delegate<vec2u> OnResize;
+        Delegate<vec2f> OnMouseMove;
 
     private:
         friend WindowEventHandler;
 
     private:
         void EventResize();
+        void EventMouseMoved(vec2f NewPosition);
     };
 }

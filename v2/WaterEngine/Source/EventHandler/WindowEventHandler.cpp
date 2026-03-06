@@ -74,9 +74,11 @@ namespace we
     // =========================================================================
     // Mouse Events
     // =========================================================================
-    void WindowEventHandler::operator()(const event::MouseMoved&)
+    void WindowEventHandler::operator()(const event::MouseMoved& Cursor)
     {
-        
+        vec2i MousePos(Cursor.position.x, Cursor.position.y);
+        vec2f WorldPos = Window.mapPixelToCoords(MousePos, Window.getView());
+        Window.EventMouseMoved(WorldPos);
     }
 
     void WindowEventHandler::operator()(const event::MouseButtonPressed&)

@@ -38,8 +38,8 @@ namespace we
         renderTexture CursorRenderTarget;
         renderTexture Composite;
 
-        vec2u RenderResolution = { 1920, 1080 };
-        bool bNeedsComposite = false;
+        vec2u RenderResolution;
+        bool bNeedsComposite;
 
     private:
         void CreateRenderTargets();

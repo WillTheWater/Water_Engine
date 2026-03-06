@@ -24,13 +24,15 @@ namespace we
         Subsystem.World    = make_unique<WorldSubsystem>();
         Subsystem.Render   = make_unique<RenderSubsystem>();
         Subsystem.Camera   = make_unique<CameraSubsystem>();
+        Subsystem.Cursor   = make_unique<CursorSubsystem>();
 
         BindDelegates();
     }
 
     void WaterEngine::BindDelegates()
     {
-        Subsystem.Window->OnResize.Bind(this, &WaterEngine::SetCameraView);
+        Subsystem.Window->OnResize.Bind(Subsystem.Camera.get(), &CameraSubsystem::SetCameraView);
+        Subsystem.Window->OnMouseMove.Bind(Subsystem.Cursor.get(), &CursorSubsystem::SetPosition);
         GetTimer().TriggerGarbageCollection.Bind(this, &WaterEngine::GarbageCollection);
     }
 
@@ -70,6 +72,11 @@ namespace we
             Subsystem.Render->Draw(*Sprite, ERenderLayer::World);
         }
 
+        if (const auto* CursorDrawable = Subsystem.Cursor->GetDrawable())
+        {
+            Subsystem.Render->Draw(*CursorDrawable, ERenderLayer::Cursor);
+        }
+
         Subsystem.Render->EndFrame();
 
         Subsystem.Window->setView(Subsystem.Camera->GetView());
@@ -77,11 +84,6 @@ namespace we
         Subsystem.Window->clear(color::Black);
         Subsystem.Window->draw(Subsystem.Render->GetCompositeSprite());
         Subsystem.Window->display();
-    }
-
-    void WaterEngine::SetCameraView(vec2u WindowSize)
-    {
-        Subsystem.Camera->Update(WindowSize);
     }
 
     void WaterEngine::GarbageCollection()
