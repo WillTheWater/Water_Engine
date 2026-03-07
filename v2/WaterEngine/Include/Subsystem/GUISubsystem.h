@@ -6,11 +6,20 @@
 #pragma once
 
 #include "Core/CoreMinimal.h"
+#include <TGUI/Backend/SFML-Graphics.hpp>
 
 namespace we
 {
 	class GUISubsystem
 	{
+	public:
+		void Initialize(renderTarget& ScreenUITarget, renderTarget& WorldUITarget);
 
+		tgui::Gui& GetScreenUI() { return ScreenUI; }
+		tgui::Gui& GetWorldUI() { return WorldUI; }
+
+	private:
+		tgui::Gui ScreenUI;
+		tgui::Gui WorldUI;
 	};
 }

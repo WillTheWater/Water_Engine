@@ -31,6 +31,10 @@ namespace we
 
         void SetTargetSize(vec2u Size);
 
+        // GUI render target access
+        sf::RenderTarget& GetWorldUITarget() { return WorldUIRenderTarget; }
+        sf::RenderTarget& GetScreenUITarget() { return ScreenUIRenderTarget; }
+
     private:
         renderTexture WorldRenderTarget;
         renderTexture WorldUIRenderTarget;

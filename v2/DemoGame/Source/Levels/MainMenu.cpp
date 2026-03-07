@@ -31,8 +31,8 @@ namespace we
 		SetupInputTests();
 
 		// TGUI TEST - REMOVE AFTER TESTING
-		TGUITest TguiTest;
-		TguiTest.RunTests();
+		// TGUITest TguiTest;
+		// TguiTest.RunTests();
     }
 
     void MainMenu::Tick(float DeltaTime)

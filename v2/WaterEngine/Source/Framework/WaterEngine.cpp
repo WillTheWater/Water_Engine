@@ -36,6 +36,7 @@ namespace we
         Subsystem.Window->OnResize.Bind(Subsystem.Camera.get(), &CameraSubsystem::SetCameraView);
         Subsystem.Window->OnMouseMove.Bind(Subsystem.Cursor.get(), &CursorSubsystem::SetPosition);
         GetTimer().TriggerGarbageCollection.Bind(Subsystem.Resource.get(), &ResourceSubsystem::GarbageCollect);
+        Subsystem.GUI->Initialize(Subsystem.Render->GetScreenUITarget(), Subsystem.Render->GetWorldUITarget());
     }
 
     bool WaterEngine::IsRunning() const
@@ -72,11 +73,19 @@ namespace we
     {
         Subsystem.Render->BeginFrame();
 
+        // World layer
         for (const auto* Sprite : Subsystem.World->GetOrderedDrawables())
         {
             Subsystem.Render->Draw(*Sprite, ERenderLayer::World);
         }
 
+        // WorldUI layer
+        Subsystem.GUI->GetWorldUI().draw();
+
+        // ScreenUI layer
+        Subsystem.GUI->GetScreenUI().draw();
+
+        // Cursor layer
         if (const auto* CursorDrawable = Subsystem.Cursor->GetDrawable())
         {
             Subsystem.Render->Draw(*CursorDrawable, ERenderLayer::Cursor);
