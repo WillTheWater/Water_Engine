@@ -53,6 +53,8 @@ namespace we
     {
         while (const auto Event = Subsystem.Window->pollEvent())
         {
+            if (Subsystem.GUI->HandleEvent(*Event)) { continue; }
+            
             Subsystem.Window->HandleEvent(*Event);
             Subsystem.Input->HandleEvent(*Event);
         }

@@ -11,6 +11,7 @@
 #include "Input/InputActions.h"
 #include "Utility/Log.h"
 #include "Tests/TGUITest.h"
+#include "Tests/WidgetTests.h"
 
 namespace we
 {
@@ -30,9 +31,10 @@ namespace we
 
 		SetupInputTests();
 
-		// TGUI TEST - REMOVE AFTER TESTING
-		// TGUITest TguiTest;
-		// TguiTest.RunTests();
+		// Widget tests
+		WidgetTestSetup TestSetup;
+		TestSetup.CreateScreenUI();
+		TestSetup.CreateWorldUI();
     }
 
     void MainMenu::Tick(float DeltaTime)
