@@ -39,10 +39,23 @@ namespace we
 		if (InputController().IsPressed(TEST_MOVE_DOWN)) TestMovementY += 1.0f;
 		if (InputController().IsPressed(TEST_MOVE_LEFT)) TestMovementX -= 1.0f;
 		if (InputController().IsPressed(TEST_MOVE_RIGHT)) TestMovementX += 1.0f;
-
-		if (InputController().IsJustPressed(TEST_ACTION_JUMP))
+		
+		if (InputController().IsPressed(TEST_ACTION_FIRE))
 		{
-			bTestJumpTriggered = true;
+			bool bJustStarted = (FireTimer == 0.0f);
+			FireTimer += DeltaTime;
+
+			if (bJustStarted || FireTimer >= FireInterval)
+			{
+				if (FireTimer >= FireInterval)
+					FireTimer = 0.0f;
+
+				LOG("[INPUT TEST] FIRE!");
+			}
+		}
+		else
+		{
+			FireTimer = 0.0f;
 		}
     }
 
@@ -78,17 +91,8 @@ namespace we
 			};
 		InputController().OnPressed(TEST_ACTION_JUMP, jumpCallback);
 
-		// Fire: Left Mouse - fires continuously while held
+		// Fire: Left Mouse - fires continuously while held (frame-rate independent in Tick)
 		InputController().Bind(TEST_ACTION_FIRE, Input::Mouse{ sf::Mouse::Button::Left });
-		auto fireHeldCallback = [this]()
-			{
-				static int heldCounter = 0;
-				if (heldCounter++ % 60 == 0)
-				{
-					LOG("[INPUT TEST] OnHeld CALLBACK: Firing... (LMB held)");
-				}
-			};
-		InputController().OnHeld(TEST_ACTION_FIRE, fireHeldCallback);
 
 		// Interact: E key - fires when key released
 		InputController().Bind(TEST_ACTION_INTERACT, Input::Keyboard{ sf::Keyboard::Scan::E });

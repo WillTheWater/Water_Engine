@@ -13,6 +13,7 @@ namespace we
 		create(window({ 1920, 1080 }), "Water Engine");
 		setVerticalSyncEnabled(true);
 		setMouseCursorVisible(false);
+		setKeyRepeatEnabled(false);
 	}
 
 	void WindowSubsystem::HandleEvent(const event& Event)
