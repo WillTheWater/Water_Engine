@@ -25,7 +25,6 @@ namespace we
 	{
 		ScreenUI.setTarget(ScreenUITarget);
 		WorldUI.setTarget(WorldUITarget);
-		LOG("GUISubsystem: Initialized");
 	}
 
 	bool GUISubsystem::HandleEvent(const sf::Event& event)
@@ -33,5 +32,27 @@ namespace we
 		GUIEventHandler Handler{*this};
 		event.visit(Handler);
 		return Handler.Consumed;
+	}
+
+	bool GUISubsystem::ShouldBlockInput() const
+	{
+		tgui::Vector2i mousePos = ScreenUI.getLastMousePosition();
+		
+		// Check ScreenUI
+		auto screenWidget = ScreenUI.getWidgetBelowMouseCursor(mousePos, true);
+		if (screenWidget)
+		{
+			LOG("[ShouldBlockInput] Blocking - ScreenUI widget: {}", screenWidget->getWidgetName().toStdString());
+			return true;
+		}
+		
+		// Check WorldUI
+		auto worldWidget = WorldUI.getWidgetBelowMouseCursor(mousePos, true);
+		if (worldWidget)
+		{
+			LOG("[ShouldBlockInput] Blocking - WorldUI widget: {}", worldWidget->getWidgetName().toStdString());
+			return true;
+		}
+		return false;
 	}
 }

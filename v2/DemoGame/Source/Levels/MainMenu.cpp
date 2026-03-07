@@ -22,7 +22,6 @@ namespace we
 
     void MainMenu::BeginPlay()
     {
-        LOG("MainMenu::BeginPlay")
         TestActor = SpawnActor<Actor>().lock();
         DestroyTimerHandle = GetTimer().SetTimer(GetObject(), &MainMenu::DestroyTestActor, 1.0f, false);
        

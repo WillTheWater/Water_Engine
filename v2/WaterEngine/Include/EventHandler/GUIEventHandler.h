@@ -17,12 +17,12 @@ namespace we
 		GUISubsystem& GUI;
 		bool Consumed = false;
 
-		void operator()(const sf::Event::MouseButtonPressed&);
-		void operator()(const sf::Event::MouseButtonReleased&);
-		void operator()(const sf::Event::MouseMoved&);
-		void operator()(const sf::Event::KeyPressed&);
-		void operator()(const sf::Event::KeyReleased&);
-		void operator()(const sf::Event::MouseWheelScrolled&);
+		void operator()(const event::MouseButtonPressed&);
+		void operator()(const event::MouseButtonReleased&);
+		void operator()(const event::MouseMoved&);
+		void operator()(const event::KeyPressed&);
+		void operator()(const event::KeyReleased&);
+		void operator()(const event::MouseWheelScrolled&);
 
 		void operator()(const auto&) {}
 	};

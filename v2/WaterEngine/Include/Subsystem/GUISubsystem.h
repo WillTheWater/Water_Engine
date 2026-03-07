@@ -25,6 +25,10 @@ namespace we
 		// Returns true if event was consumed by GUI (don't pass to game)
 		bool HandleEvent(const sf::Event& event);
 
+		// Returns true if the GUI should block game input (e.g., mouse over widget)
+		// Used to prevent game actions when interacting with UI
+		bool ShouldBlockInput() const;
+
 	private:
 		static GUISubsystem* Instance;
 

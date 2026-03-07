@@ -5,6 +5,7 @@
 
 #include "EventHandler/InputEventHandler.h"
 #include "Subsystem/InputSubsystem.h"
+#include "Subsystem/GuiSubsystem.h"
 #include "Utility/Log.h"
 
 namespace we
@@ -56,6 +57,12 @@ namespace we
 
 	void InputEventHandler::operator()(const sf::Event::MouseButtonPressed& Button)
 	{
+		// Block game input if clicking on GUI widgets
+		if (MakeGUI().ShouldBlockInput())
+		{
+			return;
+		}
+		
 		Input.ProcessPressed(Input::Mouse{ Button.button });
 	}
 
