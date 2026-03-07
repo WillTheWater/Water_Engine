@@ -10,6 +10,7 @@
 #include "Subsystem/InputSubsystem.h"
 #include "Input/InputActions.h"
 #include "Utility/Log.h"
+#include "Tests/TGUITest.h"
 
 namespace we
 {
@@ -28,6 +29,10 @@ namespace we
         TestActor->SetSprite(Tex);
 
 		SetupInputTests();
+
+		// TGUI TEST - REMOVE AFTER TESTING
+		TGUITest TguiTest;
+		TguiTest.RunTests();
     }
 
     void MainMenu::Tick(float DeltaTime)

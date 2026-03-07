@@ -26,6 +26,7 @@ namespace we
         Subsystem.Camera   = make_unique<CameraSubsystem>();
         Subsystem.Cursor   = make_unique<CursorSubsystem>();
         Subsystem.Input    = make_unique<InputSubsystem>();
+        Subsystem.GUI      = make_unique<GUISubsystem>();
 
         BindDelegates();
     }

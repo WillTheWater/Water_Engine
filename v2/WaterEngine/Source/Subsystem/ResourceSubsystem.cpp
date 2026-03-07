@@ -47,7 +47,8 @@ namespace we
         #ifdef USE_RAW_ASSETS
             return ASSET_ROOT_PATH + Filename;
         #else
-            return "Content/" + Filename;
+            // In Release, paths are relative to pak root (Assets/... not Content/Assets/...)
+            return Filename;
         #endif
     }
 

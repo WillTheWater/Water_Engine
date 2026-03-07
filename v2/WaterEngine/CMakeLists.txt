@@ -154,14 +154,15 @@ if(CMAKE_BUILD_TYPE STREQUAL "Release")
     set(CONTENT_PAK_OUTPUT "$<TARGET_FILE_DIR:${DEMO_GAME}>/${ASSET_PACK_PATH}")
     set(CONTENT_SRC_DIR "${CMAKE_SOURCE_DIR}/Content")
     
-    # Pack Content folder into Content.pak (Content folder is root in archive)
+    # Pack Content folder into Content.pak (Assets/ at root of archive)
+    # Working directory is Content/ so paths match Debug mode (Assets/... not Content/Assets/...)
     add_custom_command(
         TARGET WaterEngine POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E tar cf 
             ${CMAKE_CURRENT_BINARY_DIR}/${ASSET_PACK_PATH}
             --format=zip
-            Content/
-        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+            .
+        WORKING_DIRECTORY ${CONTENT_SRC_DIR}
         COMMENT "Packing Content.pak"
     )
     
