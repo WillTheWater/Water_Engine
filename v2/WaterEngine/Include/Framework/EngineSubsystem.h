@@ -15,6 +15,7 @@
 #include "Subsystem/TimerSubsystem.h"
 #include "Subsystem/CursorSubsystem.h"
 #include "Subsystem/InputSubsystem.h"
+#include "Subsystem/GUISubsystem.h"
 
 namespace we
 {
@@ -29,5 +30,6 @@ namespace we
 		unique<CameraSubsystem>		Camera;
 		unique<CursorSubsystem>		Cursor;
 		unique<InputSubsystem>		Input;
+		unique<GUISubsystem>		GUI;
 	};
 }

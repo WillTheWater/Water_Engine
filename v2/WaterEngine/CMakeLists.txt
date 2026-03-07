@@ -11,6 +11,7 @@
 # ========================== LIBRARY OPTIONS ==========================
 set(SFML_BUILD_NETWORK OFF)
 set(SPDLOG_USE_STD_FORMAT ON)
+set(TGUI_BACKEND SFML_GRAPHICS)
 
 # ========================== DEPENDENCIES ==========================
 include(FetchContent)
@@ -53,6 +54,12 @@ FetchContent_Declare(
     URL https://github.com/icculus/physfs/archive/refs/tags/release-3.2.0.tar.gz
 )
 
+# --- tgui ---
+FetchContent_Declare(
+    tgui 
+    URL https://github.com/texus/TGUI/archive/refs/tags/v1.11.0.tar.gz
+)
+
 # Remaining Dependencies
 FetchContent_MakeAvailable(
     sfml
@@ -61,6 +68,7 @@ FetchContent_MakeAvailable(
     enum
     toml
     physicsfs
+    tgui
 )
 
 # =============================================================================
@@ -115,6 +123,7 @@ target_link_libraries(WaterEngine PUBLIC
     magic_enum::magic_enum
     tomlplusplus::tomlplusplus
     physfs-static
+    TGUI::TGUI
 )
 
 # Console Settings
