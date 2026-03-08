@@ -16,17 +16,17 @@ namespace we
 	{
 		InputSubsystem& Input;
 
-		void operator()(const sf::Event::JoystickConnected&);
-		void operator()(const sf::Event::JoystickDisconnected&);
-		void operator()(const sf::Event::JoystickButtonPressed&);
-		void operator()(const sf::Event::JoystickButtonReleased&);
+		void operator()(const event::JoystickConnected&);
+		void operator()(const event::JoystickDisconnected&);
+		void operator()(const event::JoystickButtonPressed&);
+		void operator()(const event::JoystickButtonReleased&);
 
-		void operator()(const sf::Event::KeyPressed&);
-		void operator()(const sf::Event::KeyReleased&);
+		void operator()(const event::KeyPressed&);
+		void operator()(const event::KeyReleased&);
 
-		void operator()(const sf::Event::MouseMoved&);
-		void operator()(const sf::Event::MouseButtonPressed&);
-		void operator()(const sf::Event::MouseButtonReleased&);
+		void operator()(const event::MouseMoved&);
+		void operator()(const event::MouseButtonPressed&);
+		void operator()(const event::MouseButtonReleased&);
 
 		void operator()(const auto&) {}
 	};

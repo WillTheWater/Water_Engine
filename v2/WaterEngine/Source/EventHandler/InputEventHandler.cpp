@@ -5,69 +5,62 @@
 
 #include "EventHandler/InputEventHandler.h"
 #include "Subsystem/InputSubsystem.h"
-#include "Subsystem/GuiSubsystem.h"
 #include "Utility/Log.h"
 
 namespace we
 {
-	void InputEventHandler::operator()(const sf::Event::JoystickConnected& Gamepad)
+	void InputEventHandler::operator()(const event::JoystickConnected& Gamepad)
 	{
 		LOG("Gamepad Connected: {}", Gamepad.joystickId);
 	}
 
-	void InputEventHandler::operator()(const sf::Event::JoystickDisconnected& Gamepad)
+	void InputEventHandler::operator()(const event::JoystickDisconnected& Gamepad)
 	{
 		LOG("Gamepad Disonnected: {}", Gamepad.joystickId);
 	}
 
-	void InputEventHandler::operator()(const sf::Event::JoystickButtonPressed& Button)
+	void InputEventHandler::operator()(const event::JoystickButtonPressed& Button)
 	{
 		auto Logic = Input::HardwareToLogic(Button.button, Button.joystickId);
 		if (Logic)
 		{
 			Input::Gamepad Binding{ *Logic, Button.joystickId };
-			Input.ProcessPressed(Binding);
+			Input.OnPressed(Binding);
 		}
 	}
 
-	void InputEventHandler::operator()(const sf::Event::JoystickButtonReleased& Button)
+	void InputEventHandler::operator()(const event::JoystickButtonReleased& Button)
 	{
 		auto Logic = Input::HardwareToLogic(Button.button, Button.joystickId);
 		if (Logic)
 		{
 			Input::Gamepad Binding{ *Logic, Button.joystickId };
-			Input.ProcessReleased(Binding);
+			Input.OnReleased(Binding);
 		}
 	}
 
-	void InputEventHandler::operator()(const sf::Event::KeyPressed& Key)
+	void InputEventHandler::operator()(const event::KeyPressed& Key)
 	{
-		Input.ProcessPressed(Input::Keyboard{ Key.scancode });
+		Input.OnPressed(Input::Keyboard{ Key.scancode });
 	}
 
-	void InputEventHandler::operator()(const sf::Event::KeyReleased& Key)
+	void InputEventHandler::operator()(const event::KeyReleased& Key)
 	{
-		Input.ProcessReleased(Input::Keyboard{ Key.scancode });
+		Input.OnReleased(Input::Keyboard{ Key.scancode });
 	}
 
-	void InputEventHandler::operator()(const sf::Event::MouseMoved& Mouse)
+	void InputEventHandler::operator()(const event::MouseMoved& Mouse)
 	{
 
 	}
 
-	void InputEventHandler::operator()(const sf::Event::MouseButtonPressed& Button)
-	{
-		// Block game input if clicking on GUI widgets
-		if (MakeGUI().ShouldBlockInput())
-		{
-			return;
-		}
-		
-		Input.ProcessPressed(Input::Mouse{ Button.button });
+	void InputEventHandler::operator()(const event::MouseButtonPressed& Button)
+	{		
+		Input.OnPressed(Input::Mouse{ Button.button });
 	}
 
-	void InputEventHandler::operator()(const sf::Event::MouseButtonReleased& Button)
+	void InputEventHandler::operator()(const event::MouseButtonReleased& Button)
 	{
-		Input.ProcessReleased(Input::Mouse{ Button.button });
+		Input.OnReleased(Input::Mouse{ Button.button });
 	}
 }

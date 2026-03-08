@@ -12,6 +12,7 @@ namespace we
 	GUISubsystem* GUISubsystem::Instance = nullptr;
 
 	GUISubsystem::GUISubsystem()
+		: bHandled{false}
 	{
 		Instance = this;
 	}
@@ -31,7 +32,8 @@ namespace we
 	{
 		GUIEventHandler Handler{*this};
 		event.visit(Handler);
-		return Handler.Consumed;
+		bHandled = Handler.Consumed;
+		return bHandled;
 	}
 
 	bool GUISubsystem::ShouldBlockInput() const
@@ -42,7 +44,6 @@ namespace we
 		auto screenWidget = ScreenUI.getWidgetBelowMouseCursor(mousePos, true);
 		if (screenWidget)
 		{
-			LOG("[ShouldBlockInput] Blocking - ScreenUI widget: {}", screenWidget->getWidgetName().toStdString());
 			return true;
 		}
 		
@@ -50,7 +51,6 @@ namespace we
 		auto worldWidget = WorldUI.getWidgetBelowMouseCursor(mousePos, true);
 		if (worldWidget)
 		{
-			LOG("[ShouldBlockInput] Blocking - WorldUI widget: {}", worldWidget->getWidgetName().toStdString());
 			return true;
 		}
 		return false;
