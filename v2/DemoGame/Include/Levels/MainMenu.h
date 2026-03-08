@@ -23,17 +23,6 @@ namespace we
         void Tick(float DeltaTime) override;
 
     private:
-        void DestroyTestActor();
 
-        void SetupInputTests();
-        float TestMovementX = 0.0f;
-        float TestMovementY = 0.0f;
-        
-        
-        float FireTimer = 0.0f;
-        const float FireInterval = 0.1f;
-
-        shared<Actor> TestActor;
-        TimerHandle DestroyTimerHandle;
     };
 }

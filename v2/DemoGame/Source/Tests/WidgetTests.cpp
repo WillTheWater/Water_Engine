@@ -19,6 +19,7 @@ namespace we
         auto Button = tgui::Button::create("Test Button");
         Button->setPosition({100, 100});
         Button->setSize({200, 50});
+        Button->setFocusable(false);
         
         // Set colors to visualize hover (blue normal, green hover)
         auto Renderer = Button->getRenderer();
@@ -43,6 +44,10 @@ namespace we
         auto Button = tgui::Button::create("World Button");
         Button->setPosition({500, 300});
         Button->setSize({150, 40});
+        Button->setFocusable(false);
+        Button->onPress([]() {
+            LOG("Test button clicked!");
+            });
         MakeGUI().GetWorldUI().add(Button);
         
         auto Label = tgui::Label::create("World Label");

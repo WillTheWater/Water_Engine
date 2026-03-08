@@ -57,10 +57,8 @@ namespace we
 
             if (Subsystem.GUI->HandleEvent(*Event)) { continue; }
 
-            if (!Subsystem.GUI->ShouldBlockInput())
-            {
-                Subsystem.Input->HandleEvent(*Event);
-            }
+            Subsystem.Input->HandleEvent(*Event);
+           
         }
     }
 
@@ -70,7 +68,6 @@ namespace we
         float DeltaTime = Subsystem.Clock->GetDeltaTime();
         GetTimer().Update(DeltaTime);
         Subsystem.World->Tick(DeltaTime);
-        Subsystem.GUI->ResetHandled();
     }
 
     void WaterEngine::Render()

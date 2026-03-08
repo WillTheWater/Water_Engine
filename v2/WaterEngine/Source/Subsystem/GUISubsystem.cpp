@@ -12,7 +12,6 @@ namespace we
 	GUISubsystem* GUISubsystem::Instance = nullptr;
 
 	GUISubsystem::GUISubsystem()
-		: bHandled{false}
 	{
 		Instance = this;
 	}
@@ -32,27 +31,6 @@ namespace we
 	{
 		GUIEventHandler Handler{*this};
 		event.visit(Handler);
-		bHandled = Handler.Consumed;
-		return bHandled;
-	}
-
-	bool GUISubsystem::ShouldBlockInput() const
-	{
-		tgui::Vector2i mousePos = ScreenUI.getLastMousePosition();
-		
-		// Check ScreenUI
-		auto screenWidget = ScreenUI.getWidgetBelowMouseCursor(mousePos, true);
-		if (screenWidget)
-		{
-			return true;
-		}
-		
-		// Check WorldUI
-		auto worldWidget = WorldUI.getWidgetBelowMouseCursor(mousePos, true);
-		if (worldWidget)
-		{
-			return true;
-		}
-		return false;
+		return Handler.Consumed;
 	}
 }

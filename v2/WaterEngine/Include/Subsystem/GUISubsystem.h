@@ -23,16 +23,12 @@ namespace we
 		tgui::Gui& GetWorldUI() { return WorldUI; }
 
 		bool HandleEvent(const sf::Event& event);
-		bool ShouldBlockInput() const;
-		void ResetHandled() { bHandled = false; }
 
 	private:
 		static GUISubsystem* Instance;
 
 		tgui::Gui ScreenUI;
 		tgui::Gui WorldUI;
-
-		bool bHandled;
 	};
 
 	inline GUISubsystem& MakeGUI() { return GUISubsystem::Get(); }

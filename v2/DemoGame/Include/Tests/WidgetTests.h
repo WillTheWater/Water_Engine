@@ -9,7 +9,6 @@
 
 namespace we
 {
-    // Example widget blueprint class - uses MakeGUI() internally
     class WidgetTestSetup
     {
     public:
