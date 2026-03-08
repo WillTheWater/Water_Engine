@@ -7,6 +7,7 @@
 #include "Utility/Delegate.h"
 #include "Utility/Log.h"
 #include "Utility/Math.h"
+#include "Subsystem/GuiSubsystem.h"
 
 namespace we
 {
@@ -35,6 +36,7 @@ namespace we
     {
         Subsystem.Window->OnResize.Bind(Subsystem.Camera.get(), &CameraSubsystem::SetCameraView);
         Subsystem.Window->OnMouseMove.Bind(Subsystem.Cursor.get(), &CursorSubsystem::SetPosition);
+        Subsystem.Camera->OnViewUpdate.Bind(Subsystem.GUI.get(), &GUISubsystem::SetCameraView);
         GetTimer().TriggerGarbageCollection.Bind(Subsystem.Resource.get(), &ResourceSubsystem::GarbageCollect);
         Subsystem.GUI->Initialize(Subsystem.Render->GetScreenUITarget(), Subsystem.Render->GetWorldUITarget());
     }

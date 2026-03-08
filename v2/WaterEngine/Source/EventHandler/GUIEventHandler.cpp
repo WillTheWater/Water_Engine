@@ -27,7 +27,6 @@ namespace we
 
 	void GUIEventHandler::operator()(const event::MouseButtonReleased& e)
 	{
-		
 		if (GUI.GetScreenUI().handleEvent(e))
 		{
 			Consumed = true;

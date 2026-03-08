@@ -6,6 +6,7 @@
 #pragma once
 
 #include "Core/CoreMinimal.h"
+#include "Utility/Delegate.h"
 
 namespace we
 {
@@ -16,6 +17,8 @@ namespace we
 
         void SetCameraView(vec2u WindowSize);
         const view& GetView() const;
+
+        Delegate<view> OnViewUpdate;
 
     private:
         view CameraView;

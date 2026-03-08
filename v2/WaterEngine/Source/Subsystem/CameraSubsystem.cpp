@@ -37,6 +37,7 @@ namespace we
         }
 
         CameraView.setViewport({ {PosX, PosY}, {SizeX, SizeY} });
+        OnViewUpdate.Broadcast(CameraView);
     }
 
     const view& CameraSubsystem::GetView() const

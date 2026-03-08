@@ -22,6 +22,7 @@ namespace we
 		tgui::Gui& GetScreenUI() { return ScreenUI; }
 		tgui::Gui& GetWorldUI() { return WorldUI; }
 
+		void SetCameraView(const view NewView);
 		bool HandleEvent(const sf::Event& event);
 
 	private:
