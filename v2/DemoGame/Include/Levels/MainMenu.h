@@ -7,7 +7,7 @@
 
 #include "Core/CoreMinimal.h"
 #include "Framework/World/World.h"
-#include "Subsystem/TimerSubsystem.h"
+#include "UI/MainMenuUI.h"
 
 namespace we
 {
@@ -23,6 +23,6 @@ namespace we
         void Tick(float DeltaTime) override;
 
     private:
-
+		unique<MainMenuUI> MenuUI;
     };
 }

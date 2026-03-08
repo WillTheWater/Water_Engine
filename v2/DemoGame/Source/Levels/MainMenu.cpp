@@ -11,6 +11,7 @@
 #include "Input/InputActions.h"
 #include "Utility/Log.h"
 #include "Tests/WidgetTests.h"
+#include "UI/MainMenuUI.h"
 
 namespace we
 {
@@ -20,10 +21,11 @@ namespace we
     }
 
     void MainMenu::BeginPlay()
-    {
-		WidgetTestSetup TestSetup;
-		TestSetup.CreateScreenUI();
-		TestSetup.CreateWorldUI();
+    {		
+		// Main Menu UI
+        MainMenuUI MenuUI;
+		MenuUI.Initialize();
+		MenuUI.Show();
     }
 
     void MainMenu::Tick(float DeltaTime)
