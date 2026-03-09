@@ -18,7 +18,7 @@ namespace we
         void SetCameraView(vec2u WindowSize);
         const view& GetView() const;
 
-        Delegate<view> OnViewUpdate;
+        Delegate<const view&> OnViewUpdate;
 
     private:
         view CameraView;

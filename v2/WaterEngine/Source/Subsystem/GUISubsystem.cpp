@@ -28,25 +28,20 @@ namespace we
 		WorldUI.setTarget(WorldUITarget);
 	}
 
-	void GUISubsystem::SetCameraView(const view NewView)
+	void GUISubsystem::SetCameraView(const view& NewView)
 	{		
-		tgui::FloatRect ViewRect{
-			0,
-			0,
-			NewView.getSize().x,
-			NewView.getSize().y
-		};
+		tgui::FloatRect ViewRect{0, 0, 1920, 1080};
 		
 		ScreenUI.setAbsoluteView(ViewRect);
 		WorldUI.setAbsoluteView(ViewRect);
+
 		rectf vp = NewView.getViewport();
-		vp.size.x;
-		auto NewThing = tgui::FloatRect({vp.position.x, vp.position.y}, {vp.size.x, vp.size.y});
-		ScreenUI.setAbsoluteViewport(NewThing);
-		WorldUI.setAbsoluteViewport(NewThing);
+		auto TguiVP = tgui::FloatRect({vp.position.x, vp.position.y}, {vp.size.x, vp.size.y});
+		ScreenUI.setRelativeViewport(TguiVP);
+		WorldUI.setRelativeViewport(TguiVP);
 	}
 
-	bool GUISubsystem::HandleEvent(const sf::Event& event)
+	bool GUISubsystem::HandleEvent(const event& event)
 	{
 		GUIEventHandler Handler{*this};
 		event.visit(Handler);

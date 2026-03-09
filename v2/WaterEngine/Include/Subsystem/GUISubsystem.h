@@ -22,8 +22,8 @@ namespace we
 		tgui::Gui& GetScreenUI() { return ScreenUI; }
 		tgui::Gui& GetWorldUI() { return WorldUI; }
 
-		void SetCameraView(const view NewView);
-		bool HandleEvent(const sf::Event& event);
+		void SetCameraView(const view& NewView);
+		bool HandleEvent(const event& event);
 
 	private:
 		static GUISubsystem* Instance;

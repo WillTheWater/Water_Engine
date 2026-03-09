@@ -24,5 +24,7 @@ namespace we
 
     private:
 		unique<MainMenuUI> MenuUI;
+        shared<texture> BG;
+        shared<Actor> BGImage;
     };
 }
