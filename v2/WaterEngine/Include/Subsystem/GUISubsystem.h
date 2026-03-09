@@ -22,14 +22,20 @@ namespace we
 		tgui::Gui& GetScreenUI() { return ScreenUI; }
 		tgui::Gui& GetWorldUI() { return WorldUI; }
 
+		void SetWindowSize(vec2u NewSize);
 		void SetCameraView(const view& NewView);
-		bool HandleEvent(const event& event);
+		bool HandleEvent(const sf::Event& event);
 
 	private:
 		static GUISubsystem* Instance;
 
 		tgui::Gui ScreenUI;
 		tgui::Gui WorldUI;
+		
+		vec2u WindowSize;
+		view CurrentCameraView;
+		
+		sf::Event TransformEvent(const sf::Event& event) const;
 	};
 
 	inline GUISubsystem& MakeGUI() { return GUISubsystem::Get(); }
