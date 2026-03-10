@@ -11,18 +11,30 @@
 namespace we
 {
     class Actor;
+    class PauseMenuUI;
 
     class LevelOne : public World
     {
     public:
         LevelOne(WorldSubsystem& Subsystem);
+        ~LevelOne();
 
     protected:
         void BeginPlay() override;
         void Tick(float DeltaTime) override;
+        void EndPlay() override;
+
+    private:
+        void TogglePauseMenu();
+        void PauseGame();
+        void ResumeGame();
+        void ReturnToMainMenu();
+        void OnSettings();
 
     private:
         shared<texture> BG;
         shared<Actor> BGImage;
+        unique<PauseMenuUI> PauseUI;
+        bool bWasPausePressed = false;
     };
 }

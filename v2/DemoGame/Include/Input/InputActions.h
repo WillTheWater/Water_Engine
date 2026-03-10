@@ -26,5 +26,7 @@ enum InputActions : int
 	// Gamepad button tests
 	GAMEPAD_SOUTH,  
 	GAMEPAD_EAST,     
-	GAMEPAD_START
+	GAMEPAD_START,
+	
+	PAUSE_ACTION
 };
