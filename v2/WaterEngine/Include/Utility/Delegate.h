@@ -38,7 +38,7 @@ namespace we
         template<typename T>
         void Bind(T* Obj, void(T::* Method)(Args...))
         {
-            Bindings.push_back(make_unique<Binding<T>>(Obj, Method));
+            Bindings.push_back(we::make_unique<Binding<T>>(Obj, Method));
         }
 
         void Broadcast(Args... args)

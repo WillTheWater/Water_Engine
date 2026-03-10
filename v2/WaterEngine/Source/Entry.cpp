@@ -28,6 +28,7 @@ int main()
 
 		Engine->Update();
 		Engine->Render();
+		Engine->ProcessQuit();
 	}
 	return 0;
 }

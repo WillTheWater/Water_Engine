@@ -7,6 +7,7 @@
 
 #include "Core/CoreMinimal.h"
 #include <TGUI/Widgets/Button.hpp>
+#include "Utility/Delegate.h"
 
 namespace we
 {
@@ -18,6 +19,10 @@ namespace we
 		void Initialize();
 		void Show();
 		void Hide();
+
+		Delegate<> OnPlayButtonClicked;
+		Delegate<> OnSettingsButtonClicked;
+		Delegate<> OnQuitButtonClicked;
 		
 	private:
 		void SetupLayout();

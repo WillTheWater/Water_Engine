@@ -107,15 +107,18 @@ namespace we
 	void MainMenuUI::OnPlayClicked()
 	{
 		LOG("[MainMenuUI] Play clicked");
+		OnPlayButtonClicked.Broadcast();
 	}
 	
 	void MainMenuUI::OnSettingsClicked()
 	{
 		LOG("[MainMenuUI] Settings clicked");
+		OnSettingsButtonClicked.Broadcast();
 	}
 	
 	void MainMenuUI::OnQuitClicked()
 	{
 		LOG("[MainMenuUI] Quit clicked");
+		OnQuitButtonClicked.Broadcast();
 	}
 }

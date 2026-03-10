@@ -68,9 +68,27 @@ namespace we
     void WaterEngine::Update()
     {
         Subsystem.Clock->Tick();
+        
+        if (Subsystem.World->IsPaused() && !Subsystem.Clock->IsPaused())
+        {
+            Subsystem.Clock->Pause();
+        }
+        else if (!Subsystem.World->IsPaused() && Subsystem.Clock->IsPaused())
+        {
+            Subsystem.Clock->Resume();
+        }
+        
         float DeltaTime = Subsystem.Clock->GetDeltaTime();
         GetTimer().Update(DeltaTime);
         Subsystem.World->Tick(DeltaTime);
+    }
+
+    void WaterEngine::ProcessQuit()
+    {
+        if (Subsystem.World->ShouldQuit())
+        {
+            Subsystem.Window->close();
+        }
     }
 
     void WaterEngine::Render()

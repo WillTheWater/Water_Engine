@@ -18,12 +18,17 @@ namespace we
 
         shared<World> GetCurrentWorld() const { return CurrentWorld; }
         bool HasPendingWorld() const { return PendingWorld != nullptr; }
-
-        // Returns ordered drawables from current world
         vector<const drawable*>& GetOrderedDrawables() const;
         
         template<typename WorldType>
         void CreateWorld();
+
+        void Pause() { bIsPaused = true; }
+        void Resume() { bIsPaused = false; }
+        void TogglePause() { bIsPaused = !bIsPaused; }
+        bool IsPaused() const { return bIsPaused; }
+        void Quit() { bShouldQuit = true; }
+        bool ShouldQuit() const { return bShouldQuit; }
 
     private:
         void GarbageCollect(float DeltaTime);
@@ -34,6 +39,9 @@ namespace we
 
         float GCTimer = 0.0f;
         static constexpr float GCInterval = 3.0f;
+        
+        bool bIsPaused = false;
+        bool bShouldQuit = false;
     };
 
     template<typename WorldType>

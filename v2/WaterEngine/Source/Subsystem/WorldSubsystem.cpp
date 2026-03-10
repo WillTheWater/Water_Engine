@@ -24,7 +24,13 @@ namespace we
 
         if (CurrentWorld)
         {
-            CurrentWorld->StartTick(DeltaTime);
+            // Only tick actors if not paused
+            if (!bIsPaused)
+            {
+                CurrentWorld->StartTick(DeltaTime);
+            }
+            
+            // Garbage collect always runs
             GarbageCollect(DeltaTime);
         }
 	}

@@ -26,5 +26,10 @@ namespace we
 		unique<MainMenuUI> MenuUI;
         shared<texture> BG;
         shared<Actor> BGImage;
+
+    private:
+        void Play();
+        void Settings();
+        void Quit();
     };
 }

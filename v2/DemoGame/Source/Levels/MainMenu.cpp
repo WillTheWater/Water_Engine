@@ -26,14 +26,32 @@ namespace we
         BGImage = SpawnActor<Actor>().lock();
         BGImage->SetSprite(BG);
 
-		// Main Menu UI
-        MainMenuUI MenuUI;
-		MenuUI.Initialize();
-		MenuUI.Show();
+		// Main Menu UI - initialize the member variable
+        MenuUI = make_unique<MainMenuUI>();
+		MenuUI->Initialize();
+		MenuUI->Show();
+
+        MenuUI->OnPlayButtonClicked.Bind(this, &MainMenu::Play);
+        MenuUI->OnSettingsButtonClicked.Bind(this, &MainMenu::Settings);
+        MenuUI->OnQuitButtonClicked.Bind(this, &MainMenu::Quit);
     }
 
     void MainMenu::Tick(float DeltaTime)
     {
       
+    }
+
+    void MainMenu::Play()
+    {
+    }
+
+    void MainMenu::Settings()
+    {
+    }
+
+    void MainMenu::Quit()
+    {
+        LOG("[MainMenu] Quit requested");
+        Subsystem.Quit();
     }
 }

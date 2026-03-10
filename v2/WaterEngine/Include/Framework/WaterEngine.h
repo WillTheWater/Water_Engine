@@ -22,6 +22,7 @@ namespace we
         void ProcessEvents();
         void Update();
         void Render();
+        void ProcessQuit();
 
     protected:
         EngineSubsystem Subsystem;
