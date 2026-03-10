@@ -28,6 +28,20 @@ namespace we
 		LOG("[MainMenuUI] Initialized");
 	}
 	
+	void MainMenuUI::ClearWidgets()
+	{
+		if (!bInitialized)
+			return;
+		
+		auto& GUI = MakeGUI().GetScreenUI();
+		GUI.remove(GUI.get("ButtonLayout"));
+		
+		bInitialized = false;
+		bVisible = false;
+		
+		LOG("[MainMenuUI] Widgets cleared");
+	}
+	
 	void MainMenuUI::SetupLayout()
 	{
 		auto& GUI = MakeGUI().GetScreenUI();

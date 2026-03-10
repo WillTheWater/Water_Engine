@@ -22,6 +22,9 @@ namespace we
         
         template<typename WorldType>
         void CreateWorld();
+        
+        template<typename WorldType>
+        void LoadWorld() { CreateWorld<WorldType>(); }
 
         void Pause() { bIsPaused = true; }
         void Resume() { bIsPaused = false; }

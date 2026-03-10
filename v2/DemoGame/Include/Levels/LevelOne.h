@@ -7,30 +7,22 @@
 
 #include "Core/CoreMinimal.h"
 #include "Framework/World/World.h"
-#include "UI/MainMenuUI.h"
 
 namespace we
 {
     class Actor;
 
-    class MainMenu : public World
+    class LevelOne : public World
     {
     public:
-        MainMenu(WorldSubsystem& Subsystem);
+        LevelOne(WorldSubsystem& Subsystem);
 
     protected:
         void BeginPlay() override;
         void Tick(float DeltaTime) override;
-        void EndPlay() override;
 
     private:
-		unique<MainMenuUI> MenuUI;
         shared<texture> BG;
         shared<Actor> BGImage;
-
-    private:
-        void Play();
-        void Settings();
-        void Quit();
     };
 }

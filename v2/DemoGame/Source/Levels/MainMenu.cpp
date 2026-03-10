@@ -4,13 +4,10 @@
 // =============================================================================
 
 #include "Levels/MainMenu.h"
+#include "Levels/LevelOne.h"
 #include "Framework/World/Actor.h"
-#include "Subsystem/TimerSubsystem.h"
 #include "Subsystem/ResourceSubsystem.h"
-#include "Subsystem/InputSubsystem.h"
-#include "Input/InputActions.h"
 #include "Utility/Log.h"
-#include "Tests/WidgetTests.h"
 #include "UI/MainMenuUI.h"
 
 namespace we
@@ -26,7 +23,7 @@ namespace we
         BGImage = SpawnActor<Actor>().lock();
         BGImage->SetSprite(BG);
 
-		// Main Menu UI - initialize the member variable
+		// Main Menu UI
         MenuUI = make_unique<MainMenuUI>();
 		MenuUI->Initialize();
 		MenuUI->Show();
@@ -41,8 +38,14 @@ namespace we
       
     }
 
+    void MainMenu::EndPlay()
+    {
+        MenuUI->ClearWidgets();
+    }
+
     void MainMenu::Play()
     {
+        Subsystem.LoadWorld<LevelOne>();
     }
 
     void MainMenu::Settings()
@@ -51,7 +54,6 @@ namespace we
 
     void MainMenu::Quit()
     {
-        LOG("[MainMenu] Quit requested");
         Subsystem.Quit();
     }
 }

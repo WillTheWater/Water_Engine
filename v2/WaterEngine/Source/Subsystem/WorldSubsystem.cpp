@@ -14,7 +14,7 @@ namespace we
         {
             if (CurrentWorld)
             {
-                CurrentWorld->EndPlay();
+                CurrentWorld->EndingPlay();
             }
 
             CurrentWorld = PendingWorld;

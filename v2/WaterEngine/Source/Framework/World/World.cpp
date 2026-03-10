@@ -53,8 +53,9 @@ namespace we
 		}
 	}
 
-	void World::EndPlay()
+	void World::EndingPlay()
 	{
+		EndPlay();
 	}
 
 	void World::GarbageCollection()

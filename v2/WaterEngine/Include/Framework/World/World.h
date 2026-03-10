@@ -21,7 +21,7 @@ namespace we
 
 		void StartPlay();
 		void StartTick(float DeltaTime);
-		void EndPlay();
+		void EndingPlay();
 		void GarbageCollection();
 
 		template<typename ActorType, typename... Args>
@@ -31,7 +31,7 @@ namespace we
 		void OrderActorDrawables(Func&& Callback);
 
 		template<typename WorldType>
-		void LoadWorld() { Subsystem.CreateWorld<WorldType>(); }
+		void LoadWorld() { Subsystem.LoadWorld<WorldType>(); }
 
 		const vector<shared<Actor>>& GetActors() const { return Actors; }
 
@@ -41,6 +41,7 @@ namespace we
 		virtual void PreConstruct() {}
 		virtual void BeginPlay() {}
 		virtual void Tick(float DeltaTime) {}
+		virtual void EndPlay() {}
 
 	private:
 		bool bHasBegunPlay;

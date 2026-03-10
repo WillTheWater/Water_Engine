@@ -17,6 +17,7 @@ namespace we
 		MainMenuUI();
 		
 		void Initialize();
+		void ClearWidgets();
 		void Show();
 		void Hide();
 
