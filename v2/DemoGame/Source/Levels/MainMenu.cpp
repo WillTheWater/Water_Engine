@@ -25,6 +25,7 @@ namespace we
         BG = LoadAsset().LoadTexture("Assets/Textures/Default/defaultBackground.png");
         BGImage = SpawnActor<Actor>().lock();
         BGImage->SetSprite(BG);
+
 		// Main Menu UI
         MainMenuUI MenuUI;
 		MenuUI.Initialize();

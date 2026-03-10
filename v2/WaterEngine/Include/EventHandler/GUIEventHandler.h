@@ -17,12 +17,14 @@ namespace we
 		GUISubsystem& GUI;
 		bool Consumed = false;
 
-		void operator()(const event::MouseButtonPressed&);
-		void operator()(const event::MouseButtonReleased&);
-		void operator()(const event::MouseMoved&);
-		void operator()(const event::KeyPressed&);
-		void operator()(const event::KeyReleased&);
-		void operator()(const event::MouseWheelScrolled&);
+		vec2i TransformMousePos(int x, int y) const;
+
+		void operator()(const event::MouseButtonPressed& e);
+		void operator()(const event::MouseButtonReleased& e);
+		void operator()(const event::MouseMoved& e);
+		void operator()(const event::MouseWheelScrolled& e);
+		void operator()(const event::KeyPressed& e);
+		void operator()(const event::KeyReleased& e);
 		void operator()(const auto&) {}
 	};
 }

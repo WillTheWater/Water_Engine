@@ -6,6 +6,7 @@
 #pragma once
 
 #include "Core/CoreMinimal.h"
+#include <TGUI/Widgets/Button.hpp>
 
 namespace we
 {
@@ -20,6 +21,8 @@ namespace we
 		
 	private:
 		void SetupLayout();
+		tgui::Button::Ptr CreateButton(const std::string& Text, 
+			tgui::Color HoverColor, tgui::Color DownColor);
 		void OnPlayClicked();
 		void OnSettingsClicked();
 		void OnQuitClicked();

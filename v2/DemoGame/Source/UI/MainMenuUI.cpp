@@ -9,6 +9,7 @@
 
 #include <TGUI/Widgets/Button.hpp>
 #include <TGUI/Widgets/Label.hpp>
+#include <TGUI/Widgets/VerticalLayout.hpp>
 
 namespace we
 {
@@ -23,89 +24,60 @@ namespace we
 		
 		SetupLayout();
 		bInitialized = true;
+		
+		LOG("[MainMenuUI] Initialized");
 	}
 	
 	void MainMenuUI::SetupLayout()
 	{
 		auto& GUI = MakeGUI().GetScreenUI();
 		
-		// Render target is 1920x1080
-		const float ScreenWidth = 1920.0f;
-		const float ScreenHeight = 1080.0f;
+		// Button layout
+		auto Layout = tgui::VerticalLayout::create();
+		Layout->setSize({ "16%", "20%" });
+		Layout->setOrigin(0.5f, 0.5f);
+		Layout->setPosition("50%", "80%");
+		Layout->getRenderer()->setSpaceBetweenWidgets(10);
+		Layout->getRenderer()->setPadding(10);
 		
-		// Button size
-		const float ButtonWidth = 250.0f;
-		const float ButtonHeight = 50.0f;
-		
-		// Percentage positions
-		const float TitleY = ScreenHeight * 0.10f;   
-		const float PlayY = ScreenHeight * 0.65f;    
-		const float SettingsY = ScreenHeight * 0.75f;
-		const float QuitY = ScreenHeight * 0.85f;    
-		const float CenterX = ScreenWidth * 0.50f;   
-				
 		// Play Button
-		auto Play = tgui::Button::create("PLAY");
-		Play->setSize({ButtonWidth, ButtonHeight});
-		Play->setPosition({CenterX - ButtonWidth / 2.0f, PlayY});
-		Play->setFocusable(false);
-		Play->setTextSize(24);
-		
-		// Colors for Play button
-		auto playRenderer = Play->getRenderer();
-		playRenderer->setBackgroundColor(tgui::Color::Black);
-		playRenderer->setBackgroundColorHover(tgui::Color::Green);
-		playRenderer->setBackgroundColorDown(tgui::Color::Yellow);
-		playRenderer->setTextColor(tgui::Color::White);
-		playRenderer->setTextColorHover(tgui::Color::Black);
-		playRenderer->setTextColorDown(tgui::Color::Black);
-		playRenderer->setBorderColor(tgui::Color::White);
-		playRenderer->setBorders(tgui::Outline(2));
-		
+		auto Play = CreateButton("PLAY", tgui::Color::Green, tgui::Color::Yellow);
 		Play->onPress([this]() { OnPlayClicked(); });
-		GUI.add(Play, "PlayButton");
+		Layout->add(Play, "PlayButton");
 		
 		// Settings Button
-		auto Settings = tgui::Button::create("SETTINGS");
-		Settings->setSize({ButtonWidth, ButtonHeight});
-		Settings->setPosition({CenterX - ButtonWidth / 2.0f, SettingsY});
-		Settings->setFocusable(false);
-		Settings->setTextSize(24);
-		
-		// Colors for Settings button
-		auto settingsRenderer = Settings->getRenderer();
-		settingsRenderer->setBackgroundColor(tgui::Color::Black);
-		settingsRenderer->setBackgroundColorHover(tgui::Color::Red);
-		settingsRenderer->setBackgroundColorDown(tgui::Color::Magenta);
-		settingsRenderer->setTextColor(tgui::Color::White);
-		settingsRenderer->setTextColorHover(tgui::Color::White);
-		settingsRenderer->setTextColorDown(tgui::Color::White);
-		settingsRenderer->setBorderColor(tgui::Color::White);
-		settingsRenderer->setBorders(tgui::Outline(2));
-		
+		auto Settings = CreateButton("SETTINGS", tgui::Color::Red, tgui::Color::Magenta);
 		Settings->onPress([this]() { OnSettingsClicked(); });
-		GUI.add(Settings, "SettingsButton");
+		Layout->add(Settings, "SettingsButton");
 		
 		// Quit Button
-		auto Quit = tgui::Button::create("QUIT");
-		Quit->setSize({ButtonWidth, ButtonHeight});
-		Quit->setPosition({CenterX - ButtonWidth / 2.0f, QuitY});
-		Quit->setFocusable(false);
-		Quit->setTextSize(24);
-		
-		// Colors for Quit button
-		auto quitRenderer = Quit->getRenderer();
-		quitRenderer->setBackgroundColor(tgui::Color::Black);
-		quitRenderer->setBackgroundColorHover(tgui::Color::Blue);
-		quitRenderer->setBackgroundColorDown(tgui::Color::Cyan);
-		quitRenderer->setTextColor(tgui::Color::White);
-		quitRenderer->setTextColorHover(tgui::Color::White);
-		quitRenderer->setTextColorDown(tgui::Color::Black);
-		quitRenderer->setBorderColor(tgui::Color::White);
-		quitRenderer->setBorders(tgui::Outline(2));
-		
+		auto Quit = CreateButton("QUIT", tgui::Color::Blue, tgui::Color::Cyan);
 		Quit->onPress([this]() { OnQuitClicked(); });
-		GUI.add(Quit, "QuitButton");
+		Layout->add(Quit, "QuitButton");
+		
+		GUI.add(Layout, "ButtonLayout");
+		
+		LOG("[MainMenuUI] Layout setup complete");
+	}
+	
+	tgui::Button::Ptr MainMenuUI::CreateButton(const std::string& Text, 
+		tgui::Color HoverColor, tgui::Color DownColor)
+	{
+		auto Button = tgui::Button::create(Text);
+		Button->setTextSize(24);
+		Button->setFocusable(false);
+		
+		auto Renderer = Button->getRenderer();
+		Renderer->setBackgroundColor(tgui::Color::Black);
+		Renderer->setBackgroundColorHover(HoverColor);
+		Renderer->setBackgroundColorDown(DownColor);
+		Renderer->setTextColor(tgui::Color::White);
+		Renderer->setTextColorHover(tgui::Color::White);
+		Renderer->setTextColorDown(tgui::Color::White);
+		Renderer->setBorderColor(tgui::Color::White);
+		Renderer->setBorders(tgui::Outline(2));
+		
+		return Button;
 	}
 	
 	void MainMenuUI::Show()
@@ -114,9 +86,8 @@ namespace we
 			Initialize();
 		
 		auto& GUI = MakeGUI().GetScreenUI();
-		GUI.get("PlayButton")->setVisible(true);
-		GUI.get("SettingsButton")->setVisible(true);
-		GUI.get("QuitButton")->setVisible(true);
+		if (auto Layout = GUI.get("ButtonLayout"))
+			Layout->setVisible(true);
 		
 		bVisible = true;
 	}
@@ -127,9 +98,8 @@ namespace we
 			return;
 		
 		auto& GUI = MakeGUI().GetScreenUI();
-		GUI.get("PlayButton")->setVisible(false);
-		GUI.get("SettingsButton")->setVisible(false);
-		GUI.get("QuitButton")->setVisible(false);
+		if (auto Layout = GUI.get("ButtonLayout"))
+			Layout->setVisible(false);
 		
 		bVisible = false;
 	}

@@ -24,7 +24,11 @@ namespace we
 
 		void SetWindowSize(vec2u NewSize);
 		void SetCameraView(const view& NewView);
-		bool HandleEvent(const sf::Event& event);
+		
+		vec2u GetWindowSize() const { return WindowSize; }
+		view GetCameraView() const { return CurrentCameraView; }
+		
+		bool HandleEvent(const event& Event);
 
 	private:
 		static GUISubsystem* Instance;
@@ -34,8 +38,6 @@ namespace we
 		
 		vec2u WindowSize;
 		view CurrentCameraView;
-		
-		sf::Event TransformEvent(const sf::Event& event) const;
 	};
 
 	inline GUISubsystem& MakeGUI() { return GUISubsystem::Get(); }

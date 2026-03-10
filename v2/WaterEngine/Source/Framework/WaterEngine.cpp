@@ -35,8 +35,8 @@ namespace we
     void WaterEngine::BindDelegates()
     {
         Subsystem.Window->OnResize.Bind(Subsystem.Camera.get(), &CameraSubsystem::SetCameraView);
-        Subsystem.Window->OnResize.Bind(Subsystem.GUI.get(), &GUISubsystem::SetWindowSize);
         Subsystem.Window->OnMouseMove.Bind(Subsystem.Cursor.get(), &CursorSubsystem::SetPosition);
+        Subsystem.Window->OnResize.Bind(Subsystem.GUI.get(), &GUISubsystem::SetWindowSize);
         Subsystem.Camera->OnViewUpdate.Bind(Subsystem.GUI.get(), &GUISubsystem::SetCameraView);
         GetTimer().TriggerGarbageCollection.Bind(Subsystem.Resource.get(), &ResourceSubsystem::GarbageCollect);
         Subsystem.GUI->Initialize(Subsystem.Render->GetScreenUITarget(), Subsystem.Render->GetWorldUITarget());
@@ -61,8 +61,7 @@ namespace we
 
             if (Subsystem.GUI->HandleEvent(*Event)) { continue; }
 
-            Subsystem.Input->HandleEvent(*Event);
-           
+            Subsystem.Input->HandleEvent(*Event);           
         }
     }
 
