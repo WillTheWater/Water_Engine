@@ -34,6 +34,12 @@ FetchContent_Declare(
     URL https://github.com/gabime/spdlog/archive/refs/tags/v1.17.0.tar.gz
 )
 
+# JSON
+FetchContent_Declare(
+    json 
+    URL https://github.com/nlohmann/json/releases/download/v3.12.0/json.tar.xz
+)
+
 # --- magic_enum ---
 FetchContent_Declare(
     enum
@@ -65,6 +71,7 @@ FetchContent_MakeAvailable(
     sfml
     box2d
     logs
+    json
     enum
     toml
     physicsfs
@@ -120,6 +127,7 @@ target_link_libraries(WaterEngine PUBLIC
     SFML::Main
     box2d
     spdlog::spdlog
+    nlohmann_json::nlohmann_json
     magic_enum::magic_enum
     tomlplusplus::tomlplusplus
     physfs-static

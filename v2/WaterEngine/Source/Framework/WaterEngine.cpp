@@ -28,6 +28,7 @@ namespace we
         Subsystem.Cursor   = make_unique<CursorSubsystem>();
         Subsystem.Input    = make_unique<InputSubsystem>();
         Subsystem.GUI      = make_unique<GUISubsystem>();
+        Subsystem.Save     = make_unique<SaveSubsystem>();
 
         BindDelegates();
     }
