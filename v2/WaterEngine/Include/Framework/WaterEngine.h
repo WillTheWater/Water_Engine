@@ -7,6 +7,7 @@
 
 #include "Core/CoreMinimal.h"
 #include "Framework/EngineSubsystem.h"
+#include "Core/EngineConfig.h"
 
 namespace we
 {

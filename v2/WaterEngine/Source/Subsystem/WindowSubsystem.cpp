@@ -4,16 +4,16 @@
 // =============================================================================
 
 #include "Subsystem/WindowSubsystem.h"
-#include "Utility/Log.h"
+#include "Core/EngineConfig.h"
 
 namespace we
 {
 	WindowSubsystem::WindowSubsystem()
 	{
-		create(window({ 1920, 1080 }), "Water Engine");
-		setVerticalSyncEnabled(true);
-		setMouseCursorVisible(false);
-		setKeyRepeatEnabled(false);
+		create(window(WEConfig.Window.DefaultWindowSize), WEConfig.Window.WindowTitle);
+		setVerticalSyncEnabled(WEConfig.Window.bVSyncEnabled);
+		setMouseCursorVisible(WEConfig.Window.bMouseCursorVisible);
+		setKeyRepeatEnabled(WEConfig.Window.bKeyRepeatEnabled);
 	}
 
 	void WindowSubsystem::HandleEvent(const event& Event)
