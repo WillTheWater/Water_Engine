@@ -7,6 +7,7 @@
 #include "Levels/LevelOne.h"
 #include "Framework/World/Actor.h"
 #include "Subsystem/ResourceSubsystem.h"
+#include "Subsystem/AudioSubsystem.h"
 #include "Utility/Log.h"
 #include "UI/MainMenuUI.h"
 
@@ -31,6 +32,9 @@ namespace we
         MenuUI->OnPlayButtonClicked.Bind(this, &MainMenu::Play);
         MenuUI->OnSettingsButtonClicked.Bind(this, &MainMenu::Settings);
         MenuUI->OnQuitButtonClicked.Bind(this, &MainMenu::Quit);
+
+        // Play ambient background
+        PlayAudio().PlayAmbient("Assets/Audio/Default/defaultAmbient.ogg", 4);
     }
 
     void MainMenu::Tick(float DeltaTime)
@@ -41,6 +45,7 @@ namespace we
     void MainMenu::EndPlay()
     {
         MenuUI->ClearWidgets();
+        PlayAudio().StopAmbient(3);
     }
 
     void MainMenu::Play()

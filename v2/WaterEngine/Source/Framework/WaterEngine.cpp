@@ -15,6 +15,7 @@ namespace we
     void WaterEngine::Initialize()
     {
         Subsystem.Resource = make_unique<ResourceSubsystem>();
+        Subsystem.Audio    = make_unique<AudioSubsystem>();
         Subsystem.Window   = make_unique<WindowSubsystem>();
         Subsystem.Clock    = make_unique<ClockSubsystem>();
         Subsystem.Timer    = make_unique<TimerSubsystem>();
@@ -78,6 +79,7 @@ namespace we
         float DeltaTime = Subsystem.Clock->GetDeltaTime();
         GetTimer().Update(DeltaTime);
         Subsystem.World->Tick(DeltaTime);
+        Subsystem.Audio->Update(DeltaTime);
     }
 
     void WaterEngine::ProcessQuit()

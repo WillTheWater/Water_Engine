@@ -17,12 +17,14 @@
 #include "Subsystem/InputSubsystem.h"
 #include "Subsystem/GUISubsystem.h"
 #include "Subsystem/SaveSubsystem.h"
+#include "Subsystem/AudioSubsystem.h"
 
 namespace we
 {
 	struct EngineSubsystem
 	{
 		unique<ResourceSubsystem>	Resource;
+		unique<AudioSubsystem>		Audio;
 		unique<WindowSubsystem>		Window;
 		unique<ClockSubsystem>		Clock;
 		unique<TimerSubsystem>		Timer;
