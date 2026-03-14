@@ -55,6 +55,14 @@ namespace we
 
 	void World::EndingPlay()
 	{
+		// Call EndPlay on all actors before world ends
+		for (auto& Actor : Actors)
+		{
+			if (Actor->HasBegunPlay())
+			{
+				Actor->EndPlay();
+			}
+		}
 		EndPlay();
 	}
 
@@ -64,6 +72,11 @@ namespace we
 		{
 			if (i->get()->IsPendingDestroy())
 			{
+				// Call EndPlay before destroying actor
+				if (i->get()->HasBegunPlay())
+				{
+					i->get()->EndPlay();
+				}
 				i = Actors.erase(i);
 			}
 			else

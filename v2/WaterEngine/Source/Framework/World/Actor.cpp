@@ -51,6 +51,11 @@ namespace we
 	{
 	}
 
+	void Actor::EndPlay()
+	{
+		LOG("Actor EndPlay")
+	}
+
 	void Actor::UpdateTransform()
 	{
 		if (HasSprite())

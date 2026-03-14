@@ -24,6 +24,7 @@ namespace we
 
 		virtual void BeginPlay();
 		virtual void Tick(float DeltaTime);
+		virtual void EndPlay();
 
 	public:
 

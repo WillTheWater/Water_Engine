@@ -34,7 +34,7 @@ namespace we
         MenuUI->OnQuitButtonClicked.Bind(this, &MainMenu::Quit);
 
         // Play ambient background
-        PlayAudio().PlayAmbient("Assets/Audio/Default/defaultAmbient.ogg", 4);
+        //PlayAudio().PlayAmbient("Assets/Audio/Default/defaultAmbient.ogg", 4);
     }
 
     void MainMenu::Tick(float DeltaTime)
