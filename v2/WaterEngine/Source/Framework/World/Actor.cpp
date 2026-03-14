@@ -8,8 +8,11 @@
 
 namespace we
 {
+	uint Actor::NextID = 1;
+
 	Actor::Actor(World& OwningWorld)
-		: OwningWorld{OwningWorld}
+		: UniqueID(NextID++)
+		, OwningWorld{OwningWorld}
 		, Position{}
 		, Rotation{}
 		, Scale{1.f, 1.f}
@@ -83,6 +86,14 @@ namespace we
 		if (HasSprite())
 		{
 			ActorSprite->setOrigin(Origin);
+		}
+	}
+
+	void Actor::SetTextureRect(const recti& TexRect)
+	{
+		if (HasSprite())
+		{
+			ActorSprite->setTextureRect(TexRect);
 		}
 	}
 

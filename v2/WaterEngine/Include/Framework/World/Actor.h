@@ -22,6 +22,8 @@ namespace we
 		void StartTick(float DeltaTime);
 		bool HasBegunPlay() const { return bHasBegunPlay; }
 
+		uint GetID() const { return UniqueID; }
+
 		virtual void BeginPlay();
 		virtual void Tick(float DeltaTime);
 		virtual void EndPlay();
@@ -40,6 +42,7 @@ namespace we
 		// Sprite
 		void SetSprite(shared<texture> Texture);
 		void SetSpriteOrigin(const vec2f& Origin);
+		void SetTextureRect(const recti& TexRect);
 		bool HasSprite() const { return ActorSprite.has_value(); }
 		const drawable* GetDrawable() const;
 
@@ -55,6 +58,9 @@ namespace we
 		World& GetWorld() const { return OwningWorld; }
 
 	private:
+		static uint NextID;
+		const uint UniqueID;
+
 		World& OwningWorld;
 
 		// Transform
