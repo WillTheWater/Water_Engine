@@ -6,6 +6,7 @@
 #pragma once
 
 #include "Core/CoreMinimal.h"
+#include "Interface/PostProcess/IPostProcess.h"
 
 namespace we
 {
@@ -32,15 +33,21 @@ namespace we
         void SetTargetSize(vec2u Size);
 
         // GUI render target access
-        sf::RenderTarget& GetWorldUITarget() { return WorldUIRenderTarget; }
-        sf::RenderTarget& GetScreenUITarget() { return ScreenUIRenderTarget; }
+        renderTarget& GetWorldUITarget() { return WorldUIRenderTarget; }
+        renderTarget& GetScreenUITarget() { return ScreenUIRenderTarget; }
 
     private:
         renderTexture WorldRenderTarget;
+        renderTexture WorldPostProcessTarget;
+        vector<unique<IPostProcess>> WorldPostProcessEffects;
+
         renderTexture WorldUIRenderTarget;
         renderTexture ScreenUIRenderTarget;
         renderTexture CursorRenderTarget;
+
         renderTexture Composite;
+        renderTexture CompositePostProcessTarget;
+        vector<unique<IPostProcess>> CompositePostProcessEffects;
 
         vec2u RenderResolution;
         bool bNeedsComposite;
@@ -48,6 +55,8 @@ namespace we
     private:
         void CreateRenderTargets();
         void ClearRenderTargets();
+        void PostProcess(renderTexture* Input, renderTexture* Output, vector<unique<IPostProcess>>& Effects);
+        void ApplyPostProcess(renderTexture& MainTarget, renderTexture& PostProcessTarget, vector<unique<IPostProcess>>& Effects);
         void CompositeLayers();
     };
 }

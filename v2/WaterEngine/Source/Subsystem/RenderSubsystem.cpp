@@ -4,6 +4,7 @@
 // =============================================================================
 
 #include "Subsystem/RenderSubsystem.h"
+#include "Utility/Assert.h"
 #include "Utility/Log.h"
 
 namespace we
@@ -26,17 +27,23 @@ namespace we
 
     void RenderSubsystem::CreateRenderTargets()
     {
-        WorldRenderTarget.resize(RenderResolution);
-        WorldUIRenderTarget.resize(RenderResolution);
-        ScreenUIRenderTarget.resize(RenderResolution);
-        CursorRenderTarget.resize(RenderResolution);
-        Composite.resize(RenderResolution);
+        VERIFY(WorldRenderTarget.resize(RenderResolution));
+        VERIFY(WorldUIRenderTarget.resize(RenderResolution));
+        VERIFY(ScreenUIRenderTarget.resize(RenderResolution));
+        VERIFY(CursorRenderTarget.resize(RenderResolution));
+        VERIFY(Composite.resize(RenderResolution));
 
         WorldRenderTarget.setSmooth(true);
         ScreenUIRenderTarget.setSmooth(false);
         WorldUIRenderTarget.setSmooth(false);
         CursorRenderTarget.setSmooth(false);
         Composite.setSmooth(true);
+
+        if (shader::isAvailable)
+        {
+            VERIFY(WorldPostProcessTarget.resize(RenderResolution));
+            VERIFY(CompositePostProcessTarget.resize(RenderResolution));
+        }
     }
 
     void RenderSubsystem::BeginFrame()
@@ -85,11 +92,61 @@ namespace we
         WorldUIRenderTarget.clear(color::Transparent);
         CursorRenderTarget.clear(color::Transparent);
         Composite.clear(color::Transparent);
+
+        if (shader::isAvailable)
+        {
+            WorldPostProcessTarget.clear(color::Transparent);
+            CompositePostProcessTarget.clear(color::Transparent);
+        }
+    }
+
+    void RenderSubsystem::PostProcess(renderTexture* Input, renderTexture* Output, vector<unique<IPostProcess>>& Effects)
+    {
+        if (Effects.empty())
+        {
+            Input->display();
+            return;
+        }
+
+        renderTexture* In = Input;
+        renderTexture* Out = Output;
+
+        for (auto& Effect : Effects)
+        {
+            Out->clear(color::Transparent);
+            Effect->Apply(In->getTexture(), *Out);
+            Out->display();
+            std::swap(In, Out);
+        }
+
+        if (In != Input) 
+        {
+            Input->clear(color::Transparent);
+            sprite FinalSprite(In->getTexture());
+            Input->draw(FinalSprite);
+            Input->display();
+        }
+        else
+        {
+            Input->display();
+        }
+    }
+
+
+    void RenderSubsystem::ApplyPostProcess(renderTexture& MainTarget, renderTexture& PostProcessTarget, vector<unique<IPostProcess>>& Effects)
+    {
+        if (shader::isAvailable)
+        {
+            PostProcess(&MainTarget, &PostProcessTarget, Effects);
+        }
+
+        MainTarget.display();
     }
 
     void RenderSubsystem::CompositeLayers()
     {
-        WorldRenderTarget.display();
+        ApplyPostProcess(WorldRenderTarget, WorldPostProcessTarget, WorldPostProcessEffects);
+
         WorldUIRenderTarget.display();
         ScreenUIRenderTarget.display();
         CursorRenderTarget.display();
@@ -106,6 +163,6 @@ namespace we
         sprite CursorSprite(CursorRenderTarget.getTexture());
         Composite.draw(CursorSprite, sf::BlendAlpha);
 
-        Composite.display();
+        ApplyPostProcess(Composite, CompositePostProcessTarget, CompositePostProcessEffects);
     }
 }
