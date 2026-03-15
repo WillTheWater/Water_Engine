@@ -12,6 +12,7 @@
 namespace we
 {
     class Actor;
+    class PostProcessingComponent;
 
     class MainMenu : public World
     {
@@ -27,6 +28,7 @@ namespace we
 		unique<MainMenuUI> MenuUI;
         shared<texture> BG;
         shared<Actor> BGImage;
+        shared<PostProcessingComponent> PPCGrayscale;
 
     private:
         void Play();

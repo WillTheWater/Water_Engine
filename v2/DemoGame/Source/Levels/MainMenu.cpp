@@ -10,6 +10,8 @@
 #include "Subsystem/AudioSubsystem.h"
 #include "Utility/Log.h"
 #include "UI/MainMenuUI.h"
+#include "Component/PostProcessingComponent.h"
+#include "PostProcess/Effects/PPEGrayscale.h"
 
 namespace we
 {
@@ -22,7 +24,11 @@ namespace we
     {		
         BG = LoadAsset().LoadTexture("Assets/Textures/Default/defaultBackground.png");
         BGImage = SpawnActor<Actor>().lock();
-        BGImage->SetSprite(BG);
+        //BGImage->SetSprite(BG);
+        PPCGrayscale = make_shared<PostProcessingComponent>(BGImage.get());
+        PPCGrayscale->SetTexture(BG);
+        PPCGrayscale->AddEffect(make_unique<PPEGrayscale>());
+        PPCGrayscale->BeginPlay();
 
 		// Main Menu UI
         MenuUI = make_unique<MainMenuUI>();
