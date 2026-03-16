@@ -25,14 +25,12 @@ namespace we
         void AddEffect(unique<IPostProcess> Effect);
         void ClearEffects();
 
-        shared<texture> GetProcessedTexture() const { return ProcessedTexture; }
+        void ApplyEffects();
 
     private:
         Actor* Owner;
         shared<texture> OriginalTexture;
         shared<texture> ProcessedTexture;
         vector<unique<IPostProcess>> Effects;
-
-        void ApplyEffects();
     };
 }

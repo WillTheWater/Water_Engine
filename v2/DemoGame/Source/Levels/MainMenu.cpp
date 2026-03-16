@@ -12,6 +12,7 @@
 #include "UI/MainMenuUI.h"
 #include "Component/PostProcessingComponent.h"
 #include "PostProcess/Effects/PPEGrayscale.h"
+#include "PostProcess/Effects/PPEWave.h"
 
 namespace we
 {
@@ -25,10 +26,11 @@ namespace we
         BG = LoadAsset().LoadTexture("Assets/Textures/Default/defaultBackground.png");
         BGImage = SpawnActor<Actor>().lock();
         //BGImage->SetSprite(BG);
-        PPCGrayscale = make_shared<PostProcessingComponent>(BGImage.get());
-        PPCGrayscale->SetTexture(BG);
-        PPCGrayscale->AddEffect(make_unique<PPEGrayscale>());
-        PPCGrayscale->BeginPlay();
+        PPC = make_shared<PostProcessingComponent>(BGImage.get());
+        PPC->SetTexture(BG);
+        //PPC->AddEffect(make_unique<PPEGrayscale>());
+        PPC->AddEffect(make_unique<PPEWave>());
+        PPC->BeginPlay();
 
 		// Main Menu UI
         MenuUI = make_unique<MainMenuUI>();
@@ -45,7 +47,7 @@ namespace we
 
     void MainMenu::Tick(float DeltaTime)
     {
-      
+        PPC->Tick(DeltaTime);
     }
 
     void MainMenu::EndPlay()

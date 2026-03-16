@@ -6,18 +6,19 @@
 #pragma once
 
 #include "Core/CoreMinimal.h"
-
-#include <SFML/Graphics/RenderTarget.hpp>
-#include <SFML/Graphics/Texture.hpp>
+#include "Interface/PostProcess/IPostProcess.h"
 
 namespace we
 {
-    class IPostProcess
+    class PPEWave : public IPostProcess
     {
     public:
-        virtual ~IPostProcess() = default;
+        PPEWave();
 
-        virtual void Update(float DeltaTime) {}
-        virtual void Apply(const texture& Input, renderTarget& Output) = 0;
+        void Apply(const texture& Input, renderTarget& Output) override;
+
+    private:
+        shared<shader> WaveShader;
+        clock Time;
     };
 }

@@ -28,7 +28,7 @@ namespace we
 		unique<MainMenuUI> MenuUI;
         shared<texture> BG;
         shared<Actor> BGImage;
-        shared<PostProcessingComponent> PPCGrayscale;
+        shared<PostProcessingComponent> PPC;
 
     private:
         void Play();

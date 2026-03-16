@@ -9,6 +9,10 @@
 
 namespace we::EmbeddedShader
 {
+    // =========================================================================
+    // FRAGMENT ONLY SHADERS (Color/Pixel manipulation)
+    // =========================================================================
+
     // 1. Invert
     inline constexpr stringView InvertFragment = R"(
         #version 130
@@ -310,7 +314,7 @@ namespace we::EmbeddedShader
     )";
 
     // 21. DownSample
-    inline constexpr stringView DownSample = R"(
+    inline constexpr stringView DownSampleFragment = R"(
         #version 130
         uniform sampler2D Source;
         uniform vec2 TexSize;
@@ -336,7 +340,7 @@ namespace we::EmbeddedShader
     )";
 
     // 22. Blur - fixed with clamping
-    inline constexpr stringView Blur = R"(
+    inline constexpr stringView BlurClampedFragment = R"(
         #version 130
         uniform sampler2D Source;
         uniform vec2 TexSize;
@@ -380,7 +384,7 @@ namespace we::EmbeddedShader
     )";
 
     // 23. Additive
-    inline constexpr stringView Additive = R"(
+    inline constexpr stringView AdditiveFragment = R"(
         #version 130
         uniform sampler2D Source;
         uniform sampler2D BloomTex;
@@ -399,8 +403,12 @@ namespace we::EmbeddedShader
         }
     )";
 
-    // DefaultVerts
-    inline constexpr stringView DefaultVerts = R"(
+    // =========================================================================
+    // VERTEX ONLY SHADERS (Geometry/Position manipulation)
+    // =========================================================================
+
+    // 24. Default Vertex Shader
+    inline constexpr stringView DefaultVertex = R"(
         #version 130
 
         void main()
@@ -410,4 +418,34 @@ namespace we::EmbeddedShader
             gl_FrontColor = gl_Color;
         }
     )";
+
+    // 25. Horizontal Wave (Water/Flag effect)
+    inline constexpr stringView HorizontalWaveVertex = R"(
+        #version 130
+
+        uniform float Time;
+
+        void main()
+        {
+            // Apply wave in local/object space (pixel coordinates)
+            vec4 vertex = gl_Vertex;
+            
+            // Multiple overlapping waves for realistic water distortion
+            // Higher frequency = more ripples across the image
+            float wave1 = sin(vertex.x * 0.05 + Time * 2.0) * 8.0;
+            float wave2 = sin(vertex.x * 0.12 + Time * 3.5) * 4.0;
+            float wave3 = sin(vertex.x * 0.025 + Time * 1.2) * 6.0;
+            vertex.y += wave1 + wave2 + wave3;
+            
+            gl_Position = gl_ModelViewProjectionMatrix * vertex;
+            gl_TexCoord[0] = gl_TextureMatrix[0] * gl_MultiTexCoord0;
+            gl_FrontColor = gl_Color;
+        }
+    )";
+
+    // =========================================================================
+    // COMBO SHADERS (Require both Vertex and Fragment)
+    // =========================================================================
+
+    // None currently defined
 }

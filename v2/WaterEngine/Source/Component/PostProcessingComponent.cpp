@@ -31,6 +31,18 @@ namespace we
 
     void PostProcessingComponent::Tick(float DeltaTime)
     {
+        if (Effects.empty()) return;
+
+        for (auto& Effect : Effects)
+        {
+            Effect->Update(DeltaTime);
+        }
+        ApplyEffects();
+        
+        if (Owner && ProcessedTexture)
+        {
+            Owner->SetSprite(ProcessedTexture);
+        }
     }
 
     void PostProcessingComponent::EndPlay()
