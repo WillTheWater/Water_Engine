@@ -141,6 +141,23 @@ namespace we
     };
 
     // =========================================================================
+    // Physics Configuration
+    // =========================================================================
+    struct PhysicsConfig
+    {
+        // Scale conversion: pixels to meters (100 pixels = 1 meter)
+        static constexpr float PhysicsScale = 0.01f;
+        
+        // World gravity (meters per second squared)
+        // Default (0, 0) for top-down games, use (0, 9.8f) for platformers
+        static constexpr vec2f Gravity{0.0f, 0.0f};
+        
+        // Solver iterations (higher = more accurate, more expensive)
+        static constexpr int VelocityIterations = 8;
+        static constexpr int PositionIterations = 3;
+    };
+
+    // =========================================================================
     // Master Engine Configuration
     // =========================================================================
     struct EngineConfig
@@ -153,6 +170,7 @@ namespace we
         SaveConfig Save;
         InputConfig Input;
         TimingConfig Timing;
+        PhysicsConfig Physics;
     };
 }
 

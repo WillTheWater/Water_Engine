@@ -26,6 +26,7 @@ namespace we
         Subsystem.Input    = make_unique<InputSubsystem>();
         Subsystem.GUI      = make_unique<GUISubsystem>();
         Subsystem.Save     = make_unique<SaveSubsystem>();
+        Subsystem.Physics  = make_unique<PhysicsSubsystem>();
 
         BindDelegates();
     }
@@ -79,6 +80,7 @@ namespace we
         float DeltaTime = Subsystem.Clock->GetDeltaTime();
         GetTimer().Update(DeltaTime);
         Subsystem.World->Tick(DeltaTime);
+        Subsystem.Physics->Tick(DeltaTime);
         Subsystem.Audio->Update(DeltaTime);
     }
 

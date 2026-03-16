@@ -18,6 +18,7 @@
 #include "Subsystem/GUISubsystem.h"
 #include "Subsystem/SaveSubsystem.h"
 #include "Subsystem/AudioSubsystem.h"
+#include "Subsystem/PhysicsSubsystem.h"
 
 namespace we
 {
@@ -35,5 +36,6 @@ namespace we
 		unique<InputSubsystem>		Input;
 		unique<GUISubsystem>		GUI;
 		unique<SaveSubsystem>		Save;
+		unique<PhysicsSubsystem>	Physics;
 	};
 }
