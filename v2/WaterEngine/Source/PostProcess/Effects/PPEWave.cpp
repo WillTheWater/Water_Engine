@@ -12,7 +12,11 @@ namespace we
     PPEWave::PPEWave()
     {
         WaveShader = make_shared<shader>();
-        VERIFY(WaveShader->loadFromMemory(string(EmbeddedShader::HorizontalWaveVertex), shader::Type::Vertex));
+        VERIFY(WaveShader->loadFromMemory(
+            string(EmbeddedShader::DefaultVertex), 
+            string(EmbeddedShader::HorizontalWaveFragment)
+        ));
+        WaveShader->setUniform("Source", shader::CurrentTexture);
     }
 
     void PPEWave::Apply(const texture& Input, renderTarget& Output)

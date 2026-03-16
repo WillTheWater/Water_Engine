@@ -57,6 +57,13 @@ namespace we
     void PostProcessingComponent::SetTexture(shared<texture> Tex)
     {
         OriginalTexture = Tex;
+        
+        // Enable smooth filtering and mipmaps for distortion effects
+        if (OriginalTexture)
+        {
+            OriginalTexture->setSmooth(true);
+            OriginalTexture->generateMipmap();
+        }
     }
 
     void PostProcessingComponent::AddEffect(unique<IPostProcess> Effect)
