@@ -14,6 +14,23 @@ namespace we
 	class PhysicsComponent;
 	class CollisionComponent;
 
+	enum class ETestCharAnim : uint8
+	{
+		IdleForward,
+		IdleForwardRight,
+		IdleRight,
+		IdleBackRight,
+		IdleBack,
+		IdleBackLeft,
+		IdleLeft,
+		IdleForwardLeft
+	};
+
+	enum class ETestCharSheet : uint8
+	{
+		Idle
+	};
+
 	class TestCharacter : public Actor
 	{
 	public:

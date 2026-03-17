@@ -13,16 +13,36 @@ namespace we
 {
     struct Animation
     {
-        uint8 StateID;
+        uint8 AnimationState;
         uint8 SpriteSheetID;
         vec2u StartFrame;
         vec2u EndFrame;
-        float FrameDuration = 0.15;
+        float FrameDuration = 0.15f;
         float PlaybackSpeed = 1.0f;
         bool bLoop = true;
         bool bFlipX = false;
         bool bFlipY = false;
         optional<uint8> NextState;
+
+        Animation() = default;
+        
+        template<typename StateEnum, typename SheetEnum>
+        Animation(StateEnum InState, SheetEnum InSheetID, vec2u InStart, vec2u InEnd,
+                  float InDuration = 0.15f, float InSpeed = 1.0f, bool bInLoop = true,
+                  bool bInFlipX = false, bool bInFlipY = false)
+            : AnimationState(static_cast<uint8>(InState))
+            , SpriteSheetID(static_cast<uint8>(InSheetID))
+            , StartFrame(InStart)
+            , EndFrame(InEnd)
+            , FrameDuration(InDuration)
+            , PlaybackSpeed(InSpeed)
+            , bLoop(bInLoop)
+            , bFlipX(bInFlipX)
+            , bFlipY(bInFlipY)
+        {
+            static_assert(std::is_enum_v<StateEnum>, "State must be an enum type");
+            static_assert(std::is_enum_v<SheetEnum>, "SheetID must be an enum type");
+        }
     };
 
     struct SpriteSheet
@@ -31,7 +51,7 @@ namespace we
         vec2u FrameSize;
         uint FramesPerRow;
 
-        SpriteSheet() {}
+        SpriteSheet() = default;
         SpriteSheet(const string& Path, vec2u InFrameSize, uint InFramesPerRow = 8);
     };
 
@@ -48,7 +68,7 @@ namespace we
 
         // IAnimationComponent
         void Transition(uint8 StateID) override;
-        uint8 GetCurrentState() const override { return CurrentState; }
+        uint8 GetCurrentState() const override { return CurrentState.value_or(0); }
         bool IsPlaying(uint8 StateID) const override;
 
         void SetGlobalPlaybackSpeed(float Multiplier) override;
@@ -57,30 +77,61 @@ namespace we
         void SetFacing(bool bInFaceLeft) override;
         bool IsFacingLeft() const override { return bFaceLeft; }
 
-        // AnimationComponent specific
         void AddAnimation(const Animation& Anim);
-        void AddSpriteSheet(uint8 SheetID, const SpriteSheet& Sheet);
-        void SetActiveSpriteSheet(uint8 SheetID);
+        
+        template<typename T>
+        void AddSpriteSheet(T SheetID, const SpriteSheet& Sheet)
+        {
+            static_assert(std::is_enum_v<T>, "SheetID must be an enum type");
+            AddSpriteSheetInternal(static_cast<uint8>(SheetID), Sheet);
+        }
+        
+        template<typename T>
+        void SetActiveSpriteSheet(T SheetID)
+        {
+            static_assert(std::is_enum_v<T>, "SheetID must be an enum type");
+            SetActiveSpriteSheetInternal(static_cast<uint8>(SheetID));
+        }
+
+        template<typename T>
+        void TransitionTo(T State)
+        {
+            static_assert(std::is_enum_v<T>, "State must be an enum type");
+            TransitionToInternal(static_cast<uint8>(State));
+        }
+        
+        template<typename T>
+        bool IsPlaying(T State) const
+        {
+            static_assert(std::is_enum_v<T>, "State must be an enum type");
+            return IsPlayingInternal(static_cast<uint8>(State));
+        }
 
         vec2u GetCurrentFrame() const { return CurrentFrame; }
+
+    private:
+        void AddSpriteSheetInternal(uint8 SheetID, const SpriteSheet& Sheet);
+        void SetActiveSpriteSheetInternal(uint8 SheetID);
+        void TransitionToInternal(uint8 State);
+        bool IsPlayingInternal(uint8 State) const;
 
     private:
         Actor* Owner;
 
         dictionary<uint8, SpriteSheet> SpriteSheets;
-        uint8 ActiveSheetID = 0;
+        uint8 ActiveSheetID = 255;
         
         SpriteSheet* GetActiveSheet();
         const SpriteSheet* GetActiveSheet() const;
 
         dictionary<uint8, Animation> Animations;
-        uint8 CurrentState = 0;
+        optional<uint8> CurrentState;
         vec2u CurrentFrame;
         float ElapsedTime = 0.0f;
         float GlobalPlaybackSpeed = 1.0f;
         bool bFaceLeft = false;
         
-        uint8 LastSpriteSheetID = 0;  // Tracks last sheet set on sprite (0 = none)
+        uint8 LastSpriteSheetID = 255;
 
         void UpdateSpriteRect();
         void SyncOriginToFrame();

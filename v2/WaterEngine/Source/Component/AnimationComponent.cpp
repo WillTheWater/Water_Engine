@@ -28,16 +28,16 @@ namespace we
 
     void AnimationComponent::Tick(float DeltaTime)
     {
-        if (CurrentState == 0 || !Owner) return;
+        if (!CurrentState.has_value() || !Owner) return;
 
-        auto AnimIt = Animations.find(CurrentState);
+        auto AnimIt = Animations.find(CurrentState.value());
         if (AnimIt == Animations.end()) return;
 
         const Animation& Anim = AnimIt->second;
 
         if (Anim.SpriteSheetID != ActiveSheetID)
         {
-            SetActiveSpriteSheet(Anim.SpriteSheetID);
+            SetActiveSpriteSheetInternal(Anim.SpriteSheetID);
         }
 
         ElapsedTime += DeltaTime * GlobalPlaybackSpeed * Anim.PlaybackSpeed;
@@ -49,10 +49,10 @@ namespace we
             if (!AdvanceFrame())
             {
                 if (Anim.NextState.has_value())
-                {
-                    Transition(Anim.NextState.value());
-                    return;
-                }
+        {
+            TransitionToInternal(Anim.NextState.value());
+            return;
+        }
                 if (!Anim.bLoop)
                 {
                     return;
@@ -72,18 +72,18 @@ namespace we
         return Owner;
     }
 
-    void AnimationComponent::AddSpriteSheet(uint8 SheetID, const SpriteSheet& Sheet)
+    void AnimationComponent::AddSpriteSheetInternal(uint8 SheetID, const SpriteSheet& Sheet)
     {
         SpriteSheets[SheetID] = Sheet;
 
         if (SpriteSheets.size() == 1)
         {
-            SetActiveSpriteSheet(SheetID);
+            SetActiveSpriteSheetInternal(SheetID);
             SyncOriginToFrame();
         }
     }
 
-    void AnimationComponent::SetActiveSpriteSheet(uint8 SheetID)
+    void AnimationComponent::SetActiveSpriteSheetInternal(uint8 SheetID)
     {
         if (ActiveSheetID == SheetID) return;
         if (!SpriteSheets.contains(SheetID)) return;
@@ -101,23 +101,28 @@ namespace we
 
     void AnimationComponent::AddAnimation(const Animation& Anim)
     {
-        Animations[Anim.StateID] = Anim;
+        Animations[Anim.AnimationState] = Anim;
     }
 
     void AnimationComponent::Transition(uint8 StateID)
     {
-        if (CurrentState == StateID || StateID == 0) return;
+        TransitionToInternal(StateID);
+    }
 
-        auto AnimIt = Animations.find(StateID);
+    void AnimationComponent::TransitionToInternal(uint8 State)
+    {
+        if (CurrentState == State) return;
+
+        auto AnimIt = Animations.find(State);
         if (AnimIt == Animations.end()) return;
 
-        CurrentState = StateID;
+        CurrentState = State;
         CurrentFrame = AnimIt->second.StartFrame;
         ElapsedTime = 0.0f;
 
         if (AnimIt->second.SpriteSheetID != ActiveSheetID)
         {
-            SetActiveSpriteSheet(AnimIt->second.SpriteSheetID);
+            SetActiveSpriteSheetInternal(AnimIt->second.SpriteSheetID);
         }
 
         UpdateSpriteRect();
@@ -137,20 +142,26 @@ namespace we
 
     bool AnimationComponent::IsPlaying(uint8 StateID) const
     {
-        return CurrentState == StateID;
+        return IsPlayingInternal(StateID);
+    }
+
+    bool AnimationComponent::IsPlayingInternal(uint8 State) const
+    {
+        return CurrentState.has_value() && CurrentState.value() == State;
     }
 
     void AnimationComponent::UpdateSpriteRect()
     {
-        if (!Owner) return;
+        if (!Owner || !CurrentState.has_value()) return;
 
-        auto AnimIt = Animations.find(CurrentState);
+        auto AnimIt = Animations.find(CurrentState.value());
         if (AnimIt == Animations.end()) return;
 
         const Animation& Anim = AnimIt->second;
         const SpriteSheet* Sheet = GetActiveSheet();
         if (!Sheet || !Sheet->Texture) return;
 
+        // Only set sprite and origin when sheet actually changes (optimization)
         if (ActiveSheetID != LastSpriteSheetID)
         {
             Owner->SetSprite(Sheet->Texture);
@@ -182,7 +193,9 @@ namespace we
 
     bool AnimationComponent::AdvanceFrame()
     {
-        auto AnimIt = Animations.find(CurrentState);
+        if (!CurrentState.has_value()) return false;
+        
+        auto AnimIt = Animations.find(CurrentState.value());
         if (AnimIt == Animations.end()) return false;
 
         const Animation& Anim = AnimIt->second;
