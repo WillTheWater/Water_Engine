@@ -18,6 +18,7 @@ namespace we
         explicit WindowSubsystem();
 
         void HandleEvent(const event& Event);
+        void SetIcon(const string& Path);
 
     public:
         Delegate<vec2u> OnResize;

@@ -46,6 +46,9 @@ namespace we
         static constexpr bool bVSyncEnabled = true;
         static constexpr bool bMouseCursorVisible = false;
         static constexpr bool bKeyRepeatEnabled = false;
+        
+        // Window icon texture path (empty = no icon)
+        static constexpr const char* WindowIcon = "Assets/Icon/icon.png";
     };
 
     // =========================================================================

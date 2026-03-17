@@ -5,6 +5,7 @@
 
 #include "Subsystem/WindowSubsystem.h"
 #include "Core/EngineConfig.h"
+#include "Subsystem/ResourceSubsystem.h"
 
 namespace we
 {
@@ -14,6 +15,18 @@ namespace we
 		setVerticalSyncEnabled(WEConfig.Window.bVSyncEnabled);
 		setMouseCursorVisible(WEConfig.Window.bMouseCursorVisible);
 		setKeyRepeatEnabled(WEConfig.Window.bKeyRepeatEnabled);
+		SetIcon(WEConfig.Window.WindowIcon);
+	}
+
+	void WindowSubsystem::SetIcon(const string& Path)
+	{
+		if (Path.empty()) return;
+		auto IconTexture = LoadAsset().LoadTexture(Path);
+		if (IconTexture)
+		{
+			image Icon = IconTexture->copyToImage();
+			setIcon(Icon.getSize(), Icon.getPixelsPtr());
+		}
 	}
 
 	void WindowSubsystem::HandleEvent(const event& Event)
