@@ -11,7 +11,7 @@
 namespace we
 {
     SpriteSheet::SpriteSheet(const string& Path, vec2u InFrameSize, uint InFramesPerRow)
-        : Tex(LoadAsset().LoadTexture(Path))
+        : Texture(LoadAsset().LoadTexture(Path))
         , FrameSize(InFrameSize)
         , FramesPerRow(InFramesPerRow)
     {
@@ -94,7 +94,7 @@ namespace we
         {
             if (auto* Sheet = GetActiveSheet())
             {
-                Owner->SetSprite(Sheet->Tex);
+                Owner->SetSprite(Sheet->Texture);
             }
         }
     }
@@ -149,9 +149,14 @@ namespace we
 
         const Animation& Anim = AnimIt->second;
         const SpriteSheet* Sheet = GetActiveSheet();
-        if (!Sheet || !Sheet->Tex) return;
+        if (!Sheet || !Sheet->Texture) return;
 
-        Owner->SetSprite(Sheet->Tex);
+        if (ActiveSheetID != LastSpriteSheetID)
+        {
+            Owner->SetSprite(Sheet->Texture);
+            Owner->SetSpriteOrigin(vec2f(Sheet->FrameSize) * 0.5f);
+            LastSpriteSheetID = ActiveSheetID;
+        }
 
         recti TexRect;
         TexRect.position.x = CurrentFrame.y * Sheet->FrameSize.x;

@@ -52,6 +52,7 @@ namespace we
 
 	void Actor::Tick(float DeltaTime)
 	{
+		UpdateTransform();
 	}
 
 	void Actor::EndPlay()
@@ -77,7 +78,6 @@ namespace we
 			return;
 		}
 		
-		// SFML 3: Sprite requires texture at construction
 		ActorSprite.emplace(*Texture);
 	}
 

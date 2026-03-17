@@ -6,6 +6,7 @@
 #include "Levels/LevelOne.h"
 #include "Levels/MainMenu.h"
 #include "Framework/World/Actor.h"
+#include "Tests/TestCharacter.h"
 #include "UI/PauseMenuUI.h"
 #include "Subsystem/TimerSubsystem.h"
 #include "Subsystem/ResourceSubsystem.h"
@@ -29,6 +30,10 @@ namespace we
         BG = LoadAsset().LoadTexture("Assets/Textures/Game/level1.png");
         BGImage = SpawnActor<Actor>().lock();
         BGImage->SetSprite(BG);
+
+        // Spawn test character
+        Character = SpawnActor<TestCharacter>().lock();
+        Character->SetPosition({960.0f, 540.0f});  // Center of 1920x1080
 
         // Bind pause action to ESC key
         InputController().Bind(PAUSE_ACTION, Input::Keyboard{ sf::Keyboard::Scan::Escape });

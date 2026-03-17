@@ -34,6 +34,7 @@ namespace we
     private:
         shared<texture> BG;
         shared<Actor> BGImage;
+        shared<Actor> Character;
         unique<PauseMenuUI> PauseUI;
         bool bWasPausePressed = false;
     };

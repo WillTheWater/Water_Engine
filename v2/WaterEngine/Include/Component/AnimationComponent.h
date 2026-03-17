@@ -17,7 +17,7 @@ namespace we
         uint8 SpriteSheetID;
         vec2u StartFrame;
         vec2u EndFrame;
-        float FrameDuration;
+        float FrameDuration = 0.15;
         float PlaybackSpeed = 1.0f;
         bool bLoop = true;
         bool bFlipX = false;
@@ -27,11 +27,11 @@ namespace we
 
     struct SpriteSheet
     {
-        shared<texture> Tex;
+        shared<texture> Texture;
         vec2u FrameSize;
         uint FramesPerRow;
 
-        SpriteSheet() = default;
+        SpriteSheet() {}
         SpriteSheet(const string& Path, vec2u InFrameSize, uint InFramesPerRow = 8);
     };
 
@@ -79,6 +79,8 @@ namespace we
         float ElapsedTime = 0.0f;
         float GlobalPlaybackSpeed = 1.0f;
         bool bFaceLeft = false;
+        
+        uint8 LastSpriteSheetID = 0;  // Tracks last sheet set on sprite (0 = none)
 
         void UpdateSpriteRect();
         void SyncOriginToFrame();
