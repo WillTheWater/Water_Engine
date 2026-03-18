@@ -36,6 +36,6 @@ namespace we
 		unique<InputSubsystem>		Input;
 		unique<GUISubsystem>		GUI;
 		unique<SaveSubsystem>		Save;
-		unique<PhysicsSubsystem>	Physics;
+		shared<PhysicsSubsystem>	Physics;
 	};
 }

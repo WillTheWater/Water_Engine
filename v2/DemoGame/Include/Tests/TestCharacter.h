@@ -41,6 +41,7 @@ namespace we
 		void BeginPlay() override;
 		void Tick(float DeltaTime) override;
 		void EndPlay() override;
+		void GetDrawables(vector<const drawable*>& OutDrawables) const override;
 
 	private:
 		void SetupAnimations();

@@ -10,11 +10,15 @@
 namespace we
 {
     class World;
+    class PhysicsSubsystem;
 
     class WorldSubsystem
     {
     public:
         void Tick(float DeltaTime);
+
+        void SetPhysicsRef(shared<PhysicsSubsystem> InPhysics);
+        PhysicsSubsystem& GetPhysics();
 
         shared<World> GetCurrentWorld() const { return CurrentWorld; }
         bool HasPendingWorld() const { return PendingWorld != nullptr; }
@@ -37,6 +41,8 @@ namespace we
         void GarbageCollect(float DeltaTime);
 
     private:
+        weak<PhysicsSubsystem> Physics;
+        
         shared<World> CurrentWorld;
         shared<World> PendingWorld;
 

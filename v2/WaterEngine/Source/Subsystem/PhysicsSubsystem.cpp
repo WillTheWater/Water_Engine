@@ -8,10 +8,59 @@
 #include "box2d/b2_world.h"
 #include "box2d/b2_body.h"
 #include "box2d/b2_math.h"
+#include "box2d/b2_contact.h"
 #include "Utility/Log.h"
 
 namespace we
 {
+	class ContactListener : public b2ContactListener
+	{
+	public:
+		dictionary<b2Body*, IPhysicsContactListener*>* Listeners = nullptr;
+
+		void BeginContact(b2Contact* Contact) override
+		{
+			if (!Listeners) return;
+
+			b2Body* BodyA = Contact->GetFixtureA()->GetBody();
+			b2Body* BodyB = Contact->GetFixtureB()->GetBody();
+
+			auto ItA = Listeners->find(BodyA);
+			if (ItA != Listeners->end() && ItA->second)
+			{
+				ItA->second->OnBeginOverlap(BodyB);
+			}
+
+			auto ItB = Listeners->find(BodyB);
+			if (ItB != Listeners->end() && ItB->second)
+			{
+				ItB->second->OnBeginOverlap(BodyA);
+			}
+		}
+
+		void EndContact(b2Contact* Contact) override
+		{
+			if (!Listeners) return;
+
+			b2Body* BodyA = Contact->GetFixtureA()->GetBody();
+			b2Body* BodyB = Contact->GetFixtureB()->GetBody();
+
+			auto ItA = Listeners->find(BodyA);
+			if (ItA != Listeners->end() && ItA->second)
+			{
+				ItA->second->OnEndOverlap(BodyB);
+			}
+
+			auto ItB = Listeners->find(BodyB);
+			if (ItB != Listeners->end() && ItB->second)
+			{
+				ItB->second->OnEndOverlap(BodyA);
+			}
+		}
+	};
+
+	static ContactListener s_ContactListener;
+
 	PhysicsSubsystem::PhysicsSubsystem()
 		: PhysicsWorld{ make_unique<b2World>(b2Vec2{ WEConfig.Physics.Gravity.x, WEConfig.Physics.Gravity.y }) }
 		, PhysicsScale{ WEConfig.Physics.PhysicsScale }
@@ -19,6 +68,9 @@ namespace we
 		, PositionIterations{ WEConfig.Physics.PositionIterations }
 	{
 		PhysicsWorld->SetAllowSleeping(false);
+		s_ContactListener.Listeners = &ContactListeners;
+		PhysicsWorld->SetContactListener(&s_ContactListener);
+		LOG("[PhysicsSubsystem] Initialized with contact listener");
 	}
 
 	PhysicsSubsystem::~PhysicsSubsystem()
@@ -64,10 +116,29 @@ namespace we
 		}
 	}
 
+	void PhysicsSubsystem::RegisterContactListener(b2Body* Body, IPhysicsContactListener* Listener)
+	{
+		if (Body && Listener)
+		{
+			ContactListeners[Body] = Listener;
+			LOG("[PhysicsSubsystem] Registered contact listener for body {}", reinterpret_cast<void*>(Body));
+		}
+	}
+
+	void PhysicsSubsystem::UnregisterContactListener(b2Body* Body)
+	{
+		if (Body)
+		{
+			ContactListeners.erase(Body);
+			LOG("[PhysicsSubsystem] Unregistered contact listener for body {}", reinterpret_cast<void*>(Body));
+		}
+	}
+
 	void PhysicsSubsystem::ProcessPendingDestruction()
 	{
 		for (auto* Body : PendingDestruction)
 		{
+			ContactListeners.erase(Body);
 			PhysicsWorld->DestroyBody(Body);
 		}
 		PendingDestruction.clear();

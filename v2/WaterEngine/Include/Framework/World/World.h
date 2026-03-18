@@ -12,6 +12,7 @@
 
 namespace we
 {
+	class PhysicsSubsystem;
 
 	class World : public Object
 	{
@@ -34,6 +35,8 @@ namespace we
 		void LoadWorld() { Subsystem.LoadWorld<WorldType>(); }
 
 		const vector<shared<Actor>>& GetActors() const { return Actors; }
+		
+		PhysicsSubsystem& GetPhysics() { return Subsystem.GetPhysics(); }
 
 	protected:
 		WorldSubsystem& Subsystem;

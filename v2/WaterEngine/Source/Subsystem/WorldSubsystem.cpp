@@ -5,11 +5,22 @@
 
 #include "Subsystem/WorldSubsystem.h"
 #include "Framework/World/World.h"
+#include "Subsystem/PhysicsSubsystem.h"
 
 namespace we
 {
-	void WorldSubsystem::Tick(float DeltaTime)
-	{
+    void WorldSubsystem::SetPhysicsRef(shared<PhysicsSubsystem> InPhysics)
+    {
+        Physics = InPhysics;
+    }
+
+    PhysicsSubsystem& WorldSubsystem::GetPhysics()
+    {
+        return *Physics.lock();
+    }
+
+    void WorldSubsystem::Tick(float DeltaTime)
+    {
         if (PendingWorld)
         {
             if (CurrentWorld)
@@ -33,7 +44,7 @@ namespace we
             // Garbage collect always runs
             GarbageCollect(DeltaTime);
         }
-	}
+    }
 
     void WorldSubsystem::GarbageCollect(float DeltaTime)
     {
@@ -49,9 +60,11 @@ namespace we
     {
         static vector<const drawable*> Drawables;
         static vector<pair<uint, float>> Indices;
+        static vector<const drawable*> ActorDrawables;
         
         Drawables.clear();
         Indices.clear();
+        ActorDrawables.clear();
         
         if (!CurrentWorld)
             return Drawables;
@@ -61,21 +74,33 @@ namespace we
         for (uint i = 0; i < Actors.size(); ++i)
         {
             const auto& Actor = Actors[i];
-            if (!Actor->IsPendingDestroy() && Actor->IsVisible() && Actor->GetDrawable())
+            if (!Actor->IsPendingDestroy() && Actor->IsVisible())
             {
-                Indices.emplace_back(i, Actor->GetRenderDepth());
+                ActorDrawables.clear();
+                Actor->GetDrawables(ActorDrawables);
+                
+                for (const auto* Drawable : ActorDrawables)
+                {
+                    if (Drawable)
+                    {
+                        Indices.emplace_back(Drawables.size(), Actor->GetRenderDepth());
+                        Drawables.push_back(Drawable);
+                    }
+                }
             }
         }
         
         std::sort(Indices.begin(), Indices.end(),
             [](const auto& A, const auto& B) { return A.second < B.second; });
         
-        Drawables.reserve(Indices.size());
+        vector<const drawable*> SortedDrawables;
+        SortedDrawables.reserve(Drawables.size());
         for (const auto& [Index, Depth] : Indices)
         {
-            Drawables.push_back(Actors[Index]->GetDrawable());
+            SortedDrawables.push_back(Drawables[Index]);
         }
         
+        Drawables = std::move(SortedDrawables);
         return Drawables;
     }
 }

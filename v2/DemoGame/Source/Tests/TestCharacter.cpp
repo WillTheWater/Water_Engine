@@ -30,7 +30,9 @@ namespace we
 		PhysicsComp->BeginPlay();
 
 		CollisionComp = make_shared<CollisionComponent>(this);
+		CollisionComp->SetRadius(64.0f);
 		CollisionComp->BeginPlay();
+		CollisionComp->DrawDebug();
 	}
 
 	void TestCharacter::SetupAnimations()
@@ -141,5 +143,16 @@ namespace we
 		}
 
 		Actor::EndPlay();
+	}
+
+	void TestCharacter::GetDrawables(vector<const drawable*>& OutDrawables) const
+	{
+		Actor::GetDrawables(OutDrawables);
+
+		if (CollisionComp)
+		{
+			if (const auto* Debug = CollisionComp->DrawDebug())
+				OutDrawables.push_back(Debug);
+		}
 	}
 }

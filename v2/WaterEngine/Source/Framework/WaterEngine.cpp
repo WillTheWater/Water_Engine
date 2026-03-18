@@ -26,7 +26,7 @@ namespace we
         Subsystem.Input    = make_unique<InputSubsystem>();
         Subsystem.GUI      = make_unique<GUISubsystem>();
         Subsystem.Save     = make_unique<SaveSubsystem>();
-        Subsystem.Physics  = make_unique<PhysicsSubsystem>();
+        Subsystem.Physics  = make_shared<PhysicsSubsystem>();
 
         BindDelegates();
     }
@@ -40,6 +40,7 @@ namespace we
         GetTimer().TriggerGarbageCollection.Bind(Subsystem.Resource.get(), &ResourceSubsystem::GarbageCollect);
         Subsystem.GUI->Initialize(Subsystem.Render->GetScreenUITarget(), Subsystem.Render->GetWorldUITarget());
         Subsystem.GUI->SetWindowSize(Subsystem.Window->getSize());
+        Subsystem.World->SetPhysicsRef(Subsystem.Physics);
     }
 
     bool WaterEngine::IsRunning() const

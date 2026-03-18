@@ -105,4 +105,10 @@ namespace we
 
 		return nullptr;
 	}
+
+	void Actor::GetDrawables(vector<const drawable*>& OutDrawables) const
+	{
+		if (const auto* Sprite = GetDrawable())
+			OutDrawables.push_back(Sprite);
+	}
 }

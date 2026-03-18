@@ -6,6 +6,7 @@
 #pragma once
 
 #include "Core/CoreMinimal.h"
+#include "Interface/Physics/IPhysicsContactListener.h"
 
 // Forward declarations for Box2D
 class b2World;
@@ -17,15 +18,6 @@ class b2ContactListener;
 
 namespace we
 {
-	// Contact listener interface for components
-	class IPhysicsContactListener
-	{
-	public:
-		virtual ~IPhysicsContactListener() = default;
-		virtual void OnBeginContact(b2Body* OtherBody) = 0;
-		virtual void OnEndContact(b2Body* OtherBody) = 0;
-	};
-
 	class PhysicsSubsystem
 	{
 	public:
@@ -44,6 +36,10 @@ namespace we
 
 		// Safe destruction during callbacks
 		void MarkForDestruction(b2Body* Body);
+
+		// Contact listener registration
+		void RegisterContactListener(b2Body* Body, IPhysicsContactListener* Listener);
+		void UnregisterContactListener(b2Body* Body);
 
 		// Scale conversion (pixels <-> meters)
 		float GetPhysicsScale() const { return PhysicsScale; }
@@ -64,5 +60,6 @@ namespace we
 		int PositionIterations;
 
 		set<b2Body*> PendingDestruction;
+		dictionary<b2Body*, IPhysicsContactListener*> ContactListeners;
 	};
 }

@@ -45,6 +45,9 @@ namespace we
 		void SetTextureRect(const recti& TexRect);
 		bool HasSprite() const { return ActorSprite.has_value(); }
 		const drawable* GetDrawable() const;
+		
+		// Collect all drawables (sprite + debug shapes)
+		virtual void GetDrawables(vector<const drawable*>& OutDrawables) const;
 
 		// Render Depth
 		float GetRenderDepth() const { return CustomDepth.value_or(Position.y); }
