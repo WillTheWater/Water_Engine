@@ -18,15 +18,10 @@ enum InputActions : int
 	MOVE_DOWN,
 	MOVE_LEFT,
 	MOVE_RIGHT,
-	
-	ACTION_JUMP,        // OnPressed test
-	ACTION_FIRE,        // OnHeld test
-	ACTION_INTERACT,    // OnReleased test
-	
-	// Gamepad button tests
-	GAMEPAD_SOUTH,  
-	GAMEPAD_EAST,     
-	GAMEPAD_START,
-	
+
+	// Interaction
+	ACTION_INTERACT,	
+
+	// UI
 	PAUSE_ACTION
 };

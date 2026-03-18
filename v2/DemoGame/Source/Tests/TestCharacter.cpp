@@ -7,6 +7,7 @@
 #include "Component/AnimationComponent.h"
 #include "Component/PhysicsComponent.h"
 #include "Component/CollisionComponent.h"
+#include "Component/MovementComponent.h"
 #include "Subsystem/ResourceSubsystem.h"
 
 namespace we
@@ -33,6 +34,9 @@ namespace we
 		CollisionComp->SetRadius(64.0f);
 		CollisionComp->BeginPlay();
 		CollisionComp->DrawDebug();
+
+		MoveComp = make_shared<MovementComponent>(this);
+		MoveComp->BeginPlay();
 	}
 
 	void TestCharacter::SetupAnimations()
@@ -120,6 +124,11 @@ namespace we
 		{
 			CollisionComp->Tick(DeltaTime);
 		}
+
+		if (MoveComp)
+		{
+			MoveComp->Tick(DeltaTime);
+		}
 	}
 
 	void TestCharacter::EndPlay()
@@ -140,6 +149,12 @@ namespace we
 		{
 			CollisionComp->EndPlay();
 			CollisionComp.reset();
+		}
+
+		if (MoveComp)
+		{
+			MoveComp->EndPlay();
+			MoveComp.reset();
 		}
 
 		Actor::EndPlay();

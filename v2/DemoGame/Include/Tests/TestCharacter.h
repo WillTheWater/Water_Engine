@@ -13,6 +13,7 @@ namespace we
 	class AnimationComponent;
 	class PhysicsComponent;
 	class CollisionComponent;
+	class MovementComponent;
 
 	enum class ETestCharAnim : uint8
 	{
@@ -50,5 +51,6 @@ namespace we
 		shared<AnimationComponent> AnimComp;
 		shared<PhysicsComponent> PhysicsComp;
 		shared<CollisionComponent> CollisionComp;
+		shared<MovementComponent> MoveComp;
 	};
 }
