@@ -103,4 +103,65 @@ namespace we
 		vec2f NewPosition = Owner->GetPosition() + (Velocity * DeltaTime);
 		Owner->SetPosition(NewPosition);
 	}
+
+	namespace
+	{
+		// Rotate a point around origin by angle (radians)
+		vec2f RotatePoint(vec2f Point, float Cos, float Sin)
+		{
+			return vec2f{
+				Point.x * Cos - Point.y * Sin,
+				Point.x * Sin + Point.y * Cos
+			};
+		}
+	}
+
+	const drawable* MovementComponent::DrawDebug()
+	{
+		if (!Owner)
+			return nullptr;
+
+		if (!DebugArrow.has_value())
+		{
+			DebugArrow = sf::VertexArray(sf::PrimitiveType::Triangles, 9);
+		}
+
+		vec2f Pos = Owner->GetPosition();
+		vec2f F = ForwardVector;
+		vec2f R = RightVector;
+		color Yellow = color::Yellow;
+
+		float w = 2.f;     // half stem width
+		float sl = 60.f;   // stem length
+		float hw = 8.f;    // half head width
+		float hl = 20.f;   // head length
+
+		// Stem corners (relative to actor pos, extending along Forward)
+		vec2f BackLeft  = Pos - R * w;
+		vec2f BackRight = Pos + R * w;
+		vec2f FrontLeft = Pos - R * w + F * sl;
+		vec2f FrontRight= Pos + R * w + F * sl;
+
+		// Arrow head points
+		vec2f HeadLeft  = Pos - R * hw + F * sl;
+		vec2f HeadRight = Pos + R * hw + F * sl;
+		vec2f HeadTip   = Pos + F * (sl + hl);
+
+		// Stem: first triangle (BackLeft, BackRight, FrontRight)
+		(*DebugArrow)[0] = sf::Vertex(BackLeft, Yellow);
+		(*DebugArrow)[1] = sf::Vertex(BackRight, Yellow);
+		(*DebugArrow)[2] = sf::Vertex(FrontRight, Yellow);
+
+		// Stem: second triangle (BackLeft, FrontRight, FrontLeft)
+		(*DebugArrow)[3] = sf::Vertex(BackLeft, Yellow);
+		(*DebugArrow)[4] = sf::Vertex(FrontRight, Yellow);
+		(*DebugArrow)[5] = sf::Vertex(FrontLeft, Yellow);
+
+		// Arrow head triangle (HeadLeft, HeadRight, HeadTip)
+		(*DebugArrow)[6] = sf::Vertex(HeadLeft, Yellow);
+		(*DebugArrow)[7] = sf::Vertex(HeadRight, Yellow);
+		(*DebugArrow)[8] = sf::Vertex(HeadTip, Yellow);
+
+		return &DebugArrow.value();
+	}
 }

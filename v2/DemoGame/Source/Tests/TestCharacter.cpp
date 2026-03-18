@@ -169,5 +169,11 @@ namespace we
 			if (const auto* Debug = CollisionComp->DrawDebug())
 				OutDrawables.push_back(Debug);
 		}
+
+		if (MoveComp)
+		{
+			if (const auto* Debug = MoveComp->DrawDebug())
+				OutDrawables.push_back(Debug);
+		}
 	}
 }
