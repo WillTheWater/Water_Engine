@@ -41,10 +41,8 @@ namespace we
 		vec2f GetRightVector() const { return RightVector; }
 		void SetFacingDirection(const vec2f& Direction);
 
-		// Debug visualization - returns combined arrow drawable
 		const drawable* DrawDebug();
 
-		// Convert world input to local space (for strafing)
 		vec2f GetLocalInput() const;
 
 	private:

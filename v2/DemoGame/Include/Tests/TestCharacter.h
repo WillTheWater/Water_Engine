@@ -46,6 +46,10 @@ namespace we
 
 	private:
 		void SetupAnimations();
+		
+		// Input handling (separated for easy removal)
+		void BindInput();
+		void HandleInput();
 
 	private:
 		shared<AnimationComponent> AnimComp;

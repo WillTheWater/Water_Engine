@@ -9,6 +9,8 @@
 #include "Component/CollisionComponent.h"
 #include "Component/MovementComponent.h"
 #include "Subsystem/ResourceSubsystem.h"
+#include "Subsystem/InputSubsystem.h"
+#include "Input/InputActions.h"
 
 namespace we
 {
@@ -37,6 +39,8 @@ namespace we
 
 		MoveComp = make_shared<MovementComponent>(this);
 		MoveComp->BeginPlay();
+
+		BindInput();
 	}
 
 	void TestCharacter::SetupAnimations()
@@ -110,6 +114,9 @@ namespace we
 	{
 		Actor::Tick(DeltaTime);
 
+		// Handle input movement (separated for easy removal)
+		HandleInput();
+
 		if (AnimComp)
 		{
 			AnimComp->Tick(DeltaTime);
@@ -174,6 +181,46 @@ namespace we
 		{
 			if (const auto* Debug = MoveComp->DrawDebug())
 				OutDrawables.push_back(Debug);
+		}
+	}
+
+	void TestCharacter::BindInput()
+	{
+		auto& Input = InputController();
+
+		// WASD
+		Input.Bind(MOVE_UP, Input::Keyboard{ sf::Keyboard::Scan::W });
+		Input.Bind(MOVE_DOWN, Input::Keyboard{ sf::Keyboard::Scan::S });
+		Input.Bind(MOVE_LEFT, Input::Keyboard{ sf::Keyboard::Scan::A });
+		Input.Bind(MOVE_RIGHT, Input::Keyboard{ sf::Keyboard::Scan::D });
+
+		// Arrow keys
+		Input.Bind(MOVE_UP, Input::Keyboard{ sf::Keyboard::Scan::Up });
+		Input.Bind(MOVE_DOWN, Input::Keyboard{ sf::Keyboard::Scan::Down });
+		Input.Bind(MOVE_LEFT, Input::Keyboard{ sf::Keyboard::Scan::Left });
+		Input.Bind(MOVE_RIGHT, Input::Keyboard{ sf::Keyboard::Scan::Right });
+	}
+
+	void TestCharacter::HandleInput()
+	{
+		if (!MoveComp)
+			return;
+
+		auto& Input = InputController();
+		vec2f InputDir{};
+
+		if (Input.Pressed(MOVE_UP))
+			InputDir.y -= 1.0f;
+		if (Input.Pressed(MOVE_DOWN))
+			InputDir.y += 1.0f;
+		if (Input.Pressed(MOVE_LEFT))
+			InputDir.x -= 1.0f;
+		if (Input.Pressed(MOVE_RIGHT))
+			InputDir.x += 1.0f;
+
+		if (InputDir.lengthSquared() > 0.0f)
+		{
+			MoveComp->AddInputVector(InputDir);
 		}
 	}
 }
