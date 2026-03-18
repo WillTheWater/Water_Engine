@@ -7,6 +7,7 @@
 #include "Levels/MainMenu.h"
 #include "Framework/World/Actor.h"
 #include "Tests/TestCharacter.h"
+#include "Tests/CollisionActor.h"
 #include "UI/PauseMenuUI.h"
 #include "Subsystem/TimerSubsystem.h"
 #include "Subsystem/ResourceSubsystem.h"
@@ -33,7 +34,10 @@ namespace we
 
         // Spawn test character
         Character = SpawnActor<TestCharacter>().lock();
-        Character->SetPosition({960.0f, 540.0f});  // Center of 1920x1080
+        Character->SetPosition({960.0f, 540.0f});
+
+        auto Obstacle = SpawnActor<CollisionActor>().lock();
+        Obstacle->SetPosition({640.0f, 540.0f});
 
         // Bind pause action to ESC key
         InputController().Bind(PAUSE_ACTION, Input::Keyboard{ sf::Keyboard::Scan::Escape });
