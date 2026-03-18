@@ -5,6 +5,7 @@
 
 #include "Tests/TestCharacter.h"
 #include "Component/AnimationComponent.h"
+#include <cmath>
 #include "Component/PhysicsComponent.h"
 #include "Component/CollisionComponent.h"
 #include "Component/MovementComponent.h"
@@ -45,9 +46,12 @@ namespace we
 
 	void TestCharacter::SetupAnimations()
 	{
-		// Sprite sheet: 2048x2048, 8x8 grid, each frame 256x256
+		// Sprite sheets: 2048x2048, 8x8 grid, each frame 256x256
 		SpriteSheet IdleSheet("Assets/Textures/Game/idle.png", vec2u{256, 256}, 8);
 		AnimComp->AddSpriteSheet(ETestCharSheet::Idle, IdleSheet);
+		
+		SpriteSheet WalkSheet("Assets/Textures/Game/walk.png", vec2u{256, 256}, 8);
+		AnimComp->AddSpriteSheet(ETestCharSheet::Walk, WalkSheet);
 
 		// 8-way idle animations, 8 frames each
 		// Row 0: Forward (Down/South)
@@ -106,6 +110,63 @@ namespace we
 			vec2u{7, 0}, vec2u{7, 7}
 		});
 
+		// 8-way walk animations, 8 frames each (same row layout)
+		// Row 0: Forward (Down/South)
+		AnimComp->AddAnimation(Animation{
+			ETestCharAnim::WalkForward,
+			ETestCharSheet::Walk,
+			vec2u{0, 0}, vec2u{0, 7}
+		});
+
+		// Row 1: Forward-Right (Southeast)
+		AnimComp->AddAnimation(Animation{
+			ETestCharAnim::WalkForwardRight,
+			ETestCharSheet::Walk,
+			vec2u{1, 0}, vec2u{1, 7}
+		});
+
+		// Row 2: Right (East)
+		AnimComp->AddAnimation(Animation{
+			ETestCharAnim::WalkRight,
+			ETestCharSheet::Walk,
+			vec2u{2, 0}, vec2u{2, 7}
+		});
+
+		// Row 3: Back-Right (Northeast)
+		AnimComp->AddAnimation(Animation{
+			ETestCharAnim::WalkBackRight,
+			ETestCharSheet::Walk,
+			vec2u{3, 0}, vec2u{3, 7}
+		});
+
+		// Row 4: Back (North)
+		AnimComp->AddAnimation(Animation{
+			ETestCharAnim::WalkBack,
+			ETestCharSheet::Walk,
+			vec2u{4, 0}, vec2u{4, 7}
+		});
+
+		// Row 5: Back-Left (Northwest)
+		AnimComp->AddAnimation(Animation{
+			ETestCharAnim::WalkBackLeft,
+			ETestCharSheet::Walk,
+			vec2u{5, 0}, vec2u{5, 7}
+		});
+
+		// Row 6: Left (West)
+		AnimComp->AddAnimation(Animation{
+			ETestCharAnim::WalkLeft,
+			ETestCharSheet::Walk,
+			vec2u{6, 0}, vec2u{6, 7}
+		});
+
+		// Row 7: Forward-Left (Southwest)
+		AnimComp->AddAnimation(Animation{
+			ETestCharAnim::WalkForwardLeft,
+			ETestCharSheet::Walk,
+			vec2u{7, 0}, vec2u{7, 7}
+		});
+
 		// Start with forward-facing idle
 		AnimComp->TransitionTo(ETestCharAnim::IdleForward);
 	}
@@ -116,6 +177,9 @@ namespace we
 
 		// Handle input movement (separated for easy removal)
 		HandleInput();
+		
+		// Update facing direction based on movement
+		UpdateDirectionalAnimation();
 
 		if (AnimComp)
 		{
@@ -221,6 +285,96 @@ namespace we
 		if (InputDir.lengthSquared() > 0.0f)
 		{
 			MoveComp->AddInputVector(InputDir);
+		}
+	}
+
+	void TestCharacter::UpdateDirectionalAnimation()
+	{
+		if (!AnimComp || !MoveComp)
+			return;
+
+		vec2f LastDir = MoveComp->GetLastMoveDirection();
+		ETestCharAnim TargetAnim = MoveComp->IsMoving() 
+			? DirectionToWalkAnim(LastDir) 
+			: DirectionToIdleAnim(LastDir);
+			
+		if (!AnimComp->IsPlaying(static_cast<uint8>(TargetAnim)))
+		{
+			AnimComp->TransitionTo(TargetAnim);
+		}
+	}
+
+	ETestCharAnim TestCharacter::DirectionToIdleAnim(const vec2f& Dir) const
+	{
+		// Normalize direction
+		vec2f N = Dir;
+		float LenSq = N.lengthSquared();
+		if (LenSq > 0.0f)
+		{
+			N /= std::sqrt(LenSq);
+		}
+
+		float Angle = std::atan2(N.y, N.x);
+		float Degrees = Angle * 180.0f / 3.14159f;
+		float FacingDegrees = Degrees + 90.0f;
+		
+		// Convert to 0-360 range with 0 at Back, going clockwise
+		float Normalized = Degrees + 90.0f;
+		if (Normalized < 0.0f)
+			Normalized += 360.0f;
+		if (Normalized >= 360.0f)
+			Normalized -= 360.0f;
+		
+		int Sector = static_cast<int>((Normalized + 22.5f) / 45.0f) % 8;
+		
+		switch (Sector)
+		{
+			case 0: return ETestCharAnim::IdleBack;
+			case 1: return ETestCharAnim::IdleBackRight;
+			case 2: return ETestCharAnim::IdleRight;
+			case 3: return ETestCharAnim::IdleForwardRight;
+			case 4: return ETestCharAnim::IdleForward;
+			case 5: return ETestCharAnim::IdleForwardLeft;
+			case 6: return ETestCharAnim::IdleLeft;
+			case 7: return ETestCharAnim::IdleBackLeft;
+			default: return ETestCharAnim::IdleForward;
+		}
+	}
+
+	ETestCharAnim TestCharacter::DirectionToWalkAnim(const vec2f& Dir) const
+	{
+		// Normalize direction
+		vec2f N = Dir;
+		float LenSq = N.lengthSquared();
+		if (LenSq > 0.0f)
+		{
+			N /= std::sqrt(LenSq);
+		}
+
+		float Angle = std::atan2(N.y, N.x);
+		float Degrees = Angle * 180.0f / 3.14159f;
+		
+		// Convert to 0-360 range with 0 at Back, going clockwise
+		float Normalized = Degrees + 90.0f;
+		if (Normalized < 0.0f)
+			Normalized += 360.0f;
+		if (Normalized >= 360.0f)
+			Normalized -= 360.0f;
+		
+		// 8 sectors of 45 degrees, offset by 22.5 to center on directions
+		int Sector = static_cast<int>((Normalized + 22.5f) / 45.0f) % 8;
+		
+		switch (Sector)
+		{
+			case 0: return ETestCharAnim::WalkBack;
+			case 1: return ETestCharAnim::WalkBackRight;
+			case 2: return ETestCharAnim::WalkRight;
+			case 3: return ETestCharAnim::WalkForwardRight;
+			case 4: return ETestCharAnim::WalkForward;
+			case 5: return ETestCharAnim::WalkForwardLeft;
+			case 6: return ETestCharAnim::WalkLeft;
+			case 7: return ETestCharAnim::WalkBackLeft;
+			default: return ETestCharAnim::WalkForward;
 		}
 	}
 }

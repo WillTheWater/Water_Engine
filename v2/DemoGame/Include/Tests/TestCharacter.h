@@ -17,6 +17,7 @@ namespace we
 
 	enum class ETestCharAnim : uint8
 	{
+		// Idle animations
 		IdleForward,
 		IdleForwardRight,
 		IdleRight,
@@ -24,12 +25,23 @@ namespace we
 		IdleBack,
 		IdleBackLeft,
 		IdleLeft,
-		IdleForwardLeft
+		IdleForwardLeft,
+		
+		// Walk animations
+		WalkForward,
+		WalkForwardRight,
+		WalkRight,
+		WalkBackRight,
+		WalkBack,
+		WalkBackLeft,
+		WalkLeft,
+		WalkForwardLeft
 	};
 
 	enum class ETestCharSheet : uint8
 	{
-		Idle
+		Idle,
+		Walk
 	};
 
 	class TestCharacter : public Actor
@@ -46,10 +58,11 @@ namespace we
 
 	private:
 		void SetupAnimations();
-		
-		// Input handling (separated for easy removal)
 		void BindInput();
 		void HandleInput();
+		void UpdateDirectionalAnimation();
+		ETestCharAnim DirectionToIdleAnim(const vec2f& Dir) const;
+		ETestCharAnim DirectionToWalkAnim(const vec2f& Dir) const;
 
 	private:
 		shared<AnimationComponent> AnimComp;

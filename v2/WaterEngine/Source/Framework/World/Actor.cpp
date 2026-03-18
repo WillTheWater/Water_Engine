@@ -78,7 +78,14 @@ namespace we
 			return;
 		}
 		
-		ActorSprite.emplace(*Texture);
+		if (!ActorSprite.has_value())
+		{
+			ActorSprite.emplace(*Texture);  // Create sprite once
+		}
+		else
+		{
+			ActorSprite->setTexture(*Texture, true);  // Change texture, preserve transform
+		}
 	}
 
 	void Actor::SetSpriteOrigin(const vec2f& Origin)

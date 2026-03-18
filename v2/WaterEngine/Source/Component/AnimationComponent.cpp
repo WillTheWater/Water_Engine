@@ -35,11 +35,6 @@ namespace we
 
         const Animation& Anim = AnimIt->second;
 
-        if (Anim.SpriteSheetID != ActiveSheetID)
-        {
-            SetActiveSpriteSheetInternal(Anim.SpriteSheetID);
-        }
-
         ElapsedTime += DeltaTime * GlobalPlaybackSpeed * Anim.PlaybackSpeed;
 
         while (ElapsedTime >= Anim.FrameDuration)
@@ -49,10 +44,10 @@ namespace we
             if (!AdvanceFrame())
             {
                 if (Anim.NextState.has_value())
-        {
-            TransitionToInternal(Anim.NextState.value());
-            return;
-        }
+                {
+                    TransitionToInternal(Anim.NextState.value());
+                    return;
+                }
                 if (!Anim.bLoop)
                 {
                     return;
@@ -75,28 +70,6 @@ namespace we
     void AnimationComponent::AddSpriteSheetInternal(uint8 SheetID, const SpriteSheet& Sheet)
     {
         SpriteSheets[SheetID] = Sheet;
-
-        if (SpriteSheets.size() == 1)
-        {
-            SetActiveSpriteSheetInternal(SheetID);
-            SyncOriginToFrame();
-        }
-    }
-
-    void AnimationComponent::SetActiveSpriteSheetInternal(uint8 SheetID)
-    {
-        if (ActiveSheetID == SheetID) return;
-        if (!SpriteSheets.contains(SheetID)) return;
-
-        ActiveSheetID = SheetID;
-
-        if (Owner)
-        {
-            if (auto* Sheet = GetActiveSheet())
-            {
-                Owner->SetSprite(Sheet->Texture);
-            }
-        }
     }
 
     void AnimationComponent::AddAnimation(const Animation& Anim)
@@ -119,13 +92,6 @@ namespace we
         CurrentState = State;
         CurrentFrame = AnimIt->second.StartFrame;
         ElapsedTime = 0.0f;
-
-        if (AnimIt->second.SpriteSheetID != ActiveSheetID)
-        {
-            SetActiveSpriteSheetInternal(AnimIt->second.SpriteSheetID);
-        }
-
-        UpdateSpriteRect();
     }
 
     void AnimationComponent::SetGlobalPlaybackSpeed(float Multiplier)
@@ -161,12 +127,13 @@ namespace we
         const SpriteSheet* Sheet = GetActiveSheet();
         if (!Sheet || !Sheet->Texture) return;
 
-        // Only set sprite and origin when sheet actually changes (optimization)
-        if (ActiveSheetID != LastSpriteSheetID)
+        if (Anim.SpriteSheetID != LastSheetID)
         {
+            vec2f CurrentPos = Owner->GetPosition();
             Owner->SetSprite(Sheet->Texture);
             Owner->SetSpriteOrigin(vec2f(Sheet->FrameSize) * 0.5f);
-            LastSpriteSheetID = ActiveSheetID;
+            Owner->SetPosition(CurrentPos);
+            LastSheetID = Anim.SpriteSheetID;
         }
 
         recti TexRect;
@@ -180,15 +147,6 @@ namespace we
         float ScaleX = (bFaceLeft != Anim.bFlipX) ? -std::abs(BaseScale.x) : std::abs(BaseScale.x);
         float ScaleY = Anim.bFlipY ? -BaseScale.y : BaseScale.y;
         Owner->SetScale({ ScaleX, ScaleY });
-    }
-
-    void AnimationComponent::SyncOriginToFrame()
-    {
-        if (!Owner) return;
-        if (const SpriteSheet* Sheet = GetActiveSheet())
-        {
-            Owner->SetSpriteOrigin(vec2f(Sheet->FrameSize) * 0.5f);
-        }
     }
 
     bool AnimationComponent::AdvanceFrame()
@@ -227,13 +185,23 @@ namespace we
 
     SpriteSheet* AnimationComponent::GetActiveSheet()
     {
-        auto It = SpriteSheets.find(ActiveSheetID);
+        if (!CurrentState.has_value()) return nullptr;
+        
+        auto AnimIt = Animations.find(CurrentState.value());
+        if (AnimIt == Animations.end()) return nullptr;
+        
+        auto It = SpriteSheets.find(AnimIt->second.SpriteSheetID);
         return (It != SpriteSheets.end()) ? &It->second : nullptr;
     }
 
     const SpriteSheet* AnimationComponent::GetActiveSheet() const
     {
-        auto It = SpriteSheets.find(ActiveSheetID);
+        if (!CurrentState.has_value()) return nullptr;
+        
+        auto AnimIt = Animations.find(CurrentState.value());
+        if (AnimIt == Animations.end()) return nullptr;
+        
+        auto It = SpriteSheets.find(AnimIt->second.SpriteSheetID);
         return (It != SpriteSheets.end()) ? &It->second : nullptr;
     }
 }

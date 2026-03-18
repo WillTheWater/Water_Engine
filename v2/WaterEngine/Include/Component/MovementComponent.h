@@ -34,12 +34,16 @@ namespace we
 		// Movement queries
 		vec2f GetVelocity() const { return Velocity; }
 		vec2f GetInputDirection() const;
-		bool IsMoving() const { return Velocity.lengthSquared() > 1.0f; }
+		bool IsMoving() const { return bIsMoving; }
 
 		// Orientation
 		vec2f GetForwardVector() const { return ForwardVector; }
 		vec2f GetRightVector() const { return RightVector; }
 		void SetFacingDirection(const vec2f& Direction);
+		
+		// Last movement direction (for animation facing when stopped)
+		vec2f GetLastMoveDirection() const { return LastMoveDir; }
+		void SetLastMoveDirection(const vec2f& Dir);
 
 		const drawable* DrawDebug();
 
@@ -57,6 +61,10 @@ namespace we
 
 		vec2f ForwardVector{ 0, 1 };
 		vec2f RightVector{ 1, 0 };
+		
+		// Movement state (for animation/controller queries)
+		vec2f LastMoveDir{ 0.0f, 1.0f };  // Default facing down/forward
+		bool bIsMoving = false;
 
 		bool bAutoOrient = true;
 		optional<sf::VertexArray> DebugArrow;

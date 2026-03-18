@@ -85,13 +85,6 @@ namespace we
             static_assert(std::is_enum_v<T>, "SheetID must be an enum type");
             AddSpriteSheetInternal(static_cast<uint8>(SheetID), Sheet);
         }
-        
-        template<typename T>
-        void SetActiveSpriteSheet(T SheetID)
-        {
-            static_assert(std::is_enum_v<T>, "SheetID must be an enum type");
-            SetActiveSpriteSheetInternal(static_cast<uint8>(SheetID));
-        }
 
         template<typename T>
         void TransitionTo(T State)
@@ -111,30 +104,27 @@ namespace we
 
     private:
         void AddSpriteSheetInternal(uint8 SheetID, const SpriteSheet& Sheet);
-        void SetActiveSpriteSheetInternal(uint8 SheetID);
         void TransitionToInternal(uint8 State);
         bool IsPlayingInternal(uint8 State) const;
+        
+        SpriteSheet* GetActiveSheet();
+        const SpriteSheet* GetActiveSheet() const;
+
+        void UpdateSpriteRect();
+        bool AdvanceFrame();
 
     private:
         Actor* Owner;
 
         dictionary<uint8, SpriteSheet> SpriteSheets;
-        uint8 ActiveSheetID = 255;
-        
-        SpriteSheet* GetActiveSheet();
-        const SpriteSheet* GetActiveSheet() const;
-
         dictionary<uint8, Animation> Animations;
+        
         optional<uint8> CurrentState;
         vec2u CurrentFrame;
         float ElapsedTime = 0.0f;
         float GlobalPlaybackSpeed = 1.0f;
         bool bFaceLeft = false;
         
-        uint8 LastSpriteSheetID = 255;
-
-        void UpdateSpriteRect();
-        void SyncOriginToFrame();
-        bool AdvanceFrame();
+        uint8 LastSheetID = 255;
     };
 }

@@ -23,11 +23,13 @@ namespace we
 		if (!Owner)
 			return;
 
-		// Calculate velocity from input
-		if (LengthSquared(InputVector) > 0.001f)
+		// Calculate velocity from input and update movement state
+		bIsMoving = LengthSquared(InputVector) > 0.001f;
+		if (bIsMoving)
 		{
 			InputVector = Normalize(InputVector);
 			Velocity = InputVector * Speed;
+			LastMoveDir = InputVector;  // Store for animation facing
 		}
 		else
 		{
@@ -74,6 +76,14 @@ namespace we
 		{
 			ForwardVector = Normalize(Direction);
 			RightVector = Perpendicular(ForwardVector);
+		}
+	}
+
+	void MovementComponent::SetLastMoveDirection(const vec2f& Dir)
+	{
+		if (LengthSquared(Dir) > 0.001f)
+		{
+			LastMoveDir = Normalize(Dir);
 		}
 	}
 
