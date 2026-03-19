@@ -5,6 +5,7 @@
 
 #include "Tests/CollisionActor.h"
 #include "Component/CollisionComponent.h"
+#include "Component/PhysicsComponent.h"
 
 namespace we
 {
@@ -15,12 +16,38 @@ namespace we
 
 	CollisionActor::~CollisionActor() = default;
 
+	void CollisionActor::SetBodyType(b2BodyType Type)
+	{
+		BodyType = Type;
+	}
+
+	void CollisionActor::SetShapeType(PhysicsComponent::EShapeType Type)
+	{
+		PhysShapeType = Type;
+	}
+
+	void CollisionActor::SetPhysicsSize(float Size)
+	{
+		PhysicsSize = Size;
+	}
+
+	void CollisionActor::SetCollisionSize(float Size)
+	{
+		CollisionSize = Size;
+	}
+
 	void CollisionActor::BeginPlay()
 	{
 		Actor::BeginPlay();
 
+		PhysicsComp = make_shared<PhysicsComponent>(this);
+		PhysicsComp->SetBodyType(BodyType);
+		PhysicsComp->SetShapeType(PhysShapeType);
+		PhysicsComp->SetShapeSize({PhysicsSize, PhysicsSize});
+		PhysicsComp->BeginPlay();
+
 		CollisionComp = make_shared<CollisionComponent>(this);
-		CollisionComp->SetRadius(64.0f);
+		CollisionComp->SetRadius(CollisionSize);
 		CollisionComp->BeginPlay();
 		CollisionComp->DrawDebug();
 	}
@@ -28,6 +55,11 @@ namespace we
 	void CollisionActor::Tick(float DeltaTime)
 	{
 		Actor::Tick(DeltaTime);
+
+		if (PhysicsComp)
+		{
+			PhysicsComp->Tick(DeltaTime);
+		}
 
 		if (CollisionComp)
 		{
@@ -37,6 +69,12 @@ namespace we
 
 	void CollisionActor::EndPlay()
 	{
+		if (PhysicsComp)
+		{
+			PhysicsComp->EndPlay();
+			PhysicsComp.reset();
+		}
+
 		if (CollisionComp)
 		{
 			CollisionComp->EndPlay();
@@ -49,6 +87,12 @@ namespace we
 	void CollisionActor::GetDrawables(vector<const drawable*>& OutDrawables) const
 	{
 		Actor::GetDrawables(OutDrawables);
+
+		if (PhysicsComp)
+		{
+			if (const auto* Debug = PhysicsComp->DrawDebug())
+				OutDrawables.push_back(Debug);
+		}
 
 		if (CollisionComp)
 		{

@@ -6,6 +6,7 @@
 #include "Tests/TestCharacter.h"
 #include "Component/AnimationComponent.h"
 #include <cmath>
+#include "box2d/b2_body.h"
 #include "Component/PhysicsComponent.h"
 #include "Component/CollisionComponent.h"
 #include "Component/MovementComponent.h"
@@ -30,23 +31,32 @@ namespace we
 		SetupAnimations();
 		AnimComp->BeginPlay();
 
+		// Create physics component
 		PhysicsComp = make_shared<PhysicsComponent>(this);
+		PhysicsComp->SetBodyType(b2_dynamicBody);  // Dynamic - collides with all body types
+		PhysicsComp->SetShapeType(PhysicsComponent::EShapeType::Circle);
+		PhysicsComp->SetShapeSize({42.0f, 42.0f});
+		PhysicsComp->SetLinearDamping(10.0f);       // High damping stops when not moving
 		PhysicsComp->BeginPlay();
 
+		// Create collision component)
 		CollisionComp = make_shared<CollisionComponent>(this);
 		CollisionComp->SetRadius(64.0f);
 		CollisionComp->BeginPlay();
 		CollisionComp->DrawDebug();
 
+		// Create movement component
 		MoveComp = make_shared<MovementComponent>(this);
 		MoveComp->BeginPlay();
+		
+		// BIND: Movement velocity -> Physics body
+		MoveComp->OnVelocityCalculated.Bind(PhysicsComp.get(), &PhysicsComponent::SetVelocity);
 
 		BindInput();
 	}
 
 	void TestCharacter::SetupAnimations()
 	{
-		// Sprite sheets: 2048x2048, 8x8 grid, each frame 256x256
 		SpriteSheet IdleSheet("Assets/Textures/Game/idle.png", vec2u{256, 256}, 8);
 		AnimComp->AddSpriteSheet(ETestCharSheet::Idle, IdleSheet);
 		
@@ -110,7 +120,7 @@ namespace we
 			vec2u{7, 0}, vec2u{7, 7}
 		});
 
-		// 8-way walk animations, 8 frames each (same row layout)
+		// 8-way walk animations, 8 frames each
 		// Row 0: Forward (Down/South)
 		AnimComp->AddAnimation(Animation{
 			ETestCharAnim::WalkForward,
@@ -175,30 +185,32 @@ namespace we
 	{
 		Actor::Tick(DeltaTime);
 
-		// Handle input movement (separated for easy removal)
 		HandleInput();
 		
-		// Update facing direction based on movement
-		UpdateDirectionalAnimation();
-
-		if (AnimComp)
+		// Movement calculates velocity and broadcasts to Physics via delegate
+		if (MoveComp)
 		{
-			AnimComp->Tick(DeltaTime);
+			MoveComp->Tick(DeltaTime);
 		}
-
+		
+		// Physics body moves and syncs position to actor
 		if (PhysicsComp)
 		{
 			PhysicsComp->Tick(DeltaTime);
 		}
-
+		
+		// Collision sensor follows actor position
 		if (CollisionComp)
 		{
 			CollisionComp->Tick(DeltaTime);
 		}
-
-		if (MoveComp)
+		
+		UpdateDirectionalAnimation();
+		
+		// Animation updates frames
+		if (AnimComp)
 		{
-			MoveComp->Tick(DeltaTime);
+			AnimComp->Tick(DeltaTime);
 		}
 	}
 
@@ -234,6 +246,12 @@ namespace we
 	void TestCharacter::GetDrawables(vector<const drawable*>& OutDrawables) const
 	{
 		Actor::GetDrawables(OutDrawables);
+
+		if (PhysicsComp)
+		{
+			if (const auto* Debug = PhysicsComp->DrawDebug())
+				OutDrawables.push_back(Debug);
+		}
 
 		if (CollisionComp)
 		{

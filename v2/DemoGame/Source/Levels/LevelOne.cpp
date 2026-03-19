@@ -8,6 +8,7 @@
 #include "Framework/World/Actor.h"
 #include "Tests/TestCharacter.h"
 #include "Tests/CollisionActor.h"
+#include "Component/PhysicsComponent.h"
 #include "UI/PauseMenuUI.h"
 #include "Subsystem/TimerSubsystem.h"
 #include "Subsystem/ResourceSubsystem.h"
@@ -36,10 +37,32 @@ namespace we
         Character = SpawnActor<TestCharacter>().lock();
         Character->SetPosition({960.0f, 540.0f});
 
-        auto Obstacle = SpawnActor<CollisionActor>().lock();
-        Obstacle->SetPosition({640.0f, 540.0f});
+        // Spawn 3 obstacles with different physics body types for testing
+        
+        // Static obstacle
+        auto StaticObstacle = SpawnActor<CollisionActor>().lock();
+        StaticObstacle->SetBodyType(b2_staticBody);
+        StaticObstacle->SetShapeType(we::PhysicsComponent::EShapeType::Rectangle);
+        StaticObstacle->SetPhysicsSize(42.0f); 
+        StaticObstacle->SetCollisionSize(64.0f);
+        StaticObstacle->SetPosition({400.0f, 540.0f});
+        
+        // Kinematic obstacle
+        auto KinematicObstacle = SpawnActor<CollisionActor>().lock();
+        KinematicObstacle->SetBodyType(b2_kinematicBody);
+        KinematicObstacle->SetShapeType(we::PhysicsComponent::EShapeType::Circle);
+        KinematicObstacle->SetPhysicsSize(42.0f); 
+        KinematicObstacle->SetCollisionSize(64.0f);
+        KinematicObstacle->SetPosition({640.0f, 400.0f});
+        
+        // Dynamic obstacle
+        auto DynamicObstacle = SpawnActor<CollisionActor>().lock();
+        DynamicObstacle->SetBodyType(b2_dynamicBody);
+        DynamicObstacle->SetShapeType(we::PhysicsComponent::EShapeType::Circle);
+        DynamicObstacle->SetPhysicsSize(42.0f);  
+        DynamicObstacle->SetCollisionSize(64.0f);
+        DynamicObstacle->SetPosition({640.0f, 680.0f});
 
-        // Bind pause action to ESC key
         InputController().Bind(PAUSE_ACTION, Input::Keyboard{ sf::Keyboard::Scan::Escape });
 
         // Initialize pause menu
@@ -50,8 +73,6 @@ namespace we
         PauseUI->OnResumeClicked.Bind(this, &LevelOne::ResumeGame);
         PauseUI->OnSettingsClicked.Bind(this, &LevelOne::OnSettings);
         PauseUI->OnMainMenuClicked.Bind(this, &LevelOne::ReturnToMainMenu);
-
-        LOG("[LevelOne] BeginPlay complete");
     }
 
     void LevelOne::Tick(float DeltaTime)

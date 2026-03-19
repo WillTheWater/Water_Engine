@@ -23,26 +23,19 @@ namespace we
 		if (!Owner)
 			return;
 
-		// Calculate velocity from input and update movement state
-		bIsMoving = LengthSquared(InputVector) > 0.001f;
-		if (bIsMoving)
-		{
-			InputVector = Normalize(InputVector);
-			Velocity = InputVector * Speed;
-			LastMoveDir = InputVector;  // Store for animation facing
-		}
-		else
-		{
-			Velocity = {};
-		}
-
+		// Calculate velocity from input
+		Velocity = CalculateVelocity();
+		
 		// Update orientation
-		if (bAutoOrient && LengthSquared(Velocity) > 0.001f)
+		if (bAutoOrient && bIsMoving)
 		{
 			UpdateOrientation();
 		}
 
-		ApplyMovement(DeltaTime);
+		// Broadcast velocity to listeners (PhysicsComponent, etc.)
+		// If no physics component is bound, movement will be applied directly
+		OnVelocityCalculated.Broadcast(Velocity);
+		
 		InputVector = {};
 	}
 
@@ -87,6 +80,18 @@ namespace we
 		}
 	}
 
+	vec2f MovementComponent::CalculateVelocity()
+	{
+		bIsMoving = LengthSquared(InputVector) > 0.001f;
+		if (bIsMoving)
+		{
+			vec2f NormalizedInput = Normalize(InputVector);
+			LastMoveDir = NormalizedInput;
+			return NormalizedInput * Speed;
+		}
+		return vec2f{};
+	}
+
 	vec2f MovementComponent::GetLocalInput() const
 	{
 		if (LengthSquared(InputVector) < 0.001f)
@@ -110,8 +115,13 @@ namespace we
 
 	void MovementComponent::ApplyMovement(float DeltaTime)
 	{
-		vec2f NewPosition = Owner->GetPosition() + (Velocity * DeltaTime);
-		Owner->SetPosition(NewPosition);
+		// Only apply direct movement if no physics component is present
+		// Physics component will handle movement via velocity when available
+		if (Owner && Velocity.lengthSquared() > 0.0f)
+		{
+			vec2f NewPosition = Owner->GetPosition() + (Velocity * DeltaTime);
+			Owner->SetPosition(NewPosition);
+		}
 	}
 
 	namespace

@@ -7,6 +7,7 @@
 
 #include "Core/CoreMinimal.h"
 #include "Interface/Actor/IActorComponent.h"
+#include "Utility/Delegate.h"
 
 namespace we
 {
@@ -48,10 +49,14 @@ namespace we
 		const drawable* DrawDebug();
 
 		vec2f GetLocalInput() const;
+		
+		// Velocity broadcast delegate - bind PhysicsComponent::SetVelocity here
+		Delegate<vec2f> OnVelocityCalculated;
 
 	private:
 		void UpdateOrientation();
 		void ApplyMovement(float DeltaTime);
+		vec2f CalculateVelocity();
 
 	private:
 		Actor* Owner;
