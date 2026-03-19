@@ -30,9 +30,39 @@ namespace we
 		void OnBeginOverlap(b2Body* OtherBody) override;
 		void OnEndOverlap(b2Body* OtherBody) override;
 
-		// Queries
-		bool IsOverlapping() const { return OverlapCount > 0; }
-		int GetOverlapCount() const { return OverlapCount; }
+		// Overlap queries - Unreal-style "OtherActor" API
+		bool IsOverlapping() const { return !OverlappingActors.empty(); }
+		bool IsOtherActor(Actor* CheckActor) const;
+		
+		// Get all overlapping actors
+		const set<Actor*>& GetOtherActors() const { return OverlappingActors; }
+		
+		// Get first overlapping actor of type (most common use case)
+		template<typename T>
+		T* GetOtherActor() const
+		{
+			for (Actor* Other : OverlappingActors)
+			{
+				if (auto* Casted = dynamic_cast<T*>(Other))
+					return Casted;
+			}
+			return nullptr;
+		}
+		
+		// Get all overlapping actors of type
+		template<typename T>
+		vector<T*> GetOtherActorsOfType() const
+		{
+			vector<T*> Result;
+			for (Actor* Other : OverlappingActors)
+			{
+				if (auto* Casted = dynamic_cast<T*>(Other))
+					Result.push_back(Casted);
+			}
+			return Result;
+		}
+		
+		int GetOverlapCount() const { return static_cast<int>(OverlappingActors.size()); }
 
 		// Debug
 		const drawable* DrawDebug();
@@ -40,13 +70,14 @@ namespace we
 	private:
 		void CreateBody();
 		void DestroyBody();
+		Actor* GetActorFromBody(b2Body* Body) const;
 
 	private:
 		Actor* Owner;
 		float Radius = 32.0f;
 		b2Body* Body = nullptr;
-		int OverlapCount = 0;
 		
+		set<Actor*> OverlappingActors;  // Tracks overlapping actors (not bodies)
 		optional<circle> DebugCircle;
 	};
 }

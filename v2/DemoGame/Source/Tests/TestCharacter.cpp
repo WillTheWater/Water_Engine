@@ -5,19 +5,18 @@
 
 #include "Tests/TestCharacter.h"
 #include "Component/AnimationComponent.h"
-#include <cmath>
-#include "box2d/b2_body.h"
 #include "Component/PhysicsComponent.h"
 #include "Component/CollisionComponent.h"
 #include "Component/MovementComponent.h"
 #include "Subsystem/ResourceSubsystem.h"
 #include "Subsystem/InputSubsystem.h"
 #include "Input/InputActions.h"
+#include <cmath>
 
 namespace we
 {
 	TestCharacter::TestCharacter(World& OwningWorld)
-		: Actor(OwningWorld)
+		: Character(OwningWorld)
 	{
 	}
 
@@ -25,157 +24,50 @@ namespace we
 
 	void TestCharacter::BeginPlay()
 	{
-		Actor::BeginPlay();
-
-		AnimComp = make_shared<AnimationComponent>(this);
-		SetupAnimations();
-		AnimComp->BeginPlay();
-
-		// Create physics component
-		PhysicsComp = make_shared<PhysicsComponent>(this);
-		PhysicsComp->SetBodyType(b2_dynamicBody);  // Dynamic - collides with all body types
+		// Configure components BEFORE base BeginPlay creates them
+		PhysicsComp->SetBodyType(b2_dynamicBody);
 		PhysicsComp->SetShapeType(PhysicsComponent::EShapeType::Circle);
 		PhysicsComp->SetShapeSize({42.0f, 42.0f});
-		PhysicsComp->SetLinearDamping(10.0f);       // High damping stops when not moving
-		PhysicsComp->BeginPlay();
+		PhysicsComp->SetLinearDamping(10.0f);
 
-		// Create collision component)
-		CollisionComp = make_shared<CollisionComponent>(this);
-		CollisionComp->SetRadius(64.0f);
-		CollisionComp->BeginPlay();
-		CollisionComp->DrawDebug();
+		CollComp->SetRadius(64.0f);
 
-		// Create movement component
-		MoveComp = make_shared<MovementComponent>(this);
-		MoveComp->BeginPlay();
-		
-		// BIND: Movement velocity -> Physics body
-		MoveComp->OnVelocityCalculated.Bind(PhysicsComp.get(), &PhysicsComponent::SetVelocity);
+		// Now initialize base (creates and initializes components)
+		Character::BeginPlay();
 
+		// Post-initialization setup
+		SetupAnimations();
 		BindInput();
 	}
 
 	void TestCharacter::SetupAnimations()
 	{
+		// Sprite sheets: 2048x2048, 8x8 grid, each frame 256x256
 		SpriteSheet IdleSheet("Assets/Textures/Game/idle.png", vec2u{256, 256}, 8);
 		AnimComp->AddSpriteSheet(ETestCharSheet::Idle, IdleSheet);
 		
 		SpriteSheet WalkSheet("Assets/Textures/Game/walk.png", vec2u{256, 256}, 8);
 		AnimComp->AddSpriteSheet(ETestCharSheet::Walk, WalkSheet);
 
-		// 8-way idle animations, 8 frames each
-		// Row 0: Forward (Down/South)
-		AnimComp->AddAnimation(Animation{
-			ETestCharAnim::IdleForward,
-			ETestCharSheet::Idle,
-			vec2u{0, 0}, vec2u{0, 7}
-		});
+		// 8-way idle animations
+		AnimComp->AddAnimation(Animation{ETestCharAnim::IdleForward, ETestCharSheet::Idle, vec2u{0, 0}, vec2u{0, 7}});
+		AnimComp->AddAnimation(Animation{ETestCharAnim::IdleForwardRight, ETestCharSheet::Idle, vec2u{1, 0}, vec2u{1, 7}});
+		AnimComp->AddAnimation(Animation{ETestCharAnim::IdleRight, ETestCharSheet::Idle, vec2u{2, 0}, vec2u{2, 7}});
+		AnimComp->AddAnimation(Animation{ETestCharAnim::IdleBackRight, ETestCharSheet::Idle, vec2u{3, 0}, vec2u{3, 7}});
+		AnimComp->AddAnimation(Animation{ETestCharAnim::IdleBack, ETestCharSheet::Idle, vec2u{4, 0}, vec2u{4, 7}});
+		AnimComp->AddAnimation(Animation{ETestCharAnim::IdleBackLeft, ETestCharSheet::Idle, vec2u{5, 0}, vec2u{5, 7}});
+		AnimComp->AddAnimation(Animation{ETestCharAnim::IdleLeft, ETestCharSheet::Idle, vec2u{6, 0}, vec2u{6, 7}});
+		AnimComp->AddAnimation(Animation{ETestCharAnim::IdleForwardLeft, ETestCharSheet::Idle, vec2u{7, 0}, vec2u{7, 7}});
 
-		// Row 1: Forward-Right (Southeast)
-		AnimComp->AddAnimation(Animation{
-			ETestCharAnim::IdleForwardRight,
-			ETestCharSheet::Idle,
-			vec2u{1, 0}, vec2u{1, 7}
-		});
-
-		// Row 2: Right (East)
-		AnimComp->AddAnimation(Animation{
-			ETestCharAnim::IdleRight,
-			ETestCharSheet::Idle,
-			vec2u{2, 0}, vec2u{2, 7}
-		});
-
-		// Row 3: Back-Right (Northeast)
-		AnimComp->AddAnimation(Animation{
-			ETestCharAnim::IdleBackRight,
-			ETestCharSheet::Idle,
-			vec2u{3, 0}, vec2u{3, 7}
-		});
-
-		// Row 4: Back (North)
-		AnimComp->AddAnimation(Animation{
-			ETestCharAnim::IdleBack,
-			ETestCharSheet::Idle,
-			vec2u{4, 0}, vec2u{4, 7}
-		});
-
-		// Row 5: Back-Left (Northwest)
-		AnimComp->AddAnimation(Animation{
-			ETestCharAnim::IdleBackLeft,
-			ETestCharSheet::Idle,
-			vec2u{5, 0}, vec2u{5, 7}
-		});
-
-		// Row 6: Left (West)
-		AnimComp->AddAnimation(Animation{
-			ETestCharAnim::IdleLeft,
-			ETestCharSheet::Idle,
-			vec2u{6, 0}, vec2u{6, 7}
-		});
-
-		// Row 7: Forward-Left (Southwest)
-		AnimComp->AddAnimation(Animation{
-			ETestCharAnim::IdleForwardLeft,
-			ETestCharSheet::Idle,
-			vec2u{7, 0}, vec2u{7, 7}
-		});
-
-		// 8-way walk animations, 8 frames each
-		// Row 0: Forward (Down/South)
-		AnimComp->AddAnimation(Animation{
-			ETestCharAnim::WalkForward,
-			ETestCharSheet::Walk,
-			vec2u{0, 0}, vec2u{0, 7}
-		});
-
-		// Row 1: Forward-Right (Southeast)
-		AnimComp->AddAnimation(Animation{
-			ETestCharAnim::WalkForwardRight,
-			ETestCharSheet::Walk,
-			vec2u{1, 0}, vec2u{1, 7}
-		});
-
-		// Row 2: Right (East)
-		AnimComp->AddAnimation(Animation{
-			ETestCharAnim::WalkRight,
-			ETestCharSheet::Walk,
-			vec2u{2, 0}, vec2u{2, 7}
-		});
-
-		// Row 3: Back-Right (Northeast)
-		AnimComp->AddAnimation(Animation{
-			ETestCharAnim::WalkBackRight,
-			ETestCharSheet::Walk,
-			vec2u{3, 0}, vec2u{3, 7}
-		});
-
-		// Row 4: Back (North)
-		AnimComp->AddAnimation(Animation{
-			ETestCharAnim::WalkBack,
-			ETestCharSheet::Walk,
-			vec2u{4, 0}, vec2u{4, 7}
-		});
-
-		// Row 5: Back-Left (Northwest)
-		AnimComp->AddAnimation(Animation{
-			ETestCharAnim::WalkBackLeft,
-			ETestCharSheet::Walk,
-			vec2u{5, 0}, vec2u{5, 7}
-		});
-
-		// Row 6: Left (West)
-		AnimComp->AddAnimation(Animation{
-			ETestCharAnim::WalkLeft,
-			ETestCharSheet::Walk,
-			vec2u{6, 0}, vec2u{6, 7}
-		});
-
-		// Row 7: Forward-Left (Southwest)
-		AnimComp->AddAnimation(Animation{
-			ETestCharAnim::WalkForwardLeft,
-			ETestCharSheet::Walk,
-			vec2u{7, 0}, vec2u{7, 7}
-		});
+		// 8-way walk animations
+		AnimComp->AddAnimation(Animation{ETestCharAnim::WalkForward, ETestCharSheet::Walk, vec2u{0, 0}, vec2u{0, 7}});
+		AnimComp->AddAnimation(Animation{ETestCharAnim::WalkForwardRight, ETestCharSheet::Walk, vec2u{1, 0}, vec2u{1, 7}});
+		AnimComp->AddAnimation(Animation{ETestCharAnim::WalkRight, ETestCharSheet::Walk, vec2u{2, 0}, vec2u{2, 7}});
+		AnimComp->AddAnimation(Animation{ETestCharAnim::WalkBackRight, ETestCharSheet::Walk, vec2u{3, 0}, vec2u{3, 7}});
+		AnimComp->AddAnimation(Animation{ETestCharAnim::WalkBack, ETestCharSheet::Walk, vec2u{4, 0}, vec2u{4, 7}});
+		AnimComp->AddAnimation(Animation{ETestCharAnim::WalkBackLeft, ETestCharSheet::Walk, vec2u{5, 0}, vec2u{5, 7}});
+		AnimComp->AddAnimation(Animation{ETestCharAnim::WalkLeft, ETestCharSheet::Walk, vec2u{6, 0}, vec2u{6, 7}});
+		AnimComp->AddAnimation(Animation{ETestCharAnim::WalkForwardLeft, ETestCharSheet::Walk, vec2u{7, 0}, vec2u{7, 7}});
 
 		// Start with forward-facing idle
 		AnimComp->TransitionTo(ETestCharAnim::IdleForward);
@@ -183,122 +75,43 @@ namespace we
 
 	void TestCharacter::Tick(float DeltaTime)
 	{
-		Actor::Tick(DeltaTime);
-
 		HandleInput();
-		
-		// Movement calculates velocity and broadcasts to Physics via delegate
-		if (MoveComp)
-		{
-			MoveComp->Tick(DeltaTime);
-		}
-		
-		// Physics body moves and syncs position to actor
-		if (PhysicsComp)
-		{
-			PhysicsComp->Tick(DeltaTime);
-		}
-		
-		// Collision sensor follows actor position
-		if (CollisionComp)
-		{
-			CollisionComp->Tick(DeltaTime);
-		}
-		
 		UpdateDirectionalAnimation();
 		
-		// Animation updates frames
-		if (AnimComp)
-		{
-			AnimComp->Tick(DeltaTime);
-		}
+		Character::Tick(DeltaTime);
 	}
 
 	void TestCharacter::EndPlay()
 	{
-		if (AnimComp)
-		{
-			AnimComp->EndPlay();
-			AnimComp.reset();
-		}
-
-		if (PhysicsComp)
-		{
-			PhysicsComp->EndPlay();
-			PhysicsComp.reset();
-		}
-
-		if (CollisionComp)
-		{
-			CollisionComp->EndPlay();
-			CollisionComp.reset();
-		}
-
-		if (MoveComp)
-		{
-			MoveComp->EndPlay();
-			MoveComp.reset();
-		}
-
-		Actor::EndPlay();
-	}
-
-	void TestCharacter::GetDrawables(vector<const drawable*>& OutDrawables) const
-	{
-		Actor::GetDrawables(OutDrawables);
-
-		if (PhysicsComp)
-		{
-			if (const auto* Debug = PhysicsComp->DrawDebug())
-				OutDrawables.push_back(Debug);
-		}
-
-		if (CollisionComp)
-		{
-			if (const auto* Debug = CollisionComp->DrawDebug())
-				OutDrawables.push_back(Debug);
-		}
-
-		if (MoveComp)
-		{
-			if (const auto* Debug = MoveComp->DrawDebug())
-				OutDrawables.push_back(Debug);
-		}
+		Character::EndPlay();
 	}
 
 	void TestCharacter::BindInput()
 	{
 		auto& Input = InputController();
-
-		// WASD
-		Input.Bind(MOVE_UP, Input::Keyboard{ sf::Keyboard::Scan::W });
-		Input.Bind(MOVE_DOWN, Input::Keyboard{ sf::Keyboard::Scan::S });
-		Input.Bind(MOVE_LEFT, Input::Keyboard{ sf::Keyboard::Scan::A });
-		Input.Bind(MOVE_RIGHT, Input::Keyboard{ sf::Keyboard::Scan::D });
-
-		// Arrow keys
-		Input.Bind(MOVE_UP, Input::Keyboard{ sf::Keyboard::Scan::Up });
-		Input.Bind(MOVE_DOWN, Input::Keyboard{ sf::Keyboard::Scan::Down });
-		Input.Bind(MOVE_LEFT, Input::Keyboard{ sf::Keyboard::Scan::Left });
-		Input.Bind(MOVE_RIGHT, Input::Keyboard{ sf::Keyboard::Scan::Right });
+		
+		Input.Bind(MOVE_UP, Input::Keyboard{sf::Keyboard::Scan::W});
+		Input.Bind(MOVE_DOWN, Input::Keyboard{sf::Keyboard::Scan::S});
+		Input.Bind(MOVE_LEFT, Input::Keyboard{sf::Keyboard::Scan::A});
+		Input.Bind(MOVE_RIGHT, Input::Keyboard{sf::Keyboard::Scan::D});
+		
+		Input.Bind(MOVE_UP, Input::Keyboard{sf::Keyboard::Scan::Up});
+		Input.Bind(MOVE_DOWN, Input::Keyboard{sf::Keyboard::Scan::Down});
+		Input.Bind(MOVE_LEFT, Input::Keyboard{sf::Keyboard::Scan::Left});
+		Input.Bind(MOVE_RIGHT, Input::Keyboard{sf::Keyboard::Scan::Right});
 	}
 
 	void TestCharacter::HandleInput()
 	{
-		if (!MoveComp)
-			return;
+		if (!MoveComp) return;
 
 		auto& Input = InputController();
 		vec2f InputDir{};
 
-		if (Input.Pressed(MOVE_UP))
-			InputDir.y -= 1.0f;
-		if (Input.Pressed(MOVE_DOWN))
-			InputDir.y += 1.0f;
-		if (Input.Pressed(MOVE_LEFT))
-			InputDir.x -= 1.0f;
-		if (Input.Pressed(MOVE_RIGHT))
-			InputDir.x += 1.0f;
+		if (Input.Pressed(MOVE_UP)) InputDir.y -= 1.0f;
+		if (Input.Pressed(MOVE_DOWN)) InputDir.y += 1.0f;
+		if (Input.Pressed(MOVE_LEFT)) InputDir.x -= 1.0f;
+		if (Input.Pressed(MOVE_RIGHT)) InputDir.x += 1.0f;
 
 		if (InputDir.lengthSquared() > 0.0f)
 		{
@@ -308,8 +121,7 @@ namespace we
 
 	void TestCharacter::UpdateDirectionalAnimation()
 	{
-		if (!AnimComp || !MoveComp)
-			return;
+		if (!AnimComp || !MoveComp) return;
 
 		vec2f LastDir = MoveComp->GetLastMoveDirection();
 		ETestCharAnim TargetAnim = MoveComp->IsMoving() 
@@ -324,24 +136,16 @@ namespace we
 
 	ETestCharAnim TestCharacter::DirectionToIdleAnim(const vec2f& Dir) const
 	{
-		// Normalize direction
 		vec2f N = Dir;
 		float LenSq = N.lengthSquared();
-		if (LenSq > 0.0f)
-		{
-			N /= std::sqrt(LenSq);
-		}
+		if (LenSq > 0.0f) N /= std::sqrt(LenSq);
 
 		float Angle = std::atan2(N.y, N.x);
 		float Degrees = Angle * 180.0f / 3.14159f;
-		float FacingDegrees = Degrees + 90.0f;
 		
-		// Convert to 0-360 range with 0 at Back, going clockwise
 		float Normalized = Degrees + 90.0f;
-		if (Normalized < 0.0f)
-			Normalized += 360.0f;
-		if (Normalized >= 360.0f)
-			Normalized -= 360.0f;
+		if (Normalized < 0.0f) Normalized += 360.0f;
+		if (Normalized >= 360.0f) Normalized -= 360.0f;
 		
 		int Sector = static_cast<int>((Normalized + 22.5f) / 45.0f) % 8;
 		
@@ -361,25 +165,17 @@ namespace we
 
 	ETestCharAnim TestCharacter::DirectionToWalkAnim(const vec2f& Dir) const
 	{
-		// Normalize direction
 		vec2f N = Dir;
 		float LenSq = N.lengthSquared();
-		if (LenSq > 0.0f)
-		{
-			N /= std::sqrt(LenSq);
-		}
+		if (LenSq > 0.0f) N /= std::sqrt(LenSq);
 
 		float Angle = std::atan2(N.y, N.x);
 		float Degrees = Angle * 180.0f / 3.14159f;
 		
-		// Convert to 0-360 range with 0 at Back, going clockwise
 		float Normalized = Degrees + 90.0f;
-		if (Normalized < 0.0f)
-			Normalized += 360.0f;
-		if (Normalized >= 360.0f)
-			Normalized -= 360.0f;
+		if (Normalized < 0.0f) Normalized += 360.0f;
+		if (Normalized >= 360.0f) Normalized -= 360.0f;
 		
-		// 8 sectors of 45 degrees, offset by 22.5 to center on directions
 		int Sector = static_cast<int>((Normalized + 22.5f) / 45.0f) % 8;
 		
 		switch (Sector)

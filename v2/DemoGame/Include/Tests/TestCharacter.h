@@ -6,15 +6,10 @@
 #pragma once
 
 #include "Core/CoreMinimal.h"
-#include "Framework/World/Actor.h"
+#include "Framework/World/Character.h"
 
 namespace we
 {
-	class AnimationComponent;
-	class PhysicsComponent;
-	class CollisionComponent;
-	class MovementComponent;
-
 	enum class ETestCharAnim : uint8
 	{
 		// Idle animations
@@ -44,7 +39,7 @@ namespace we
 		Walk
 	};
 
-	class TestCharacter : public Actor
+	class TestCharacter : public Character
 	{
 	public:
 		TestCharacter(World& OwningWorld);
@@ -54,7 +49,6 @@ namespace we
 		void BeginPlay() override;
 		void Tick(float DeltaTime) override;
 		void EndPlay() override;
-		void GetDrawables(vector<const drawable*>& OutDrawables) const override;
 
 	private:
 		void SetupAnimations();
@@ -63,11 +57,5 @@ namespace we
 		void UpdateDirectionalAnimation();
 		ETestCharAnim DirectionToIdleAnim(const vec2f& Dir) const;
 		ETestCharAnim DirectionToWalkAnim(const vec2f& Dir) const;
-
-	private:
-		shared<AnimationComponent> AnimComp;
-		shared<PhysicsComponent> PhysicsComp;
-		shared<CollisionComponent> CollisionComp;
-		shared<MovementComponent> MoveComp;
 	};
 }

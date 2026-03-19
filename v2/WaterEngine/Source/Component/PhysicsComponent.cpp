@@ -68,7 +68,7 @@ namespace we
         // Create shape based on type
         if (ShapeType == EShapeType::Circle)
         {
-            b2CircleShape CircleShape;
+            b2CircleShape CircleShape{};
             CircleShape.m_radius = Physics.PixelsToMeters(ShapeSize.x);
             
             b2FixtureDef FixtureDef;
@@ -82,7 +82,7 @@ namespace we
         }
         else  // Rectangle
         {
-            b2PolygonShape BoxShape;
+            b2PolygonShape BoxShape{};
             BoxShape.SetAsBox(
                 Physics.PixelsToMeters(ShapeSize.x),
                 Physics.PixelsToMeters(ShapeSize.y)

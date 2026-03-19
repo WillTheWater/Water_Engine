@@ -123,6 +123,52 @@ namespace we
 		return Owner;
 	}
 
+	void CollisionComponent::OnBeginOverlap(b2Body* OtherBody)
+	{
+		// Get the other actor from the body
+		Actor* OtherActor = GetActorFromBody(OtherBody);
+		
+		// Ignore overlaps with same actor (e.g., our own PhysicsComponent body)
+		if (!OtherActor || OtherActor == Owner)
+			return;
+		
+		OverlappingActors.insert(OtherActor);
+		LOG("[CollisionComponent] OnBeginOverlap with Actor {} - Count: {}", 
+			OtherActor->GetID(), OverlappingActors.size());
+	}
+
+	void CollisionComponent::OnEndOverlap(b2Body* OtherBody)
+	{
+		Actor* OtherActor = GetActorFromBody(OtherBody);
+		
+		if (!OtherActor)
+			return;
+		
+		OverlappingActors.erase(OtherActor);
+		LOG("[CollisionComponent] OnEndOverlap with Actor {} - Count: {}", 
+			OtherActor->GetID(), OverlappingActors.size());
+	}
+
+	bool CollisionComponent::IsOtherActor(Actor* CheckActor) const
+	{
+		if (!CheckActor)
+			return false;
+		
+		return OverlappingActors.find(CheckActor) != OverlappingActors.end();
+	}
+
+	Actor* CollisionComponent::GetActorFromBody(b2Body* Body) const
+	{
+		if (!Body || !Body->GetUserData().pointer)
+			return nullptr;
+		
+		auto* Component = reinterpret_cast<IActorComponent*>(Body->GetUserData().pointer);
+		if (!Component)
+			return nullptr;
+		
+		return Component->GetOwner();
+	}
+
 	const drawable* CollisionComponent::DrawDebug()
 	{
 		if (!Body || !Owner)
@@ -137,22 +183,8 @@ namespace we
 		}
 
 		DebugCircle->setPosition(Owner->GetPosition());
-
 		DebugCircle->setOutlineColor(IsOverlapping() ? color::Red : color::Green);
 
 		return &DebugCircle.value();
-	}
-
-	void CollisionComponent::OnBeginOverlap(b2Body* OtherBody)
-	{
-		OverlapCount++;
-		LOG("[CollisionComponent] OnBeginOverlap - OverlapCount: {}", OverlapCount);
-	}
-
-	void CollisionComponent::OnEndOverlap(b2Body* OtherBody)
-	{
-		OverlapCount--;
-		if (OverlapCount < 0) OverlapCount = 0;
-		LOG("[CollisionComponent] OnEndOverlap - OverlapCount: {}", OverlapCount);
 	}
 }
