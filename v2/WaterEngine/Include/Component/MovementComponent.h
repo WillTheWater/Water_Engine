@@ -27,8 +27,8 @@ namespace we
 		void ClearInput();
 
 		// Configuration
-		void SetSpeed(float InSpeed) { Speed = InSpeed; }
-		float GetSpeed() const { return Speed; }
+		void SetSpeed(float InSpeed) { CurrentSpeed = InSpeed; }
+		float GetSpeed() const { return CurrentSpeed; }
 		void SetAutoOrient(bool bEnabled) { bAutoOrient = bEnabled; }
 		bool IsAutoOrient() const { return bAutoOrient; }
 
@@ -60,7 +60,7 @@ namespace we
 
 	private:
 		Actor* Owner;
-		float Speed = 200.0f;
+		float CurrentSpeed = 200.0f;
 		vec2f Velocity;
 		vec2f InputVector;
 
@@ -70,6 +70,11 @@ namespace we
 		// Movement state (for animation/controller queries)
 		vec2f LastMoveDir{ 0.0f, 1.0f };  // Default facing down/forward
 		bool bIsMoving = false;
+
+		// Movement type flags
+		bool bIsWalking = true;
+		bool bIsRunning = false;
+		bool bIsSwimming = false;
 
 		bool bAutoOrient = true;
 		optional<sf::VertexArray> DebugArrow;

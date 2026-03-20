@@ -27,6 +27,10 @@ namespace we
 		void EndPlay() override;
 		void GetDrawables(vector<const drawable*>& OutDrawables) const override;
 
+		shared<AnimationComponent> GetAnimationComponent() const { return AnimComp; }
+		shared<PhysicsComponent> GetPhysicsComponent() const { return PhysicsComp; }
+		shared<MovementComponent> GetMovementComponent() const { return MoveComp; }
+		shared<CollisionComponent> GetCollisionComponent() const { return CollComp; }
 		shared<CameraComponent> GetCameraComponent() const { return CameraComp; }
 
 	protected:

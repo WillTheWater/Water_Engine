@@ -23,17 +23,13 @@ namespace we
 		if (!Owner)
 			return;
 
-		// Calculate velocity from input
 		Velocity = CalculateVelocity();
 		
-		// Update orientation
 		if (bAutoOrient && bIsMoving)
 		{
 			UpdateOrientation();
 		}
 
-		// Broadcast velocity to listeners (PhysicsComponent, etc.)
-		// If no physics component is bound, movement will be applied directly
 		OnVelocityCalculated.Broadcast(Velocity);
 		
 		InputVector = {};
@@ -87,7 +83,7 @@ namespace we
 		{
 			vec2f NormalizedInput = Normalize(InputVector);
 			LastMoveDir = NormalizedInput;
-			return NormalizedInput * Speed;
+			return NormalizedInput * CurrentSpeed;
 		}
 		return vec2f{};
 	}
@@ -115,24 +111,10 @@ namespace we
 
 	void MovementComponent::ApplyMovement(float DeltaTime)
 	{
-		// Only apply direct movement if no physics component is present
-		// Physics component will handle movement via velocity when available
 		if (Owner && Velocity.lengthSquared() > 0.0f)
 		{
 			vec2f NewPosition = Owner->GetPosition() + (Velocity * DeltaTime);
 			Owner->SetPosition(NewPosition);
-		}
-	}
-
-	namespace
-	{
-		// Rotate a point around origin by angle (radians)
-		vec2f RotatePoint(vec2f Point, float Cos, float Sin)
-		{
-			return vec2f{
-				Point.x * Cos - Point.y * Sin,
-				Point.x * Sin + Point.y * Cos
-			};
 		}
 	}
 
