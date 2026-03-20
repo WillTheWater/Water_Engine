@@ -27,6 +27,9 @@ namespace we
         void Draw(const drawable& RenderObject, ERenderLayer Layer);
         void EndFrame();
         
+        // Camera view setup
+        void SetWorldView(vec2f Center, float Zoom = 1.0f, float Rotation = 0.0f);
+        
         sprite GetCompositeSprite() const;
         vec2u GetRenderResolution() const { return RenderResolution; }
 

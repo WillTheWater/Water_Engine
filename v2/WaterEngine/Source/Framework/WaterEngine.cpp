@@ -96,6 +96,12 @@ namespace we
 
     void WaterEngine::Render()
     {
+        // Get camera view data from CameraSubsystem
+        vec2f CamPos = Subsystem.Camera->GetViewPosition();
+        float CamZoom = Subsystem.Camera->GetViewZoom();
+        float CamRot = Subsystem.Camera->GetViewRotation();
+        
+        Subsystem.Render->SetWorldView(CamPos, CamZoom, CamRot);
         Subsystem.Render->BeginFrame();
 
         // World layer

@@ -4,6 +4,7 @@
 // =============================================================================
 
 #include "Subsystem/CameraSubsystem.h"
+#include "Component/CameraComponent.h"
 #include "Utility/Log.h"
 
 namespace we
@@ -72,8 +73,7 @@ namespace we
     {
         if (ActiveCamera)
         {
-            // TODO: return ActiveCamera->GetFinalPosition();
-            return DefaultPosition;
+            return ActiveCamera->GetFinalPosition();
         }
         return DefaultPosition;
     }
@@ -82,8 +82,7 @@ namespace we
     {
         if (ActiveCamera)
         {
-            // TODO: return ActiveCamera->GetZoom();
-            return DefaultZoom;
+            return ActiveCamera->GetZoom();
         }
         return DefaultZoom;
     }
@@ -92,8 +91,7 @@ namespace we
     {
         if (ActiveCamera)
         {
-            // TODO: return ActiveCamera->GetRotation();
-            return DefaultRotation;
+            return ActiveCamera->GetRotation();
         }
         return DefaultRotation;
     }

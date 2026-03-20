@@ -46,6 +46,23 @@ namespace we
         }
     }
 
+    void RenderSubsystem::SetWorldView(vec2f Center, float Zoom, float Rotation)
+    {
+        // Calculate view size based on zoom
+        vec2f ViewSize = vec2f(RenderResolution) / Zoom;
+        
+        view WorldView;
+        WorldView.setCenter(Center);
+        WorldView.setSize(ViewSize);
+        WorldView.setRotation(sf::radians(Rotation));
+        
+        WorldRenderTarget.setView(WorldView);
+        if (shader::isAvailable)
+        {
+            WorldPostProcessTarget.setView(WorldView);
+        }
+    }
+
     void RenderSubsystem::BeginFrame()
     {
         ClearRenderTargets();
