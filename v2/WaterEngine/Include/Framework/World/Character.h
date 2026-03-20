@@ -14,6 +14,7 @@ namespace we
 	class PhysicsComponent;
 	class MovementComponent;
 	class CollisionComponent;
+	class CameraComponent;
 
 	class Character : public Actor
 	{
@@ -26,10 +27,13 @@ namespace we
 		void EndPlay() override;
 		void GetDrawables(vector<const drawable*>& OutDrawables) const override;
 
+		shared<CameraComponent> GetCameraComponent() const { return CameraComp; }
+
 	protected:
 		shared<AnimationComponent> AnimComp;
 		shared<PhysicsComponent> PhysicsComp;
 		shared<MovementComponent> MoveComp;
 		shared<CollisionComponent> CollComp;
+		shared<CameraComponent> CameraComp;
 	};
 }

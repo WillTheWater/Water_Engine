@@ -6,8 +6,9 @@
 #include "Levels/LevelOne.h"
 #include "Levels/MainMenu.h"
 #include "Framework/World/Actor.h"
-#include "Framework/World/Camera.h"
+#include "Framework/World/Character.h"
 #include "Tests/TestCharacter.h"
+#include "Component/CameraComponent.h"
 #include "Tests/CollisionActor.h"
 #include "Component/PhysicsComponent.h"
 #include "UI/PauseMenuUI.h"
@@ -35,15 +36,19 @@ namespace we
         BGImage->SetSprite(BG);
         // BG texture will repeat if needed
 
-        // Spawn a camera to view the world
-        auto CamActor = SpawnActor<Camera>().lock();
-        CamActor->SetPosition({960.0f, 540.0f});
-        CamActor->SetActive();
-        LOG("[LevelOne] Spawned camera");
-
-        // Test character
+        // Test character (has built-in camera)
         Character = SpawnActor<TestCharacter>().lock();
         Character->SetPosition({960.0f, 540.0f});
+        
+        // Activate character camera with smooth follow
+        if (auto CamComp = Character->GetCameraComponent())
+        {
+            CamComp->AttachTo(CamComp->GetOwner());
+            CamComp->SetActive();
+            CamComp->SetSmoothFollow(true, .3f);
+            CamComp->SetOffset({0.0f, -100.0f});
+            LOG("[LevelOne] Camera following player with smooth follow");
+        }
         
         // Static obstacle
         auto StaticObstacle = SpawnActor<CollisionActor>().lock();

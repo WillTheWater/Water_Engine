@@ -11,6 +11,7 @@
 namespace we
 {
     class Actor;
+    class Character;
     class PauseMenuUI;
 
     class LevelOne : public World
@@ -34,7 +35,7 @@ namespace we
     private:
         shared<texture> BG;
         shared<Actor> BGImage;
-        shared<Actor> Character;
+        shared<Character> Character;
         unique<PauseMenuUI> PauseUI;
         bool bWasPausePressed = false;
     };

@@ -8,6 +8,7 @@
 #include "Component/PhysicsComponent.h"
 #include "Component/MovementComponent.h"
 #include "Component/CollisionComponent.h"
+#include "Component/CameraComponent.h"
 #include "Utility/Log.h"
 
 namespace we
@@ -19,6 +20,7 @@ namespace we
 		PhysicsComp = make_shared<PhysicsComponent>(this);
 		MoveComp = make_shared<MovementComponent>(this);
 		CollComp = make_shared<CollisionComponent>(this);
+		CameraComp = make_shared<CameraComponent>(this);
 	}
 
 	Character::~Character() = default;
@@ -38,6 +40,7 @@ namespace we
 		MoveComp->BeginPlay();
 		CollComp->BeginPlay();
 		CollComp->DrawDebug();
+		CameraComp->BeginPlay();
 	}
 
 	void Character::Tick(float DeltaTime)
@@ -48,6 +51,7 @@ namespace we
 		if (PhysicsComp) PhysicsComp->Tick(DeltaTime);
 		if (CollComp) CollComp->Tick(DeltaTime);
 		if (AnimComp) AnimComp->Tick(DeltaTime);
+		if (CameraComp) CameraComp->Tick(DeltaTime);
 	}
 
 	void Character::EndPlay()
@@ -74,6 +78,12 @@ namespace we
 		{
 			PhysicsComp->EndPlay();
 			PhysicsComp.reset();
+		}
+
+		if (CameraComp)
+		{
+			CameraComp->EndPlay();
+			CameraComp.reset();
 		}
 
 		Actor::EndPlay();

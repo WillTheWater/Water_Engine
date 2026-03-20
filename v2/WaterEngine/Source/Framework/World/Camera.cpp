@@ -23,11 +23,7 @@ namespace we
 
 		LOG("[Camera] BeginPlay on Actor {}", GetID());
 
-		// Initialize the camera component
 		CamComp->BeginPlay();
-		
-		// Auto-activate this camera (optional - can be removed if manual activation preferred)
-		CamComp->SetActive();
 	}
 
 	void Camera::Tick(float DeltaTime)

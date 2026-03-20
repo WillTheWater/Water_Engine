@@ -33,6 +33,9 @@ namespace we
         void SetZoom(float InZoom);
         void SetRotation(float InRadians);
 
+        // Attachment
+        void AttachTo(Actor* TargetActor);
+
         // Smooth follow
         void SetSmoothFollow(bool bEnable, float SmoothTime = 0.3f);
 
@@ -56,12 +59,14 @@ namespace we
 
     private:
         Actor* Owner;
-        CameraSubsystem* CameraSys = nullptr;
+        CameraSubsystem* Subsystem = nullptr;
 
         // Config
         vec2f Offset = {0.0f, 0.0f};
         float Zoom = 1.0f;
         float Rotation = 0.0f;
+
+        Actor* AttachedTarget = nullptr;
 
         // Smooth follow
         bool bSmoothFollow = false;

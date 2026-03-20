@@ -17,6 +17,7 @@ namespace we
     CameraComponent::CameraComponent(Actor* InOwner)
         : Owner(InOwner)
         , SmoothedPosition(InOwner ? InOwner->GetPosition() : vec2f{0.0f, 0.0f})
+        , AttachedTarget(nullptr)  // Don't follow anyone by default
     {
     }
 
@@ -27,7 +28,7 @@ namespace we
         // Get reference to camera subsystem from world
         if (Owner)
         {
-            CameraSys = &Owner->GetWorld().GetCamera();
+            Subsystem = &Owner->GetWorld().GetCamera();
         }
     }
 
@@ -39,9 +40,9 @@ namespace we
     void CameraComponent::EndPlay()
     {
         // If this was active, clear it
-        if (IsActive() && CameraSys)
+        if (IsActive() && Subsystem)
         {
-            CameraSys->ClearActiveCamera();
+            Subsystem->ClearActiveCamera();
         }
     }
 
@@ -52,17 +53,22 @@ namespace we
 
     void CameraComponent::SetActive()
     {
-        if (CameraSys)
+        if (!Subsystem && Owner)
         {
-            CameraSys->SetActiveCamera(this);
+            Subsystem = &Owner->GetWorld().GetCamera();
+        }
+
+        if (Subsystem)
+        {
+            Subsystem->SetActiveCamera(this);
             LOG("[CameraComponent] Set as active camera");
         }
     }
 
     bool CameraComponent::IsActive() const
     {
-        if (!CameraSys) return false;
-        return CameraSys->GetActiveCamera() == this;
+        if (!Subsystem) return false;
+        return Subsystem->GetActiveCamera() == this;
     }
 
     void CameraComponent::SetOffset(vec2f InOffset)
@@ -78,6 +84,15 @@ namespace we
     void CameraComponent::SetRotation(float InRadians)
     {
         Rotation = InRadians;
+    }
+
+    void CameraComponent::AttachTo(Actor* TargetActor)
+    {
+        AttachedTarget = TargetActor;
+        if (TargetActor)
+        {
+            LOG("[CameraComponent] Attached to Actor {}", TargetActor->GetID());
+        }
     }
 
     void CameraComponent::SetSmoothFollow(bool bEnable, float InSmoothTime)
@@ -114,10 +129,11 @@ namespace we
 
     void CameraComponent::UpdatePosition(float DeltaTime)
     {
-        if (!Owner) return;
+        // If no attachment, stay at current position
+        if (!AttachedTarget) return;
 
-        // Get target position (owner + offset)
-        vec2f TargetPos = Owner->GetPosition() + Offset;
+        // Get target position (attached actor + offset)
+        vec2f TargetPos = AttachedTarget->GetPosition() + Offset;
 
         // Apply smooth follow
         if (bSmoothFollow)
