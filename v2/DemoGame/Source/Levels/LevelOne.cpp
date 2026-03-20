@@ -9,6 +9,7 @@
 #include "Framework/World/Character.h"
 #include "Tests/TestCharacter.h"
 #include "Component/CameraComponent.h"
+#include "PostProcess/Effects/PPEScroll.h"
 #include "Tests/CollisionActor.h"
 #include "Component/PhysicsComponent.h"
 #include "UI/PauseMenuUI.h"
@@ -16,6 +17,8 @@
 #include "Subsystem/ResourceSubsystem.h"
 #include "Subsystem/InputSubsystem.h"
 #include "Subsystem/WorldSubsystem.h"
+#include "Component/PostProcessingComponent.h"
+#include "PostProcess/Effects/PPEWave.h"
 #include "Input/InputActions.h"
 #include "Utility/Log.h"
 
@@ -31,24 +34,29 @@ namespace we
     void LevelOne::BeginPlay()
     {
         // Load background
-        BG = LoadAsset().LoadTexture("Assets/Textures/Game/level1.png");
+        BG = LoadAsset().LoadTexture("Assets/Textures/Game/beach.png");
         BGImage = SpawnActor<Actor>().lock();
         BGImage->SetSprite(BG);
-        // BG texture will repeat if needed
+
+        Water = LoadAsset().LoadTexture("Assets/Textures/Game/water.png");
+        WaterImage = SpawnActor<Actor>().lock();
+        WaterPPC = make_shared<PostProcessingComponent>(WaterImage.get());
+        WaterPPC->SetTexture(Water);
+        WaterPPC->AddEffect(make_unique<PPEScroll>());
+        WaterPPC->AddEffect(make_unique<PPEWave>());
+        WaterPPC->BeginPlay();
 
         // Test character (has built-in camera)
         Character = SpawnActor<TestCharacter>().lock();
         Character->SetPosition({960.0f, 540.0f});
         
         // Activate character camera with smooth follow
-        if (auto CamComp = Character->GetCameraComponent())
+       /* if (auto CamComp = Character->GetCameraComponent())
         {
             CamComp->AttachTo(CamComp->GetOwner());
             CamComp->SetActive();
             CamComp->SetSmoothFollow(true, .3f);
-            CamComp->SetOffset({0.0f, -100.0f});
-            LOG("[LevelOne] Camera following player with smooth follow");
-        }
+        }*/
         
         // Static obstacle
         auto StaticObstacle = SpawnActor<CollisionActor>().lock();
@@ -88,6 +96,11 @@ namespace we
 
     void LevelOne::Tick(float DeltaTime)
     {
+        if (WaterPPC)
+        {
+            WaterPPC->Tick(DeltaTime);
+        }
+
         bool bIsPressed = InputController().Pressed(PAUSE_ACTION);
         if (bIsPressed && !bWasPausePressed)
         {
@@ -102,6 +115,12 @@ namespace we
         {
             PauseUI->ClearWidgets();
             PauseUI.reset();
+        }
+
+        if (WaterPPC)
+        {
+            WaterPPC->EndPlay();
+            WaterPPC.reset();
         }
     }
 

@@ -422,13 +422,44 @@ namespace we::EmbeddedShader
             float wave2 = sin(uv.x * 14.0 + Time * 2.3) * 0.004;
             
             // Subtle vertical variation so ripples aren't perfectly horizontal
-            float wave3 = cos(uv.y * 6.0 + Time * 0.8) * 0.003;
+            float wave3 = cos(uv.y * 6.0 + Time * 0.8) * 0.0043;
             
             uv.y += wave1 + wave2;
             uv.x += wave3;
             
             // Use texture() for automatic mipmap selection (smoother sampling)
             gl_FragColor = texture(Source, uv);
+        }
+    )";
+
+    // 24b. Scroll Fragment Shader - seamless horizontal scrolling with mirror
+    inline constexpr stringView ScrollFragment = R"(
+        #version 130
+
+        uniform sampler2D Source;
+        uniform float Time;
+
+        void main()
+        {
+            vec2 uv = gl_TexCoord[0].xy;
+            
+            // Scroll speed (halved)
+            float scrollSpeed = 0.0075;
+            float scrolled = fract(uv.x - Time * scrollSpeed);
+            
+            // Mirror: left half = original, right half = mirrored
+            // This creates seamless loop because edges now match
+            float sampleX;
+            if (scrolled < 0.5)
+            {
+                sampleX = scrolled * 2.0;  // 0 to 1 across left half
+            }
+            else
+            {
+                sampleX = (1.0 - scrolled) * 2.0;  // Mirror back: 1 to 0 across right half
+            }
+            
+            gl_FragColor = texture(Source, vec2(sampleX, uv.y));
         }
     )";
 

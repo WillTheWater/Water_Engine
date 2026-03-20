@@ -81,7 +81,7 @@ namespace we
         renderTexture TempTarget;
         TempTarget.resize(OriginalTexture->getSize());
 
-        TempTarget.clear();
+        TempTarget.clear(color::Transparent);
         TempTarget.draw(sprite(*OriginalTexture));
         TempTarget.display();
 
