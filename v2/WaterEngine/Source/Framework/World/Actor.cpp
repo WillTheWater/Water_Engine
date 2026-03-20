@@ -80,11 +80,11 @@ namespace we
 		
 		if (!ActorSprite.has_value())
 		{
-			ActorSprite.emplace(*Texture);  // Create sprite once
+			ActorSprite.emplace(*Texture);
 		}
 		else
 		{
-			ActorSprite->setTexture(*Texture, true);  // Change texture, preserve transform
+			ActorSprite->setTexture(*Texture, true);
 		}
 	}
 

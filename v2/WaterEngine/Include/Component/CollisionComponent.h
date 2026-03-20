@@ -30,14 +30,14 @@ namespace we
 		void OnBeginOverlap(b2Body* OtherBody) override;
 		void OnEndOverlap(b2Body* OtherBody) override;
 
-		// Overlap queries - Unreal-style "OtherActor" API
+		// Overlap queries
 		bool IsOverlapping() const { return !OverlappingActors.empty(); }
 		bool IsOtherActor(Actor* CheckActor) const;
 		
 		// Get all overlapping actors
 		const set<Actor*>& GetOtherActors() const { return OverlappingActors; }
 		
-		// Get first overlapping actor of type (most common use case)
+		// Get first overlapping actor of type
 		template<typename T>
 		T* GetOtherActor() const
 		{
@@ -64,7 +64,6 @@ namespace we
 		
 		int GetOverlapCount() const { return static_cast<int>(OverlappingActors.size()); }
 
-		// Debug
 		const drawable* DrawDebug();
 
 	private:
@@ -77,7 +76,7 @@ namespace we
 		float Radius = 32.0f;
 		b2Body* Body = nullptr;
 		
-		set<Actor*> OverlappingActors;  // Tracks overlapping actors (not bodies)
+		set<Actor*> OverlappingActors;
 		optional<circle> DebugCircle;
 	};
 }

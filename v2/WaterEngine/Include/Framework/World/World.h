@@ -13,6 +13,7 @@
 namespace we
 {
 	class PhysicsSubsystem;
+	class CameraSubsystem;
 
 	class World : public Object
 	{
@@ -37,6 +38,7 @@ namespace we
 		const vector<shared<Actor>>& GetActors() const { return Actors; }
 		
 		PhysicsSubsystem& GetPhysics() { return Subsystem.GetPhysics(); }
+		CameraSubsystem& GetCamera() { return Subsystem.GetCamera(); }
 
 	protected:
 		WorldSubsystem& Subsystem;

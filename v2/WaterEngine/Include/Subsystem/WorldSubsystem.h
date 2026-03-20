@@ -11,6 +11,9 @@ namespace we
 {
     class World;
     class PhysicsSubsystem;
+    class CameraSubsystem;
+    
+    using we::shared;
 
     class WorldSubsystem
     {
@@ -19,6 +22,9 @@ namespace we
 
         void SetPhysicsRef(shared<PhysicsSubsystem> InPhysics);
         PhysicsSubsystem& GetPhysics();
+        
+        void SetCameraRef(shared<CameraSubsystem> InCamera);
+        CameraSubsystem& GetCamera();
 
         shared<World> GetCurrentWorld() const { return CurrentWorld; }
         bool HasPendingWorld() const { return PendingWorld != nullptr; }
@@ -42,6 +48,7 @@ namespace we
 
     private:
         weak<PhysicsSubsystem> Physics;
+        weak<CameraSubsystem> Camera;
         
         shared<World> CurrentWorld;
         shared<World> PendingWorld;

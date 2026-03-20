@@ -6,6 +6,7 @@
 #include "Subsystem/WorldSubsystem.h"
 #include "Framework/World/World.h"
 #include "Subsystem/PhysicsSubsystem.h"
+#include "Subsystem/CameraSubsystem.h"
 
 namespace we
 {
@@ -14,9 +15,19 @@ namespace we
         Physics = InPhysics;
     }
 
+    void WorldSubsystem::SetCameraRef(shared<CameraSubsystem> InCamera)
+    {
+        Camera = InCamera;
+    }
+
     PhysicsSubsystem& WorldSubsystem::GetPhysics()
     {
         return *Physics.lock();
+    }
+
+    CameraSubsystem& WorldSubsystem::GetCamera()
+    {
+        return *Camera.lock();
     }
 
     void WorldSubsystem::Tick(float DeltaTime)

@@ -31,7 +31,7 @@ namespace we
 		unique<TimerSubsystem>		Timer;
 		unique<WorldSubsystem>		World;
 		unique<RenderSubsystem>		Render;
-		unique<CameraSubsystem>		Camera;
+		shared<CameraSubsystem>		Camera;
 		unique<CursorSubsystem>		Cursor;
 		unique<InputSubsystem>		Input;
 		unique<GUISubsystem>		GUI;

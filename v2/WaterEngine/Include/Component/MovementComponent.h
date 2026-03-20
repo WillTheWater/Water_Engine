@@ -42,7 +42,7 @@ namespace we
 		vec2f GetRightVector() const { return RightVector; }
 		void SetFacingDirection(const vec2f& Direction);
 		
-		// Last movement direction (for animation facing when stopped)
+		// Last movement direction
 		vec2f GetLastMoveDirection() const { return LastMoveDir; }
 		void SetLastMoveDirection(const vec2f& Dir);
 

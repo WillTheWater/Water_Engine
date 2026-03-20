@@ -32,12 +32,11 @@ namespace we
         BG = LoadAsset().LoadTexture("Assets/Textures/Game/level1.png");
         BGImage = SpawnActor<Actor>().lock();
         BGImage->SetSprite(BG);
+        BG->isRepeated();
 
-        // Spawn test character
+        // Test character
         Character = SpawnActor<TestCharacter>().lock();
         Character->SetPosition({960.0f, 540.0f});
-
-        // Spawn 3 obstacles with different physics body types for testing
         
         // Static obstacle
         auto StaticObstacle = SpawnActor<CollisionActor>().lock();

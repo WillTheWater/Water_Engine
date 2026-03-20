@@ -8,7 +8,6 @@
 #include "Core/CoreMinimal.h"
 #include "Interface/Physics/IPhysicsContactListener.h"
 
-// Forward declarations for Box2D
 class b2World;
 class b2Body;
 struct b2BodyDef;

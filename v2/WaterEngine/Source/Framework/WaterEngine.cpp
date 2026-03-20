@@ -21,7 +21,7 @@ namespace we
         Subsystem.Timer    = make_unique<TimerSubsystem>();
         Subsystem.World    = make_unique<WorldSubsystem>();
         Subsystem.Render   = make_unique<RenderSubsystem>();
-        Subsystem.Camera   = make_unique<CameraSubsystem>();
+        Subsystem.Camera   = make_shared<CameraSubsystem>();
         Subsystem.Cursor   = make_unique<CursorSubsystem>();
         Subsystem.Input    = make_unique<InputSubsystem>();
         Subsystem.GUI      = make_unique<GUISubsystem>();
@@ -41,6 +41,7 @@ namespace we
         Subsystem.GUI->Initialize(Subsystem.Render->GetScreenUITarget(), Subsystem.Render->GetWorldUITarget());
         Subsystem.GUI->SetWindowSize(Subsystem.Window->getSize());
         Subsystem.World->SetPhysicsRef(Subsystem.Physics);
+        Subsystem.World->SetCameraRef(Subsystem.Camera);
     }
 
     bool WaterEngine::IsRunning() const

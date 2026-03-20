@@ -21,7 +21,6 @@ namespace we
 		explicit Character(World& InWorld);
 		~Character();
 
-		// Lifecycle
 		void BeginPlay() override;
 		void Tick(float DeltaTime) override;
 		void EndPlay() override;
