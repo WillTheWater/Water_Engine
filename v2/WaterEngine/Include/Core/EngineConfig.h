@@ -85,10 +85,12 @@ namespace we
         static constexpr float WorldGCInterval = 3.0f;
         
         // Asset paths (set by CMake in actual builds)
+        #ifdef USE_RAW_ASSETS
         static constexpr const char* AssetRootPath = ASSET_ROOT_PATH;
+        #endif
         
         #ifdef USE_PACKED_ASSETS
-        static constexpr string_view AssetPackPath = ASSET_PACK_PATH;
+        static constexpr stringView AssetPackPath = ASSET_PACK_PATH;
         #endif
     };
 
