@@ -6,6 +6,7 @@
 #pragma once
 
 #include "Core/CoreMinimal.h"
+#include "Framework/GameInstance.h"
 #include "Subsystem/ResourceSubsystem.h"
 #include "Subsystem/WindowSubsystem.h"
 #include "Subsystem/ClockSubsystem.h"
@@ -37,5 +38,6 @@ namespace we
 		unique<GUISubsystem>		GUI;
 		unique<SaveSubsystem>		Save;
 		shared<PhysicsSubsystem>	Physics;
+		unique<GameInstance>		GameInstance;
 	};
 }

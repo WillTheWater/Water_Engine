@@ -15,8 +15,9 @@ namespace we
     {
     public:
         WaterEngine();
+        virtual ~WaterEngine();
 
-        virtual void StartPlay() {}
+        virtual void StartPlay();
 
         bool IsRunning() const;
         bool HasFocus() const;
@@ -26,6 +27,8 @@ namespace we
         void ProcessQuit();
 
     protected:
+        virtual unique<GameInstance> CreateGameInstance() { return make_unique<GameInstance>(); }
+        
         EngineSubsystem Subsystem;
 
     private:

@@ -11,6 +11,15 @@ namespace we
     {
         Initialize();
     }
+    
+    WaterEngine::~WaterEngine()
+    {
+        if (Subsystem.GameInstance)
+        {
+            Subsystem.GameInstance->Shutdown();
+            Subsystem.GameInstance.reset();
+        }
+    }
 
     void WaterEngine::Initialize()
     {
@@ -42,6 +51,12 @@ namespace we
         Subsystem.GUI->SetWindowSize(Subsystem.Window->getSize());
         Subsystem.World->SetPhysicsRef(Subsystem.Physics);
         Subsystem.World->SetCameraRef(Subsystem.Camera);
+    }
+
+    void WaterEngine::StartPlay()
+    {
+        Subsystem.GameInstance = CreateGameInstance();
+        if (Subsystem.GameInstance) { Subsystem.GameInstance->Init(Subsystem); }
     }
 
     bool WaterEngine::IsRunning() const

@@ -7,6 +7,7 @@
 #include "Entry.h"
 #include "Config/GameConfig.h"
 #include "Utility/Log.h"
+#include "DemoGameInstance.h"
 
 #include "Levels/MainMenu.h"
 
@@ -17,6 +18,11 @@ namespace we
 		return make_unique<Game>();
 	}
 
+	unique<GameInstance> Game::CreateGameInstance()
+	{
+		return make_unique<DemoGameInstance>();
+	}
+
 	Game::Game()
 		: WaterEngine{}
 	{
@@ -24,6 +30,8 @@ namespace we
 
 	void Game::StartPlay()
 	{
+		WaterEngine::StartPlay();
 		Subsystem.World->CreateWorld<MainMenu>();
 	}
+
 }

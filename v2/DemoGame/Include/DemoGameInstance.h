@@ -6,19 +6,16 @@
 #pragma once
 
 #include "Core/CoreMinimal.h"
-#include "Framework/WaterEngine.h"
+#include "Framework/GameInstance.h"
 
 namespace we
 {
-	class Game : public WaterEngine
+	class DemoGameInstance : public GameInstance
 	{
 	public:
-		Game();
+		DemoGameInstance();
 
-		void StartPlay() override;
-
-	protected:
-		// Override to create our game-specific GameInstance
-		unique<GameInstance> CreateGameInstance() override;
+		void Init(EngineSubsystem& InSubsystem) override;
+		void Shutdown() override;
 	};
 }
