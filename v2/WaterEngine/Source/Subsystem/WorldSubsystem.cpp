@@ -7,6 +7,8 @@
 #include "Framework/World/World.h"
 #include "Subsystem/PhysicsSubsystem.h"
 #include "Subsystem/CameraSubsystem.h"
+#include "Subsystem/SaveSubsystem.h"
+#include "Framework/GameInstance.h"
 
 namespace we
 {
@@ -28,6 +30,26 @@ namespace we
     CameraSubsystem& WorldSubsystem::GetCamera()
     {
         return *Camera.lock();
+    }
+
+    void WorldSubsystem::SetSaveRef(shared<SaveSubsystem> InSave)
+    {
+        Save = InSave;
+    }
+
+    SaveSubsystem& WorldSubsystem::GetSave()
+    {
+        return *Save.lock();
+    }
+
+    void WorldSubsystem::SetGameInstanceRef(shared<GameInstance> InGameInstance)
+    {
+        GameInst = InGameInstance;
+    }
+
+    GameInstance& WorldSubsystem::GetGameInstance()
+    {
+        return *GameInst.lock();
     }
 
     void WorldSubsystem::Tick(float DeltaTime)

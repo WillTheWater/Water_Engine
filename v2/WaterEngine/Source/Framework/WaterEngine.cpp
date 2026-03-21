@@ -34,7 +34,7 @@ namespace we
         Subsystem.Cursor   = make_unique<CursorSubsystem>();
         Subsystem.Input    = make_unique<InputSubsystem>();
         Subsystem.GUI      = make_unique<GUISubsystem>();
-        Subsystem.Save     = make_unique<SaveSubsystem>();
+        Subsystem.Save     = make_shared<SaveSubsystem>();
         Subsystem.Physics  = make_shared<PhysicsSubsystem>();
 
         BindDelegates();
@@ -51,6 +51,8 @@ namespace we
         Subsystem.GUI->SetWindowSize(Subsystem.Window->getSize());
         Subsystem.World->SetPhysicsRef(Subsystem.Physics);
         Subsystem.World->SetCameraRef(Subsystem.Camera);
+        Subsystem.World->SetSaveRef(Subsystem.Save);
+        Subsystem.World->SetGameInstanceRef(Subsystem.GameInstance);
     }
 
     void WaterEngine::StartPlay()

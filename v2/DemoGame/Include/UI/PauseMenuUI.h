@@ -26,6 +26,7 @@ namespace we
 		Delegate<> OnResumeClicked;
 		Delegate<> OnSettingsClicked;
 		Delegate<> OnMainMenuClicked;
+		Delegate<> OnSaveAndQuitClicked;
 		
 	private:
 		void SetupLayout();
@@ -34,6 +35,7 @@ namespace we
 		void OnResume();
 		void OnSettings();
 		void OnMainMenu();
+		void OnSaveAndQuit();
 		
 		bool bVisible = false;
 		bool bInitialized = false;

@@ -12,6 +12,7 @@ namespace we
 {
     class Actor;
     class Character;
+    class CollisionActor;
     class PauseMenuUI;
     class PostProcessingComponent;
 
@@ -32,6 +33,7 @@ namespace we
         void ResumeGame();
         void ReturnToMainMenu();
         void OnSettings();
+        void SaveAndQuit();
 
     private:
         shared<texture> BG;
@@ -40,6 +42,7 @@ namespace we
         shared<Actor> WaterImage;
         shared<PostProcessingComponent> WaterPPC;
         shared<Character> Character;
+        shared<CollisionActor> DynObstacle;
         unique<PauseMenuUI> PauseUI;
         bool bWasPausePressed = false;
     };

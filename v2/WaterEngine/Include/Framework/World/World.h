@@ -14,6 +14,8 @@ namespace we
 {
 	class PhysicsSubsystem;
 	class CameraSubsystem;
+	class SaveSubsystem;
+	class GameInstance;
 
 	class World : public Object
 	{
@@ -39,6 +41,8 @@ namespace we
 		
 		PhysicsSubsystem& GetPhysics() { return Subsystem.GetPhysics(); }
 		CameraSubsystem& GetCamera() { return Subsystem.GetCamera(); }
+		SaveSubsystem& GetSave() { return Subsystem.GetSave(); }
+		GameInstance& GetGameInstance() { return Subsystem.GetGameInstance(); }
 
 	protected:
 		WorldSubsystem& Subsystem;

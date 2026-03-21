@@ -12,6 +12,8 @@ namespace we
     class World;
     class PhysicsSubsystem;
     class CameraSubsystem;
+    class SaveSubsystem;
+    class GameInstance;
     
     using we::shared;
 
@@ -25,6 +27,12 @@ namespace we
         
         void SetCameraRef(shared<CameraSubsystem> InCamera);
         CameraSubsystem& GetCamera();
+
+        void SetSaveRef(shared<SaveSubsystem> InSave);
+        SaveSubsystem& GetSave();
+        
+        void SetGameInstanceRef(shared<GameInstance> InGameInstance);
+        GameInstance& GetGameInstance();
 
         shared<World> GetCurrentWorld() const { return CurrentWorld; }
         bool HasPendingWorld() const { return PendingWorld != nullptr; }
@@ -49,6 +57,8 @@ namespace we
     private:
         weak<PhysicsSubsystem> Physics;
         weak<CameraSubsystem> Camera;
+        weak<SaveSubsystem> Save;
+        weak<GameInstance> GameInst;
         
         shared<World> CurrentWorld;
         shared<World> PendingWorld;

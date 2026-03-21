@@ -70,6 +70,11 @@ namespace we
 		MainMenu->onPress([this]() { OnMainMenu(); });
 		Layout->add(MainMenu, "MainMenuButton");
 		
+		// Save & Quit Button
+		auto SaveQuit = CreateButton("SAVE & QUIT", tgui::Color::Red, tgui::Color::Magenta);
+		SaveQuit->onPress([this]() { OnSaveAndQuit(); });
+		Layout->add(SaveQuit, "SaveQuitButton");
+		
 		GUI.add(Layout, "PauseLayout");
 		
 		LOG("[PauseMenuUI] Layout setup complete");
@@ -143,5 +148,11 @@ namespace we
 	{
 		LOG("[PauseMenuUI] Main Menu clicked");
 		OnMainMenuClicked.Broadcast();
+	}
+	
+	void PauseMenuUI::OnSaveAndQuit()
+	{
+		LOG("[PauseMenuUI] Save & Quit clicked");
+		OnSaveAndQuitClicked.Broadcast();
 	}
 }

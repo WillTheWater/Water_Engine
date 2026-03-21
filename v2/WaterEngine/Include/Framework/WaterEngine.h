@@ -27,7 +27,7 @@ namespace we
         void ProcessQuit();
 
     protected:
-        virtual unique<GameInstance> CreateGameInstance() { return make_unique<GameInstance>(); }
+        virtual shared<GameInstance> CreateGameInstance() { return make_shared<GameInstance>(); }
         
         EngineSubsystem Subsystem;
 

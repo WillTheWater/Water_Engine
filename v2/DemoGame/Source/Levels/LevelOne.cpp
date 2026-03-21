@@ -17,10 +17,12 @@
 #include "Subsystem/ResourceSubsystem.h"
 #include "Subsystem/InputSubsystem.h"
 #include "Subsystem/WorldSubsystem.h"
+#include "Subsystem/SaveSubsystem.h"
 #include "Component/PostProcessingComponent.h"
 #include "PostProcess/Effects/PPEWave.h"
 #include "Input/InputActions.h"
 #include "Utility/Log.h"
+#include "Config/GameConfig.h"
 
 namespace we
 {
@@ -46,9 +48,22 @@ namespace we
         WaterPPC->AddEffect(make_unique<PPEWave>());
         WaterPPC->BeginPlay();
 
+        // Load saved data and update session counter
+        int TimesPlayed = Subsystem.GetSave().Get<int>(SAVE_TIMES_PLAYED, 0);
+        TimesPlayed++;
+        Subsystem.GetSave().Set(SAVE_TIMES_PLAYED, TimesPlayed);
+        Subsystem.GetSave().Set(SAVE_LAST_LEVEL, "LevelOne");
+        LOG("[LevelOne] Times played: {}", TimesPlayed);
+        
+        // Load positions
+        float PlayerX = Subsystem.GetSave().Get<float>(SAVE_PLAYER_POS_X, 960.0f);
+        float PlayerY = Subsystem.GetSave().Get<float>(SAVE_PLAYER_POS_Y, 540.0f);
+        float ObstacleX = Subsystem.GetSave().Get<float>(SAVE_OBSTACLE_POS_X, 640.0f);
+        float ObstacleY = Subsystem.GetSave().Get<float>(SAVE_OBSTACLE_POS_Y, 680.0f);
+        
         // Test character (has built-in camera)
         Character = SpawnActor<TestCharacter>().lock();
-        Character->SetPosition({960.0f, 540.0f});
+        Character->SetPosition({PlayerX, PlayerY});
         
         // Activate character camera with smooth follow
        /* if (auto CamComp = Character->GetCameraComponent())
@@ -57,7 +72,7 @@ namespace we
             CamComp->SetActive();
             CamComp->SetSmoothFollow(true, .3f);
         }*/
-        
+
         // Static obstacle
         auto StaticObstacle = SpawnActor<CollisionActor>().lock();
         StaticObstacle->SetBodyType(b2_staticBody);
@@ -75,12 +90,12 @@ namespace we
         KinematicObstacle->SetPosition({640.0f, 400.0f});
         
         // Dynamic obstacle
-        auto DynamicObstacle = SpawnActor<CollisionActor>().lock();
-        DynamicObstacle->SetBodyType(b2_dynamicBody);
-        DynamicObstacle->SetShapeType(we::PhysicsComponent::EShapeType::Circle);
-        DynamicObstacle->SetPhysicsSize(42.0f);  
-        DynamicObstacle->SetCollisionSize(64.0f);
-        DynamicObstacle->SetPosition({640.0f, 680.0f});
+        DynObstacle = SpawnActor<CollisionActor>().lock();
+        DynObstacle->SetBodyType(b2_dynamicBody);
+        DynObstacle->SetShapeType(we::PhysicsComponent::EShapeType::Circle);
+        DynObstacle->SetPhysicsSize(42.0f);  
+        DynObstacle->SetCollisionSize(64.0f);
+        DynObstacle->SetPosition({ObstacleX, ObstacleY});
 
         InputController().Bind(PAUSE_ACTION, Input::Keyboard{ sf::Keyboard::Scan::Escape });
 
@@ -92,6 +107,7 @@ namespace we
         PauseUI->OnResumeClicked.Bind(this, &LevelOne::ResumeGame);
         PauseUI->OnSettingsClicked.Bind(this, &LevelOne::OnSettings);
         PauseUI->OnMainMenuClicked.Bind(this, &LevelOne::ReturnToMainMenu);
+        PauseUI->OnSaveAndQuitClicked.Bind(this, &LevelOne::SaveAndQuit);
     }
 
     void LevelOne::Tick(float DeltaTime)
@@ -111,6 +127,23 @@ namespace we
 
     void LevelOne::EndPlay()
     {
+        // Save positions
+        if (Character)
+        {
+            vec2f Pos = Character->GetPosition();
+            Subsystem.GetSave().Set(SAVE_PLAYER_POS_X, Pos.x);
+            Subsystem.GetSave().Set(SAVE_PLAYER_POS_Y, Pos.y);
+            LOG("[LevelOne] Saved player position: {}, {}", Pos.x, Pos.y);
+        }
+        if (DynObstacle)
+        {
+            vec2f Pos = DynObstacle->GetPosition();
+            Subsystem.GetSave().Set(SAVE_OBSTACLE_POS_X, Pos.x);
+            Subsystem.GetSave().Set(SAVE_OBSTACLE_POS_Y, Pos.y);
+            LOG("[LevelOne] Saved obstacle position: {}, {}", Pos.x, Pos.y);
+        }
+        Subsystem.GetSave().Save();
+        
         if (PauseUI)
         {
             PauseUI->ClearWidgets();
@@ -166,5 +199,30 @@ namespace we
     void LevelOne::OnSettings()
     {
         // TODO: Implement settings UI
+    }
+
+    void LevelOne::SaveAndQuit()
+    {
+        LOG("[LevelOne] Save & Quit requested");
+        
+        // Save positions first
+        if (Character)
+        {
+            vec2f Pos = Character->GetPosition();
+            Subsystem.GetSave().Set(SAVE_PLAYER_POS_X, Pos.x);
+            Subsystem.GetSave().Set(SAVE_PLAYER_POS_Y, Pos.y);
+            LOG("[LevelOne] Saved player position: {}, {}", Pos.x, Pos.y);
+        }
+        if (DynObstacle)
+        {
+            vec2f Pos = DynObstacle->GetPosition();
+            Subsystem.GetSave().Set(SAVE_OBSTACLE_POS_X, Pos.x);
+            Subsystem.GetSave().Set(SAVE_OBSTACLE_POS_Y, Pos.y);
+            LOG("[LevelOne] Saved obstacle position: {}, {}", Pos.x, Pos.y);
+        }
+        
+        // Flush to disk and quit
+        Subsystem.GetSave().Save();
+        Subsystem.Quit();
     }
 }

@@ -46,4 +46,28 @@ namespace we
 	{
 		return SaveData.value(Key, DefaultValue);
 	}
+
+	// JSON serialization for vec2f
+	inline void to_json(json& J, const vec2f& V)
+	{
+		J = json::array({V.x, V.y});
+	}
+
+	inline void from_json(const json& J, vec2f& V)
+	{
+		V.x = J[0];
+		V.y = J[1];
+	}
+
+	// JSON serialization for vec2i
+	inline void to_json(json& J, const vec2i& V)
+	{
+		J = json::array({V.x, V.y});
+	}
+
+	inline void from_json(const json& J, vec2i& V)
+	{
+		V.x = J[0];
+		V.y = J[1];
+	}
 }

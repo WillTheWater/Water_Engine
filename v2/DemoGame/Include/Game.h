@@ -19,6 +19,6 @@ namespace we
 
 	protected:
 		// Override to create our game-specific GameInstance
-		unique<GameInstance> CreateGameInstance() override;
+		shared<GameInstance> CreateGameInstance() override;
 	};
 }

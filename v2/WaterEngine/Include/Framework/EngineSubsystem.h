@@ -36,8 +36,8 @@ namespace we
 		unique<CursorSubsystem>		Cursor;
 		unique<InputSubsystem>		Input;
 		unique<GUISubsystem>		GUI;
-		unique<SaveSubsystem>		Save;
+		shared<SaveSubsystem>		Save;
 		shared<PhysicsSubsystem>	Physics;
-		unique<GameInstance>		GameInstance;
+		shared<GameInstance>		GameInstance;
 	};
 }

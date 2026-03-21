@@ -18,9 +18,9 @@ namespace we
 		return make_unique<Game>();
 	}
 
-	unique<GameInstance> Game::CreateGameInstance()
+	shared<GameInstance> Game::CreateGameInstance()
 	{
-		return make_unique<DemoGameInstance>();
+		return make_shared<DemoGameInstance>();
 	}
 
 	Game::Game()
