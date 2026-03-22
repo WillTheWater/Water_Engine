@@ -19,6 +19,7 @@
 #include "Subsystem/WorldSubsystem.h"
 #include "Subsystem/SaveSubsystem.h"
 #include "Component/PostProcessingComponent.h"
+#include "NPC/AoiMizukawa.h"
 #include "PostProcess/Effects/PPEWave.h"
 #include "Input/InputActions.h"
 #include "Utility/Log.h"
@@ -64,6 +65,9 @@ namespace we
         // Test character
         Character = SpawnActor<TestCharacter>().lock();
         Character->SetPosition({PlayerX, PlayerY});
+
+        auto Aoi = SpawnActor<AoiMizukawa>().lock();
+        Aoi->SetPosition({ 1200.0f, 800.0f });
 
         // Static obstacle
         auto StaticObstacle = SpawnActor<CollisionActor>().lock();
