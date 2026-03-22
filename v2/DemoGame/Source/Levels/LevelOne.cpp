@@ -19,6 +19,7 @@
 #include "Subsystem/WorldSubsystem.h"
 #include "Subsystem/SaveSubsystem.h"
 #include "Component/PostProcessingComponent.h"
+#include "Framework/World/Barrier.h"
 #include "NPC/AoiMizukawa.h"
 #include "PostProcess/Effects/PPEWave.h"
 #include "Input/InputActions.h"
@@ -69,6 +70,32 @@ namespace we
 
         auto Aoi = SpawnActor<AoiMizukawa>().lock();
         Aoi->SetPosition({ 1200.0f, 800.0f });
+
+        auto BottomBarrier = SpawnActor<Barrier>().lock();
+        BottomBarrier->SetPoints({
+            {0.0f, 2855.0f},
+            {5760.0f, 2855.0f}
+            });
+        BottomBarrier->SetThickness(8.0f);
+
+        auto ForestBarrier = SpawnActor<Barrier>().lock();
+        ForestBarrier->SetPoints({
+            {0, 3400},
+            {0.0f, 980},
+            {950, 400},
+            {1600,220},
+            {2200, 316},
+            {2680, 290},
+            {2950, 0},
+            {3295, 0},
+            {3510, 370},
+            {4230, 460},
+            {4970, 330},
+            {5415, 480},
+            {5760, 1080},
+            {5760, 3400}
+            });
+        ForestBarrier->SetThickness(8.0f);
 
         // Static obstacle
         auto StaticObstacle = SpawnActor<CollisionActor>().lock();

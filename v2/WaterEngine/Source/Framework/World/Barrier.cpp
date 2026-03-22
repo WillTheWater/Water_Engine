@@ -65,7 +65,7 @@ namespace we
 			return;
 		}
 
-		Body->GetUserData().pointer = reinterpret_cast<uintptr_t>(this);
+		Body->GetUserData().pointer = 0;
 
 		CreateSegments();
 
