@@ -41,6 +41,7 @@ namespace we
         BG = LoadAsset().LoadTexture("Assets/Textures/Game/world.png");
         BGImage = SpawnActor<Actor>().lock();
         BGImage->SetSprite(BG);
+        BGImage->SetCustomRenderDepth(-20.f);
 
         Water = LoadAsset().LoadTexture("Assets/Textures/Game/water.png");
         WaterImage = SpawnActor<Actor>().lock();
@@ -97,29 +98,41 @@ namespace we
             });
         ForestBarrier->SetThickness(8.0f);
 
-        // Static obstacle
-        auto StaticObstacle = SpawnActor<CollisionActor>().lock();
-        StaticObstacle->SetBodyType(b2_staticBody);
-        StaticObstacle->SetShapeType(we::PhysicsComponent::EShapeType::Rectangle);
-        StaticObstacle->SetPhysicsSize(42.0f); 
-        StaticObstacle->SetCollisionSize(64.0f);
-        StaticObstacle->SetPosition({400.0f, 540.0f});
-        
-        // Kinematic obstacle
-        auto KinematicObstacle = SpawnActor<CollisionActor>().lock();
-        KinematicObstacle->SetBodyType(b2_kinematicBody);
-        KinematicObstacle->SetShapeType(we::PhysicsComponent::EShapeType::Circle);
-        KinematicObstacle->SetPhysicsSize(42.0f); 
-        KinematicObstacle->SetCollisionSize(64.0f);
-        KinematicObstacle->SetPosition({640.0f, 400.0f});
-        
-        // Dynamic obstacle
-        DynObstacle = SpawnActor<CollisionActor>().lock();
-        DynObstacle->SetBodyType(b2_dynamicBody);
-        DynObstacle->SetShapeType(we::PhysicsComponent::EShapeType::Circle);
-        DynObstacle->SetPhysicsSize(42.0f);  
-        DynObstacle->SetCollisionSize(64.0f);
-        DynObstacle->SetPosition({ObstacleX, ObstacleY});
+        Hut1 = SpawnActor<Actor>().lock();
+        Hut1Shadow = SpawnActor<Actor>().lock();
+        Hut1Tex = LoadAsset().LoadTexture("Assets/Textures/Game/hut1.png");
+        Hut1TexShadow = LoadAsset().LoadTexture("Assets/Textures/Game/hut1shadow.png");
+        Hut1->SetSprite(Hut1Tex);
+        Hut1Shadow->SetSprite(Hut1TexShadow);
+        Hut1->SetSpriteOrigin({ 515, 815 });
+        Hut1Shadow->SetSpriteOrigin({ 515, 815 });
+        Hut1->SetPosition({742, 1335});
+        Hut1Shadow->SetPosition({742, 1335});
+        Hut1Shadow->SetCustomRenderDepth(10000.f);
+
+        Hut2 = SpawnActor<Actor>().lock();
+        Hut2Shadow = SpawnActor<Actor>().lock();
+        Hut2Tex = LoadAsset().LoadTexture("Assets/Textures/Game/hut2.png");
+        Hut2TexShadow = LoadAsset().LoadTexture("Assets/Textures/Game/hut2shadow.png");
+        Hut2->SetSprite(Hut2Tex);
+        Hut2Shadow->SetSprite(Hut2TexShadow);
+        Hut2->SetSpriteOrigin({ 475, 580 });
+        Hut2Shadow->SetSpriteOrigin({ 475, 580 });
+        Hut2->SetPosition({ 1420, 710 });
+        Hut2Shadow->SetPosition({ 1420, 710 });
+        Hut2Shadow->SetCustomRenderDepth(10000.f);
+
+        Hut3 = SpawnActor<Actor>().lock();
+        Hut3Shadow = SpawnActor<Actor>().lock();
+        Hut3Tex = LoadAsset().LoadTexture("Assets/Textures/Game/hut3.png");
+        Hut3TexShadow = LoadAsset().LoadTexture("Assets/Textures/Game/hut3shadow.png");
+        Hut3->SetSprite(Hut3Tex);
+        Hut3Shadow->SetSprite(Hut3TexShadow);
+        Hut3->SetSpriteOrigin({ 780, 760 });
+        Hut3Shadow->SetSpriteOrigin({ 780, 760 });
+        Hut3->SetPosition({ 4175, 870 });
+        Hut3Shadow->SetPosition({ 4175, 870 });
+        Hut3Shadow->SetCustomRenderDepth(10000.f);
 
         InputController().Bind(PAUSE_ACTION, Input::Keyboard{ sf::Keyboard::Scan::Escape });
 

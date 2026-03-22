@@ -40,6 +40,18 @@ namespace we
         shared<texture> Water;
         shared<Actor> BGImage;
         shared<Actor> WaterImage;
+        shared<texture> Hut1Tex;
+        shared<texture> Hut1TexShadow;
+        shared<Actor> Hut1;
+        shared<Actor> Hut1Shadow;
+        shared<texture> Hut2Tex;
+        shared<texture> Hut2TexShadow;
+        shared<Actor> Hut2;
+        shared<Actor> Hut2Shadow;
+        shared<texture> Hut3Tex;
+        shared<texture> Hut3TexShadow;
+        shared<Actor> Hut3;
+        shared<Actor> Hut3Shadow;
         shared<PostProcessingComponent> WaterPPC;
         shared<Character> Character;
         shared<CollisionActor> DynObstacle;
