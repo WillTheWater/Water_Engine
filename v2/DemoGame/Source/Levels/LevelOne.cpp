@@ -36,7 +36,7 @@ namespace we
     void LevelOne::BeginPlay()
     {
         // Load background
-        BG = LoadAsset().LoadTexture("Assets/Textures/Game/beach.png");
+        BG = LoadAsset().LoadTexture("Assets/Textures/Game/world.png");
         BGImage = SpawnActor<Actor>().lock();
         BGImage->SetSprite(BG);
 
@@ -61,17 +61,9 @@ namespace we
         float ObstacleX = Subsystem.GetSave().Get<float>(SAVE_OBSTACLE_POS_X, 640.0f);
         float ObstacleY = Subsystem.GetSave().Get<float>(SAVE_OBSTACLE_POS_Y, 680.0f);
         
-        // Test character (has built-in camera)
+        // Test character
         Character = SpawnActor<TestCharacter>().lock();
         Character->SetPosition({PlayerX, PlayerY});
-        
-        // Activate character camera with smooth follow
-       /* if (auto CamComp = Character->GetCameraComponent())
-        {
-            CamComp->AttachTo(CamComp->GetOwner());
-            CamComp->SetActive();
-            CamComp->SetSmoothFollow(true, .3f);
-        }*/
 
         // Static obstacle
         auto StaticObstacle = SpawnActor<CollisionActor>().lock();

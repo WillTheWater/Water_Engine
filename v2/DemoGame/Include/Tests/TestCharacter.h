@@ -57,5 +57,6 @@ namespace we
 		void UpdateDirectionalAnimation();
 		ETestCharAnim DirectionToIdleAnim(const vec2f& Dir) const;
 		ETestCharAnim DirectionToWalkAnim(const vec2f& Dir) const;
+		void SetCameraBounds();
 	};
 }

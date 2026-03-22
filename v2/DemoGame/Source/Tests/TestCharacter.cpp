@@ -8,9 +8,11 @@
 #include "Component/PhysicsComponent.h"
 #include "Component/CollisionComponent.h"
 #include "Component/MovementComponent.h"
+#include "Component/CameraComponent.h"
 #include "Subsystem/ResourceSubsystem.h"
 #include "Subsystem/InputSubsystem.h"
 #include "Input/InputActions.h"
+#include "Utility/Log.h"
 #include <cmath>
 
 namespace we
@@ -24,20 +26,27 @@ namespace we
 
 	void TestCharacter::BeginPlay()
 	{
-		// Configure components BEFORE base BeginPlay creates them
 		PhysicsComp->SetBodyType(b2_dynamicBody);
 		PhysicsComp->SetShapeType(PhysicsComponent::EShapeType::Circle);
 		PhysicsComp->SetShapeSize({42.0f, 42.0f});
 		PhysicsComp->SetLinearDamping(10.0f);
 
 		CollComp->SetRadius(64.0f);
+		MoveComp->SetSpeed(240);
 
-		// Now initialize base (creates and initializes components)
 		Character::BeginPlay();
 
-		// Post-initialization setup
 		SetupAnimations();
 		BindInput();
+		
+		// Configure camera
+		if (auto CamComp = GetCameraComponent())
+		{
+			CamComp->AttachTo(this);
+			CamComp->SetActive();
+			CamComp->SetSmoothFollow(true, 0.1f);
+			SetCameraBounds();
+		}
 	}
 
 	void TestCharacter::SetupAnimations()
@@ -189,6 +198,28 @@ namespace we
 			case 6: return ETestCharAnim::WalkLeft;
 			case 7: return ETestCharAnim::WalkBackLeft;
 			default: return ETestCharAnim::WalkForward;
+		}
+	}
+	
+	void TestCharacter::SetCameraBounds()
+	{
+		if (auto CamComp = GetCameraComponent())
+		{
+			// World bounds: (0,0) to (5760, 3240)
+			constexpr vec2f WorldSize = {5760.0f, 3240.0f};
+			
+			// Viewport size (1920x1080)
+			constexpr vec2f ViewSize = {1920.0f, 1080.0f};
+			
+			// Camera center clamping - viewport half-size from edges
+			vec2f MinBounds = ViewSize / 2.0f;  // (960, 540)
+			vec2f MaxBounds = WorldSize - MinBounds;  // (4800, 2700)
+			
+			// Set bounds: position = MinBounds, size = Max - Min
+			CamComp->SetBounds({MinBounds, MaxBounds - MinBounds});
+			
+			LOG("[TestCharacter] Camera bounds set: Min({},{}) Max({},{})", 
+			    MinBounds.x, MinBounds.y, MaxBounds.x, MaxBounds.y);
 		}
 	}
 }
