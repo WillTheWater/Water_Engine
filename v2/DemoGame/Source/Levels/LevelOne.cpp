@@ -81,6 +81,28 @@ namespace we
 
         auto ForestBarrier = SpawnActor<Barrier>().lock();
         ForestBarrier->SetPoints({
+            {215, 1350},
+            {865, 940},
+            {1265, 1295},
+            {915, 1600}
+            });
+        ForestBarrier->SetThickness(8.0f);
+        ForestBarrier->SetClosed(true);
+
+        Hut1 = SpawnActor<Actor>().lock();
+        Hut1Shadow = SpawnActor<Actor>().lock();
+        Hut1Tex = LoadAsset().LoadTexture("Assets/Textures/Game/hut1.png");
+        Hut1TexShadow = LoadAsset().LoadTexture("Assets/Textures/Game/hut1shadow.png");
+        Hut1->SetSprite(Hut1Tex);
+        Hut1Shadow->SetSprite(Hut1TexShadow);
+        Hut1->SetSpriteOrigin({ 515, 815 });
+        Hut1Shadow->SetSpriteOrigin({ 515, 815 });
+        Hut1->SetPosition({742, 1335});
+        Hut1Shadow->SetPosition({742, 1335});
+        Hut1Shadow->SetCustomRenderDepth(10000.f);
+
+        auto Hut1Barrier = SpawnActor<Barrier>().lock();
+        Hut1Barrier->SetPoints({
             {0, 3400},
             {0.0f, 980},
             {950, 400},
@@ -96,19 +118,7 @@ namespace we
             {5760, 1080},
             {5760, 3400}
             });
-        ForestBarrier->SetThickness(8.0f);
-
-        Hut1 = SpawnActor<Actor>().lock();
-        Hut1Shadow = SpawnActor<Actor>().lock();
-        Hut1Tex = LoadAsset().LoadTexture("Assets/Textures/Game/hut1.png");
-        Hut1TexShadow = LoadAsset().LoadTexture("Assets/Textures/Game/hut1shadow.png");
-        Hut1->SetSprite(Hut1Tex);
-        Hut1Shadow->SetSprite(Hut1TexShadow);
-        Hut1->SetSpriteOrigin({ 515, 815 });
-        Hut1Shadow->SetSpriteOrigin({ 515, 815 });
-        Hut1->SetPosition({742, 1335});
-        Hut1Shadow->SetPosition({742, 1335});
-        Hut1Shadow->SetCustomRenderDepth(10000.f);
+        Hut1Barrier->SetThickness(8.0f);
 
         Hut2 = SpawnActor<Actor>().lock();
         Hut2Shadow = SpawnActor<Actor>().lock();
