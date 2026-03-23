@@ -70,7 +70,7 @@ namespace we
         Character->SetPosition({PlayerX, PlayerY});
 
         auto Aoi = SpawnActor<AoiMizukawa>().lock();
-        Aoi->SetPosition({ 1200.0f, 800.0f });
+        Aoi->SetPosition({ 4700, 2400 });
 
         auto BottomBarrier = SpawnActor<Barrier>().lock();
         BottomBarrier->SetPoints({
@@ -81,10 +81,20 @@ namespace we
 
         auto ForestBarrier = SpawnActor<Barrier>().lock();
         ForestBarrier->SetPoints({
-            {215, 1350},
-            {865, 940},
-            {1265, 1295},
-            {915, 1600}
+            { 0, 3400 },
+            {0.0f, 980},
+            {950, 400},
+            {1600,220},
+            {2200, 316},
+            {2680, 290},
+            {2950, 0},
+            {3295, 0},
+            {3510, 370},
+            {4230, 460},
+            {4970, 330},
+            {5415, 480},
+            {5760, 1080},
+            {5760, 3400}
             });
         ForestBarrier->SetThickness(8.0f);
         ForestBarrier->SetClosed(true);
@@ -103,22 +113,13 @@ namespace we
 
         auto Hut1Barrier = SpawnActor<Barrier>().lock();
         Hut1Barrier->SetPoints({
-            {0, 3400},
-            {0.0f, 980},
-            {950, 400},
-            {1600,220},
-            {2200, 316},
-            {2680, 290},
-            {2950, 0},
-            {3295, 0},
-            {3510, 370},
-            {4230, 460},
-            {4970, 330},
-            {5415, 480},
-            {5760, 1080},
-            {5760, 3400}
+            {215, 1350},
+            {865, 940},
+            {1265, 1295},
+            {915, 1600}
             });
         Hut1Barrier->SetThickness(8.0f);
+        Hut1Barrier->SetClosed(true);
 
         Hut2 = SpawnActor<Actor>().lock();
         Hut2Shadow = SpawnActor<Actor>().lock();
@@ -132,6 +133,16 @@ namespace we
         Hut2Shadow->SetPosition({ 1420, 710 });
         Hut2Shadow->SetCustomRenderDepth(10000.f);
 
+        auto Hut2Barrier = SpawnActor<Barrier>().lock();
+        Hut2Barrier->SetPoints({
+            {1314, 850},
+            {958, 566},
+            {1669, 400},
+            {1945, 745}
+            });
+        Hut2Barrier->SetThickness(8.0f);
+        Hut2Barrier->SetClosed(true);
+
         Hut3 = SpawnActor<Actor>().lock();
         Hut3Shadow = SpawnActor<Actor>().lock();
         Hut3Tex = LoadAsset().LoadTexture("Assets/Textures/Game/hut3.png");
@@ -143,6 +154,23 @@ namespace we
         Hut3->SetPosition({ 4175, 870 });
         Hut3Shadow->SetPosition({ 4175, 870 });
         Hut3Shadow->SetCustomRenderDepth(10000.f);
+
+        auto Hut3Barrier = SpawnActor<Barrier>().lock();
+        Hut3Barrier->SetPoints({
+            {3425, 735},
+            {3700, 800},
+            {3822, 989},
+            {3709, 989},
+            {3709, 1100},
+            {4000, 1100},
+            {4000, 980},
+            {4380, 980},
+            {4400, 1050},
+            {4500, 1050},
+            {4340, 500},
+            });
+        Hut3Barrier->SetThickness(8.0f);
+        Hut3Barrier->SetClosed(true);
 
         InputController().Bind(PAUSE_ACTION, Input::Keyboard{ sf::Keyboard::Scan::Escape });
 
