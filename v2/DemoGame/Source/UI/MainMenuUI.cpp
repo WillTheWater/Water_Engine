@@ -55,17 +55,17 @@ namespace we
 		Layout->getRenderer()->setPadding(10);
 		
 		// Play Button
-		auto Play = CreateButton("PLAY", tgui::Color::Green, tgui::Color::Yellow);
+		auto Play = CreateButton("PLAY");
 		Play->onPress([this]() { OnPlayClicked(); });
 		Layout->add(Play, "PlayButton");
 		
 		// Settings Button
-		auto Settings = CreateButton("SETTINGS", tgui::Color::Red, tgui::Color::Magenta);
+		auto Settings = CreateButton("SETTINGS");
 		Settings->onPress([this]() { OnSettingsClicked(); });
 		Layout->add(Settings, "SettingsButton");
 		
 		// Quit Button
-		auto Quit = CreateButton("QUIT", tgui::Color::Blue, tgui::Color::Cyan);
+		auto Quit = CreateButton("QUIT");
 		Quit->onPress([this]() { OnQuitClicked(); });
 		Layout->add(Quit, "QuitButton");
 		
@@ -74,17 +74,17 @@ namespace we
 		LOG("[MainMenuUI] Layout setup complete");
 	}
 	
-	tgui::Button::Ptr MainMenuUI::CreateButton(const std::string& Text, 
-		tgui::Color HoverColor, tgui::Color DownColor)
+	tgui::Button::Ptr MainMenuUI::CreateButton(const std::string& Text)
 	{
 		auto Button = tgui::Button::create(Text);
 		Button->setTextSize(24);
 		Button->setFocusable(false);
 		
 		auto Renderer = Button->getRenderer();
-		Renderer->setBackgroundColor(tgui::Color::Black);
-		Renderer->setBackgroundColorHover(HoverColor);
-		Renderer->setBackgroundColorDown(DownColor);
+		// Normal: {0, 16, 31}, Hover: {47, 121, 142}, Pressed: {133, 120, 81}
+		Renderer->setBackgroundColor(tgui::Color{0, 16, 31});
+		Renderer->setBackgroundColorHover(tgui::Color{47, 121, 142});
+		Renderer->setBackgroundColorDown(tgui::Color{133, 120, 81});
 		Renderer->setTextColor(tgui::Color::White);
 		Renderer->setTextColorHover(tgui::Color::White);
 		Renderer->setTextColorDown(tgui::Color::White);

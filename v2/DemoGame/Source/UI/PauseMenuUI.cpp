@@ -56,22 +56,22 @@ namespace we
 		Layout->getRenderer()->setPadding(10);
 		
 		// Resume Button
-		auto Resume = CreateButton("RESUME", tgui::Color::Green, tgui::Color::Yellow);
+		auto Resume = CreateButton("RESUME");
 		Resume->onPress([this]() { OnResume(); });
 		Layout->add(Resume, "ResumeButton");
 		
 		// Settings Button
-		auto Settings = CreateButton("SETTINGS", tgui::Color::Red, tgui::Color::Magenta);
+		auto Settings = CreateButton("SETTINGS");
 		Settings->onPress([this]() { OnSettings(); });
 		Layout->add(Settings, "SettingsButton");
 		
 		// Main Menu Button
-		auto MainMenu = CreateButton("MAIN MENU", tgui::Color::Blue, tgui::Color::Cyan);
+		auto MainMenu = CreateButton("MAIN MENU");
 		MainMenu->onPress([this]() { OnMainMenu(); });
 		Layout->add(MainMenu, "MainMenuButton");
 		
 		// Save & Quit Button
-		auto SaveQuit = CreateButton("SAVE & QUIT", tgui::Color::Red, tgui::Color::Magenta);
+		auto SaveQuit = CreateButton("SAVE & QUIT");
 		SaveQuit->onPress([this]() { OnSaveAndQuit(); });
 		Layout->add(SaveQuit, "SaveQuitButton");
 		
@@ -80,17 +80,17 @@ namespace we
 		LOG("[PauseMenuUI] Layout setup complete");
 	}
 	
-	tgui::Button::Ptr PauseMenuUI::CreateButton(const std::string& Text, 
-		tgui::Color HoverColor, tgui::Color DownColor)
+	tgui::Button::Ptr PauseMenuUI::CreateButton(const std::string& Text)
 	{
 		auto Button = tgui::Button::create(Text);
 		Button->setTextSize(24);
 		Button->setFocusable(false);
 		
 		auto Renderer = Button->getRenderer();
-		Renderer->setBackgroundColor(tgui::Color::Black);
-		Renderer->setBackgroundColorHover(HoverColor);
-		Renderer->setBackgroundColorDown(DownColor);
+		// Normal: {0, 16, 31}, Hover: {47, 121, 142}, Pressed: {133, 120, 81}
+		Renderer->setBackgroundColor(tgui::Color{0, 16, 31});
+		Renderer->setBackgroundColorHover(tgui::Color{47, 121, 142});
+		Renderer->setBackgroundColorDown(tgui::Color{133, 120, 81});
 		Renderer->setTextColor(tgui::Color::White);
 		Renderer->setTextColorHover(tgui::Color::White);
 		Renderer->setTextColorDown(tgui::Color::White);

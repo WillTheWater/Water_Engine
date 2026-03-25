@@ -27,8 +27,7 @@ namespace we
 		
 	private:
 		void SetupLayout();
-		tgui::Button::Ptr CreateButton(const std::string& Text, 
-			tgui::Color HoverColor, tgui::Color DownColor);
+		tgui::Button::Ptr CreateButton(const std::string& Text);
 		void OnPlayClicked();
 		void OnSettingsClicked();
 		void OnQuitClicked();
