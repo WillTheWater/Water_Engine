@@ -10,6 +10,7 @@
 #include "Subsystem/AudioSubsystem.h"
 #include "Utility/Log.h"
 #include "UI/MainMenuUI.h"
+#include "UI/SettingsUI.h"
 #include "Component/PostProcessingComponent.h"
 #include "PostProcess/Effects/PPEGrayscale.h"
 #include "PostProcess/Effects/PPEWave.h"
@@ -38,8 +39,13 @@ namespace we
 		MenuUI->Show();
 
         MenuUI->OnPlayButtonClicked.Bind(this, &MainMenu::Play);
-        MenuUI->OnSettingsButtonClicked.Bind(this, &MainMenu::Settings);
+        MenuUI->OnSettingsButtonClicked.Bind(this, &MainMenu::OpenSettings);
         MenuUI->OnQuitButtonClicked.Bind(this, &MainMenu::Quit);
+
+		// Settings UI
+		SettingsMenu = make_unique<SettingsUI>();
+		SettingsMenu->Initialize();
+		SettingsMenu->OnBackClicked.Bind(this, &MainMenu::CloseSettings);
 
         // Play ambient background
         //PlayAudio().PlayAmbient("Assets/Audio/Default/defaultAmbient.ogg", 4);
@@ -52,6 +58,8 @@ namespace we
 
     void MainMenu::EndPlay()
     {
+        if (SettingsMenu)
+            SettingsMenu->ClearWidgets();
         MenuUI->ClearWidgets();
         PlayAudio().StopAmbient(3);
     }
@@ -61,8 +69,16 @@ namespace we
         Subsystem.LoadWorld<LevelOne>();
     }
 
-    void MainMenu::Settings()
+    void MainMenu::OpenSettings()
     {
+        MenuUI->Hide();
+        SettingsMenu->Show();
+    }
+
+    void MainMenu::CloseSettings()
+    {
+        SettingsMenu->Hide();
+        MenuUI->Show();
     }
 
     void MainMenu::Quit()

@@ -24,8 +24,6 @@ namespace we
 		
 		SetupLayout();
 		bInitialized = true;
-		
-		LOG("[MainMenuUI] Initialized");
 	}
 	
 	void MainMenuUI::ClearWidgets()
@@ -38,8 +36,6 @@ namespace we
 		
 		bInitialized = false;
 		bVisible = false;
-		
-		LOG("[MainMenuUI] Widgets cleared");
 	}
 	
 	void MainMenuUI::SetupLayout()
@@ -70,8 +66,6 @@ namespace we
 		Layout->add(Quit, "QuitButton");
 		
 		GUI.add(Layout, "ButtonLayout");
-		
-		LOG("[MainMenuUI] Layout setup complete");
 	}
 	
 	tgui::Button::Ptr MainMenuUI::CreateButton(const std::string& Text)
@@ -81,7 +75,6 @@ namespace we
 		Button->setFocusable(false);
 		
 		auto Renderer = Button->getRenderer();
-		// Normal: {0, 16, 31}, Hover: {47, 121, 142}, Pressed: {133, 120, 81}
 		Renderer->setBackgroundColor(tgui::Color{0, 16, 31});
 		Renderer->setBackgroundColorHover(tgui::Color{47, 121, 142});
 		Renderer->setBackgroundColorDown(tgui::Color{133, 120, 81});
@@ -120,19 +113,16 @@ namespace we
 	
 	void MainMenuUI::OnPlayClicked()
 	{
-		LOG("[MainMenuUI] Play clicked");
 		OnPlayButtonClicked.Broadcast();
 	}
 	
 	void MainMenuUI::OnSettingsClicked()
 	{
-		LOG("[MainMenuUI] Settings clicked");
 		OnSettingsButtonClicked.Broadcast();
 	}
 	
 	void MainMenuUI::OnQuitClicked()
 	{
-		LOG("[MainMenuUI] Quit clicked");
 		OnQuitButtonClicked.Broadcast();
 	}
 }

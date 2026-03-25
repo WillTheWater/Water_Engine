@@ -7,40 +7,33 @@
 
 #include "Core/CoreMinimal.h"
 #include <TGUI/Widgets/Button.hpp>
-#include "UI/SettingsUI.h"
+#include <TGUI/Widgets/Slider.hpp>
+#include <TGUI/Widgets/CheckBox.hpp>
 #include "Utility/Delegate.h"
 
 namespace we
 {
-	class PauseMenuUI
+	class SettingsUI
 	{
 	public:
-		PauseMenuUI();
-		
+		SettingsUI();
+
 		void Initialize();
 		void ClearWidgets();
 		void Show();
 		void Hide();
-		void Toggle();
-		bool IsVisible() const { return bVisible; }
 
-		Delegate<> OnResumeClicked;
-		Delegate<> OnSettingsClicked;
-		Delegate<> OnMainMenuClicked;
-		Delegate<> OnSaveAndQuitClicked;
-		
+		Delegate<> OnBackClicked;
+
 	private:
 		void SetupLayout();
 		tgui::Button::Ptr CreateButton(const std::string& Text);
-		void OnResume();
-		void OnSettings();
-		void OnSettingsClosed();
-		void OnMainMenu();
-		void OnSaveAndQuit();
-		
+		tgui::Slider::Ptr CreateSlider();
+		tgui::CheckBox::Ptr CreateCheckbox(const std::string& Text);
+		void OnBackPressed();
+
+	private:
 		bool bVisible = false;
 		bool bInitialized = false;
-		unique<SettingsUI> SettingsMenu;
-		bool bInSettings = false;
 	};
 }

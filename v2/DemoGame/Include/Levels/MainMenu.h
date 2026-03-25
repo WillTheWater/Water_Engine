@@ -8,6 +8,7 @@
 #include "Core/CoreMinimal.h"
 #include "Framework/World/World.h"
 #include "UI/MainMenuUI.h"
+#include "UI/SettingsUI.h"
 
 namespace we
 {
@@ -26,13 +27,15 @@ namespace we
 
     private:
 		unique<MainMenuUI> MenuUI;
+		unique<SettingsUI> SettingsMenu;
         shared<texture> BG;
         shared<Actor> BGImage;
         shared<PostProcessingComponent> PPC;
 
     private:
         void Play();
-        void Settings();
+        void OpenSettings();
+        void CloseSettings();
         void Quit();
     };
 }

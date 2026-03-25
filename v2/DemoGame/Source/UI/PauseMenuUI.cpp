@@ -5,7 +5,6 @@
 
 #include "UI/PauseMenuUI.h"
 #include "Subsystem/GuiSubsystem.h"
-#include "Utility/Log.h"
 
 #include <TGUI/Widgets/Button.hpp>
 #include <TGUI/Widgets/Label.hpp>
@@ -23,10 +22,14 @@ namespace we
 			return;
 		
 		SetupLayout();
-		bInitialized = true;  // Set BEFORE calling Hide()
-		Hide();  // Start hidden
 		
-		LOG("[PauseMenuUI] Initialized");
+		// Settings UI
+		SettingsMenu = make_unique<SettingsUI>();
+		SettingsMenu->Initialize();
+		SettingsMenu->OnBackClicked.Bind(this, &PauseMenuUI::OnSettingsClosed);
+		
+		bInitialized = true;
+		Hide();
 	}
 	
 	void PauseMenuUI::ClearWidgets()
@@ -34,13 +37,14 @@ namespace we
 		if (!bInitialized)
 			return;
 		
+		if (SettingsMenu)
+			SettingsMenu->ClearWidgets();
+		
 		auto& GUI = MakeGUI().GetScreenUI();
 		GUI.remove(GUI.get("PauseLayout"));
 		
 		bInitialized = false;
 		bVisible = false;
-		
-		LOG("[PauseMenuUI] Widgets cleared");
 	}
 	
 	void PauseMenuUI::SetupLayout()
@@ -76,8 +80,6 @@ namespace we
 		Layout->add(SaveQuit, "SaveQuitButton");
 		
 		GUI.add(Layout, "PauseLayout");
-		
-		LOG("[PauseMenuUI] Layout setup complete");
 	}
 	
 	tgui::Button::Ptr PauseMenuUI::CreateButton(const std::string& Text)
@@ -87,7 +89,6 @@ namespace we
 		Button->setFocusable(false);
 		
 		auto Renderer = Button->getRenderer();
-		// Normal: {0, 16, 31}, Hover: {47, 121, 142}, Pressed: {133, 120, 81}
 		Renderer->setBackgroundColor(tgui::Color{0, 16, 31});
 		Renderer->setBackgroundColorHover(tgui::Color{47, 121, 142});
 		Renderer->setBackgroundColorDown(tgui::Color{133, 120, 81});
@@ -110,6 +111,7 @@ namespace we
 			Layout->setVisible(true);
 		
 		bVisible = true;
+		bInSettings = false;
 	}
 	
 	void PauseMenuUI::Hide()
@@ -121,38 +123,72 @@ namespace we
 		if (auto Layout = GUI.get("PauseLayout"))
 			Layout->setVisible(false);
 		
+		if (SettingsMenu)
+			SettingsMenu->Hide();
+		
 		bVisible = false;
+		bInSettings = false;
 	}
 	
 	void PauseMenuUI::Toggle()
 	{
 		if (bVisible)
-			Hide();
+		{
+			if (bInSettings && SettingsMenu)
+			{
+				SettingsMenu->Hide();
+				bInSettings = false;
+				Show();
+			}
+			else
+			{
+				Hide();
+			}
+		}
 		else
+		{
 			Show();
+		}
 	}
 	
 	void PauseMenuUI::OnResume()
 	{
-		LOG("[PauseMenuUI] Resume clicked");
 		OnResumeClicked.Broadcast();
 	}
 	
 	void PauseMenuUI::OnSettings()
 	{
-		LOG("[PauseMenuUI] Settings clicked");
+		bInSettings = true;
+		
+		auto& GUI = MakeGUI().GetScreenUI();
+		if (auto Layout = GUI.get("PauseLayout"))
+			Layout->setVisible(false);
+		
+		if (SettingsMenu)
+			SettingsMenu->Show();
+		
 		OnSettingsClicked.Broadcast();
+	}
+	
+	void PauseMenuUI::OnSettingsClosed()
+	{
+		bInSettings = false;
+		
+		if (SettingsMenu)
+			SettingsMenu->Hide();
+		
+		auto& GUI = MakeGUI().GetScreenUI();
+		if (auto Layout = GUI.get("PauseLayout"))
+			Layout->setVisible(true);
 	}
 	
 	void PauseMenuUI::OnMainMenu()
 	{
-		LOG("[PauseMenuUI] Main Menu clicked");
 		OnMainMenuClicked.Broadcast();
 	}
 	
 	void PauseMenuUI::OnSaveAndQuit()
 	{
-		LOG("[PauseMenuUI] Save & Quit clicked");
 		OnSaveAndQuitClicked.Broadcast();
 	}
 }
