@@ -21,6 +21,7 @@
 #include "Component/PostProcessingComponent.h"
 #include "Framework/World/Barrier.h"
 #include "NPC/AoiMizukawa.h"
+#include "NPC/Kiyoshi.h"
 #include "PostProcess/Effects/PPEWave.h"
 #include "Input/InputActions.h"
 #include "Utility/Log.h"
@@ -71,6 +72,18 @@ namespace we
 
         auto Aoi = SpawnActor<AoiMizukawa>().lock();
         Aoi->SetPosition({ 4700, 2400 });
+
+        auto Kiyo = SpawnActor<Kiyoshi>().lock();
+        Kiyo->SetWaypoints({
+            {1200.0f, 1530.0f}, 
+            {1550.0f, 1800.0f}, 
+            {3500.0f, 1350.0f}, 
+            {4300.0f, 1100.0f}, 
+            {5210.0f, 1130.0f}, 
+            {5480.0f, 1300.0f}, 
+            {4780.0f, 1830.0f}, 
+            {1550.0f, 1800.0f}  
+        });
 
         auto BottomBarrier = SpawnActor<Barrier>().lock();
         BottomBarrier->SetPoints({
