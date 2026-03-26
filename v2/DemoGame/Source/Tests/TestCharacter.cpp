@@ -33,6 +33,7 @@ namespace we
 
 		CollComp->SetRadius(64.0f);
 		MoveComp->SetSpeed(240);
+		SetScale({ 2.1,2.1 });
 
 		Character::BeginPlay();
 
@@ -52,10 +53,10 @@ namespace we
 	void TestCharacter::SetupAnimations()
 	{
 		// Sprite sheets: 2048x2048, 8x8 grid, each frame 256x256
-		SpriteSheet IdleSheet("Assets/Textures/Game/idle.png", vec2u{256, 256}, 8);
+		SpriteSheet IdleSheet("Assets/Textures/Game/idle.png", vec2u{100, 128}, 8);
 		AnimComp->AddSpriteSheet(ETestCharSheet::Idle, IdleSheet);
 		
-		SpriteSheet WalkSheet("Assets/Textures/Game/walk.png", vec2u{256, 256}, 8);
+		SpriteSheet WalkSheet("Assets/Textures/Game/walk.png", vec2u{100, 128}, 8);
 		AnimComp->AddSpriteSheet(ETestCharSheet::Walk, WalkSheet);
 
 		// 8-way idle animations
@@ -215,11 +216,7 @@ namespace we
 			vec2f MinBounds = ViewSize / 2.0f;  // (960, 540)
 			vec2f MaxBounds = WorldSize - MinBounds;  // (4800, 2700)
 			
-			// Set bounds: position = MinBounds, size = Max - Min
 			CamComp->SetBounds({MinBounds, MaxBounds - MinBounds});
-			
-			LOG("[TestCharacter] Camera bounds set: Min({},{}) Max({},{})", 
-			    MinBounds.x, MinBounds.y, MaxBounds.x, MaxBounds.y);
 		}
 	}
 }
