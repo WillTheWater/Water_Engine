@@ -187,6 +187,9 @@ namespace we
 
         InputController().Bind(PAUSE_ACTION, Input::Keyboard{ sf::Keyboard::Scan::Escape });
 
+        // Event-driven pause toggle - fires immediately on key press, works when paused
+        PauseBinding = InputController().BindAction(PAUSE_ACTION, this, &LevelOne::TogglePauseMenu);
+
         // Initialize pause menu
         PauseUI = make_unique<PauseMenuUI>();
         PauseUI->Initialize(Subsystem.GetSave());
@@ -204,13 +207,7 @@ namespace we
         {
             WaterPPC->Tick(DeltaTime);
         }
-
-        bool bIsPressed = InputController().Pressed(PAUSE_ACTION);
-        if (bIsPressed && !bWasPausePressed)
-        {
-            TogglePauseMenu();
-        }
-        bWasPausePressed = bIsPressed;
+        // Pause toggle is now event-driven (works even when paused)
     }
 
     void LevelOne::EndPlay()

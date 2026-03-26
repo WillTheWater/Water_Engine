@@ -8,69 +8,148 @@
 
 namespace we
 {
-	InputSubsystem* InputSubsystem::Instance = nullptr;
+    // =========================================================================
+    // BindingHandle Implementation
+    // =========================================================================
+    BindingHandle::BindingHandle(int InActionId, uint64_t InToken, InputSubsystem* InOwner)
+        : ActionId(InActionId)
+        , Token(InToken)
+        , Owner(InOwner)
+    {
+    }
 
-	InputSubsystem::InputSubsystem()
-	{
-		Instance = this;
-	}
+    BindingHandle::BindingHandle(BindingHandle&& Other) noexcept
+        : ActionId(Other.ActionId)
+        , Token(Other.Token)
+        , Owner(Other.Owner)
+    {
+        Other.ActionId = -1;
+        Other.Token = 0;
+        Other.Owner = nullptr;
+    }
 
-	InputSubsystem& InputSubsystem::Get()
-	{
-		return *Instance;
-	}
+    BindingHandle& BindingHandle::operator=(BindingHandle&& Other) noexcept
+    {
+        if (this != &Other)
+        {
+            Release();
+            ActionId = Other.ActionId;
+            Token = Other.Token;
+            Owner = Other.Owner;
+            Other.ActionId = -1;
+            Other.Token = 0;
+            Other.Owner = nullptr;
+        }
+        return *this;
+    }
 
-	void InputSubsystem::HandleEvent(const sf::Event& event)
-	{
-		InputEventHandler Handler{ *this };
-		event.visit(Handler);
-	}
+    void BindingHandle::Release()
+    {
+        if (Owner && ActionId >= 0 && Token != 0)
+        {
+            Owner->UnbindAction(ActionId, Token);
+            Owner = nullptr;
+            ActionId = -1;
+            Token = 0;
+        }
+    }
 
-	void InputSubsystem::Bind(int InputAction, const Input::Binding& Binding)
-	{
-		Bindings.emplace(InputAction, Binding);
-	}
+    // =========================================================================
+    // InputSubsystem Implementation
+    // =========================================================================
+    InputSubsystem* InputSubsystem::Instance = nullptr;
 
-	bool InputSubsystem::Pressed(int InputAction) const
-	{
-		return HeldActions.contains(InputAction);
-	}
+    InputSubsystem::InputSubsystem()
+    {
+        Instance = this;
+    }
 
-	void InputSubsystem::OnPressed(const Input::Binding& Binding)
-	{
-		for (const auto& [Action, BoundBinding] : Bindings)
-		{
-			if (Input::BindingsEqual(BoundBinding, Binding))
-			{
-				uint& Count = ActionPressCount[Action];
-				if (Count == 0)
-				{
-					HeldActions.insert(Action);
-				}
-				Count++;
-			}
-		}
-	}
+    InputSubsystem& InputSubsystem::Get()
+    {
+        return *Instance;
+    }
 
-	void InputSubsystem::OnReleased(const Input::Binding& Binding)
-	{
-		for (const auto& [Action, BoundBinding] : Bindings)
-		{
-			if (Input::BindingsEqual(BoundBinding, Binding))
-			{
-				auto It = ActionPressCount.find(Action);
-				if (It != ActionPressCount.end())
-				{
-					if (It->second > 0)
-					{
-						It->second--;
-					}
-					if (It->second == 0)
-					{
-						HeldActions.erase(Action);
-					}
-				}
-			}
-		}
-	}
+    void InputSubsystem::HandleEvent(const sf::Event& event)
+    {
+        InputEventHandler Handler{ *this };
+        event.visit(Handler);
+    }
+
+    void InputSubsystem::Bind(int InputAction, const Input::Binding& Binding)
+    {
+        Bindings.emplace(InputAction, Binding);
+    }
+
+    bool InputSubsystem::Pressed(int InputAction) const
+    {
+        return HeldActions.contains(InputAction);
+    }
+
+    void InputSubsystem::OnPressed(const Input::Binding& Binding)
+    {
+        for (const auto& [Action, BoundBinding] : Bindings)
+        {
+            if (Input::BindingsEqual(BoundBinding, Binding))
+            {
+                uint& Count = ActionPressCount[Action];
+                if (Count == 0)
+                {
+                    HeldActions.insert(Action);
+
+                    // Fire event callbacks for this action
+                    auto It = ActionCallbacks.find(Action);
+                    if (It != ActionCallbacks.end())
+                    {
+                        for (auto& [Token, Callback] : It->second)
+                        {
+                            Callback();
+                        }
+                    }
+                }
+                Count++;
+            }
+        }
+    }
+
+    void InputSubsystem::OnReleased(const Input::Binding& Binding)
+    {
+        for (const auto& [Action, BoundBinding] : Bindings)
+        {
+            if (Input::BindingsEqual(BoundBinding, Binding))
+            {
+                auto It = ActionPressCount.find(Action);
+                if (It != ActionPressCount.end())
+                {
+                    if (It->second > 0)
+                    {
+                        It->second--;
+                    }
+                    if (It->second == 0)
+                    {
+                        HeldActions.erase(Action);
+                    }
+                }
+            }
+        }
+    }
+
+    BindingHandle InputSubsystem::BindAction(int InputAction, std::function<void()> Callback)
+    {
+        uint64_t Token = NextToken++;
+        ActionCallbacks[InputAction][Token] = std::move(Callback);
+        return BindingHandle(InputAction, Token, this);
+    }
+
+    void InputSubsystem::UnbindAction(int ActionId, uint64_t Token)
+    {
+        auto It = ActionCallbacks.find(ActionId);
+        if (It != ActionCallbacks.end())
+        {
+            It->second.erase(Token);
+            if (It->second.empty())
+            {
+                ActionCallbacks.erase(It);
+            }
+        }
+    }
 }

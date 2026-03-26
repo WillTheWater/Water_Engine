@@ -7,6 +7,7 @@
 
 #include "Core/CoreMinimal.h"
 #include "Framework/World/World.h"
+#include "Subsystem/InputSubsystem.h"
 
 namespace we
 {
@@ -24,7 +25,7 @@ namespace we
 
     protected:
         void BeginPlay() override;
-        void Tick(float DeltaTime) override;
+        void Tick(float DeltaTime);
         void EndPlay() override;
 
     private:
@@ -56,6 +57,8 @@ namespace we
         shared<Character> Character;
         shared<CollisionActor> DynObstacle;
         unique<PauseMenuUI> PauseUI;
-        bool bWasPausePressed = false;
+
+        // Event-driven input binding (auto-unbinds on destruction)
+        BindingHandle PauseBinding;
     };
 }
