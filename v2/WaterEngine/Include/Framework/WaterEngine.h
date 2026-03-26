@@ -18,6 +18,7 @@ namespace we
         virtual ~WaterEngine();
 
         virtual void StartPlay();
+        void Shutdown();
 
         bool IsRunning() const;
         bool HasFocus() const;

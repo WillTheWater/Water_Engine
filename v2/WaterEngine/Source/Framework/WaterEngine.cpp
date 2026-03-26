@@ -14,11 +14,6 @@ namespace we
     
     WaterEngine::~WaterEngine()
     {
-        if (Subsystem.GameInstance)
-        {
-            Subsystem.GameInstance->Shutdown();
-            Subsystem.GameInstance.reset();
-        }
     }
 
     void WaterEngine::Initialize()
@@ -109,6 +104,18 @@ namespace we
         {
             Subsystem.Window->close();
         }
+    }
+
+    void WaterEngine::Shutdown()
+    {
+        if (Subsystem.GameInstance)
+        {
+            Subsystem.GameInstance->Shutdown();
+            Subsystem.GameInstance.reset();
+        }
+        Subsystem.World.reset();
+        
+        Subsystem.GUI.reset();
     }
 
     void WaterEngine::Render()

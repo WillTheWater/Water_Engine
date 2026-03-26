@@ -30,5 +30,7 @@ int main()
 		Engine->Render();
 		Engine->ProcessQuit();
 	}
+	
+	Engine->Shutdown();
 	return 0;
 }
