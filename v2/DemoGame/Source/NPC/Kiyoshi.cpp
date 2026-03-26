@@ -173,10 +173,10 @@ namespace we
 
 	void Kiyoshi::SetupAnimations()
 	{
-		SpriteSheet IdleSheet("Assets/Textures/Game/oldidle.png", vec2u{256, 256}, 8);
+		SpriteSheet IdleSheet("Assets/Textures/Game/oldIdle.png", vec2u{256, 256}, 8);
 		AnimComp->AddSpriteSheet(EKiyoshiSheet::Idle, IdleSheet);
 		
-		SpriteSheet WalkSheet("Assets/Textures/Game/oldwalk.png", vec2u{256, 256}, 8);
+		SpriteSheet WalkSheet("Assets/Textures/Game/oldWalk.png", vec2u{256, 256}, 8);
 		AnimComp->AddSpriteSheet(EKiyoshiSheet::Walk, WalkSheet);
 
 		// 8-way idle animations

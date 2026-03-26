@@ -323,6 +323,7 @@ namespace we
 		bool bFullscreen = FullscreenCheckbox->isChecked();
 		if (Save)
 			Save->Set(SAVE_FULLSCREEN, bFullscreen);
+		MakeGUI().RequestFullscreen(bFullscreen);
 	}
 
 	void SettingsUI::OnBackPressed()

@@ -48,7 +48,7 @@ namespace we
 		SettingsMenu->OnBackClicked.Bind(this, &MainMenu::CloseSettings);
 
         // Play ambient background
-        //PlayAudio().PlayAmbient("Assets/Audio/Default/defaultAmbient.ogg", 4);
+        PlayAudio().PlayAmbient("Assets/Audio/Default/defaultAmbient.ogg", 4);
     }
 
     void MainMenu::Tick(float DeltaTime)
@@ -61,7 +61,6 @@ namespace we
         if (SettingsMenu)
             SettingsMenu->ClearWidgets();
         MenuUI->ClearWidgets();
-        PlayAudio().StopAmbient(3);
     }
 
     void MainMenu::Play()

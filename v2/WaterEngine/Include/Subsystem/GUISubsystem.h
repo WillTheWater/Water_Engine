@@ -7,6 +7,7 @@
 
 #include "Core/CoreMinimal.h"
 #include <TGUI/Backend/SFML-Graphics.hpp>
+#include "Utility/Delegate.h"
 
 namespace we
 {
@@ -29,6 +30,9 @@ namespace we
 		view GetCameraView() const { return CurrentCameraView; }
 		
 		bool HandleEvent(const event& Event);
+
+		void RequestFullscreen(bool bEnabled);
+		Delegate<bool> OnFullscreenRequested;
 
 	private:
 		static GUISubsystem* Instance;

@@ -20,6 +20,10 @@ namespace we
         void HandleEvent(const event& Event);
         void SetIcon(const string& Path);
 
+        void ToggleFullscreen();
+        void SetFullscreen(bool bEnabled);
+        bool IsFullscreen() const { return bFullscreen; }
+
     public:
         Delegate<vec2u> OnResize;
         Delegate<vec2f> OnMouseMove;
@@ -27,8 +31,10 @@ namespace we
     private:
         friend WindowEventHandler;
 
-    private:
         void EventResize();
         void EventMouseMoved(vec2f NewPosition);
+
+        bool bFullscreen = false;
+        vec2u WindowedSize{1920, 1080};
     };
 }

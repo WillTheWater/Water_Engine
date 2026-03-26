@@ -45,4 +45,9 @@ namespace we
 		Event.visit(Handler);
 		return Handler.Consumed;
 	}
+
+	void GUISubsystem::RequestFullscreen(bool bEnabled)
+	{
+		OnFullscreenRequested.Broadcast(bEnabled);
+	}
 }
