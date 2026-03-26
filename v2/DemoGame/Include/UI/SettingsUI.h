@@ -13,12 +13,14 @@
 
 namespace we
 {
+	class SaveSubsystem;
+
 	class SettingsUI
 	{
 	public:
 		SettingsUI();
 
-		void Initialize();
+		void Initialize(SaveSubsystem& InSave);
 		void ClearWidgets();
 		void Show();
 		void Hide();
@@ -32,8 +34,32 @@ namespace we
 		tgui::CheckBox::Ptr CreateCheckbox(const std::string& Text);
 		void OnBackPressed();
 
+		// Settings callbacks
+		void LoadSettings();
+		void SaveSettings();
+		
+		void OnMuteChanged();
+		void OnMasterVolumeChanged();
+		void OnMusicVolumeChanged();
+		void OnAmbientVolumeChanged();
+		void OnSFXVolumeChanged();
+		void OnVoiceVolumeChanged();
+		void OnUIVolumeChanged();
+		void OnFullscreenChanged();
+
 	private:
 		bool bVisible = false;
 		bool bInitialized = false;
+		SaveSubsystem* Save = nullptr;
+
+		// Widgets
+		tgui::CheckBox::Ptr MuteCheckbox;
+		tgui::CheckBox::Ptr FullscreenCheckbox;
+		tgui::Slider::Ptr MasterSlider;
+		tgui::Slider::Ptr MusicSlider;
+		tgui::Slider::Ptr AmbientSlider;
+		tgui::Slider::Ptr SFXSlider;
+		tgui::Slider::Ptr VoiceSlider;
+		tgui::Slider::Ptr UISlider;
 	};
 }

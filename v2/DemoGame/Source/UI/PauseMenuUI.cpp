@@ -5,6 +5,7 @@
 
 #include "UI/PauseMenuUI.h"
 #include "Subsystem/GuiSubsystem.h"
+#include "Subsystem/SaveSubsystem.h"
 
 #include <TGUI/Widgets/Button.hpp>
 #include <TGUI/Widgets/Label.hpp>
@@ -16,16 +17,17 @@ namespace we
 	{
 	}
 	
-	void PauseMenuUI::Initialize()
+	void PauseMenuUI::Initialize(SaveSubsystem& InSave)
 	{
 		if (bInitialized)
 			return;
 		
+		Save = &InSave;
 		SetupLayout();
 		
 		// Settings UI
 		SettingsMenu = make_unique<SettingsUI>();
-		SettingsMenu->Initialize();
+		SettingsMenu->Initialize(InSave);
 		SettingsMenu->OnBackClicked.Bind(this, &PauseMenuUI::OnSettingsClosed);
 		
 		bInitialized = true;
@@ -104,7 +106,7 @@ namespace we
 	void PauseMenuUI::Show()
 	{
 		if (!bInitialized)
-			Initialize();
+			return;
 		
 		auto& GUI = MakeGUI().GetScreenUI();
 		if (auto Layout = GUI.get("PauseLayout"))

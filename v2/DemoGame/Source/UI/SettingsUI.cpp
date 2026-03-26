@@ -5,6 +5,9 @@
 
 #include "UI/SettingsUI.h"
 #include "Subsystem/GuiSubsystem.h"
+#include "Subsystem/AudioSubsystem.h"
+#include "Subsystem/SaveSubsystem.h"
+#include "Config/GameConfig.h"
 
 #include <TGUI/Widgets/Button.hpp>
 #include <TGUI/Widgets/Slider.hpp>
@@ -18,12 +21,14 @@ namespace we
 {
 	SettingsUI::SettingsUI() = default;
 
-	void SettingsUI::Initialize()
+	void SettingsUI::Initialize(SaveSubsystem& InSave)
 	{
 		if (bInitialized)
 			return;
 
+		Save = &InSave;
 		SetupLayout();
+		LoadSettings();
 		bInitialized = true;
 		Hide();
 	}
@@ -71,14 +76,15 @@ namespace we
 		MuteLabel->setPosition(0, 5);
 		MuteLabel->getRenderer()->setTextColor(tgui::Color::White);
 		MuteRow->add(MuteLabel);
-		auto MuteCheckbox = CreateCheckbox("");
+		MuteCheckbox = CreateCheckbox("");
 		MuteCheckbox->setPosition("85%", 2);
 		MuteCheckbox->setSize(25, 25);
+		MuteCheckbox->onChange([this]() { OnMuteChanged(); });
 		MuteRow->add(MuteCheckbox);
 		Layout->add(MuteRow);
 
 		// Channel sliders
-		auto AddChannelSlider = [&](const std::string& Name)
+		auto AddChannelSlider = [&](const std::string& Name, tgui::Slider::Ptr& Slider, auto Callback)
 		{
 			auto Row = tgui::HorizontalLayout::create();
 			Row->setSize({ "100%", "30" });
@@ -87,17 +93,18 @@ namespace we
 			Label->getRenderer()->setTextColor(tgui::Color::White);
 			Label->setSize({ "80", "100%" });
 			Row->add(Label);
-			auto Slider = CreateSlider();
+			Slider = CreateSlider();
+			Slider->onValueChange(Callback);
 			Row->add(Slider);
 			Layout->add(Row);
 		};
 
-		AddChannelSlider("Master");
-		AddChannelSlider("Music");
-		AddChannelSlider("Ambient");
-		AddChannelSlider("SFX");
-		AddChannelSlider("Voice");
-		AddChannelSlider("UI");
+		AddChannelSlider("Master", MasterSlider, [this]() { OnMasterVolumeChanged(); });
+		AddChannelSlider("Music", MusicSlider, [this]() { OnMusicVolumeChanged(); });
+		AddChannelSlider("Ambient", AmbientSlider, [this]() { OnAmbientVolumeChanged(); });
+		AddChannelSlider("SFX", SFXSlider, [this]() { OnSFXVolumeChanged(); });
+		AddChannelSlider("Voice", VoiceSlider, [this]() { OnVoiceVolumeChanged(); });
+		AddChannelSlider("UI", UISlider, [this]() { OnUIVolumeChanged(); });
 
 		// Spacer
 		Layout->add(tgui::Label::create(""), "Spacer1");
@@ -116,9 +123,10 @@ namespace we
 		FullscreenLabel->setPosition(0, 5);
 		FullscreenLabel->getRenderer()->setTextColor(tgui::Color::White);
 		FullscreenRow->add(FullscreenLabel);
-		auto FullscreenCheckbox = CreateCheckbox("");
+		FullscreenCheckbox = CreateCheckbox("");
 		FullscreenCheckbox->setPosition("85%", 2);
 		FullscreenCheckbox->setSize(25, 25);
+		FullscreenCheckbox->onChange([this]() { OnFullscreenChanged(); });
 		FullscreenRow->add(FullscreenCheckbox);
 		Layout->add(FullscreenRow);
 
@@ -189,15 +197,144 @@ namespace we
 		return Checkbox;
 	}
 
+	void SettingsUI::LoadSettings()
+	{
+		if (!Save)
+			return;
+
+		// Master
+		float MasterVol = Save->Get<float>(SAVE_MASTER_VOLUME, 1.0f);
+		MasterSlider->setValue(static_cast<int>(MasterVol * 100.0f));
+		PlayAudio().SetMasterVolume(MasterVol);
+
+		bool MasterMuted = Save->Get<bool>(SAVE_MASTER_MUTED, false);
+		MuteCheckbox->setChecked(MasterMuted);
+		PlayAudio().SetMasterMuted(MasterMuted);
+
+		// Music
+		float MusicVol = Save->Get<float>(SAVE_MUSIC_VOLUME, 1.0f);
+		MusicSlider->setValue(static_cast<int>(MusicVol * 100.0f));
+		PlayAudio().SetChannelVolume(AudioChannel::Music, MusicVol);
+
+		bool MusicMuted = Save->Get<bool>(SAVE_MUSIC_MUTED, false);
+		PlayAudio().SetChannelMuted(AudioChannel::Music, MusicMuted);
+
+		// Ambient
+		float AmbientVol = Save->Get<float>(SAVE_AMBIENT_VOLUME, 1.0f);
+		AmbientSlider->setValue(static_cast<int>(AmbientVol * 100.0f));
+		PlayAudio().SetChannelVolume(AudioChannel::Ambient, AmbientVol);
+
+		bool AmbientMuted = Save->Get<bool>(SAVE_AMBIENT_MUTED, false);
+		PlayAudio().SetChannelMuted(AudioChannel::Ambient, AmbientMuted);
+
+		// SFX
+		float SFXVol = Save->Get<float>(SAVE_SFX_VOLUME, 1.0f);
+		SFXSlider->setValue(static_cast<int>(SFXVol * 100.0f));
+		PlayAudio().SetChannelVolume(AudioChannel::SFX, SFXVol);
+
+		bool SFXMuted = Save->Get<bool>(SAVE_SFX_MUTED, false);
+		PlayAudio().SetChannelMuted(AudioChannel::SFX, SFXMuted);
+
+		// Voice
+		float VoiceVol = Save->Get<float>(SAVE_VOICE_VOLUME, 1.0f);
+		VoiceSlider->setValue(static_cast<int>(VoiceVol * 100.0f));
+		PlayAudio().SetChannelVolume(AudioChannel::Voice, VoiceVol);
+
+		bool VoiceMuted = Save->Get<bool>(SAVE_VOICE_MUTED, false);
+		PlayAudio().SetChannelMuted(AudioChannel::Voice, VoiceMuted);
+
+		// UI
+		float UIVol = Save->Get<float>(SAVE_UI_VOLUME, 1.0f);
+		UISlider->setValue(static_cast<int>(UIVol * 100.0f));
+		PlayAudio().SetChannelVolume(AudioChannel::UI, UIVol);
+
+		bool UIMuted = Save->Get<bool>(SAVE_UI_MUTED, false);
+		PlayAudio().SetChannelMuted(AudioChannel::UI, UIMuted);
+
+		// Fullscreen (saved state only, no logic yet)
+		bool bFullscreen = Save->Get<bool>(SAVE_FULLSCREEN, false);
+		FullscreenCheckbox->setChecked(bFullscreen);
+	}
+
+	void SettingsUI::SaveSettings()
+	{
+		if (Save)
+			Save->Save();
+	}
+
+	void SettingsUI::OnMuteChanged()
+	{
+		bool bMuted = MuteCheckbox->isChecked();
+		PlayAudio().SetMasterMuted(bMuted);
+		if (Save)
+			Save->Set(SAVE_MASTER_MUTED, bMuted);
+	}
+
+	void SettingsUI::OnMasterVolumeChanged()
+	{
+		float Volume = MasterSlider->getValue() / 100.0f;
+		PlayAudio().SetMasterVolume(Volume);
+		if (Save)
+			Save->Set(SAVE_MASTER_VOLUME, Volume);
+	}
+
+	void SettingsUI::OnMusicVolumeChanged()
+	{
+		float Volume = MusicSlider->getValue() / 100.0f;
+		PlayAudio().SetChannelVolume(AudioChannel::Music, Volume);
+		if (Save)
+			Save->Set(SAVE_MUSIC_VOLUME, Volume);
+	}
+
+	void SettingsUI::OnAmbientVolumeChanged()
+	{
+		float Volume = AmbientSlider->getValue() / 100.0f;
+		PlayAudio().SetChannelVolume(AudioChannel::Ambient, Volume);
+		if (Save)
+			Save->Set(SAVE_AMBIENT_VOLUME, Volume);
+	}
+
+	void SettingsUI::OnSFXVolumeChanged()
+	{
+		float Volume = SFXSlider->getValue() / 100.0f;
+		PlayAudio().SetChannelVolume(AudioChannel::SFX, Volume);
+		if (Save)
+			Save->Set(SAVE_SFX_VOLUME, Volume);
+	}
+
+	void SettingsUI::OnVoiceVolumeChanged()
+	{
+		float Volume = VoiceSlider->getValue() / 100.0f;
+		PlayAudio().SetChannelVolume(AudioChannel::Voice, Volume);
+		if (Save)
+			Save->Set(SAVE_VOICE_VOLUME, Volume);
+	}
+
+	void SettingsUI::OnUIVolumeChanged()
+	{
+		float Volume = UISlider->getValue() / 100.0f;
+		PlayAudio().SetChannelVolume(AudioChannel::UI, Volume);
+		if (Save)
+			Save->Set(SAVE_UI_VOLUME, Volume);
+	}
+
+	void SettingsUI::OnFullscreenChanged()
+	{
+		bool bFullscreen = FullscreenCheckbox->isChecked();
+		if (Save)
+			Save->Set(SAVE_FULLSCREEN, bFullscreen);
+	}
+
 	void SettingsUI::OnBackPressed()
 	{
+		SaveSettings();
 		OnBackClicked.Broadcast();
 	}
 
 	void SettingsUI::Show()
 	{
 		if (!bInitialized)
-			Initialize();
+			return;
 
 		auto& GUI = MakeGUI().GetScreenUI();
 		if (auto Overlay = GUI.get("SettingsOverlay"))

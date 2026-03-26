@@ -44,7 +44,7 @@ namespace we
 
 		// Settings UI
 		SettingsMenu = make_unique<SettingsUI>();
-		SettingsMenu->Initialize();
+		SettingsMenu->Initialize(Subsystem.GetSave());
 		SettingsMenu->OnBackClicked.Bind(this, &MainMenu::CloseSettings);
 
         // Play ambient background

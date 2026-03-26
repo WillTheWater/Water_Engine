@@ -74,8 +74,6 @@ namespace we
 		if (outstream File{ SavePath })
 		{
 			File << SaveData.dump(4);
-			LOG("Save written to: {}", SavePath);
-			LOG("Auto Save Enabled");
 		}
 		else
 		{

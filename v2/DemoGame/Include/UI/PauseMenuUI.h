@@ -12,12 +12,14 @@
 
 namespace we
 {
+	class SaveSubsystem;
+
 	class PauseMenuUI
 	{
 	public:
 		PauseMenuUI();
 		
-		void Initialize();
+		void Initialize(SaveSubsystem& InSave);
 		void ClearWidgets();
 		void Show();
 		void Hide();
@@ -42,5 +44,6 @@ namespace we
 		bool bInitialized = false;
 		unique<SettingsUI> SettingsMenu;
 		bool bInSettings = false;
+		SaveSubsystem* Save = nullptr;
 	};
 }

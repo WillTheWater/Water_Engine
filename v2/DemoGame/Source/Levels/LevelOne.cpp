@@ -189,7 +189,7 @@ namespace we
 
         // Initialize pause menu
         PauseUI = make_unique<PauseMenuUI>();
-        PauseUI->Initialize();
+        PauseUI->Initialize(Subsystem.GetSave());
 
         // Bind delegates
         PauseUI->OnResumeClicked.Bind(this, &LevelOne::ResumeGame);
