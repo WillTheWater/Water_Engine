@@ -19,10 +19,14 @@ namespace we
         WaveShader->setUniform("Source", shader::CurrentTexture);
     }
 
+    void PPEWave::Update(float DeltaTime)
+    {
+        ElapsedTime += DeltaTime;
+    }
+
     void PPEWave::Apply(const texture& Input, renderTarget& Output)
     {
-        float Elapsed = Time.getElapsedTime().asSeconds();
-        WaveShader->setUniform("Time", Elapsed);
+        WaveShader->setUniform("Time", ElapsedTime);
         Output.draw(sprite(Input), WaveShader.get());
     }
 }

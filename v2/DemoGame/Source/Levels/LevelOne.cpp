@@ -250,9 +250,13 @@ namespace we
         if (PauseUI->IsVisible())
         {
             PauseUI->Hide();
+            Subsystem.Resume();
         }
         else
+        {
             PauseUI->Show();
+            Subsystem.Pause();
+        }
     }
 
     void LevelOne::PauseGame()

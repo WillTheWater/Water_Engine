@@ -14,11 +14,12 @@ namespace we
     {
     public:
         PPEScroll();
+
+        void Update(float DeltaTime) override;
         void Apply(const texture& Input, renderTarget& Output) override;
-        void Update(float DeltaTime) override {}
 
     private:
         shared<shader> ScrollShader;
-        sf::Clock Time;
+        float ElapsedTime = 0.0f;
     };
 }

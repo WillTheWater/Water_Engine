@@ -19,10 +19,14 @@ namespace we
         ScrollShader->setUniform("Source", shader::CurrentTexture);
     }
 
+    void PPEScroll::Update(float DeltaTime)
+    {
+        ElapsedTime += DeltaTime;
+    }
+
     void PPEScroll::Apply(const texture& Input, renderTarget& Output)
     {
-        float Elapsed = Time.getElapsedTime().asSeconds();
-        ScrollShader->setUniform("Time", Elapsed);
+        ScrollShader->setUniform("Time", ElapsedTime);
         Output.draw(sprite(Input), ScrollShader.get());
     }
 }

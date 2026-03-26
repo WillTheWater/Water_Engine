@@ -15,10 +15,11 @@ namespace we
     public:
         PPEWave();
 
+        void Update(float DeltaTime) override;
         void Apply(const texture& Input, renderTarget& Output) override;
 
     private:
         shared<shader> WaveShader;
-        clock Time;
+        float ElapsedTime = 0.0f;
     };
 }
