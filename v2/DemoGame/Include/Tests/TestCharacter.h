@@ -7,6 +7,7 @@
 
 #include "Core/CoreMinimal.h"
 #include "Framework/World/Character.h"
+#include "Subsystem/InputSubsystem.h"
 
 namespace we
 {
@@ -55,8 +56,11 @@ namespace we
 		void BindInput();
 		void HandleInput();
 		void UpdateDirectionalAnimation();
+		void TryInteract();
 		ETestCharAnim DirectionToIdleAnim(const vec2f& Dir) const;
 		ETestCharAnim DirectionToWalkAnim(const vec2f& Dir) const;
 		void SetCameraBounds();
+
+		BindingHandle InteractBinding;
 	};
 }

@@ -9,9 +9,10 @@
 #include "Component/CollisionComponent.h"
 #include "Component/MovementComponent.h"
 #include "Component/CameraComponent.h"
+#include "Interaction/IInteractable.h"
+#include "Input/InputActions.h"
 #include "Subsystem/ResourceSubsystem.h"
 #include "Subsystem/InputSubsystem.h"
-#include "Input/InputActions.h"
 #include "Utility/Log.h"
 #include <cmath>
 
@@ -108,6 +109,9 @@ namespace we
 		Input.Bind(MOVE_DOWN, Input::Keyboard{sf::Keyboard::Scan::Down});
 		Input.Bind(MOVE_LEFT, Input::Keyboard{sf::Keyboard::Scan::Left});
 		Input.Bind(MOVE_RIGHT, Input::Keyboard{sf::Keyboard::Scan::Right});
+
+		Input.Bind(ACTION_INTERACT, Input::Keyboard{sf::Keyboard::Scan::E});
+		InteractBinding = Input.BindAction(ACTION_INTERACT, this, &TestCharacter::TryInteract);
 	}
 
 	void TestCharacter::HandleInput()
@@ -126,6 +130,33 @@ namespace we
 		{
 			MoveComp->AddInputVector(InputDir);
 		}
+	}
+
+	void TestCharacter::TryInteract()
+	{
+		if (!CollComp)
+		{
+			LOG("[TestCharacter] No collision component");
+			return;
+		}
+
+		for (Actor* Other : CollComp->GetOtherActors())
+		{
+			if (!Other)
+				continue;
+
+			if (auto* Interactable = dynamic_cast<IInteractable*>(Other))
+			{
+				if (Interactable->CanInteract(this))
+				{
+					LOG("[TestCharacter] Interacting with Actor {}", Other->GetID());
+					Interactable->Interact(this);
+					return;
+				}
+			}
+		}
+
+		LOG("[TestCharacter] Nothing to interact with");
 	}
 
 	void TestCharacter::UpdateDirectionalAnimation()

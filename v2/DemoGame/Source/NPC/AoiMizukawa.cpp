@@ -29,6 +29,11 @@ namespace we
 
 	AoiMizukawa::~AoiMizukawa() = default;
 
+	void AoiMizukawa::Interact(Actor* Interactor)
+	{
+		LOG("[AoiMizukawa] Welcome! Please enjoy your stay.");
+	}
+
 	void AoiMizukawa::BeginPlay()
 	{
 		PhysicsComp->SetBodyType(b2_staticBody);

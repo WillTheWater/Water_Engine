@@ -28,6 +28,11 @@ namespace we
 		Waypoints = InWaypoints;
 	}
 
+	void Kiyoshi::Interact(Actor* Interactor)
+	{
+		LOG("[Kiyoshi] Hello traveler! *bows*");
+	}
+
 	void Kiyoshi::BeginPlay()
 	{
 		// Kinematic body - moves autonomously

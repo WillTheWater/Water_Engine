@@ -7,14 +7,18 @@
 
 #include "Core/CoreMinimal.h"
 #include "Framework/World/Character.h"
+#include "Interaction/IInteractable.h"
 
 namespace we
 {
-	class AoiMizukawa : public Character
+	class AoiMizukawa : public Character, public IInteractable
 	{
 	public:
 		AoiMizukawa(World& OwningWorld);
 		~AoiMizukawa();
+
+		// IInteractable
+		void Interact(Actor* Interactor) override;
 
 	protected:
 		void BeginPlay() override;

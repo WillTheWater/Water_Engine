@@ -8,6 +8,7 @@
 #include "Core/CoreMinimal.h"
 #include "Framework/World/Character.h"
 #include "Subsystem/TimerSubsystem.h"
+#include "Interaction/IInteractable.h"
 
 namespace we
 {
@@ -47,7 +48,7 @@ namespace we
 		Interacting
 	};
 
-	class Kiyoshi : public Character
+	class Kiyoshi : public Character, public IInteractable
 	{
 	public:
 		Kiyoshi(World& OwningWorld);
@@ -55,6 +56,9 @@ namespace we
 
 		// Configure patrol path
 		void SetWaypoints(const vector<vec2f>& InWaypoints);
+
+		// IInteractable
+		void Interact(Actor* Interactor) override;
 
 	protected:
 		void BeginPlay() override;
