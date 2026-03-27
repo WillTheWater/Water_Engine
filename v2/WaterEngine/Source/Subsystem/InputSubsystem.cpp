@@ -8,9 +8,6 @@
 
 namespace we
 {
-    // =========================================================================
-    // BindingHandle Implementation
-    // =========================================================================
     BindingHandle::BindingHandle(int InActionId, uint64_t InToken, InputSubsystem* InOwner)
         : ActionId(InActionId)
         , Token(InToken)
@@ -54,9 +51,6 @@ namespace we
         }
     }
 
-    // =========================================================================
-    // InputSubsystem Implementation
-    // =========================================================================
     InputSubsystem* InputSubsystem::Instance = nullptr;
 
     InputSubsystem::InputSubsystem()
@@ -96,7 +90,6 @@ namespace we
                 {
                     HeldActions.insert(Action);
 
-                    // Fire event callbacks for this action
                     auto It = ActionCallbacks.find(Action);
                     if (It != ActionCallbacks.end())
                     {

@@ -52,7 +52,6 @@ namespace we
 
 	void TestCharacter::SetupAnimations()
 	{
-		// Sprite sheets: 2048x2048, 8x8 grid, each frame 256x256
 		SpriteSheet IdleSheet("Assets/Textures/Game/idle.png", vec2u{100, 128}, 8);
 		AnimComp->AddSpriteSheet(ETestCharSheet::Idle, IdleSheet);
 		

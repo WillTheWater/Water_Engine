@@ -70,7 +70,6 @@ namespace we
 		PhysicsWorld->SetAllowSleeping(false);
 		s_ContactListener.Listeners = &ContactListeners;
 		PhysicsWorld->SetContactListener(&s_ContactListener);
-		LOG("[PhysicsSubsystem] Initialized with contact listener");
 	}
 
 	PhysicsSubsystem::~PhysicsSubsystem()
@@ -121,7 +120,6 @@ namespace we
 		if (Body && Listener)
 		{
 			ContactListeners[Body] = Listener;
-			LOG("[PhysicsSubsystem] Registered contact listener for body {}", reinterpret_cast<void*>(Body));
 		}
 	}
 
@@ -130,7 +128,6 @@ namespace we
 		if (Body)
 		{
 			ContactListeners.erase(Body);
-			LOG("[PhysicsSubsystem] Unregistered contact listener for body {}", reinterpret_cast<void*>(Body));
 		}
 	}
 

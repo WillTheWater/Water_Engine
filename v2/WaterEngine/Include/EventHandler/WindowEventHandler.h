@@ -37,7 +37,6 @@ namespace we
         void operator()(const event::MouseButtonPressed&);
         void operator()(const event::MouseButtonReleased&);
 
-        // Catch-all for unhandled event types
         void operator()(const auto&) {}
     };
 }

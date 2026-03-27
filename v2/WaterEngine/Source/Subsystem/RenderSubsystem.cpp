@@ -4,13 +4,14 @@
 // =============================================================================
 
 #include "Subsystem/RenderSubsystem.h"
+#include "Core/EngineConfig.h"
 #include "Utility/Assert.h"
 #include "Utility/Log.h"
 
 namespace we
 {
     RenderSubsystem::RenderSubsystem()
-        : RenderResolution{1920,1080}
+        : RenderResolution{WEConfig.Render.RenderResolution}
         , bNeedsComposite{false}
     {
         CreateRenderTargets();
@@ -33,11 +34,11 @@ namespace we
         VERIFY(CursorRenderTarget.resize(RenderResolution));
         VERIFY(Composite.resize(RenderResolution));
 
-        WorldRenderTarget.setSmooth(true);
-        ScreenUIRenderTarget.setSmooth(false);
-        WorldUIRenderTarget.setSmooth(false);
-        CursorRenderTarget.setSmooth(false);
-        Composite.setSmooth(true);
+        WorldRenderTarget.setSmooth(WEConfig.Render.bWorldLayerSmooth);
+        ScreenUIRenderTarget.setSmooth(WEConfig.Render.bScreenUILayerSmooth);
+        WorldUIRenderTarget.setSmooth(WEConfig.Render.bWorldUILayerSmooth);
+        CursorRenderTarget.setSmooth(WEConfig.Render.bCursorLayerSmooth);
+        Composite.setSmooth(WEConfig.Render.bCompositeSmooth);
 
         if (shader::isAvailable)
         {
@@ -48,7 +49,6 @@ namespace we
 
     void RenderSubsystem::SetWorldView(vec2f Center, float Zoom, float Rotation)
     {
-        // Calculate view size based on zoom
         vec2f ViewSize = vec2f(RenderResolution) / Zoom;
         
         view WorldView;
@@ -104,11 +104,11 @@ namespace we
 
     void RenderSubsystem::ClearRenderTargets()
     {
-        WorldRenderTarget.clear(color::Green);
-        ScreenUIRenderTarget.clear(color::Transparent);
-        WorldUIRenderTarget.clear(color::Transparent);
-        CursorRenderTarget.clear(color::Transparent);
-        Composite.clear(color::Transparent);
+        WorldRenderTarget.clear(WEConfig.Render.WindowClearColor);
+        ScreenUIRenderTarget.clear(WEConfig.Render.ScreenUIClearColor);
+        WorldUIRenderTarget.clear(WEConfig.Render.WorldUIClearColor);
+        CursorRenderTarget.clear(WEConfig.Render.CursorClearColor);
+        Composite.clear(WEConfig.Render.CompositeClearColor);
 
         if (shader::isAvailable)
         {

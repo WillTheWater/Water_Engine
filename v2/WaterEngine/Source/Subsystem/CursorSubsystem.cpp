@@ -5,7 +5,7 @@
 
 #include "Subsystem/CursorSubsystem.h"
 #include "Subsystem/ResourceSubsystem.h"
-#include "Utility/Log.h"
+#include "Core/EngineConfig.h"
 
 namespace we
 {
@@ -13,10 +13,10 @@ namespace we
 		: CursorTexture{}
 		, CursorSprite{}
 		, CurrentPosition{}
-		, CursorSize{42,42}
+		, CursorSize{WEConfig.Cursor.CursorSize}
 		, bIsVisible{true}
 	{
-		auto Cur = LoadAsset().LoadTexture("Assets/Textures/Default/defaultCursor.png");
+		auto Cur = LoadAsset().LoadTexture(WEConfig.Cursor.DefaultCursorTexture);
 		SetTexture(Cur);
 	}
 

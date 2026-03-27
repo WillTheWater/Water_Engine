@@ -13,7 +13,6 @@ namespace we
         : RenderResolution{1920, 1080}
     {
         SetCameraView(vec2u(RenderResolution));
-        LOG("[CameraSubsystem] Initialized");
     }
 
     // Legacy API implementation
@@ -49,24 +48,14 @@ namespace we
         return CameraView;
     }
 
-    // New API implementation
     void CameraSubsystem::SetActiveCamera(CameraComponent* Camera)
     {
         ActiveCamera = Camera;
-        if (Camera)
-        {
-            LOG("[CameraSubsystem] Active camera set");
-        }
-        else
-        {
-            LOG("[CameraSubsystem] Active camera cleared");
-        }
     }
 
     void CameraSubsystem::ClearActiveCamera()
     {
         ActiveCamera = nullptr;
-        LOG("[CameraSubsystem] Active camera cleared, using default view");
     }
 
     vec2f CameraSubsystem::GetViewPosition() const
@@ -101,7 +90,5 @@ namespace we
         DefaultPosition = Center;
         DefaultZoom = Zoom;
         DefaultRotation = Rotation;
-        LOG("[CameraSubsystem] Default view set: Pos({}, {}), Zoom{}, Rot{}", 
-            Center.x, Center.y, Zoom, Rotation);
     }
 }

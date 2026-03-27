@@ -26,7 +26,6 @@ namespace we
 
 	void CollisionComponent::BeginPlay()
 	{
-		LOG("[CollisionComponent] BeginPlay on Actor {}", Owner ? Owner->GetID() : 0);
 		CreateBody();
 	}
 
@@ -39,7 +38,6 @@ namespace we
 		}
 
 		auto& Physics = Owner->GetWorld().GetPhysics();
-		LOG("[CollisionComponent] Creating body with radius {} pixels", Radius);
 
 		b2BodyDef BodyDef;
 		BodyDef.type = b2_dynamicBody;
@@ -57,12 +55,9 @@ namespace we
 		}
 
 		Body->GetUserData().pointer = reinterpret_cast<uintptr_t>(this);
-		LOG("[CollisionComponent] Body created, userData set to component pointer {}", reinterpret_cast<void*>(this));
 
 		b2CircleShape CircleShape;
 		CircleShape.m_radius = Physics.PixelsToMeters(Radius);
-		LOG("[CollisionComponent] Circle shape radius: {} meters", CircleShape.m_radius);
-
 		b2FixtureDef FixtureDef;
 		FixtureDef.shape = &CircleShape;
 		FixtureDef.isSensor = true;
@@ -70,10 +65,8 @@ namespace we
 		FixtureDef.friction = 0.0f;
 
 		Body->CreateFixture(&FixtureDef);
-		LOG("[CollisionComponent] Fixture created (sensor)");
 
 		Physics.RegisterContactListener(Body, this);
-		LOG("[CollisionComponent] Registered with contact listener");
 	}
 
 	void CollisionComponent::Tick(float DeltaTime)
@@ -95,7 +88,6 @@ namespace we
 
 	void CollisionComponent::EndPlay()
 	{
-		LOG("[CollisionComponent] EndPlay on Actor {}", Owner ? Owner->GetID() : 0);
 		DestroyBody();
 	}
 
@@ -105,8 +97,6 @@ namespace we
 		{
 			return;
 		}
-
-		LOG("[CollisionComponent] Destroying body");
 
 		if (Owner)
 		{
@@ -125,16 +115,11 @@ namespace we
 
 	void CollisionComponent::OnBeginOverlap(b2Body* OtherBody)
 	{
-		// Get the other actor from the body
 		Actor* OtherActor = GetActorFromBody(OtherBody);
-		
-		// Ignore overlaps with same actor (e.g., our own PhysicsComponent body)
 		if (!OtherActor || OtherActor == Owner)
 			return;
 		
 		OverlappingActors.insert(OtherActor);
-		LOG("[CollisionComponent] OnBeginOverlap with Actor {} - Count: {}", 
-			OtherActor->GetID(), OverlappingActors.size());
 	}
 
 	void CollisionComponent::OnEndOverlap(b2Body* OtherBody)
@@ -145,8 +130,6 @@ namespace we
 			return;
 		
 		OverlappingActors.erase(OtherActor);
-		LOG("[CollisionComponent] OnEndOverlap with Actor {} - Count: {}", 
-			OtherActor->GetID(), OverlappingActors.size());
 	}
 
 	bool CollisionComponent::IsOtherActor(Actor* CheckActor) const

@@ -61,8 +61,6 @@ namespace we
         {
             CurrentMusic->Music->play();
         }
-
-        LOG("[Audio] Playing music: {}", Path);
     }
 
     void AudioSubsystem::PlayAmbient(const string& Path, float FadeInDuration)
@@ -97,8 +95,6 @@ namespace we
         {
             CurrentAmbient->Music->play();
         }
-
-        LOG("[Audio] Playing ambient: {}", Path);
     }
 
     void AudioSubsystem::PlaySFX(const string& Path)

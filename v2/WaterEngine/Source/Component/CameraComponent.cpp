@@ -25,7 +25,6 @@ namespace we
 
     void CameraComponent::BeginPlay()
     {
-        // Get reference to camera subsystem from world
         if (Owner)
         {
             Subsystem = &Owner->GetWorld().GetCamera();
@@ -39,7 +38,6 @@ namespace we
 
     void CameraComponent::EndPlay()
     {
-        // If this was active, clear it
         if (IsActive() && Subsystem)
         {
             Subsystem->ClearActiveCamera();
@@ -61,7 +59,6 @@ namespace we
         if (Subsystem)
         {
             Subsystem->SetActiveCamera(this);
-            LOG("[CameraComponent] Set as active camera");
         }
     }
 
@@ -89,10 +86,6 @@ namespace we
     void CameraComponent::AttachTo(Actor* TargetActor)
     {
         AttachedTarget = TargetActor;
-        if (TargetActor)
-        {
-            LOG("[CameraComponent] Attached to Actor {}", TargetActor->GetID());
-        }
     }
 
     void CameraComponent::SetSmoothFollow(bool bEnable, float InSmoothTime)
@@ -104,7 +97,6 @@ namespace we
     void CameraComponent::Shake(float Amplitude, float Duration, float Frequency)
     {
         ActiveShake = ShakeState{Amplitude, Duration, Frequency, 0.0f};
-        LOG("[CameraComponent] Shake started: Amp{}, Dur{}, Freq{}", Amplitude, Duration, Frequency);
     }
 
     void CameraComponent::StopShake()
@@ -129,13 +121,9 @@ namespace we
 
     void CameraComponent::UpdatePosition(float DeltaTime)
     {
-        // If no attachment, stay at current position
         if (!AttachedTarget) return;
-
-        // Get target position (attached actor + offset)
         vec2f TargetPos = AttachedTarget->GetPosition() + Offset;
 
-        // Apply smooth follow
         if (bSmoothFollow)
         {
             float t = Clamp(DeltaTime / SmoothTime, 0.0f, 1.0f);
@@ -146,7 +134,6 @@ namespace we
             SmoothedPosition = TargetPos;
         }
 
-        // Apply shake
         if (ActiveShake)
         {
             ActiveShake->Elapsed += DeltaTime;
@@ -160,7 +147,6 @@ namespace we
             }
         }
 
-        // Apply bounds clamping
         if (Bounds)
         {
             ClampToBounds(SmoothedPosition);
@@ -173,11 +159,9 @@ namespace we
 
         float progress = ActiveShake->Elapsed / ActiveShake->Duration;
         float currentAmplitude = ActiveShake->Amplitude * (1.0f - progress);
-        
-        // Simple sine-based shake
         float angle = ActiveShake->Elapsed * ActiveShake->Frequency * 2.0f * 3.14159f;
         float x = std::cos(angle) * currentAmplitude;
-        float y = std::sin(angle * 1.3f) * currentAmplitude;  // Different frequency for y
+        float y = std::sin(angle * 1.3f) * currentAmplitude;
         
         return {x, y};
     }

@@ -58,7 +58,6 @@ namespace we
     {
         OriginalTexture = Tex;
         
-        // Enable smooth filtering and mipmaps for distortion effects
         if (OriginalTexture)
         {
             OriginalTexture->setSmooth(true);

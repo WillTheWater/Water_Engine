@@ -22,7 +22,6 @@ namespace we
 
     void PhysicsComponent::BeginPlay()
     {
-        LOG("[PhysicsComponent] BeginPlay on Actor {}", Owner ? Owner->GetID() : 0);
         CreateBody();
     }
 
@@ -96,9 +95,6 @@ namespace we
             FixtureDef.isSensor = false;
 
             Body->CreateFixture(&FixtureDef);
-            LOG("[PhysicsComponent] Rectangle fixture created, halfExtents={}m, {}m",
-                Physics.PixelsToMeters(ShapeSize.x),
-                Physics.PixelsToMeters(ShapeSize.y));
         }
     }
 
@@ -113,15 +109,12 @@ namespace we
 
     void PhysicsComponent::EndPlay()
     {
-        LOG("[PhysicsComponent] EndPlay on Actor {}", Owner ? Owner->GetID() : 0);
         DestroyBody();
     }
 
     void PhysicsComponent::DestroyBody()
     {
         if (!Body) return;
-
-        LOG("[PhysicsComponent] Destroying body");
 
         if (Owner)
         {
@@ -211,8 +204,6 @@ namespace we
 
     void PhysicsComponent::SyncBodyToActor()
     {
-        // Call when actor is teleported/moved manually
-        // Updates physics body to match actor position
         if (!Body || !Owner) return;
 
         auto& Physics = Owner->GetWorld().GetPhysics();
