@@ -9,6 +9,7 @@
 #include "Framework/World/Character.h"
 #include "Subsystem/TimerSubsystem.h"
 #include "Interaction/IInteractable.h"
+#include "UI/InteractUI.h"
 
 namespace we
 {
@@ -86,5 +87,6 @@ namespace we
 		EAIState AIState = EAIState::Waiting;
 		TimerHandle WaitTimer;
 		Actor* CurrentInteractor = nullptr;
+		InteractUI PromptUI;
 	};
 }

@@ -22,7 +22,7 @@ namespace we
 		void Hide();
 		bool IsVisible() const;
 
-		void SetPosition(const vec2f& ScreenPos);
+		void SetPosition(const vec2f& WorldPos, const vec2f& Offset = {0.0f, 0.0f});
 		void SetText(const string& Text);
 		void SetAnchor(const vec2f& AnchorPoint);
 

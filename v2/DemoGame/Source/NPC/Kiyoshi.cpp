@@ -12,7 +12,6 @@
 #include "Interaction/IInteractor.h"
 #include "Utility/Log.h"
 #include "Utility/Math.h"
-#include <cmath>
 
 namespace we
 {
@@ -50,6 +49,8 @@ namespace we
 		Character::BeginPlay();
 
 		SetupAnimations();
+
+		PromptUI.Initialize("Talk");
 		
 		// Start patrol
 		if (!Waypoints.empty())
@@ -125,6 +126,8 @@ namespace we
 				AIState = EAIState::Interacting;
 				MoveComp->ClearInput();
 				FacePlayer();
+				PromptUI.Show();
+				PromptUI.SetPosition(GetPosition(), { 0.f, -100.f });
 			}
 		}
 	}
@@ -134,6 +137,7 @@ namespace we
 		if (Other == CurrentInteractor && dynamic_cast<IInteractor*>(Other))
 		{
 			CurrentInteractor = nullptr;
+			PromptUI.Hide();
 
 			// Resume patrol
 			AIState = EAIState::Waiting;

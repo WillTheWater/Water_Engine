@@ -50,8 +50,7 @@ namespace we
 		SetupAnimation();
 
 		PromptUI.Initialize("Talk");
-		PromptUI.SetPosition(GetPosition());
-		PromptUI.Show();
+		PromptUI.SetPosition(GetPosition(), {0.f, -100.f});
 	}
 
 	void AoiMizukawa::Tick(float DeltaTime)
@@ -82,6 +81,7 @@ namespace we
 		if (auto* Interactor = dynamic_cast<IInteractor*>(Other))
 		{
 			LOG("Player Overlapped!");
+			PromptUI.Show();
 		}
 	}
 
@@ -90,6 +90,7 @@ namespace we
 		if (auto* Interactor = dynamic_cast<IInteractor*>(Other))
 		{
 			LOG("Player Ended Overlapped!");
+			PromptUI.Hide();
 		}
 	}
 }

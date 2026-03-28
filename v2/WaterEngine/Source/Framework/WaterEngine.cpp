@@ -47,6 +47,8 @@ namespace we
 
         Subsystem.GUI->Initialize(Subsystem.Render->GetScreenUITarget(), Subsystem.Render->GetWorldUITarget());
         Subsystem.GUI->SetWindowSize(Subsystem.Window->getSize());
+        Subsystem.GUI->SetCameraView(Subsystem.Camera->GetView());
+        Subsystem.GUI->SetCameraWorldPosition(Subsystem.Camera->GetViewPosition());
         Subsystem.GUI->OnFullscreenRequested.Bind(Subsystem.Window.get(), &WindowSubsystem::SetFullscreen);
 
         Subsystem.World->SetPhysicsRef(Subsystem.Physics);
@@ -139,7 +141,9 @@ namespace we
             Subsystem.Render->Draw(*Sprite, ERenderLayer::World);
         }
 
-        // WorldUI layer
+        // WorldUI layer - update camera position and sync world positions before draw
+        Subsystem.GUI->SetCameraWorldPosition(Subsystem.Camera->GetViewPosition());
+        Subsystem.GUI->SyncWorldPositions();
         Subsystem.GUI->GetWorldUI().draw();
 
         // ScreenUI layer

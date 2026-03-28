@@ -25,9 +25,14 @@ namespace we
 
 		void SetWindowSize(vec2u NewSize);
 		void SetCameraView(const view& NewView);
+		void SetCameraWorldPosition(const vec2f& WorldPos);
 		
 		vec2u GetWindowSize() const { return WindowSize; }
 		view GetCameraView() const { return CurrentCameraView; }
+		
+		// World-space UI positioning
+		void SetWidgetWorldPosition(tgui::Widget::Ptr Widget, const vec2f& WorldPos);
+		void SyncWorldPositions();
 		
 		bool HandleEvent(const event& Event);
 
@@ -42,6 +47,10 @@ namespace we
 		
 		vec2u WindowSize;
 		view CurrentCameraView;
+		vec2f CameraWorldPosition;
+		
+		// Track WorldUI widgets in world coordinates
+		dictionary<tgui::Widget::Ptr, vec2f> WorldPositions;
 	};
 
 	inline GUISubsystem& MakeGUI() { return GUISubsystem::Get(); }

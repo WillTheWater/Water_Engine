@@ -67,11 +67,14 @@ namespace we
 		return Background && Background->isVisible();
 	}
 
-	void InteractUI::SetPosition(const vec2f& ScreenPos)
+	void InteractUI::SetPosition(const vec2f& WorldPos, const vec2f& Offset)
 	{
 		if (Background)
 		{
-			Background->setPosition({ScreenPos.x, ScreenPos.y});
+			// Apply offset to world position, then store
+			// GUI subsystem handles camera transform
+			vec2f FinalPos = WorldPos + Offset;
+			MakeGUI().SetWidgetWorldPosition(Background, FinalPos);
 		}
 	}
 

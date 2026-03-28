@@ -5,7 +5,6 @@
 
 #include "Subsystem/CameraSubsystem.h"
 #include "Component/CameraComponent.h"
-#include "Utility/Log.h"
 
 namespace we
 {
@@ -15,7 +14,6 @@ namespace we
         SetCameraView(vec2u(RenderResolution));
     }
 
-    // Legacy API implementation
     void CameraSubsystem::SetCameraView(vec2u WindowSize)
     {
         CameraView.setSize({(RenderResolution.x), (RenderResolution.y)});
