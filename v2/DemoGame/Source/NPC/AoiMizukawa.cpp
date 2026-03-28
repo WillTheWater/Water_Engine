@@ -48,6 +48,10 @@ namespace we
 		Character::BeginPlay();
 
 		SetupAnimation();
+
+		PromptUI.Initialize("Talk");
+		PromptUI.SetPosition(GetPosition());
+		PromptUI.Show();
 	}
 
 	void AoiMizukawa::Tick(float DeltaTime)

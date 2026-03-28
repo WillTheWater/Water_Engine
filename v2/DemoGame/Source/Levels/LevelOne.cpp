@@ -194,7 +194,6 @@ namespace we
 
         // Bind delegates
         PauseUI->OnResumeClicked.Bind(this, &LevelOne::ResumeGame);
-        PauseUI->OnSettingsClicked.Bind(this, &LevelOne::OnSettings);
         PauseUI->OnMainMenuClicked.Bind(this, &LevelOne::ReturnToMainMenu);
         PauseUI->OnSaveAndQuitClicked.Bind(this, &LevelOne::SaveAndQuit);
     }

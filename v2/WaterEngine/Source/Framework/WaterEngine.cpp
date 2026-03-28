@@ -40,11 +40,15 @@ namespace we
         Subsystem.Window->OnResize.Bind(Subsystem.Camera.get(), &CameraSubsystem::SetCameraView);
         Subsystem.Window->OnMouseMove.Bind(Subsystem.Cursor.get(), &CursorSubsystem::SetPosition);
         Subsystem.Window->OnResize.Bind(Subsystem.GUI.get(), &GUISubsystem::SetWindowSize);
+
         Subsystem.Camera->OnViewUpdate.Bind(Subsystem.GUI.get(), &GUISubsystem::SetCameraView);
+
         GetTimer().TriggerGarbageCollection.Bind(Subsystem.Resource.get(), &ResourceSubsystem::GarbageCollect);
+
         Subsystem.GUI->Initialize(Subsystem.Render->GetScreenUITarget(), Subsystem.Render->GetWorldUITarget());
         Subsystem.GUI->SetWindowSize(Subsystem.Window->getSize());
         Subsystem.GUI->OnFullscreenRequested.Bind(Subsystem.Window.get(), &WindowSubsystem::SetFullscreen);
+
         Subsystem.World->SetPhysicsRef(Subsystem.Physics);
         Subsystem.World->SetCameraRef(Subsystem.Camera);
         Subsystem.World->SetSaveRef(Subsystem.Save);

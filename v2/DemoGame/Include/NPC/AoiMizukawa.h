@@ -8,6 +8,8 @@
 #include "Core/CoreMinimal.h"
 #include "Framework/World/Character.h"
 #include "Interaction/IInteractable.h"
+#include "UI/InteractUI.h"
+
 
 namespace we
 {
@@ -29,5 +31,7 @@ namespace we
 		void SetupAnimation();
 		void OnBeginOverlap(Actor* Other);
 		void OnEndOverlap(Actor* Other);
+
+		InteractUI PromptUI;
 	};
 }
