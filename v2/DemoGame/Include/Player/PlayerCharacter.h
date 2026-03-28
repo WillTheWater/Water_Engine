@@ -12,7 +12,7 @@
 
 namespace we
 {
-	enum class ETestCharAnim : uint8
+	enum class EPlayerAnim : uint8
 	{
 		// Idle animations
 		IdleForward,
@@ -23,7 +23,7 @@ namespace we
 		IdleBackLeft,
 		IdleLeft,
 		IdleForwardLeft,
-		
+
 		// Walk animations
 		WalkForward,
 		WalkForwardRight,
@@ -35,17 +35,17 @@ namespace we
 		WalkForwardLeft
 	};
 
-	enum class ETestCharSheet : uint8
+	enum class EPlayerState : uint8
 	{
 		Idle,
 		Walk
 	};
 
-	class TestCharacter : public Character , public IInteractor
+	class PlayerCharacter : public Character, public IInteractor
 	{
 	public:
-		TestCharacter(World& OwningWorld);
-		~TestCharacter();
+		PlayerCharacter(World& OwningWorld);
+		~PlayerCharacter();
 
 	protected:
 		void BeginPlay() override;
@@ -58,8 +58,8 @@ namespace we
 		void HandleInput();
 		void UpdateDirectionalAnimation();
 		void TryInteract();
-		ETestCharAnim DirectionToIdleAnim(const vec2f& Dir) const;
-		ETestCharAnim DirectionToWalkAnim(const vec2f& Dir) const;
+		EPlayerAnim DirectionToIdleAnim(const vec2f& Dir) const;
+		EPlayerAnim DirectionToWalkAnim(const vec2f& Dir) const;
 		void SetCameraBounds();
 
 		BindingHandle InteractBinding;

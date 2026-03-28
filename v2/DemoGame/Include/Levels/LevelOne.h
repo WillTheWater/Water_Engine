@@ -33,7 +33,6 @@ namespace we
         void PauseGame();
         void ResumeGame();
         void ReturnToMainMenu();
-        void OnSettings();
         void SaveAndQuit();
 
     private:
@@ -58,7 +57,6 @@ namespace we
         shared<CollisionActor> DynObstacle;
         unique<PauseMenuUI> PauseUI;
 
-        // Event-driven input binding (auto-unbinds on destruction)
         BindingHandle PauseBinding;
     };
 }

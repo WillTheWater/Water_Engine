@@ -24,13 +24,11 @@ namespace we
 		if (bInitialized)
 			return;
 
-		// Create background panel (RED for visibility testing)
 		Background = tgui::Panel::create({Width, Height});
 		Background->getRenderer()->setBackgroundColor({255, 0, 0, 255});
 		Background->getRenderer()->setBorderColor({255, 255, 255, 200});
 		Background->getRenderer()->setBorders({2, 2, 2, 2});
 
-		// Create text label
 		TextLabel = tgui::Label::create(Text);
 		TextLabel->setTextSize(14);
 		TextLabel->getRenderer()->setTextColor({255, 255, 255});
@@ -38,10 +36,8 @@ namespace we
 		TextLabel->setVerticalAlignment(tgui::VerticalAlignment::Center);
 		TextLabel->setSize({Width, Height});
 
-		// Add label to panel
 		Background->add(TextLabel);
 
-		// Add to WorldUI
 		MakeGUI().GetWorldUI().add(Background);
 
 		bInitialized = true;

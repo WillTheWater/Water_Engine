@@ -10,30 +10,19 @@
 
 namespace we
 {
-	// Semi-transparent interaction prompt widget
-	// Attach to any actor to show "E to Interact!" above their head
 	class InteractUI
 	{
 	public:
 		InteractUI();
 		~InteractUI();
 
-		// Create the widget once (call in BeginPlay)
 		void Initialize(const string& Text = "E to Interact!");
 
-		// Show existing widget
 		void Show();
-
-		// Hide existing widget
 		void Hide();
 
-		// Update position in world space
 		void SetPosition(const vec2f& WorldPos);
-
-		// Set custom prompt text
 		void SetText(const string& Text);
-
-		// Check if currently visible
 		bool IsVisible() const { return bVisible; }
 
 	private:

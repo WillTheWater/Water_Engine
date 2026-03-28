@@ -7,10 +7,9 @@
 #include "Levels/MainMenu.h"
 #include "Framework/World/Actor.h"
 #include "Framework/World/Character.h"
-#include "Tests/TestCharacter.h"
+#include "Player/PlayerCharacter.h"
 #include "Component/CameraComponent.h"
 #include "PostProcess/Effects/PPEScroll.h"
-#include "Tests/CollisionActor.h"
 #include "Component/PhysicsComponent.h"
 #include "UI/PauseMenuUI.h"
 #include "Subsystem/TimerSubsystem.h"
@@ -66,7 +65,7 @@ namespace we
         float ObstacleY = Subsystem.GetSave().Get<float>(SAVE_OBSTACLE_POS_Y, 680.0f);
         
         // Test character
-        Character = SpawnActor<TestCharacter>().lock();
+        Character = SpawnActor<PlayerCharacter>().lock();
         Character->SetPosition({PlayerX, PlayerY});
 
         auto Aoi = SpawnActor<AoiMizukawa>().lock();
@@ -206,23 +205,15 @@ namespace we
         {
             WaterPPC->Tick(DeltaTime);
         }
-        // Pause toggle is now event-driven (works even when paused)
     }
 
     void LevelOne::EndPlay()
     {
-        // Save positions
         if (Character)
         {
             vec2f Pos = Character->GetPosition();
             Subsystem.GetSave().Set(SAVE_PLAYER_POS_X, Pos.x);
             Subsystem.GetSave().Set(SAVE_PLAYER_POS_Y, Pos.y);
-        }
-        if (DynObstacle)
-        {
-            vec2f Pos = DynObstacle->GetPosition();
-            Subsystem.GetSave().Set(SAVE_OBSTACLE_POS_X, Pos.x);
-            Subsystem.GetSave().Set(SAVE_OBSTACLE_POS_Y, Pos.y);
         }
         Subsystem.GetSave().Save();
         
@@ -282,29 +273,15 @@ namespace we
         Subsystem.LoadWorld<MainMenu>();
     }
 
-    void LevelOne::OnSettings()
-    {
-        // TODO: Implement settings UI
-    }
-
     void LevelOne::SaveAndQuit()
     {
-        
-        // Save positions first
         if (Character)
         {
             vec2f Pos = Character->GetPosition();
             Subsystem.GetSave().Set(SAVE_PLAYER_POS_X, Pos.x);
             Subsystem.GetSave().Set(SAVE_PLAYER_POS_Y, Pos.y);
         }
-        if (DynObstacle)
-        {
-            vec2f Pos = DynObstacle->GetPosition();
-            Subsystem.GetSave().Set(SAVE_OBSTACLE_POS_X, Pos.x);
-            Subsystem.GetSave().Set(SAVE_OBSTACLE_POS_Y, Pos.y);
-        }
         
-        // Flush to disk and quit
         Subsystem.GetSave().Save();
         Subsystem.Quit();
     }
