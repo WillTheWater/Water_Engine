@@ -75,7 +75,9 @@ namespace we
 		void OnWaitComplete();
 		void OnResumeFromInteraction();
 		void FacePlayer();
-		bool CheckPlayerOverlap();
+
+		void OnBeginOverlap(Actor* Other);
+		void OnEndOverlap(Actor* Other);
 
 	private:
 		// Patrol
@@ -83,6 +85,6 @@ namespace we
 		size_t CurrentWaypointIndex = 0;
 		EAIState AIState = EAIState::Waiting;
 		TimerHandle WaitTimer;
-		bool bWasOverlappingPlayer = false;
+		Actor* CurrentInteractor = nullptr;
 	};
 }

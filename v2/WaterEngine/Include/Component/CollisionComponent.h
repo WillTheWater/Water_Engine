@@ -8,6 +8,7 @@
 #include "Core/CoreMinimal.h"
 #include "Interface/Actor/IActorComponent.h"
 #include "Interface/Physics/IPhysicsContactListener.h"
+#include "Utility/Delegate.h"
 
 class b2Body;
 
@@ -27,12 +28,16 @@ namespace we
 		Actor* GetOwner() const override;
 
 		// IPhysicsContactListener
-		void OnBeginOverlap(b2Body* OtherBody) override;
-		void OnEndOverlap(b2Body* OtherBody) override;
+		void OnComponentBeginOverlap(b2Body* OtherBody) override;
+		void OnComponentEndOverlap(b2Body* OtherBody) override;
 
 		// Overlap queries
 		bool IsOverlapping() const { return !OverlappingActors.empty(); }
 		bool IsOtherActor(Actor* CheckActor) const;
+
+		// Delegates
+		Delegate<Actor*> OnBeginOverlap;
+		Delegate<Actor*> OnEndOverlap;
 		
 		// Get all overlapping actors
 		const set<Actor*>& GetOtherActors() const { return OverlappingActors; }

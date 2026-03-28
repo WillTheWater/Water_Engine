@@ -27,5 +27,7 @@ namespace we
 
 	private:
 		void SetupAnimation();
+		void OnBeginOverlap(Actor* Other);
+		void OnEndOverlap(Actor* Other);
 	};
 }

@@ -8,6 +8,7 @@
 #include "Core/CoreMinimal.h"
 #include "Framework/World/Character.h"
 #include "Subsystem/InputSubsystem.h"
+#include "Interaction/IInteractor.h"
 
 namespace we
 {
@@ -40,7 +41,7 @@ namespace we
 		Walk
 	};
 
-	class TestCharacter : public Character
+	class TestCharacter : public Character , public IInteractor
 	{
 	public:
 		TestCharacter(World& OwningWorld);

@@ -8,8 +8,8 @@
 #include "Component/PhysicsComponent.h"
 #include "Component/CollisionComponent.h"
 #include "Component/MovementComponent.h"
-#include "Tests/TestCharacter.h"
 #include "Subsystem/ResourceSubsystem.h"
+#include "Interaction/IInteractor.h"
 #include "Utility/Log.h"
 #include "Utility/Math.h"
 #include <cmath>
@@ -42,6 +42,9 @@ namespace we
 		PhysicsComp->SetLinearDamping(10.0f);
 
 		CollComp->SetRadius(64.0f);
+		CollComp->OnBeginOverlap.Bind(this, &Kiyoshi::OnBeginOverlap);
+		CollComp->OnEndOverlap.Bind(this, &Kiyoshi::OnEndOverlap);
+
 		MoveComp->SetSpeed(120);
 
 		Character::BeginPlay();
@@ -68,48 +71,18 @@ namespace we
 
 	void Kiyoshi::Tick(float DeltaTime)
 	{
-		bool bIsOverlappingPlayer = CheckPlayerOverlap();
-		
-		// Handle player interaction
-		if (bIsOverlappingPlayer)
-		{
-			if (AIState != EAIState::Interacting)
-			{
-				// Just started overlapping - stop and face player
-				AIState = EAIState::Interacting;
-				MoveComp->ClearInput();
-				FacePlayer();
-			}
-		}
-		else if (bWasOverlappingPlayer && !bIsOverlappingPlayer)
-		{
-			// Player just left - start wait timer before resuming
-			AIState = EAIState::Waiting;
-			float WaitTime = RNG().Random(1.0f, 4.0f);
-			WaitTimer = GetTimer().SetTimer(
-				weak_from_this(),
-				&Kiyoshi::OnResumeFromInteraction,
-				WaitTime,
-				false
-			);
-		}
-		
-		bWasOverlappingPlayer = bIsOverlappingPlayer;
-		
-		// Normal patrol behavior
 		if (AIState == EAIState::Moving && !Waypoints.empty())
 		{
 			vec2f TargetPos = Waypoints[CurrentWaypointIndex];
 			vec2f CurrentPos = GetPosition();
 			vec2f ToTarget = TargetPos - CurrentPos;
 			float DistSq = ToTarget.lengthSquared();
-			
+
 			if (DistSq < 25.0f)
 			{
-				// Reached waypoint - start waiting
 				AIState = EAIState::Waiting;
 				MoveComp->ClearInput();
-				
+
 				float WaitTime = RNG().Random(1.0f, 4.0f);
 				WaitTimer = GetTimer().SetTimer(
 					weak_from_this(),
@@ -120,41 +93,57 @@ namespace we
 			}
 			else
 			{
-				// Move toward target
 				vec2f Direction = ToTarget / std::sqrt(DistSq);
 				MoveComp->AddInputVector(Direction);
 			}
 		}
-		
+
 		UpdateDirectionalAnimation();
 		Character::Tick(DeltaTime);
 	}
 
-	bool Kiyoshi::CheckPlayerOverlap()
-	{
-		if (!CollComp->IsOverlapping())
-			return false;
-		
-		return CollComp->GetOtherActor<TestCharacter>() != nullptr;
-	}
-
 	void Kiyoshi::FacePlayer()
 	{
-		if (!CollComp->IsOverlapping())
+		if (!CurrentInteractor)
 			return;
-		
-		// Find player in overlapping actors
-		for (Actor* Other : CollComp->GetOtherActors())
+
+		vec2f ToInteractor = CurrentInteractor->GetPosition() - GetPosition();
+		if (ToInteractor.lengthSquared() > 0.001f)
 		{
-			if (dynamic_cast<TestCharacter*>(Other))
+			MoveComp->SetLastMoveDirection(ToInteractor);
+		}
+	}
+
+	void Kiyoshi::OnBeginOverlap(Actor* Other)
+	{
+		if (auto* Interactor = dynamic_cast<IInteractor*>(Other))
+		{
+			CurrentInteractor = Other;
+
+			if (AIState != EAIState::Interacting)
 			{
-				vec2f ToPlayer = Other->GetPosition() - GetPosition();
-				if (ToPlayer.lengthSquared() > 0.001f)
-				{
-					MoveComp->SetLastMoveDirection(ToPlayer);
-				}
-				return;
+				AIState = EAIState::Interacting;
+				MoveComp->ClearInput();
+				FacePlayer();
 			}
+		}
+	}
+
+	void Kiyoshi::OnEndOverlap(Actor* Other)
+	{
+		if (Other == CurrentInteractor && dynamic_cast<IInteractor*>(Other))
+		{
+			CurrentInteractor = nullptr;
+
+			// Resume patrol
+			AIState = EAIState::Waiting;
+			float WaitTime = RNG().Random(1.0f, 4.0f);
+			WaitTimer = GetTimer().SetTimer(
+				weak_from_this(),
+				&Kiyoshi::OnResumeFromInteraction,
+				WaitTime,
+				false
+			);
 		}
 	}
 

@@ -28,13 +28,13 @@ namespace we
 			auto ItA = Listeners->find(BodyA);
 			if (ItA != Listeners->end() && ItA->second)
 			{
-				ItA->second->OnBeginOverlap(BodyB);
+				ItA->second->OnComponentBeginOverlap(BodyB);
 			}
 
 			auto ItB = Listeners->find(BodyB);
 			if (ItB != Listeners->end() && ItB->second)
 			{
-				ItB->second->OnBeginOverlap(BodyA);
+				ItB->second->OnComponentBeginOverlap(BodyA);
 			}
 		}
 
@@ -48,13 +48,13 @@ namespace we
 			auto ItA = Listeners->find(BodyA);
 			if (ItA != Listeners->end() && ItA->second)
 			{
-				ItA->second->OnEndOverlap(BodyB);
+				ItA->second->OnComponentEndOverlap(BodyB);
 			}
 
 			auto ItB = Listeners->find(BodyB);
 			if (ItB != Listeners->end() && ItB->second)
 			{
-				ItB->second->OnEndOverlap(BodyA);
+				ItB->second->OnComponentEndOverlap(BodyA);
 			}
 		}
 	};

@@ -15,7 +15,7 @@ namespace we
 	{
 	public:
 		virtual ~IPhysicsContactListener() = default;
-		virtual void OnBeginOverlap(b2Body* OtherBody) = 0;
-		virtual void OnEndOverlap(b2Body* OtherBody) = 0;
+		virtual void OnComponentBeginOverlap(b2Body* OtherBody) = 0;
+		virtual void OnComponentEndOverlap(b2Body* OtherBody) = 0;
 	};
 }

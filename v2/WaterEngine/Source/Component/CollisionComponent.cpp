@@ -113,16 +113,17 @@ namespace we
 		return Owner;
 	}
 
-	void CollisionComponent::OnBeginOverlap(b2Body* OtherBody)
+	void CollisionComponent::OnComponentBeginOverlap(b2Body* OtherBody)
 	{
 		Actor* OtherActor = GetActorFromBody(OtherBody);
 		if (!OtherActor || OtherActor == Owner)
 			return;
 		
 		OverlappingActors.insert(OtherActor);
+		OnBeginOverlap.Broadcast(OtherActor);
 	}
 
-	void CollisionComponent::OnEndOverlap(b2Body* OtherBody)
+	void CollisionComponent::OnComponentEndOverlap(b2Body* OtherBody)
 	{
 		Actor* OtherActor = GetActorFromBody(OtherBody);
 		
@@ -130,6 +131,7 @@ namespace we
 			return;
 		
 		OverlappingActors.erase(OtherActor);
+		OnEndOverlap.Broadcast(OtherActor);
 	}
 
 	bool CollisionComponent::IsOtherActor(Actor* CheckActor) const
