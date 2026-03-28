@@ -29,8 +29,6 @@ namespace we
 	{
 		Actor::BeginPlay();
 
-		LOG("[Character] BeginPlay on Actor {}", GetID());
-
 		// Bind movement velocity to physics body
 		MoveComp->OnVelocityCalculated.Bind(PhysicsComp.get(), &PhysicsComponent::SetVelocity);
 

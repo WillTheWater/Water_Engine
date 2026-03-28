@@ -31,7 +31,6 @@ namespace we
                 return;
             }
             
-            LOG("ResourceSubsystem: Mounted {}", ASSET_PACK_PATH);
         #endif
     }
 
@@ -207,7 +206,6 @@ namespace we
         {
             if (it->second.use_count() == 1)
             {
-                LOG("ResourceSubsystem GC: Unloading {} '{}'", TypeName, it->first);
                 it = Cache.erase(it);
             }
             else

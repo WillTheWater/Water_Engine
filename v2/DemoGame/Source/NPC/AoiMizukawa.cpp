@@ -68,7 +68,5 @@ namespace we
 
 		// Play idle animation
 		AnimComp->TransitionTo(EAoiState::Idle);
-
-		LOG("[AoiMizukawa] Animation setup complete");
 	}
 }

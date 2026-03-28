@@ -68,8 +68,6 @@ namespace we
 		Body->GetUserData().pointer = 0;
 
 		CreateSegments();
-
-		LOG("[Barrier] Body created with {} segments", bClosed ? Points.size() : Points.size() - 1);
 	}
 
 	void Barrier::CreateSegments()
@@ -122,8 +120,6 @@ namespace we
 	{
 		if (!Body)
 			return;
-
-		LOG("[Barrier] Destroying body");
 
 		GetWorld().GetPhysics().MarkForDestruction(Body);
 		Body = nullptr;

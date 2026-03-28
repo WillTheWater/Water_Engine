@@ -10,18 +10,15 @@ namespace we
 {
 	DemoGameInstance::DemoGameInstance()
 	{
-		LOG("[DemoGameInstance] Created");
 	}
 
 	void DemoGameInstance::Init(EngineSubsystem& InSubsystem)
 	{
 		GameInstance::Init(InSubsystem);
-		LOG("[DemoGameInstance] Initialized");
 	}
 
 	void DemoGameInstance::Shutdown()
 	{
-		LOG("[DemoGameInstance] Shutdown");
 		GameInstance::Shutdown();
 	}
 }

@@ -55,7 +55,6 @@ namespace we
 
 	void World::EndingPlay()
 	{
-		// Call EndPlay on all actors before world ends
 		for (auto& Actor : Actors)
 		{
 			if (Actor->HasBegunPlay())
@@ -72,7 +71,6 @@ namespace we
 		{
 			if (i->get()->IsPendingDestroy())
 			{
-				// Call EndPlay before destroying actor
 				if (i->get()->HasBegunPlay())
 				{
 					i->get()->EndPlay();

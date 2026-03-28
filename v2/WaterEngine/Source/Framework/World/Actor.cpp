@@ -25,7 +25,6 @@ namespace we
 
 	Actor::~Actor()
 	{
-		LOG("Actor Destroyed")
 	}
 
 	void Actor::StartPlay()
@@ -47,7 +46,6 @@ namespace we
 
 	void Actor::BeginPlay()
 	{
-		LOG("Actor BeginPlay")
 	}
 
 	void Actor::Tick(float DeltaTime)
@@ -57,7 +55,6 @@ namespace we
 
 	void Actor::EndPlay()
 	{
-		LOG("Actor EndPlay")
 	}
 
 	void Actor::UpdateTransform()

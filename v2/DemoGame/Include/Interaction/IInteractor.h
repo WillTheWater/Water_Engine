@@ -1,21 +1,17 @@
 // =============================================================================
-// Water Engine v2.0.0
+// Water Engine v2.0.0 - Demo Game
 // Copyright(C) 2026 Will The Water
 // =============================================================================
 
 #pragma once
 
 #include "Core/CoreMinimal.h"
-#include "Framework/GameInstance.h"
 
 namespace we
 {
-	class DemoGameInstance : public GameInstance
+	class IInteractor
 	{
 	public:
-		DemoGameInstance();
-
-		void Init(EngineSubsystem& InSubsystem) override;
-		void Shutdown() override;
+		virtual ~IInteractor() = default;
 	};
 }

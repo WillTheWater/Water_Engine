@@ -21,8 +21,6 @@ namespace we
 	{
 		Actor::BeginPlay();
 
-		LOG("[Camera] BeginPlay on Actor {}", GetID());
-
 		CamComp->BeginPlay();
 	}
 
@@ -38,7 +36,6 @@ namespace we
 
 	void Camera::EndPlay()
 	{
-		LOG("[Camera] EndPlay on Actor {}", GetID());
 
 		if (CamComp)
 		{

@@ -58,7 +58,6 @@ namespace we
         TimesPlayed++;
         Subsystem.GetSave().Set(SAVE_TIMES_PLAYED, TimesPlayed);
         Subsystem.GetSave().Set(SAVE_LAST_LEVEL, "LevelOne");
-        LOG("[LevelOne] Times played: {}", TimesPlayed);
         
         // Load positions
         float PlayerX = Subsystem.GetSave().Get<float>(SAVE_PLAYER_POS_X, 960.0f);
@@ -218,14 +217,12 @@ namespace we
             vec2f Pos = Character->GetPosition();
             Subsystem.GetSave().Set(SAVE_PLAYER_POS_X, Pos.x);
             Subsystem.GetSave().Set(SAVE_PLAYER_POS_Y, Pos.y);
-            LOG("[LevelOne] Saved player position: {}, {}", Pos.x, Pos.y);
         }
         if (DynObstacle)
         {
             vec2f Pos = DynObstacle->GetPosition();
             Subsystem.GetSave().Set(SAVE_OBSTACLE_POS_X, Pos.x);
             Subsystem.GetSave().Set(SAVE_OBSTACLE_POS_Y, Pos.y);
-            LOG("[LevelOne] Saved obstacle position: {}, {}", Pos.x, Pos.y);
         }
         Subsystem.GetSave().Save();
         
@@ -292,7 +289,6 @@ namespace we
 
     void LevelOne::SaveAndQuit()
     {
-        LOG("[LevelOne] Save & Quit requested");
         
         // Save positions first
         if (Character)
@@ -300,14 +296,12 @@ namespace we
             vec2f Pos = Character->GetPosition();
             Subsystem.GetSave().Set(SAVE_PLAYER_POS_X, Pos.x);
             Subsystem.GetSave().Set(SAVE_PLAYER_POS_Y, Pos.y);
-            LOG("[LevelOne] Saved player position: {}, {}", Pos.x, Pos.y);
         }
         if (DynObstacle)
         {
             vec2f Pos = DynObstacle->GetPosition();
             Subsystem.GetSave().Set(SAVE_OBSTACLE_POS_X, Pos.x);
             Subsystem.GetSave().Set(SAVE_OBSTACLE_POS_Y, Pos.y);
-            LOG("[LevelOne] Saved obstacle position: {}, {}", Pos.x, Pos.y);
         }
         
         // Flush to disk and quit

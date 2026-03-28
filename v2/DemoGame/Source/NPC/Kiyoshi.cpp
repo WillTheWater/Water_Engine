@@ -64,7 +64,6 @@ namespace we
 		
 		CurrentWaypointIndex = (CurrentWaypointIndex + 1) % Waypoints.size();
 		AIState = EAIState::Moving;
-		LOG("[Kiyoshi] Moving to waypoint {}", CurrentWaypointIndex);
 	}
 
 	void Kiyoshi::Tick(float DeltaTime)
@@ -80,7 +79,6 @@ namespace we
 				AIState = EAIState::Interacting;
 				MoveComp->ClearInput();
 				FacePlayer();
-				LOG("[Kiyoshi] Player detected - stopping to interact");
 			}
 		}
 		else if (bWasOverlappingPlayer && !bIsOverlappingPlayer)
