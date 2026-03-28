@@ -5,7 +5,6 @@
 
 #include "UI/InteractUI.h"
 #include "Subsystem/GuiSubsystem.h"
-#include "Utility/Log.h"
 
 namespace we
 {
@@ -24,54 +23,55 @@ namespace we
 		if (bInitialized)
 			return;
 
+		// Black background with white border
 		Background = tgui::Panel::create({Width, Height});
-		Background->getRenderer()->setBackgroundColor({255, 0, 0, 255});
-		Background->getRenderer()->setBorderColor({255, 255, 255, 200});
+		Background->getRenderer()->setBackgroundColor({0, 0, 0, 200});
+		Background->getRenderer()->setBorderColor({255, 255, 255, 255});
 		Background->getRenderer()->setBorders({2, 2, 2, 2});
 
+		// White centered text
 		TextLabel = tgui::Label::create(Text);
 		TextLabel->setTextSize(14);
-		TextLabel->getRenderer()->setTextColor({255, 255, 255});
+		TextLabel->getRenderer()->setTextColor({255, 255, 255, 255});
 		TextLabel->setHorizontalAlignment(tgui::HorizontalAlignment::Center);
 		TextLabel->setVerticalAlignment(tgui::VerticalAlignment::Center);
 		TextLabel->setSize({Width, Height});
 
 		Background->add(TextLabel);
-
 		MakeGUI().GetWorldUI().add(Background);
+
+		Background->setOrigin(Anchor.x, Anchor.y);
+		Background->setVisible(false);
 
 		bInitialized = true;
 	}
 
 	void InteractUI::Show()
 	{
-		if (!bInitialized || bVisible)
-			return;
-
-		if (Background)
+		if (Background && bInitialized)
 		{
 			Background->setVisible(true);
 		}
-		bVisible = true;
 	}
 
 	void InteractUI::Hide()
 	{
-		if (!bInitialized || !bVisible)
-			return;
-
-		if (Background)
+		if (Background && bInitialized)
 		{
 			Background->setVisible(false);
 		}
-		bVisible = false;
 	}
 
-	void InteractUI::SetPosition(const vec2f& WorldPos)
+	bool InteractUI::IsVisible() const
+	{
+		return Background && Background->isVisible();
+	}
+
+	void InteractUI::SetPosition(const vec2f& ScreenPos)
 	{
 		if (Background)
 		{
-			Background->setPosition({WorldPos.x, WorldPos.y});
+			Background->setPosition({ScreenPos.x, ScreenPos.y});
 		}
 	}
 
@@ -80,6 +80,15 @@ namespace we
 		if (TextLabel)
 		{
 			TextLabel->setText(Text);
+		}
+	}
+
+	void InteractUI::SetAnchor(const vec2f& AnchorPoint)
+	{
+		Anchor = AnchorPoint;
+		if (Background)
+		{
+			Background->setOrigin(Anchor.x, Anchor.y);
 		}
 	}
 }

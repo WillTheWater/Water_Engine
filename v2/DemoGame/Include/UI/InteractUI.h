@@ -17,18 +17,19 @@ namespace we
 		~InteractUI();
 
 		void Initialize(const string& Text = "E to Interact!");
-
+		
 		void Show();
 		void Hide();
+		bool IsVisible() const;
 
-		void SetPosition(const vec2f& WorldPos);
+		void SetPosition(const vec2f& ScreenPos);
 		void SetText(const string& Text);
-		bool IsVisible() const { return bVisible; }
+		void SetAnchor(const vec2f& AnchorPoint);
 
 	private:
 		tgui::Panel::Ptr Background;
 		tgui::Label::Ptr TextLabel;
-		bool bVisible = false;
+		vec2f Anchor{0.5f, 1.0f};
 		bool bInitialized = false;
 		static constexpr float Width = 120.0f;
 		static constexpr float Height = 30.0f;
