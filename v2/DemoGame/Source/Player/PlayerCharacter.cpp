@@ -33,6 +33,8 @@ namespace we
 		PhysicsComp->SetLinearDamping(10.0f);
 
 		CollComp->SetRadius(64.0f);
+		CollComp->OnBeginOverlap.Bind(this, &PlayerCharacter::OnBeginOverlap);
+		CollComp->OnEndOverlap.Bind(this, &PlayerCharacter::OnEndOverlap);
 		MoveComp->SetSpeed(240);
 		SetScale({ 2.1,2.1 });
 
@@ -129,6 +131,22 @@ namespace we
 		if (InputDir.lengthSquared() > 0.0f)
 		{
 			MoveComp->AddInputVector(InputDir);
+		}
+	}
+
+	void PlayerCharacter::OnBeginOverlap(Actor* Other)
+	{
+		if (auto* Interactable = dynamic_cast<IInteractable*>(Other))
+		{
+			Interactable->ShowPrompt(this);
+		}
+	}
+
+	void PlayerCharacter::OnEndOverlap(Actor* Other)
+	{
+		if (auto* Interactable = dynamic_cast<IInteractable*>(Other))
+		{
+			Interactable->HidePrompt(this);
 		}
 	}
 

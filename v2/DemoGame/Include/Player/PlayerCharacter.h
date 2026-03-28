@@ -8,7 +8,6 @@
 #include "Core/CoreMinimal.h"
 #include "Framework/World/Character.h"
 #include "Subsystem/InputSubsystem.h"
-#include "Interaction/IInteractor.h"
 
 namespace we
 {
@@ -41,7 +40,7 @@ namespace we
 		Walk
 	};
 
-	class PlayerCharacter : public Character, public IInteractor
+	class PlayerCharacter : public Character
 	{
 	public:
 		PlayerCharacter(World& OwningWorld);
@@ -58,6 +57,8 @@ namespace we
 		void HandleInput();
 		void UpdateDirectionalAnimation();
 		void TryInteract();
+		void OnBeginOverlap(Actor* Other);
+		void OnEndOverlap(Actor* Other);
 		EPlayerAnim DirectionToIdleAnim(const vec2f& Dir) const;
 		EPlayerAnim DirectionToWalkAnim(const vec2f& Dir) const;
 		void SetCameraBounds();

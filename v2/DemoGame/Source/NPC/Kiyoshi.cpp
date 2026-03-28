@@ -9,8 +9,6 @@
 #include "Component/CollisionComponent.h"
 #include "Component/MovementComponent.h"
 #include "Subsystem/ResourceSubsystem.h"
-#include "Interaction/IInteractor.h"
-#include "Utility/Log.h"
 #include "Utility/Math.h"
 
 namespace we
@@ -41,8 +39,7 @@ namespace we
 		PhysicsComp->SetLinearDamping(10.0f);
 
 		CollComp->SetRadius(64.0f);
-		CollComp->OnBeginOverlap.Bind(this, &Kiyoshi::OnBeginOverlap);
-		CollComp->OnEndOverlap.Bind(this, &Kiyoshi::OnEndOverlap);
+		// Note: No overlap bindings - player detects us, not the other way around
 
 		MoveComp->SetSpeed(120);
 
@@ -109,46 +106,44 @@ namespace we
 			return;
 
 		vec2f ToInteractor = CurrentInteractor->GetPosition() - GetPosition();
-		if (ToInteractor.lengthSquared() > 0.001f)
+		if (LengthSquared(ToInteractor) > EPSILON)
 		{
 			MoveComp->SetLastMoveDirection(ToInteractor);
 		}
 	}
 
-	void Kiyoshi::OnBeginOverlap(Actor* Other)
+	void Kiyoshi::ShowPrompt(Actor* Interactor)
 	{
-		if (auto* Interactor = dynamic_cast<IInteractor*>(Other))
+		CurrentInteractor = Interactor;
+		
+		GetTimer().ClearTimer(WaitTimer);
+		WaitTimer = TimerHandle();
+		
+		if (AIState != EAIState::Interacting)
 		{
-			CurrentInteractor = Other;
-
-			if (AIState != EAIState::Interacting)
-			{
-				AIState = EAIState::Interacting;
-				MoveComp->ClearInput();
-				FacePlayer();
-				PromptUI.Show();
-				PromptUI.SetPosition(GetPosition(), { 0.f, -100.f });
-			}
+			AIState = EAIState::Interacting;
+			MoveComp->ClearInput();
+			FacePlayer();
 		}
+		
+		PromptUI.Show();
+		PromptUI.SetPosition(GetPosition(), { 0.f, -100.f });
 	}
 
-	void Kiyoshi::OnEndOverlap(Actor* Other)
+	void Kiyoshi::HidePrompt(Actor* Interactor)
 	{
-		if (Other == CurrentInteractor && dynamic_cast<IInteractor*>(Other))
-		{
-			CurrentInteractor = nullptr;
-			PromptUI.Hide();
+		CurrentInteractor = nullptr;
+		PromptUI.Hide();
 
-			// Resume patrol
-			AIState = EAIState::Waiting;
-			float WaitTime = RNG().Random(1.0f, 4.0f);
-			WaitTimer = GetTimer().SetTimer(
-				weak_from_this(),
-				&Kiyoshi::OnResumeFromInteraction,
-				WaitTime,
-				false
-			);
-		}
+		// Resume patrol
+		AIState = EAIState::Waiting;
+		float WaitTime = RNG().Random(1.0f, 4.0f);
+		WaitTimer = GetTimer().SetTimer(
+			weak_from_this(),
+			&Kiyoshi::OnResumeFromInteraction,
+			WaitTime,
+			false
+		);
 	}
 
 	void Kiyoshi::OnWaitComplete()

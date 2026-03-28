@@ -60,6 +60,8 @@ namespace we
 
 		// IInteractable
 		void Interact(Actor* Interactor) override;
+		void ShowPrompt(Actor* Interactor) override;
+		void HidePrompt(Actor* Interactor) override;
 
 	protected:
 		void BeginPlay() override;
@@ -76,9 +78,6 @@ namespace we
 		void OnWaitComplete();
 		void OnResumeFromInteraction();
 		void FacePlayer();
-
-		void OnBeginOverlap(Actor* Other);
-		void OnEndOverlap(Actor* Other);
 
 	private:
 		// Patrol

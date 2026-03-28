@@ -21,6 +21,8 @@ namespace we
 
 		// IInteractable
 		void Interact(Actor* Interactor) override;
+		void ShowPrompt(Actor* Interactor) override;
+		void HidePrompt(Actor* Interactor) override;
 
 	protected:
 		void BeginPlay() override;
@@ -29,8 +31,6 @@ namespace we
 
 	private:
 		void SetupAnimation();
-		void OnBeginOverlap(Actor* Other);
-		void OnEndOverlap(Actor* Other);
 
 		InteractUI PromptUI;
 	};

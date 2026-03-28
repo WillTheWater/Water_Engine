@@ -8,7 +8,6 @@
 #include "Component/PhysicsComponent.h"
 #include "Component/CollisionComponent.h"
 #include "Subsystem/ResourceSubsystem.h"
-#include "Interaction/IInteractor.h"
 #include "Utility/Log.h"
 
 namespace we
@@ -42,8 +41,7 @@ namespace we
 		PhysicsComp->SetShapeSize({42.0f, 42.0f});
 
 		CollComp->SetRadius(64.0f);
-		CollComp->OnBeginOverlap.Bind(this, &AoiMizukawa::OnBeginOverlap);
-		CollComp->OnEndOverlap.Bind(this, &AoiMizukawa::OnEndOverlap);
+		// Note: No overlap bindings - player detects us, not the other way around
 
 		Character::BeginPlay();
 
@@ -76,21 +74,13 @@ namespace we
 		AnimComp->TransitionTo(EAoiState::Idle);
 	}
 
-	void AoiMizukawa::OnBeginOverlap(Actor* Other)
+	void AoiMizukawa::ShowPrompt(Actor* Interactor)
 	{
-		if (auto* Interactor = dynamic_cast<IInteractor*>(Other))
-		{
-			LOG("Player Overlapped!");
-			PromptUI.Show();
-		}
+		PromptUI.Show();
 	}
 
-	void AoiMizukawa::OnEndOverlap(Actor* Other)
+	void AoiMizukawa::HidePrompt(Actor* Interactor)
 	{
-		if (auto* Interactor = dynamic_cast<IInteractor*>(Other))
-		{
-			LOG("Player Ended Overlapped!");
-			PromptUI.Hide();
-		}
+		PromptUI.Hide();
 	}
 }
