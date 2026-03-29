@@ -51,6 +51,7 @@ namespace we
 		void BeginPlay() override;
 		void Tick(float DeltaTime) override;
 		void EndPlay() override;
+		void GetDrawables(vector<const drawable*>& OutDrawables) const override;
 
 	private:
 		void SetupAnimations();
@@ -65,11 +66,17 @@ namespace we
 		EPlayerAnim DirectionToIdleAnim(const vec2f& Dir) const;
 		EPlayerAnim DirectionToWalkAnim(const vec2f& Dir) const;
 		void SetCameraBounds();
+		void SetupShadow();
 
 		BindingHandle InteractBinding;
 		
 		// Interaction state
 		IInteractable* CurrentInteractable = nullptr;
 		bool bInDialog = false;
+
+		// Shadow
+		optional<sprite> ShadowSprite;
+		shared<texture> ShadowTexture;
+		vec2f ShadowOffset{ 0.0f, 95.0f };
 	};
 }

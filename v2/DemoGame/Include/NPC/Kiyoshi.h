@@ -10,6 +10,7 @@
 #include "Subsystem/TimerSubsystem.h"
 #include "Interaction/IInteractable.h"
 #include "UI/InteractUI.h"
+#include "UI/DialogUI.h"
 
 namespace we
 {
@@ -67,6 +68,7 @@ namespace we
 		void BeginPlay() override;
 		void Tick(float DeltaTime) override;
 		void EndPlay() override;
+		void GetDrawables(vector<const drawable*>& OutDrawables) const override;
 
 	private:
 		void SetupAnimations();
@@ -78,6 +80,10 @@ namespace we
 		void OnWaitComplete();
 		void OnResumeFromInteraction();
 		void FacePlayer();
+		void SetupShadow();
+		void StartDialog();
+		bool AdvanceDialog();
+		void EndDialog();
 
 	private:
 		// Patrol
@@ -87,5 +93,12 @@ namespace we
 		TimerHandle WaitTimer;
 		Actor* CurrentInteractor = nullptr;
 		InteractUI PromptUI;
+		DialogUI DialogBox;
+		bool bInDialog = false;
+
+		// Shadow
+		optional<sprite> ShadowSprite;
+		shared<texture> ShadowTexture;
+		vec2f ShadowOffset{ 0.0f, 95.0f };
 	};
 }

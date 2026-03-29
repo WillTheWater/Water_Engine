@@ -27,7 +27,17 @@ namespace we
 
 	void Kiyoshi::Interact(Actor* Interactor)
 	{
-		LOG("[Kiyoshi] Hello traveler! *bows*");
+		if (!bInDialog)
+		{
+			StartDialog();
+		}
+		else
+		{
+			if (!AdvanceDialog())
+			{
+				EndDialog();
+			}
+		}
 	}
 
 	void Kiyoshi::BeginPlay()
@@ -47,8 +57,12 @@ namespace we
 
 		SetScale({ 2.1, 2.1 });
 		SetupAnimations();
+		SetupShadow();
 
 		PromptUI.Initialize("Talk");
+		
+		DialogBox.Initialize();
+		DialogBox.SetPosition(GetPosition(), { 0.f, -200.f });
 		
 		// Start patrol
 		if (!Waypoints.empty())
@@ -98,7 +112,18 @@ namespace we
 		}
 
 		UpdateDirectionalAnimation();
+
 		Character::Tick(DeltaTime);
+		if (ShadowSprite)
+		{
+			ShadowSprite->setPosition(GetPosition() + ShadowOffset);
+		}
+		
+		// Update dialog position to follow Kiyoshi
+		if (bInDialog)
+		{
+			DialogBox.SetPosition(GetPosition(), { 0.f, -200.f });
+		}
 	}
 
 	void Kiyoshi::FacePlayer()
@@ -127,14 +152,22 @@ namespace we
 			FacePlayer();
 		}
 		
-		PromptUI.Show();
-		PromptUI.SetPosition(GetPosition(), { 0.f, -100.f });
+		if (!bInDialog)
+		{
+			PromptUI.Show();
+			PromptUI.SetPosition(GetPosition(), { 0.f, -100.f });
+		}
 	}
 
 	void Kiyoshi::HidePrompt(Actor* Interactor)
 	{
 		CurrentInteractor = nullptr;
 		PromptUI.Hide();
+
+		if (bInDialog)
+		{
+			EndDialog();
+		}
 
 		// Resume patrol
 		AIState = EAIState::Waiting;
@@ -161,6 +194,56 @@ namespace we
 	{
 		GetTimer().ClearTimer(WaitTimer);
 		Character::EndPlay();
+	}
+
+	void Kiyoshi::SetupShadow()
+	{
+		ShadowTexture = LoadAsset().LoadTexture("Assets/Textures/Game/shadow.png");
+
+		if (ShadowTexture)
+		{
+			ShadowSprite.emplace(*ShadowTexture);
+			vec2u TexSize = ShadowTexture->getSize();
+			ShadowSprite->setOrigin({ TexSize.x / 2.0f, TexSize.y / 2.0f });
+			ShadowSprite->setColor({ 0, 0, 0, 150 });
+			ShadowSprite->setScale({ .7,.7 });
+		}
+	}
+
+	void Kiyoshi::GetDrawables(vector<const drawable*>& OutDrawables) const
+	{
+		// Add SHADOW FIRST so it renders UNDER the character
+		if (ShadowSprite && ShadowTexture)
+			OutDrawables.push_back(&ShadowSprite.value());
+
+		// Then add all the normal character drawables (sprite + debug)
+		Character::GetDrawables(OutDrawables);
+	}
+
+	void Kiyoshi::StartDialog()
+	{
+		bInDialog = true;
+		PromptUI.Hide();
+		
+		FacePlayer();
+		
+		DialogBox.SetDialog({
+			"Greetings, young one.",
+			"I've been patrolling these paths for many years.",
+			"Stay safe on your journey."
+		});
+		DialogBox.Show();
+	}
+
+	bool Kiyoshi::AdvanceDialog()
+	{
+		return DialogBox.Advance();
+	}
+
+	void Kiyoshi::EndDialog()
+	{
+		bInDialog = false;
+		DialogBox.Hide();
 	}
 
 	void Kiyoshi::SetupAnimations()

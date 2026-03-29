@@ -51,6 +51,7 @@ namespace we
 
 		SetScale({ 2.1,2.1 });
 		SetupAnimation();
+		SetupShadow();
 
 		PromptUI.Initialize("Talk");
 		PromptUI.SetPosition(GetPosition(), {0.f, -100.f});
@@ -63,6 +64,10 @@ namespace we
 	{
 		UpdateDirectionalAnimation();
 		Character::Tick(DeltaTime);
+		if (ShadowSprite)
+		{
+			ShadowSprite->setPosition(GetPosition() + ShadowOffset);
+		}
 	}
 
 	void AoiMizukawa::EndPlay()
@@ -163,6 +168,11 @@ namespace we
 		CurrentInteractor = nullptr;
 		PromptUI.Hide();
 		
+		if (bInDialog)
+		{
+			EndDialog();
+		}
+		
 		FacingDirection = OriginalFacingDirection;
 	}
 
@@ -192,5 +202,27 @@ namespace we
 		DialogBox.Hide();
 		
 		FacingDirection = OriginalFacingDirection;
+	}
+
+	void AoiMizukawa::GetDrawables(vector<const drawable*>& OutDrawables) const
+	{
+		if (ShadowSprite && ShadowTexture)
+			OutDrawables.push_back(&ShadowSprite.value());
+
+		Character::GetDrawables(OutDrawables);
+	}
+
+	void AoiMizukawa::SetupShadow()
+	{
+		ShadowTexture = LoadAsset().LoadTexture("Assets/Textures/Game/shadow.png");
+
+		if (ShadowTexture)
+		{
+			ShadowSprite.emplace(*ShadowTexture);
+			vec2u TexSize = ShadowTexture->getSize();
+			ShadowSprite->setOrigin({ TexSize.x / 2.0f, TexSize.y / 2.0f });
+			ShadowSprite->setColor({ 0, 0, 0, 150 });
+			ShadowSprite->setScale({ .7,.7 });
+		}
 	}
 }

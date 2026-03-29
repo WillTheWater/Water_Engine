@@ -46,6 +46,7 @@ namespace we
 		void BeginPlay() override;
 		void Tick(float DeltaTime) override;
 		void EndPlay() override;
+		void GetDrawables(vector<const drawable*>& OutDrawables) const override;
 
 	private:
 		void SetupAnimation();
@@ -55,6 +56,7 @@ namespace we
 		void StartDialog();
 		bool AdvanceDialog();
 		void EndDialog();
+		void SetupShadow();
 
 	private:
 		InteractUI PromptUI;
@@ -63,5 +65,10 @@ namespace we
 		Actor* CurrentInteractor = nullptr;
 		vec2f FacingDirection{ 0.0f, 1.0f };
 		vec2f OriginalFacingDirection{ 0.0f, 1.0f };
+
+		// Shadow
+		optional<sprite> ShadowSprite;
+		shared<texture> ShadowTexture;
+		vec2f ShadowOffset{ 0.0f, 95.0f };
 	};
 }

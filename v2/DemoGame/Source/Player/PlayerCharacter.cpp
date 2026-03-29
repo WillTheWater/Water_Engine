@@ -43,6 +43,7 @@ namespace we
 		Character::BeginPlay();
 
 		SetupAnimations();
+		SetupShadow();
 		BindInput();
 
 		// Configure camera
@@ -92,12 +93,42 @@ namespace we
 		HandleInput();
 		UpdateDirectionalAnimation();
 
+		// Update shadow position
+		if (ShadowSprite)
+		{
+			ShadowSprite->setPosition(GetPosition() + ShadowOffset);
+		}
+
 		Character::Tick(DeltaTime);
 	}
 
 	void PlayerCharacter::EndPlay()
 	{
 		Character::EndPlay();
+	}
+
+	void PlayerCharacter::SetupShadow()
+	{
+		ShadowTexture = LoadAsset().LoadTexture("Assets/Textures/Game/shadow.png");
+
+		if (ShadowTexture)
+		{
+			ShadowSprite.emplace(*ShadowTexture);
+			vec2u TexSize = ShadowTexture->getSize();
+			ShadowSprite->setOrigin({ TexSize.x / 2.0f, TexSize.y / 2.0f });
+			ShadowSprite->setColor({ 0, 0, 0, 150 });
+			ShadowSprite->setScale({.7,.7});
+		}
+	}
+
+	void PlayerCharacter::GetDrawables(vector<const drawable*>& OutDrawables) const
+	{
+		// Add SHADOW FIRST so it renders UNDER the character
+		if (ShadowSprite && ShadowTexture)
+			OutDrawables.push_back(&ShadowSprite.value());
+
+		// Then add all the normal character drawables (sprite + debug)
+		Character::GetDrawables(OutDrawables);
 	}
 
 	void PlayerCharacter::BindInput()
@@ -152,9 +183,10 @@ namespace we
 	{
 		if (auto* Interactable = dynamic_cast<IInteractable*>(Other))
 		{
-			// If walking away from current interaction, end it
+			// If walking away from current interaction, tell NPC to hide/cleanup first
 			if (Interactable == CurrentInteractable)
 			{
+				Interactable->HidePrompt(this);
 				EndInteraction();
 			}
 			else
