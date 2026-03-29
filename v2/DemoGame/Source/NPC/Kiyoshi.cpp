@@ -45,6 +45,7 @@ namespace we
 
 		Character::BeginPlay();
 
+		SetScale({ 2.1, 2.1 });
 		SetupAnimations();
 
 		PromptUI.Initialize("Talk");
@@ -164,10 +165,10 @@ namespace we
 
 	void Kiyoshi::SetupAnimations()
 	{
-		SpriteSheet IdleSheet("Assets/Textures/Game/oldIdle.png", vec2u{256, 256}, 8);
+		SpriteSheet IdleSheet("Assets/Textures/Game/oldIdle.png", vec2u{ 100, 128 }, 8);
 		AnimComp->AddSpriteSheet(EKiyoshiSheet::Idle, IdleSheet);
 		
-		SpriteSheet WalkSheet("Assets/Textures/Game/oldWalk.png", vec2u{256, 256}, 8);
+		SpriteSheet WalkSheet("Assets/Textures/Game/oldWalk.png", vec2u{ 100, 128 }, 8);
 		AnimComp->AddSpriteSheet(EKiyoshiSheet::Walk, WalkSheet);
 
 		// 8-way idle animations
