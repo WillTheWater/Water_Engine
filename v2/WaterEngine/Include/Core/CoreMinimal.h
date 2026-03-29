@@ -48,6 +48,7 @@ namespace we
 	using outstream   = std::ofstream;
 
 	using uint8  = unsigned char;
+	using uint16 = std::uint16_t;
 	using uint   = std::uint32_t;
 	using int64  = std::int64_t;
 	using ulong  = std::size_t;

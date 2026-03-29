@@ -13,6 +13,7 @@
 #include "Input/InputActions.h"
 #include "Subsystem/ResourceSubsystem.h"
 #include "Subsystem/InputSubsystem.h"
+#include "Core/EngineConfig.h"
 #include "Utility/Log.h"
 #include <cmath>
 
@@ -33,6 +34,7 @@ namespace we
 		PhysicsComp->SetLinearDamping(10.0f);
 
 		CollComp->SetRadius(64.0f);
+		CollComp->SetCollisionChannel(ECollisionChannel::Interaction);
 		CollComp->OnBeginOverlap.Bind(this, &PlayerCharacter::OnBeginOverlap);
 		CollComp->OnEndOverlap.Bind(this, &PlayerCharacter::OnEndOverlap);
 		MoveComp->SetSpeed(240);

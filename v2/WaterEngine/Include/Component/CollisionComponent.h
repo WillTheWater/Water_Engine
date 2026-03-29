@@ -30,6 +30,7 @@ namespace we
 		// IPhysicsContactListener
 		void OnComponentBeginOverlap(b2Body* OtherBody) override;
 		void OnComponentEndOverlap(b2Body* OtherBody) override;
+		void SetCollisionChannel(ECollisionChannel Channel) override;
 
 		// Overlap queries
 		bool IsOverlapping() const { return !OverlappingActors.empty(); }
@@ -80,6 +81,7 @@ namespace we
 		Actor* Owner;
 		float Radius = 32.0f;
 		b2Body* Body = nullptr;
+		ECollisionChannel CollisionChannel = ECollisionChannel::Interaction;
 		
 		set<Actor*> OverlappingActors;
 		optional<circle> DebugCircle;

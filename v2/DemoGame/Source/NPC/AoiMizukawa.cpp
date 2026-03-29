@@ -41,10 +41,11 @@ namespace we
 		PhysicsComp->SetShapeSize({42.0f, 42.0f});
 
 		CollComp->SetRadius(64.0f);
-		// Note: No overlap bindings - player detects us, not the other way around
+		CollComp->SetCollisionChannel(ECollisionChannel::Interaction);
 
 		Character::BeginPlay();
 
+		SetScale({ 2.1,2.1 });
 		SetupAnimation();
 
 		PromptUI.Initialize("Talk");
@@ -63,8 +64,7 @@ namespace we
 
 	void AoiMizukawa::SetupAnimation()
 	{
-		// Sprite sheet: girlidle.png - 1 row x 8 columns, 256x256 per frame
-		SpriteSheet IdleSheet("Assets/Textures/Game/girlidle.png", vec2u{256, 256}, 8);
+		SpriteSheet IdleSheet("Assets/Textures/Game/girlidle.png", vec2u{ 100, 128 }, 8);
 		AnimComp->AddSpriteSheet(EAoiSheet::Idle, IdleSheet);
 
 		// Single idle animation

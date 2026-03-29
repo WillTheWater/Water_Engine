@@ -6,6 +6,7 @@
 #pragma once
 
 #include "Core/CoreMinimal.h"
+#include "Core/EngineConfig.h"
 
 class b2Body;
 
@@ -17,5 +18,8 @@ namespace we
 		virtual ~IPhysicsContactListener() = default;
 		virtual void OnComponentBeginOverlap(b2Body* OtherBody) = 0;
 		virtual void OnComponentEndOverlap(b2Body* OtherBody) = 0;
+		
+		// Collision filtering - pure virtual
+		virtual void SetCollisionChannel(ECollisionChannel Channel) = 0;
 	};
 }

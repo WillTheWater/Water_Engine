@@ -7,6 +7,7 @@
 
 #include "Core/CoreMinimal.h"
 #include "Interface/Actor/IActorComponent.h"
+#include "Interface/Physics/IPhysicsContactListener.h"
 
 #include "box2d/b2_body.h"
 
@@ -14,7 +15,7 @@ class b2Body;
 
 namespace we
 {
-    class PhysicsComponent : public IActorComponent
+    class PhysicsComponent : public IActorComponent, public IPhysicsContactListener
     {
     public:
         enum class EShapeType
@@ -57,6 +58,11 @@ namespace we
         // Debug visualization
         const drawable* DrawDebug();
 
+        // IPhysicsContactListener (physics bodies don't use overlap callbacks)
+        void OnComponentBeginOverlap(b2Body* OtherBody) override {}
+        void OnComponentEndOverlap(b2Body* OtherBody) override {}
+        void SetCollisionChannel(ECollisionChannel Channel) override;
+
     private:
         void CreateBody();
         void DestroyBody();
@@ -71,6 +77,7 @@ namespace we
         EShapeType ShapeType = EShapeType::Circle;
         vec2f ShapeSize{32.0f, 32.0f};
         float LinearDamping = 10.0f;
+        ECollisionChannel CollisionChannel = ECollisionChannel::Physics;
         
         optional<circle> DebugCircle;
         optional<rectangle> DebugRect;

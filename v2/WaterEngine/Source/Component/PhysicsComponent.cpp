@@ -7,6 +7,7 @@
 #include "Framework/World/Actor.h"
 #include "Framework/World/World.h"
 #include "Subsystem/PhysicsSubsystem.h"
+#include "Core/EngineConfig.h"
 #include "box2d/b2_body.h"
 #include "box2d/b2_circle_shape.h"
 #include "box2d/b2_polygon_shape.h"
@@ -76,6 +77,11 @@ namespace we
             FixtureDef.friction = 0.3f;
             FixtureDef.restitution = 0.0f;
             FixtureDef.isSensor = false;
+            
+            // Set collision filter - Physics channel collides with World and Physics
+            uint16 ChannelBits = static_cast<uint16>(CollisionChannel);
+            FixtureDef.filter.categoryBits = ChannelBits;
+            FixtureDef.filter.maskBits = static_cast<uint16>(ECollisionChannel::World) | ChannelBits;
 
             Body->CreateFixture(&FixtureDef);
         }
@@ -93,8 +99,33 @@ namespace we
             FixtureDef.friction = 0.3f;
             FixtureDef.restitution = 0.0f;
             FixtureDef.isSensor = false;
+            
+            // Set collision filter - Physics channel collides with World and Physics
+            uint16 ChannelBits = static_cast<uint16>(CollisionChannel);
+            FixtureDef.filter.categoryBits = ChannelBits;
+            FixtureDef.filter.maskBits = static_cast<uint16>(ECollisionChannel::World) | ChannelBits;
 
             Body->CreateFixture(&FixtureDef);
+        }
+    }
+
+    void PhysicsComponent::SetCollisionChannel(ECollisionChannel Channel)
+    {
+        CollisionChannel = Channel;
+        
+        if (!Body)
+            return;
+        
+        // Update existing fixture filter
+        uint16 ChannelBits = static_cast<uint16>(Channel);
+        uint16 MaskBits = static_cast<uint16>(ECollisionChannel::World) | ChannelBits;
+        
+        for (b2Fixture* Fixture = Body->GetFixtureList(); Fixture; Fixture = Fixture->GetNext())
+        {
+            b2Filter Filter = Fixture->GetFilterData();
+            Filter.categoryBits = ChannelBits;
+            Filter.maskBits = MaskBits;
+            Fixture->SetFilterData(Filter);
         }
     }
 
@@ -298,4 +329,5 @@ namespace we
             return &DebugRect.value();
         }
     }
+
 }

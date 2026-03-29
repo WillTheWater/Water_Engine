@@ -7,10 +7,11 @@
 #include "Framework/World/Actor.h"
 #include "Framework/World/World.h"
 #include "Subsystem/PhysicsSubsystem.h"
+#include "Core/EngineConfig.h"
+#include "Utility/Log.h"
 #include "box2d/b2_body.h"
 #include "box2d/b2_circle_shape.h"
 #include "box2d/b2_fixture.h"
-#include "Utility/Log.h"
 
 namespace we
 {
@@ -63,6 +64,11 @@ namespace we
 		FixtureDef.isSensor = true;
 		FixtureDef.density = 0.0f;
 		FixtureDef.friction = 0.0f;
+		
+		// Set default collision filter - Interaction channel only detects Interaction
+		uint16 ChannelBits = static_cast<uint16>(CollisionChannel);
+		FixtureDef.filter.categoryBits = ChannelBits;
+		FixtureDef.filter.maskBits = ChannelBits;  // Only detect same channel
 
 		Body->CreateFixture(&FixtureDef);
 
@@ -171,5 +177,23 @@ namespace we
 		DebugCircle->setOutlineColor(IsOverlapping() ? color::Red : color::Green);
 
 		return &DebugCircle.value();
+	}
+
+	void CollisionComponent::SetCollisionChannel(ECollisionChannel Channel)
+	{
+		CollisionChannel = Channel;
+		
+		if (!Body)
+			return;
+		
+		// Update existing fixture filter
+		uint16 ChannelBits = static_cast<uint16>(Channel);
+		for (b2Fixture* Fixture = Body->GetFixtureList(); Fixture; Fixture = Fixture->GetNext())
+		{
+			b2Filter Filter = Fixture->GetFilterData();
+			Filter.categoryBits = ChannelBits;
+			Filter.maskBits = ChannelBits;  // Only detect same channel
+			Fixture->SetFilterData(Filter);
+		}
 	}
 }

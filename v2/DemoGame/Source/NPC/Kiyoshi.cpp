@@ -39,7 +39,7 @@ namespace we
 		PhysicsComp->SetLinearDamping(10.0f);
 
 		CollComp->SetRadius(64.0f);
-		// Note: No overlap bindings - player detects us, not the other way around
+		CollComp->SetCollisionChannel(ECollisionChannel::Interaction);
 
 		MoveComp->SetSpeed(120);
 
