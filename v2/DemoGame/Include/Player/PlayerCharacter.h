@@ -8,6 +8,7 @@
 #include "Core/CoreMinimal.h"
 #include "Framework/World/Character.h"
 #include "Subsystem/InputSubsystem.h"
+#include "Interaction/IInteractable.h"
 
 namespace we
 {
@@ -59,10 +60,16 @@ namespace we
 		void TryInteract();
 		void OnBeginOverlap(Actor* Other);
 		void OnEndOverlap(Actor* Other);
+		void StartInteraction(IInteractable* Target);
+		void EndInteraction();
 		EPlayerAnim DirectionToIdleAnim(const vec2f& Dir) const;
 		EPlayerAnim DirectionToWalkAnim(const vec2f& Dir) const;
 		void SetCameraBounds();
 
 		BindingHandle InteractBinding;
+		
+		// Interaction state
+		IInteractable* CurrentInteractable = nullptr;
+		bool bInDialog = false;
 	};
 }

@@ -9,18 +9,10 @@
 #include "Component/CollisionComponent.h"
 #include "Subsystem/ResourceSubsystem.h"
 #include "Utility/Log.h"
+#include "Utility/Math.h"
 
 namespace we
 {
-	enum class EAoiState : uint8
-	{
-		Idle
-	};
-
-	enum class EAoiSheet : uint8
-	{
-		Idle
-	};
 
 	AoiMizukawa::AoiMizukawa(World& OwningWorld)
 		: Character(OwningWorld)
@@ -31,7 +23,19 @@ namespace we
 
 	void AoiMizukawa::Interact(Actor* Interactor)
 	{
-		LOG("[AoiMizukawa] Welcome! Please enjoy your stay.");
+		if (!bInDialog)
+		{
+			// Start new dialog
+			StartDialog();
+		}
+		else
+		{
+			// Continue or end existing dialog
+			if (!AdvanceDialog())
+			{
+				EndDialog();
+			}
+		}
 	}
 
 	void AoiMizukawa::BeginPlay()
@@ -50,10 +54,14 @@ namespace we
 
 		PromptUI.Initialize("Talk");
 		PromptUI.SetPosition(GetPosition(), {0.f, -100.f});
+		
+		DialogBox.Initialize();
+		DialogBox.SetPosition(GetPosition(), {0.f, -200.f});
 	}
 
 	void AoiMizukawa::Tick(float DeltaTime)
 	{
+		UpdateDirectionalAnimation();
 		Character::Tick(DeltaTime);
 	}
 
@@ -67,20 +75,122 @@ namespace we
 		SpriteSheet IdleSheet("Assets/Textures/Game/girlidle.png", vec2u{ 100, 128 }, 8);
 		AnimComp->AddSpriteSheet(EAoiSheet::Idle, IdleSheet);
 
-		// Single idle animation
-		AnimComp->AddAnimation(Animation{EAoiState::Idle, EAoiSheet::Idle, vec2u{0, 0}, vec2u{0, 7}});
+		// 8-way idle animations (rows 0-7)
+		AnimComp->AddAnimation(Animation{EAoiState::IdleForward,      EAoiSheet::Idle, vec2u{0, 0}, vec2u{0, 7}});
+		AnimComp->AddAnimation(Animation{EAoiState::IdleForwardRight, EAoiSheet::Idle, vec2u{1, 0}, vec2u{1, 7}});
+		AnimComp->AddAnimation(Animation{EAoiState::IdleRight,        EAoiSheet::Idle, vec2u{2, 0}, vec2u{2, 7}});
+		AnimComp->AddAnimation(Animation{EAoiState::IdleBackRight,    EAoiSheet::Idle, vec2u{3, 0}, vec2u{3, 7}});
+		AnimComp->AddAnimation(Animation{EAoiState::IdleBack,         EAoiSheet::Idle, vec2u{4, 0}, vec2u{4, 7}});
+		AnimComp->AddAnimation(Animation{EAoiState::IdleBackLeft,     EAoiSheet::Idle, vec2u{5, 0}, vec2u{5, 7}});
+		AnimComp->AddAnimation(Animation{EAoiState::IdleLeft,         EAoiSheet::Idle, vec2u{6, 0}, vec2u{6, 7}});
+		AnimComp->AddAnimation(Animation{EAoiState::IdleForwardLeft,  EAoiSheet::Idle, vec2u{7, 0}, vec2u{7, 7}});
 
-		// Play idle animation
-		AnimComp->TransitionTo(EAoiState::Idle);
+		// Play default idle animation
+		AnimComp->TransitionTo(EAoiState::IdleForward);
+	}
+
+	void AoiMizukawa::UpdateDirectionalAnimation()
+	{
+		if (!AnimComp)
+			return;
+
+		EAoiState TargetAnim = DirectionToAnim(FacingDirection);
+		if (!AnimComp->IsPlaying(TargetAnim))
+		{
+			AnimComp->TransitionTo(TargetAnim);
+		}
+	}
+
+	EAoiState AoiMizukawa::DirectionToAnim(const vec2f& Dir) const
+	{
+		vec2f N = Dir;
+		float LenSq = N.lengthSquared();
+		if (LenSq > 0.0f)
+			N /= std::sqrt(LenSq);
+
+		float Angle = std::atan2(N.y, N.x);
+		float Degrees = Angle * 180.0f / 3.14159f;
+		
+		float Normalized = Degrees + 90.0f;
+		if (Normalized < 0.0f) Normalized += 360.0f;
+		if (Normalized >= 360.0f) Normalized -= 360.0f;
+		
+		int Sector = static_cast<int>((Normalized + 22.5f) / 45.0f) % 8;
+		
+		switch (Sector)
+		{
+			case 0: return EAoiState::IdleBack;
+			case 1: return EAoiState::IdleBackRight;
+			case 2: return EAoiState::IdleRight;
+			case 3: return EAoiState::IdleForwardRight;
+			case 4: return EAoiState::IdleForward;
+			case 5: return EAoiState::IdleForwardLeft;
+			case 6: return EAoiState::IdleLeft;
+			case 7: return EAoiState::IdleBackLeft;
+			default: return EAoiState::IdleForward;
+		}
+	}
+
+	void AoiMizukawa::FacePlayer()
+	{
+		if (!CurrentInteractor)
+			return;
+
+		vec2f ToInteractor = CurrentInteractor->GetPosition() - GetPosition();
+		if (LengthSquared(ToInteractor) > EPSILON)
+		{
+			FacingDirection = ToInteractor / std::sqrt(LengthSquared(ToInteractor));
+		}
 	}
 
 	void AoiMizukawa::ShowPrompt(Actor* Interactor)
 	{
-		PromptUI.Show();
+		CurrentInteractor = Interactor;
+		
+		OriginalFacingDirection = FacingDirection;
+		
+		FacePlayer();
+		
+		if (!bInDialog)
+		{
+			PromptUI.Show();
+			PromptUI.SetPosition(GetPosition(), { 0.f, -100.f });
+		}
 	}
 
 	void AoiMizukawa::HidePrompt(Actor* Interactor)
 	{
+		CurrentInteractor = nullptr;
 		PromptUI.Hide();
+		
+		FacingDirection = OriginalFacingDirection;
+	}
+
+	void AoiMizukawa::StartDialog()
+	{
+		bInDialog = true;
+		PromptUI.Hide();
+		
+		FacePlayer();
+		
+		DialogBox.SetDialog({
+			"Welcome to our village!",
+			"Please enjoy your stay.",
+			"The forest is dangerous at night."
+		});
+		DialogBox.Show();
+	}
+
+	bool AoiMizukawa::AdvanceDialog()
+	{
+		return DialogBox.Advance();
+	}
+
+	void AoiMizukawa::EndDialog()
+	{
+		bInDialog = false;
+		DialogBox.Hide();
+		
+		FacingDirection = OriginalFacingDirection;
 	}
 }

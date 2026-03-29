@@ -140,7 +140,11 @@ namespace we
 	{
 		if (auto* Interactable = dynamic_cast<IInteractable*>(Other))
 		{
-			Interactable->ShowPrompt(this);
+			// Don't show prompt if already in dialog with someone
+			if (!bInDialog)
+			{
+				Interactable->ShowPrompt(this);
+			}
 		}
 	}
 
@@ -148,15 +152,28 @@ namespace we
 	{
 		if (auto* Interactable = dynamic_cast<IInteractable*>(Other))
 		{
-			Interactable->HidePrompt(this);
+			// If walking away from current interaction, end it
+			if (Interactable == CurrentInteractable)
+			{
+				EndInteraction();
+			}
+			else
+			{
+				Interactable->HidePrompt(this);
+			}
 		}
 	}
 
 	void PlayerCharacter::TryInteract()
 	{
+		if (bInDialog && CurrentInteractable)
+		{
+			CurrentInteractable->Interact(this);
+			return;
+		}
+
 		if (!CollComp)
 		{
-			LOG("[PlayerCharacter] No collision component");
 			return;
 		}
 
@@ -169,14 +186,27 @@ namespace we
 			{
 				if (Interactable->CanInteract(this))
 				{
-					LOG("[PlayerCharacter] Interacting with Actor {}", Other->GetID());
+					StartInteraction(Interactable);
 					Interactable->Interact(this);
 					return;
 				}
 			}
 		}
+	}
 
-		LOG("[PlayerCharacter] Nothing to interact with");
+	void PlayerCharacter::StartInteraction(IInteractable* Target)
+	{
+		CurrentInteractable = Target;
+		bInDialog = true;
+	}
+
+	void PlayerCharacter::EndInteraction()
+	{
+		if (CurrentInteractable)
+		{
+			CurrentInteractable = nullptr;
+			bInDialog = false;
+		}
 	}
 
 	void PlayerCharacter::UpdateDirectionalAnimation()

@@ -9,10 +9,28 @@
 #include "Framework/World/Character.h"
 #include "Interaction/IInteractable.h"
 #include "UI/InteractUI.h"
+#include "UI/DialogUI.h"
 
 
 namespace we
 {
+	enum class EAoiState : uint8
+	{
+		IdleForward,
+		IdleForwardRight,
+		IdleRight,
+		IdleBackRight,
+		IdleBack,
+		IdleBackLeft,
+		IdleLeft,
+		IdleForwardLeft
+	};
+
+	enum class EAoiSheet : uint8
+	{
+		Idle
+	};
+
 	class AoiMizukawa : public Character, public IInteractable
 	{
 	public:
@@ -31,7 +49,19 @@ namespace we
 
 	private:
 		void SetupAnimation();
+		void UpdateDirectionalAnimation();
+		EAoiState DirectionToAnim(const vec2f& Dir) const;
+		void FacePlayer();
+		void StartDialog();
+		bool AdvanceDialog();
+		void EndDialog();
 
+	private:
 		InteractUI PromptUI;
+		DialogUI DialogBox;
+		bool bInDialog = false;
+		Actor* CurrentInteractor = nullptr;
+		vec2f FacingDirection{ 0.0f, 1.0f };
+		vec2f OriginalFacingDirection{ 0.0f, 1.0f };
 	};
 }
