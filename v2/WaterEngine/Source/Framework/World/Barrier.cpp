@@ -130,6 +130,10 @@ namespace we
 		// No sprite - barrier is invisible without debug
 		(void)OutDrawables;
 
+		// Only draw debug if explicitly enabled
+		if (!bDebugDrawEnabled)
+			return;
+
 		if (!Body || Points.size() < 2)
 			return;
 

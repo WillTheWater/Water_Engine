@@ -29,6 +29,10 @@ namespace we
 		void EndPlay() override;
 		void GetDrawables(vector<const drawable*>& OutDrawables) const override;
 
+		// Debug visualization
+		void DrawDebug() { bDebugDrawEnabled = true; }
+		bool IsDebugDrawEnabled() const { return bDebugDrawEnabled; }
+
 	private:
 		void CreateBody();
 		void DestroyBody();
@@ -46,5 +50,6 @@ namespace we
 		// Debug visualization
 		mutable vector<rectangle> DebugRects;
 		mutable bool bDebugInitialized = false;
+		bool bDebugDrawEnabled = false;
 	};
 }
