@@ -120,6 +120,8 @@ namespace we
 
 	const drawable* MovementComponent::DrawDebug()
 	{
+		bDebugDrawEnabled = true;
+		
 		if (!Owner)
 			return nullptr;
 

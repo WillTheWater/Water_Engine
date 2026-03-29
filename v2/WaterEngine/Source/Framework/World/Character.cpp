@@ -37,7 +37,7 @@ namespace we
 		PhysicsComp->BeginPlay();
 		MoveComp->BeginPlay();
 		CollComp->BeginPlay();
-		CollComp->DrawDebug();
+		//CollComp->DrawDebug();
 		CameraComp->BeginPlay();
 	}
 
@@ -91,19 +91,20 @@ namespace we
 	{
 		Actor::GetDrawables(OutDrawables);
 
-		if (PhysicsComp)
+		// Only draw debug if explicitly enabled via DrawDebug() call
+		if (PhysicsComp && PhysicsComp->IsDebugDrawEnabled())
 		{
 			if (const auto* Debug = PhysicsComp->DrawDebug())
 				OutDrawables.push_back(Debug);
 		}
 
-		if (CollComp)
+		if (CollComp && CollComp->IsDebugDrawEnabled())
 		{
 			if (const auto* Debug = CollComp->DrawDebug())
 				OutDrawables.push_back(Debug);
 		}
 
-		if (MoveComp)
+		if (MoveComp && MoveComp->IsDebugDrawEnabled())
 		{
 			if (const auto* Debug = MoveComp->DrawDebug())
 				OutDrawables.push_back(Debug);

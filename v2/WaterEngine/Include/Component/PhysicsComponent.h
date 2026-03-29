@@ -57,6 +57,7 @@ namespace we
 
         // Debug visualization
         const drawable* DrawDebug();
+        bool IsDebugDrawEnabled() const { return bDebugDrawEnabled; }
 
         // IPhysicsContactListener (physics bodies don't use overlap callbacks)
         void OnComponentBeginOverlap(b2Body* OtherBody) override {}
@@ -78,6 +79,7 @@ namespace we
         vec2f ShapeSize{32.0f, 32.0f};
         float LinearDamping = 10.0f;
         ECollisionChannel CollisionChannel = ECollisionChannel::Physics;
+        bool bDebugDrawEnabled = false;
         
         optional<circle> DebugCircle;
         optional<rectangle> DebugRect;

@@ -279,6 +279,8 @@ namespace we
 
     const drawable* PhysicsComponent::DrawDebug()
     {
+        bDebugDrawEnabled = true;
+        
         if (!Body || !Owner)
             return nullptr;
 
@@ -329,5 +331,4 @@ namespace we
             return &DebugRect.value();
         }
     }
-
 }

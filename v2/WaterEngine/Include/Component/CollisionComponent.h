@@ -71,6 +71,7 @@ namespace we
 		int GetOverlapCount() const { return static_cast<int>(OverlappingActors.size()); }
 
 		const drawable* DrawDebug();
+		bool IsDebugDrawEnabled() const { return bDebugDrawEnabled; }
 
 	private:
 		void CreateBody();
@@ -82,6 +83,7 @@ namespace we
 		float Radius = 32.0f;
 		b2Body* Body = nullptr;
 		ECollisionChannel CollisionChannel = ECollisionChannel::Interaction;
+		bool bDebugDrawEnabled = false;
 		
 		set<Actor*> OverlappingActors;
 		optional<circle> DebugCircle;

@@ -162,6 +162,8 @@ namespace we
 
 	const drawable* CollisionComponent::DrawDebug()
 	{
+		bDebugDrawEnabled = true;
+		
 		if (!Body || !Owner)
 			return nullptr;
 

@@ -47,6 +47,7 @@ namespace we
 		void SetLastMoveDirection(const vec2f& Dir);
 
 		const drawable* DrawDebug();
+		bool IsDebugDrawEnabled() const { return bDebugDrawEnabled; }
 
 		vec2f GetLocalInput() const;
 		
@@ -77,6 +78,7 @@ namespace we
 		bool bIsSwimming = false;
 
 		bool bAutoOrient = true;
+		bool bDebugDrawEnabled = false;
 		optional<sf::VertexArray> DebugArrow;
 	};
 }
