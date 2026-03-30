@@ -121,6 +121,19 @@ namespace we
 		}
 	}
 
+	void PlayerCharacter::FaceInteractionTarget(Actor* Target)
+	{
+		if (!Target || !MoveComp) return;
+
+		vec2f ToTarget = Target->GetPosition() - GetPosition();
+		if (LengthSquared(ToTarget) > EPSILON)
+		{
+			vec2f Dir = Normalize(ToTarget);
+			MoveComp->SetFacingDirection(Dir);
+			MoveComp->SetLastMoveDirection(Dir);
+		}
+	}
+
 	void PlayerCharacter::GetDrawables(vector<const drawable*>& OutDrawables) const
 	{
 		// Add SHADOW FIRST so it renders UNDER the character
@@ -233,13 +246,7 @@ namespace we
 
 		if (auto* TargetActor = dynamic_cast<Actor*>(Target))
 		{
-			vec2f ToTarget = TargetActor->GetPosition() - GetPosition();
-			if (LengthSquared(ToTarget) > EPSILON)
-			{
-				vec2f Dir = Normalize(ToTarget);
-				MoveComp->SetFacingDirection(Dir);
-				MoveComp->SetLastMoveDirection(Dir);
-			}
+			FaceInteractionTarget(TargetActor);
 		}
 	}
 

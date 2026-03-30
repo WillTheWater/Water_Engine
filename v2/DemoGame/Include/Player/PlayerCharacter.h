@@ -9,6 +9,7 @@
 #include "Framework/World/Character.h"
 #include "Subsystem/InputSubsystem.h"
 #include "Interaction/IInteractable.h"
+#include "Interaction/QuestComponent.h"
 
 namespace we
 {
@@ -67,6 +68,7 @@ namespace we
 		EPlayerAnim DirectionToWalkAnim(const vec2f& Dir) const;
 		void SetCameraBounds();
 		void SetupShadow();
+		void FaceInteractionTarget(Actor* Target);
 
 		BindingHandle InteractBinding;
 		
@@ -78,5 +80,12 @@ namespace we
 		optional<sprite> ShadowSprite;
 		shared<texture> ShadowTexture;
 		vec2f ShadowOffset{ 0.0f, 95.0f };
+
+	public:
+		QuestComponent& GetQuest() { return QuestComp; }
+		const QuestComponent& GetQuest() const { return QuestComp; }
+
+	private:
+		QuestComponent QuestComp;
 	};
 }
