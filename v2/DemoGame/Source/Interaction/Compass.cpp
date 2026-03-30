@@ -38,6 +38,10 @@ namespace we
 
 	void Compass::EndPlay()
 	{
+		if (CollComp)
+		{
+			CollComp->EndPlay();
+		}
 		Actor::EndPlay();
 	}
 

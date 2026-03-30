@@ -34,6 +34,7 @@ namespace we
         void ResumeGame();
         void ReturnToMainMenu();
         void SaveAndQuit();
+        void OnExitGame();
 
     private:
         shared<texture> BG;

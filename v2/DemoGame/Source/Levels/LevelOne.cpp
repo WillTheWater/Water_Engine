@@ -23,6 +23,7 @@
 #include "NPC/AoiMizukawa.h"
 #include "NPC/Kiyoshi.h"
 #include "Interaction/Compass.h"
+#include "Interaction/ForestExit.h"
 #include "PostProcess/Effects/PPEWave.h"
 #include "Input/InputActions.h"
 #include "Utility/Log.h"
@@ -88,6 +89,11 @@ namespace we
         // Spawn quest item (compass)
         auto CompassItem = SpawnActor<Compass>().lock();
         CompassItem->SetPosition({ 3000.0f, 2000.0f });
+
+        // Spawn forest exit (top of level)
+        auto Exit = SpawnActor<ForestExit>().lock();
+        Exit->SetPosition({ 3050.0f, 20.0f });
+        Exit->OnExitTriggered.Bind(this, &LevelOne::OnExitGame);
 
         // Create all level barriers
         CreateLevelOneBarriers(*this);
@@ -228,6 +234,12 @@ namespace we
         }
         
         Subsystem.GetSave().Save();
+        Subsystem.Quit();
+    }
+
+    void LevelOne::OnExitGame()
+    {
+        LOG("[LevelOne] Quest complete! Exiting game...");
         Subsystem.Quit();
     }
 }
