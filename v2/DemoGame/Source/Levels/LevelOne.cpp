@@ -22,6 +22,7 @@
 #include "Framework/World/Barrier.h"
 #include "NPC/AoiMizukawa.h"
 #include "NPC/Kiyoshi.h"
+#include "Interaction/Compass.h"
 #include "PostProcess/Effects/PPEWave.h"
 #include "Input/InputActions.h"
 #include "Utility/Log.h"
@@ -83,6 +84,10 @@ namespace we
             {4780.0f, 1830.0f}, 
             {1550.0f, 1800.0f}  
         });
+
+        // Spawn quest item (compass)
+        auto CompassItem = SpawnActor<Compass>().lock();
+        CompassItem->SetPosition({ 3000.0f, 2000.0f });
 
         // Create all level barriers
         CreateLevelOneBarriers(*this);

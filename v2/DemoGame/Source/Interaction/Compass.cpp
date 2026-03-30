@@ -1,0 +1,81 @@
+// =============================================================================
+// Water Engine v2.0.0 - Demo Game
+// Copyright(C) 2026 Will The Water
+// =============================================================================
+
+#include "Interaction/Compass.h"
+#include "Component/CollisionComponent.h"
+#include "Subsystem/ResourceSubsystem.h"
+#include "Player/PlayerCharacter.h"
+
+namespace we
+{
+	Compass::Compass(World& OwningWorld)
+		: Actor(OwningWorld)
+	{
+	}
+
+	Compass::~Compass() = default;
+
+	void Compass::BeginPlay()
+	{
+		Actor::BeginPlay();
+
+		SetupSprite();
+
+		// Setup interaction collision (stored as member to keep alive)
+		CollComp = make_shared<CollisionComponent>(this);
+		CollComp->SetRadius(64.0f);
+		CollComp->SetCollisionChannel(ECollisionChannel::Interaction);
+		CollComp->BeginPlay();
+
+		// Initialize prompt
+		PromptUI.Initialize("Pick Up");
+		PromptUI.SetPosition(GetPosition(), { 0.f, -50.f });
+
+		SetScale({ 0.8f, 0.8f });
+	}
+
+	void Compass::EndPlay()
+	{
+		Actor::EndPlay();
+	}
+
+	void Compass::SetupSprite()
+	{
+		CompassTexture = LoadAsset().LoadTexture("Assets/Textures/Game/compass.png");
+
+		if (CompassTexture)
+		{
+			CompassSprite.emplace(*CompassTexture);
+			vec2u TexSize = CompassTexture->getSize();
+			CompassSprite->setOrigin({ TexSize.x / 2.0f, TexSize.y / 2.0f });
+			SetSprite(CompassTexture);
+			SetSpriteOrigin({ TexSize.x / 2.0f, TexSize.y / 2.0f });
+		}
+	}
+
+	void Compass::Interact(Actor* Interactor)
+	{
+		auto* Player = dynamic_cast<PlayerCharacter*>(Interactor);
+		if (!Player) return;
+
+		// Mark quest item found
+		Player->GetQuest().MarkItemFound();
+
+		// Hide prompt and destroy
+		PromptUI.Hide();
+		Destroy();
+	}
+
+	void Compass::ShowPrompt(Actor* Interactor)
+	{
+		PromptUI.Show();
+		PromptUI.SetPosition(GetPosition(), { 0.f, -50.f });
+	}
+
+	void Compass::HidePrompt(Actor* Interactor)
+	{
+		PromptUI.Hide();
+	}
+}
