@@ -8,6 +8,7 @@
 #include "Component/PhysicsComponent.h"
 #include "Component/CollisionComponent.h"
 #include "Subsystem/ResourceSubsystem.h"
+#include "Player/PlayerCharacter.h"
 #include "Utility/Log.h"
 #include "Utility/Math.h"
 
@@ -23,10 +24,13 @@ namespace we
 
 	void AoiMizukawa::Interact(Actor* Interactor)
 	{
+		auto* Player = dynamic_cast<PlayerCharacter*>(Interactor);
+		if (!Player) return;
+
 		if (!bInDialog)
 		{
 			// Start new dialog
-			StartDialog();
+			StartDialog(Player);
 		}
 		else
 		{
@@ -176,18 +180,57 @@ namespace we
 		FacingDirection = OriginalFacingDirection;
 	}
 
-	void AoiMizukawa::StartDialog()
+	void AoiMizukawa::StartDialog(PlayerCharacter* Player)
 	{
 		bInDialog = true;
 		PromptUI.Hide();
-		
 		FacePlayer();
-		
-		DialogBox.SetDialog({
-			"Welcome to our village!",
-			"Please enjoy your stay.",
-			"The forest is dangerous at night."
-		});
+
+		auto& Quest = Player->GetQuest();
+
+		if (!Quest.HasMetAoi())
+		{
+			// FIRST TIME
+			DialogBox.SetDialog({
+				"Hello! I'm Aoi. Please find my grandpa Kiyoshi!",
+				"He patrols the southern paths.",
+				"I'm worried about him..."
+				});
+			Quest.MarkMetAoi();
+		}
+		else if (!Quest.HasFoundGrandpa())
+		{
+			// NOT FOUND GRANDPA
+			DialogBox.SetDialog({
+				"Have you found grandpa yet?",
+				"He should be patrolling nearby..."
+				});
+		}
+		else if (!Quest.HasKiyoshiItem())
+		{
+			// FOUND GRANDPA
+			DialogBox.SetDialog({
+				"You found him! Thank you so much!",
+				"Grandpa can be forgetful..."
+				});
+		}
+		else if (!Quest.CanExitForest())
+		{
+			// FOUND GRANDPA
+			DialogBox.SetDialog({
+				"You found him! Thank you so much!",
+				"Grandpa can be forgetful..."
+				});
+		}
+		else
+		{
+			// FOUND GRANDPA
+			DialogBox.SetDialog({
+				"You found him! Thank you so much!",
+				"Grandpa can be forgetful..."
+				});
+		}
+
 		DialogBox.Show();
 	}
 

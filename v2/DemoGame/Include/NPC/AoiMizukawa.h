@@ -14,6 +14,8 @@
 
 namespace we
 {
+	class PlayerCharacter;
+
 	enum class EAoiState : uint8
 	{
 		IdleForward,
@@ -53,7 +55,7 @@ namespace we
 		void UpdateDirectionalAnimation();
 		EAoiState DirectionToAnim(const vec2f& Dir) const;
 		void FacePlayer();
-		void StartDialog();
+		void StartDialog(PlayerCharacter* Player);
 		bool AdvanceDialog();
 		void EndDialog();
 		void SetupShadow();

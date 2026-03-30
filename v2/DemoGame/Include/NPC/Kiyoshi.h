@@ -81,7 +81,7 @@ namespace we
 		void OnResumeFromInteraction();
 		void FacePlayer();
 		void SetupShadow();
-		void StartDialog();
+		void StartDialog(class PlayerCharacter* Player);
 		bool AdvanceDialog();
 		void EndDialog();
 

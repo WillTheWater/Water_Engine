@@ -10,6 +10,7 @@
 #include "Component/MovementComponent.h"
 #include "Subsystem/ResourceSubsystem.h"
 #include "Utility/Math.h"
+#include "Player/PlayerCharacter.h"
 
 namespace we
 {
@@ -27,9 +28,12 @@ namespace we
 
 	void Kiyoshi::Interact(Actor* Interactor)
 	{
+		auto* Player = dynamic_cast<PlayerCharacter*>(Interactor);
+		if (!Player) return;
+
 		if (!bInDialog)
 		{
-			StartDialog();
+			StartDialog(Player);
 		}
 		else
 		{
@@ -220,18 +224,59 @@ namespace we
 		Character::GetDrawables(OutDrawables);
 	}
 
-	void Kiyoshi::StartDialog()
+	void Kiyoshi::StartDialog(PlayerCharacter* Player)
 	{
 		bInDialog = true;
 		PromptUI.Hide();
 		
 		FacePlayer();
 		
-		DialogBox.SetDialog({
-			"Greetings, young one.",
-			"I've been patrolling these paths for many years.",
-			"Stay safe on your journey."
-		});
+		auto& Quest = Player->GetQuest();
+		
+		if (!Quest.HasMetAoi())
+		{
+			// Haven't spoken to Aoi yet - just grunt
+			DialogBox.SetDialog({
+				"*Grunts silently*"
+			});
+		}
+		else if (!Quest.HasFoundGrandpa())
+		{
+			// First meeting after Aoi sent you
+			DialogBox.SetDialog({
+				"Ah, my granddaughter sent you?",
+				"I am Kiyoshi. I've been patrolling these paths for many years.",
+				"Say, could you help me? I lost my walking stick somewhere..."
+			});
+			Quest.MarkFoundGrandpa();
+		}
+		else if (!Quest.HasKiyoshiItem())
+		{
+			// Still looking for the walking stick
+			DialogBox.SetDialog({
+				"Still haven't found my walking stick...",
+				"It should be somewhere along the path."
+			});
+		}
+		else if (!Quest.CanExitForest())
+		{
+			// Found the item - grant permission to leave
+			DialogBox.SetDialog({
+				"You found my walking stick! Thank you, young one.",
+				"You are welcome to pass through the forest.",
+				"Safe travels."
+			});
+			Quest.MarkCanExit();
+		}
+		else
+		{
+			// Quest complete
+			DialogBox.SetDialog({
+				"Safe travels, young one.",
+				"Come visit again sometime."
+			});
+		}
+		
 		DialogBox.Show();
 	}
 
