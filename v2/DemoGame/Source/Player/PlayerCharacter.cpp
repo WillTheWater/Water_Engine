@@ -15,7 +15,7 @@
 #include "Subsystem/InputSubsystem.h"
 #include "Core/EngineConfig.h"
 #include "Utility/Log.h"
-#include <cmath>
+#include "Utility/Math.h"
 
 namespace we
 {
@@ -230,6 +230,17 @@ namespace we
 	{
 		CurrentInteractable = Target;
 		bInDialog = true;
+
+		if (auto* TargetActor = dynamic_cast<Actor*>(Target))
+		{
+			vec2f ToTarget = TargetActor->GetPosition() - GetPosition();
+			if (LengthSquared(ToTarget) > EPSILON)
+			{
+				vec2f Dir = Normalize(ToTarget);
+				MoveComp->SetFacingDirection(Dir);
+				MoveComp->SetLastMoveDirection(Dir);
+			}
+		}
 	}
 
 	void PlayerCharacter::EndInteraction()
@@ -245,7 +256,7 @@ namespace we
 	{
 		if (!AnimComp || !MoveComp) return;
 
-		vec2f LastDir = MoveComp->GetLastMoveDirection();
+		vec2f LastDir = MoveComp->GetForwardVector();
 		EPlayerAnim TargetAnim = MoveComp->IsMoving()
 			? DirectionToWalkAnim(LastDir)
 			: DirectionToIdleAnim(LastDir);
