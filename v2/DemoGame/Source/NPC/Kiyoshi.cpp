@@ -228,55 +228,69 @@ namespace we
 	{
 		bInDialog = true;
 		PromptUI.Hide();
-		
+
 		FacePlayer();
-		
+
 		auto& Quest = Player->GetQuest();
-		
+
 		if (!Quest.HasMetAoi())
 		{
-			// Haven't spoken to Aoi yet - just grunt
+			// Haven't spoken to Aoi yet
 			DialogBox.SetDialog({
-				"*Grunts silently*"
-			});
+				"Hm? You look lost.",
+				"Best keep to the paths. The forest doesn’t like wanderers."
+				});
 		}
 		else if (!Quest.HasFoundGrandpa())
 		{
 			// First meeting after Aoi sent you
 			DialogBox.SetDialog({
-				"Ah, my granddaughter sent you?",
-				"I am Kiyoshi. I've been patrolling these paths for many years.",
-				"Say, could you help me? I lost my walking stick somewhere..."
-			});
+				"Ah… Aoi sent you, did she?",
+				"Name’s Kiyoshi.",
+				"You’re after the Water Engine, I take it.",
+				"Funny thing... I used to know these woods like the back of my hand.",
+				"These day not so much.",
+				"I had a compass around here somewhere. Maybe you can help me find it.",
+				"Without it, north might as well be everywhere at once.",
+				"If you happen across it, bring it back to me."
+				});
 			Quest.MarkFoundGrandpa();
 		}
 		else if (!Quest.HasKiyoshiItem())
 		{
-			// Still looking for the walking stick
+			// Still looking for the compass
 			DialogBox.SetDialog({
-				"Still haven't found my walking stick...",
-				"It should be somewhere along the path."
-			});
+				"No compass yet?",
+				"It’s a small thing, but it’s kept me on track for years.",
+				"Check along the paths, I wouldn’t have strayed far."
+				});
 		}
 		else if (!Quest.CanExitForest())
 		{
-			// Found the item - grant permission to leave
+			// Found the item - give compass and unlock path
 			DialogBox.SetDialog({
-				"You found my walking stick! Thank you, young one.",
-				"You are welcome to pass through the forest.",
-				"Safe travels."
-			});
+				"There it is… my compass.",
+				"Heh… still pointing true.",
+				"You know what? You can keep it.",
+				"You’ll make better use of it than I will.",
+				"If you’re heading for the Water Engine, listen carefully.",
+				"Take the northern trail into the forest.",
+				"Don’t stray, don’t second-guess it.",
+				"Follow the path, and it’ll take you where you need to go."
+				});
 			Quest.MarkCanExit();
 		}
 		else
 		{
 			// Quest complete
 			DialogBox.SetDialog({
-				"Safe travels, young one.",
-				"Come visit again sometime."
-			});
+				"Still carrying that compass?",
+				"Good.",
+				"Trust it more than your instincts in those woods.",
+				"They’ll lead you in circles."
+				});
 		}
-		
+
 		DialogBox.Show();
 	}
 

@@ -192,9 +192,13 @@ namespace we
 		{
 			// FIRST TIME
 			DialogBox.SetDialog({
-				"Hello! I'm Aoi. Please find my grandpa Kiyoshi!",
-				"He patrols the southern paths.",
-				"I'm worried about him..."
+				"Hey! Didn’t expect to see someone new out here.",
+				"I’m Aoi. Aoi Mizukawa.",
+				"Let me guess… you’re looking for the Water Engine, aren’t you?",
+				"People pass through here every now and then chasing that rumor.",
+				"If anyone actually knows the way, it’s my grandpa, Kiyoshi.",
+				"He wanders around here all day like he’s got somewhere to be.",
+				"You can find him walking about."
 				});
 			Quest.MarkMetAoi();
 		}
@@ -202,32 +206,38 @@ namespace we
 		{
 			// NOT FOUND GRANDPA
 			DialogBox.SetDialog({
-				"Have you found grandpa yet?",
-				"He should be patrolling nearby..."
+				"No sign of him yet?",
+				"He never stays in one place long.",
+				"Check the paths, he'll circle back through there eventually."
 				});
 		}
 		else if (!Quest.HasKiyoshiItem())
 		{
 			// FOUND GRANDPA
 			DialogBox.SetDialog({
-				"You found him! Thank you so much!",
-				"Grandpa can be forgetful..."
+				"You found him already?",
+				"Let me guess… he lost something again.",
+				"It’s always something with him.",
+				"Whatever it is, it’s probably important, he won’t stop talking until it’s back in his hands."
 				});
 		}
 		else if (!Quest.CanExitForest())
 		{
-			// FOUND GRANDPA
+			// RETURNED ITEM
 			DialogBox.SetDialog({
-				"You found him! Thank you so much!",
-				"Grandpa can be forgetful..."
+				"You found grandpa's compass? Nice.",
+				"Like I said, he's always losing something.",
+				"Thank you for helping him, I hope you find what you're looking for."
 				});
 		}
 		else
 		{
-			// FOUND GRANDPA
+			// QUEST COMPLETE
 			DialogBox.SetDialog({
-				"You found him! Thank you so much!",
-				"Grandpa can be forgetful..."
+				"So, heading north now?",
+				"The forest up there can be intiidating, be mindful.",
+				"If the Water Engine is real, that’s where you’ll find it.",
+				"Good luck!"
 				});
 		}
 
