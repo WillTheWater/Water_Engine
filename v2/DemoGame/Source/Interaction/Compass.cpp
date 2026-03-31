@@ -69,6 +69,7 @@ namespace we
 
 		// Hide prompt and destroy
 		PromptUI.Hide();
+		CollComp->EndPlay();
 		Destroy();
 	}
 
