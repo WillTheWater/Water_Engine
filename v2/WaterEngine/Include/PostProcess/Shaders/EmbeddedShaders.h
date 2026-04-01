@@ -416,13 +416,13 @@ namespace we::EmbeddedShader
             
             // Multiple overlapping waves for natural water effect
             // Primary wave: gentle horizontal flow
-            float wave1 = sin(uv.x * 8.0 + Time * 1.5) * 0.008;
+            float wave1 = sin(uv.x * 38.0 + Time * 1.5) * 0.008;
             
             // Secondary wave: slightly different frequency for organic feel
             float wave2 = sin(uv.x * 14.0 + Time * 2.3) * 0.004;
             
             // Subtle vertical variation so ripples aren't perfectly horizontal
-            float wave3 = cos(uv.y * 6.0 + Time * 0.8) * 0.0043;
+            float wave3 = cos(uv.y * 6.0 + Time * 0.8) * 0.0143;
             
             uv.y += wave1 + wave2;
             uv.x += wave3;

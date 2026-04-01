@@ -49,7 +49,8 @@ namespace we
 
         Water = LoadAsset().LoadTexture("Assets/Textures/Game/water.png");
         WaterImage = SpawnActor<Actor>().lock();
-        WaterImage->SetPosition({ 0, 3240 - 474 });
+        WaterImage->SetPosition({ 0, 2900 });
+        WaterImage->SetScale({ 1.1,1 });
         WaterPPC = make_shared<PostProcessingComponent>(WaterImage.get());
         WaterPPC->SetTexture(Water);
         WaterPPC->AddEffect(make_unique<PPEScroll>());
