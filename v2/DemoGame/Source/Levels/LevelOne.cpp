@@ -5,6 +5,7 @@
 
 #include "Levels/LevelOne.h"
 #include "Levels/MainMenu.h"
+#include "Levels/Credits.h"
 #include "Levels/LevelOneBarriers.h"
 #include "Framework/World/Actor.h"
 #include "Framework/World/Character.h"
@@ -239,7 +240,7 @@ namespace we
 
     void LevelOne::OnExitGame()
     {
-        LOG("[LevelOne] Quest complete! Exiting game...");
-        Subsystem.Quit();
+        LOG("[LevelOne] Loading Credits...");
+        Subsystem.LoadWorld<Credits>();
     }
 }

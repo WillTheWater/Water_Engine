@@ -133,8 +133,6 @@ namespace we
     {
         if (!Body || !Owner) return;
 
-        // Sync actor position FROM physics body
-        // (Physics body is the source of truth when it exists)
         SyncActorToBody();
     }
 

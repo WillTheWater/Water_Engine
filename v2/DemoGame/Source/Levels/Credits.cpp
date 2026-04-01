@@ -30,6 +30,5 @@ namespace we
 
     void Credits::Quit()
     {
-        Subsystem.Quit();
     }
 }

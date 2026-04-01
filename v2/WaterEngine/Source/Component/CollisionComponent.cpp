@@ -188,13 +188,12 @@ namespace we
 		if (!Body)
 			return;
 		
-		// Update existing fixture filter
 		uint16 ChannelBits = static_cast<uint16>(Channel);
 		for (b2Fixture* Fixture = Body->GetFixtureList(); Fixture; Fixture = Fixture->GetNext())
 		{
 			b2Filter Filter = Fixture->GetFilterData();
 			Filter.categoryBits = ChannelBits;
-			Filter.maskBits = ChannelBits;  // Only detect same channel
+			Filter.maskBits = ChannelBits;
 			Fixture->SetFilterData(Filter);
 		}
 	}

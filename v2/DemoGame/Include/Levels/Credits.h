@@ -24,12 +24,10 @@ namespace we
         void EndPlay() override;
 
     private:
-        void OnInput();
         void Quit();
 
     private:
         shared<texture> BG;
         shared<Actor> BGImage;
-        BindingHandle ExitBinding;
     };
 }
