@@ -17,6 +17,11 @@ class b2ContactListener;
 
 namespace we
 {
+	class World;
+}
+
+namespace we
+{
 	class PhysicsSubsystem
 	{
 	public:
@@ -32,13 +37,18 @@ namespace we
 		// Body management (used by components)
 		b2Body* CreateBody(const b2BodyDef& Def);
 		void DestroyBody(b2Body* Body);
-
-		// Safe destruction during callbacks
 		void MarkForDestruction(b2Body* Body);
 
 		// Contact listener registration
-		void RegisterContactListener(b2Body* Body, IPhysicsContactListener* Listener);
+		void RegisterContactListener(b2Body* Body, ActorID ID);
 		void UnregisterContactListener(b2Body* Body);
+		
+		// Get ActorID for a body
+		ActorID GetBodyActorID(b2Body* Body) const;
+		
+		// Set current world for actor lookup during contact callbacks
+		void SetCurrentWorld(World* InWorld) { CurrentWorld = InWorld; }
+		World* GetCurrentWorld() const { return CurrentWorld; }
 
 		// Scale conversion (pixels <-> meters)
 		float GetPhysicsScale() const { return PhysicsScale; }
@@ -50,6 +60,7 @@ namespace we
 
 	private:
 		void ProcessPendingDestruction();
+		void ProcessContactEvents();
 
 	private:
 		unique<b2World> PhysicsWorld;
@@ -59,6 +70,20 @@ namespace we
 		int PositionIterations;
 
 		set<b2Body*> PendingDestruction;
-		dictionary<b2Body*, IPhysicsContactListener*> ContactListeners;
+		dictionary<b2Body*, ActorID> ContactListeners;
+		World* CurrentWorld = nullptr;
+		bool bInPhysicsStep = false;
+		bool bProcessingContactEvents = false;
+
+	public:
+		// Contact event queue - deferred to end of physics step
+		struct ContactEvent
+		{
+			b2Body* BodyA = nullptr;
+			b2Body* BodyB = nullptr;
+			bool bBegin = true;  // true = BeginContact, false = EndContact
+		};
+	private:
+		vector<ContactEvent> ContactEventQueue;
 	};
 }

@@ -121,16 +121,16 @@ namespace we
 		if (!Body)
 			return;
 
+		Body->GetUserData().pointer = 0;
+
 		GetWorld().GetPhysics().MarkForDestruction(Body);
 		Body = nullptr;
 	}
 
 	void Barrier::GetDrawables(vector<const drawable*>& OutDrawables) const
 	{
-		// No sprite - barrier is invisible without debug
 		(void)OutDrawables;
 
-		// Only draw debug if explicitly enabled
 		if (!bDebugDrawEnabled)
 			return;
 

@@ -25,6 +25,7 @@ namespace we
         };
 
         explicit PhysicsComponent(Actor* InOwner);
+        ~PhysicsComponent();
 
         // IActorComponent
         void BeginPlay() override;

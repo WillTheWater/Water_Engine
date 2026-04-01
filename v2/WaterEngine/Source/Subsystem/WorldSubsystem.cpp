@@ -63,6 +63,13 @@ namespace we
 
             CurrentWorld = PendingWorld;
             PendingWorld = nullptr;
+            
+            // Update physics subsystem's current world for contact callbacks
+            if (auto PhysicsPtr = Physics.lock())
+            {
+                PhysicsPtr->SetCurrentWorld(CurrentWorld.get());
+            }
+            
             CurrentWorld->StartPlay();
         }
 

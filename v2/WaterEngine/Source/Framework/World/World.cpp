@@ -21,6 +21,26 @@ namespace we
 	{
 	}
 
+	Actor* World::FindActor(ActorID ID) const
+	{
+		auto It = ActorByID.find(ID);
+		if (It != ActorByID.end())
+		{
+			return It->second.get();
+		}
+		return nullptr;
+	}
+
+	void World::RegisterActor(ActorID ID, shared<Actor> Actor)
+	{
+		ActorByID[ID] = Actor;
+	}
+
+	void World::UnregisterActor(ActorID ID)
+	{
+		ActorByID.erase(ID);
+	}
+
 	void World::StartPlay()
 	{
 		if (!bHasBegunPlay)
@@ -36,6 +56,7 @@ namespace we
 		for (auto& A : PendingActors)
 		{
 			Actors.push_back(A);
+			RegisterActor(A->GetID(), A);
 			A->StartPlay();
 		}
 
@@ -75,6 +96,7 @@ namespace we
 				{
 					i->get()->EndPlay();
 				}
+				UnregisterActor(i->get()->GetID());
 				i = Actors.erase(i);
 			}
 			else

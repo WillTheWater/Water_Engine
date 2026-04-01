@@ -20,6 +20,20 @@ namespace we
 	{
 	}
 
+	CollisionComponent::~CollisionComponent()
+	{
+		if (Body)
+		{
+			Body->GetUserData().pointer = 0;
+
+			if (Owner)
+			{
+				auto& Physics = Owner->GetWorld().GetPhysics();
+				Physics.MarkForDestruction(Body);
+			}
+		}
+	}
+
 	void CollisionComponent::SetRadius(float RadiusPixels)
 	{
 		Radius = RadiusPixels;
@@ -65,14 +79,13 @@ namespace we
 		FixtureDef.density = 0.0f;
 		FixtureDef.friction = 0.0f;
 		
-		// Set default collision filter - Interaction channel only detects Interaction
 		uint16 ChannelBits = static_cast<uint16>(CollisionChannel);
 		FixtureDef.filter.categoryBits = ChannelBits;
 		FixtureDef.filter.maskBits = ChannelBits;  // Only detect same channel
 
 		Body->CreateFixture(&FixtureDef);
 
-		Physics.RegisterContactListener(Body, this);
+		Physics.RegisterContactListener(Body, Owner->GetID());
 	}
 
 	void CollisionComponent::Tick(float DeltaTime)
@@ -104,10 +117,11 @@ namespace we
 			return;
 		}
 
+		Body->GetUserData().pointer = 0;
+
 		if (Owner)
 		{
 			auto& Physics = Owner->GetWorld().GetPhysics();
-			Physics.UnregisterContactListener(Body);
 			Physics.MarkForDestruction(Body);
 		}
 
@@ -125,6 +139,9 @@ namespace we
 		if (!OtherActor || OtherActor == Owner)
 			return;
 		
+		if (OtherActor->IsPendingDestroy())
+			return;
+		
 		OverlappingActors.insert(OtherActor);
 		OnBeginOverlap.Broadcast(OtherActor);
 	}
@@ -134,7 +151,10 @@ namespace we
 		Actor* OtherActor = GetActorFromBody(OtherBody);
 		
 		if (!OtherActor)
+		{
+			CleanupDestroyedOverlaps();
 			return;
+		}
 		
 		OverlappingActors.erase(OtherActor);
 		OnEndOverlap.Broadcast(OtherActor);
@@ -148,16 +168,34 @@ namespace we
 		return OverlappingActors.find(CheckActor) != OverlappingActors.end();
 	}
 
+	void CollisionComponent::CleanupDestroyedOverlaps()
+	{
+		for (auto It = OverlappingActors.begin(); It != OverlappingActors.end();)
+		{
+			if ((*It)->IsPendingDestroy())
+			{
+				OnEndOverlap.Broadcast(*It);
+				It = OverlappingActors.erase(It);
+			}
+			else
+			{
+				++It;
+			}
+		}
+	}
+
 	Actor* CollisionComponent::GetActorFromBody(b2Body* Body) const
 	{
-		if (!Body || !Body->GetUserData().pointer)
+		if (!Body || !Owner)
 			return nullptr;
 		
-		auto* Component = reinterpret_cast<IActorComponent*>(Body->GetUserData().pointer);
-		if (!Component)
+		auto& Physics = Owner->GetWorld().GetPhysics();
+		ActorID ID = Physics.GetBodyActorID(Body);
+		
+		if (ID == INVALID_ACTOR_ID)
 			return nullptr;
 		
-		return Component->GetOwner();
+		return Owner->GetWorld().FindActor(ID);
 	}
 
 	const drawable* CollisionComponent::DrawDebug()

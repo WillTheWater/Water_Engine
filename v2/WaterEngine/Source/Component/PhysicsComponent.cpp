@@ -21,6 +21,20 @@ namespace we
     {
     }
 
+    PhysicsComponent::~PhysicsComponent()
+    {
+        if (Body)
+        {
+            Body->GetUserData().pointer = 0;
+
+            if (Owner)
+            {
+                auto& Physics = Owner->GetWorld().GetPhysics();
+                Physics.MarkForDestruction(Body);
+            }
+        }
+    }
+
     void PhysicsComponent::BeginPlay()
     {
         CreateBody();
@@ -144,6 +158,7 @@ namespace we
     void PhysicsComponent::DestroyBody()
     {
         if (!Body) return;
+        Body->GetUserData().pointer = 0;
 
         if (Owner)
         {

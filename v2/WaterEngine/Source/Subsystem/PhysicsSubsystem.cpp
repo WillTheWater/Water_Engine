@@ -5,6 +5,9 @@
 
 #include "Subsystem/PhysicsSubsystem.h"
 #include "Core/EngineConfig.h"
+#include "Framework/World/World.h"
+#include "Framework/World/Actor.h"
+#include "Component/CollisionComponent.h"
 #include "box2d/b2_world.h"
 #include "box2d/b2_body.h"
 #include "box2d/b2_math.h"
@@ -16,45 +19,41 @@ namespace we
 	class ContactListener : public b2ContactListener
 	{
 	public:
-		dictionary<b2Body*, IPhysicsContactListener*>* Listeners = nullptr;
+		dictionary<b2Body*, ActorID>* Listeners = nullptr;
+		World** CurrentWorldPtr = nullptr;
+		vector<PhysicsSubsystem::ContactEvent>* EventQueue = nullptr;
 
 		void BeginContact(b2Contact* Contact) override
 		{
-			if (!Listeners) return;
+			if (!Listeners || !CurrentWorldPtr || !*CurrentWorldPtr || !EventQueue) return;
 
 			b2Body* BodyA = Contact->GetFixtureA()->GetBody();
 			b2Body* BodyB = Contact->GetFixtureB()->GetBody();
 
-			auto ItA = Listeners->find(BodyA);
-			if (ItA != Listeners->end() && ItA->second)
-			{
-				ItA->second->OnComponentBeginOverlap(BodyB);
-			}
+			// Only queue if at least one body is registered for callbacks
+			bool bHasListenerA = Listeners->find(BodyA) != Listeners->end();
+			bool bHasListenerB = Listeners->find(BodyB) != Listeners->end();
 
-			auto ItB = Listeners->find(BodyB);
-			if (ItB != Listeners->end() && ItB->second)
+			if (bHasListenerA || bHasListenerB)
 			{
-				ItB->second->OnComponentBeginOverlap(BodyA);
+				EventQueue->push_back({ BodyA, BodyB, true });
 			}
 		}
 
 		void EndContact(b2Contact* Contact) override
 		{
-			if (!Listeners) return;
+			if (!Listeners || !CurrentWorldPtr || !*CurrentWorldPtr || !EventQueue) return;
 
 			b2Body* BodyA = Contact->GetFixtureA()->GetBody();
 			b2Body* BodyB = Contact->GetFixtureB()->GetBody();
 
-			auto ItA = Listeners->find(BodyA);
-			if (ItA != Listeners->end() && ItA->second)
-			{
-				ItA->second->OnComponentEndOverlap(BodyB);
-			}
+			// Only queue if at least one body is registered for callbacks
+			bool bHasListenerA = Listeners->find(BodyA) != Listeners->end();
+			bool bHasListenerB = Listeners->find(BodyB) != Listeners->end();
 
-			auto ItB = Listeners->find(BodyB);
-			if (ItB != Listeners->end() && ItB->second)
+			if (bHasListenerA || bHasListenerB)
 			{
-				ItB->second->OnComponentEndOverlap(BodyA);
+				EventQueue->push_back({ BodyA, BodyB, false });
 			}
 		}
 	};
@@ -66,21 +65,66 @@ namespace we
 		, PhysicsScale{ WEConfig.Physics.PhysicsScale }
 		, VelocityIterations{ WEConfig.Physics.VelocityIterations }
 		, PositionIterations{ WEConfig.Physics.PositionIterations }
+		, CurrentWorld{ nullptr }
 	{
 		PhysicsWorld->SetAllowSleeping(false);
 		s_ContactListener.Listeners = &ContactListeners;
+		s_ContactListener.CurrentWorldPtr = &CurrentWorld;
+		s_ContactListener.EventQueue = &ContactEventQueue;
 		PhysicsWorld->SetContactListener(&s_ContactListener);
 	}
 
 	PhysicsSubsystem::~PhysicsSubsystem()
 	{
-		ProcessPendingDestruction();
 	}
 
 	void PhysicsSubsystem::Tick(float DeltaTime)
 	{
 		ProcessPendingDestruction();
+		
 		PhysicsWorld->Step(DeltaTime, VelocityIterations, PositionIterations);
+		
+		ProcessPendingDestruction();
+		ProcessContactEvents();
+	}
+
+	void PhysicsSubsystem::ProcessContactEvents()
+	{
+		if (!CurrentWorld || ContactEventQueue.empty()) return;
+
+		vector<ContactEvent> Events = ContactEventQueue;
+		ContactEventQueue.clear();
+
+		for (const auto& Event : Events)
+		{
+			// Handle BodyA
+			auto ItA = ContactListeners.find(Event.BodyA);
+			if (ItA != ContactListeners.end() && Event.BodyA->GetUserData().pointer)
+			{
+				auto* CollComp = reinterpret_cast<CollisionComponent*>(Event.BodyA->GetUserData().pointer);
+				if (CollComp)
+				{
+					if (Event.bBegin)
+						CollComp->OnComponentBeginOverlap(Event.BodyB);
+					else
+						CollComp->OnComponentEndOverlap(Event.BodyB);
+				}
+			}
+			
+			// Handle BodyB
+			auto ItB = ContactListeners.find(Event.BodyB);
+			if (ItB != ContactListeners.end() && Event.BodyB->GetUserData().pointer)
+			{
+				auto* CollComp = reinterpret_cast<CollisionComponent*>(Event.BodyB->GetUserData().pointer);
+				if (CollComp)
+				{
+					if (Event.bBegin)
+						CollComp->OnComponentBeginOverlap(Event.BodyA);
+					else
+						CollComp->OnComponentEndOverlap(Event.BodyA);
+				}
+			}
+		}
 	}
 
 	void PhysicsSubsystem::SetGravity(vec2f Gravity)
@@ -103,7 +147,7 @@ namespace we
 	{
 		if (Body)
 		{
-			PhysicsWorld->DestroyBody(Body);
+			PendingDestruction.insert(Body);
 		}
 	}
 
@@ -115,11 +159,11 @@ namespace we
 		}
 	}
 
-	void PhysicsSubsystem::RegisterContactListener(b2Body* Body, IPhysicsContactListener* Listener)
+	void PhysicsSubsystem::RegisterContactListener(b2Body* Body, ActorID ID)
 	{
-		if (Body && Listener)
+		if (Body && ID != INVALID_ACTOR_ID)
 		{
-			ContactListeners[Body] = Listener;
+			ContactListeners[Body] = ID;
 		}
 	}
 
@@ -131,8 +175,24 @@ namespace we
 		}
 	}
 
+	ActorID PhysicsSubsystem::GetBodyActorID(b2Body* Body) const
+	{
+		if (!Body) return INVALID_ACTOR_ID;
+		auto It = ContactListeners.find(Body);
+		if (It != ContactListeners.end())
+		{
+			return It->second;
+		}
+		return INVALID_ACTOR_ID;
+	}
+
 	void PhysicsSubsystem::ProcessPendingDestruction()
 	{
+		if (bInPhysicsStep)
+		{
+			return;
+		}
+
 		for (auto* Body : PendingDestruction)
 		{
 			ContactListeners.erase(Body);

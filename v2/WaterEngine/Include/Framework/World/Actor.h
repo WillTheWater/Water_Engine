@@ -22,7 +22,7 @@ namespace we
 		void StartTick(float DeltaTime);
 		bool HasBegunPlay() const { return bHasBegunPlay; }
 
-		uint GetID() const { return UniqueID; }
+		ActorID GetID() const { return UniqueID; }
 
 		virtual void BeginPlay();
 		virtual void Tick(float DeltaTime);
@@ -61,8 +61,8 @@ namespace we
 		World& GetWorld() const { return OwningWorld; }
 
 	private:
-		static uint NextID;
-		const uint UniqueID;
+		static ActorID NextID;
+		const ActorID UniqueID;
 
 		World& OwningWorld;
 

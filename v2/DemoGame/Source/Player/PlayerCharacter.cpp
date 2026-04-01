@@ -41,7 +41,7 @@ namespace we
 		SetScale({ 2.1,2.1 });
 
 		Character::BeginPlay();
-		QuestComp.MarkCanExit();
+		//QuestComp.MarkCanExit();
 
 		SetupAnimations();
 		SetupShadow();

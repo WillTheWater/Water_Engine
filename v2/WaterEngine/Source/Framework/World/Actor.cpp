@@ -8,7 +8,7 @@
 
 namespace we
 {
-	uint Actor::NextID = 1;
+	ActorID Actor::NextID = 1;
 
 	Actor::Actor(World& OwningWorld)
 		: UniqueID(NextID++)

@@ -39,6 +39,9 @@ namespace we
 
 		const vector<shared<Actor>>& GetActors() const { return Actors; }
 		
+		// Actor lookup by ID
+		Actor* FindActor(ActorID ID) const;
+		
 		PhysicsSubsystem& GetPhysics() { return Subsystem.GetPhysics(); }
 		CameraSubsystem& GetCamera() { return Subsystem.GetCamera(); }
 		SaveSubsystem& GetSave() { return Subsystem.GetSave(); }
@@ -53,9 +56,14 @@ namespace we
 		virtual void EndPlay() {}
 
 	private:
+		void RegisterActor(ActorID ID, shared<Actor> Actor);
+		void UnregisterActor(ActorID ID);
+		
+	private:
 		bool bHasBegunPlay;
 		vector<shared<Actor>> PendingActors;
 		vector<shared<Actor>> Actors;
+		dictionary<ActorID, shared<Actor>> ActorByID;
 	};
 
 	template<typename ActorType, typename... Args>

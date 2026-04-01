@@ -18,6 +18,7 @@ namespace we
 	{
 	public:
 		explicit CollisionComponent(Actor* InOwner);
+		~CollisionComponent();
 
 		void SetRadius(float RadiusPixels);
 
@@ -77,6 +78,7 @@ namespace we
 		void CreateBody();
 		void DestroyBody();
 		Actor* GetActorFromBody(b2Body* Body) const;
+		void CleanupDestroyedOverlaps();
 
 	private:
 		Actor* Owner;
