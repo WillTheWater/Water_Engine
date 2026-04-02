@@ -30,8 +30,9 @@ namespace we
 	{
 		PhysicsComp->SetBodyType(b2_dynamicBody);
 		PhysicsComp->SetShapeType(PhysicsComponent::EShapeType::Circle);
-		PhysicsComp->SetShapeSize({ 42.0f, 42.0f });
+		PhysicsComp->SetShapeSize({ 38.0f, 38.0f });
 		PhysicsComp->SetLinearDamping(10.0f);
+		PhysicsComp->SetShapeOffset({ 0, 60 });
 		PhysicsComp->DrawDebug();
 
 		CollComp->SetRadius(64.0f);

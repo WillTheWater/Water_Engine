@@ -50,6 +50,7 @@ namespace we
 		PhysicsComp->SetBodyType(b2_kinematicBody);
 		PhysicsComp->SetShapeType(PhysicsComponent::EShapeType::Circle);
 		PhysicsComp->SetShapeSize({42.0f, 42.0f});
+		PhysicsComp->SetShapeOffset({ 0, 60 });
 		PhysicsComp->SetLinearDamping(10.0f);
 
 		CollComp->SetRadius(64.0f);

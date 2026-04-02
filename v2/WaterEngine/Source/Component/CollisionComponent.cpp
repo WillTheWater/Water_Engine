@@ -39,6 +39,18 @@ namespace we
 		Radius = RadiusPixels;
 	}
 
+	void CollisionComponent::SetShapeOffset(vec2f Offset)
+	{
+		ShapeOffset = Offset;
+		
+		// If body exists, recreate to apply offset
+		if (Body)
+		{
+			DestroyBody();
+			CreateBody();
+		}
+	}
+
 	void CollisionComponent::BeginPlay()
 	{
 		CreateBody();
@@ -56,9 +68,12 @@ namespace we
 
 		b2BodyDef BodyDef;
 		BodyDef.type = b2_dynamicBody;
+		
+		// Apply shape offset to position
+		vec2f SpawnPos = Owner->GetPosition() + ShapeOffset;
 		BodyDef.position = b2Vec2(
-			Physics.PixelsToMeters(Owner->GetPosition().x),
-			Physics.PixelsToMeters(Owner->GetPosition().y)
+			Physics.PixelsToMeters(SpawnPos.x),
+			Physics.PixelsToMeters(SpawnPos.y)
 		);
 		BodyDef.angle = Owner->GetRotation().asRadians();
 
@@ -96,9 +111,12 @@ namespace we
 		}
 
 		auto& Physics = Owner->GetWorld().GetPhysics();
+		
+		// Apply offset when updating body position
+		vec2f BodyPos = Owner->GetPosition() + ShapeOffset;
 		b2Vec2 Position(
-			Physics.PixelsToMeters(Owner->GetPosition().x),
-			Physics.PixelsToMeters(Owner->GetPosition().y)
+			Physics.PixelsToMeters(BodyPos.x),
+			Physics.PixelsToMeters(BodyPos.y)
 		);
 		float Angle = Owner->GetRotation().asRadians();
 
@@ -213,7 +231,7 @@ namespace we
 			DebugCircle->setOutlineThickness(2.0f);
 		}
 
-		DebugCircle->setPosition(Owner->GetPosition());
+		DebugCircle->setPosition(Owner->GetPosition() + ShapeOffset);
 		DebugCircle->setOutlineColor(IsOverlapping() ? color::Red : color::Green);
 
 		return &DebugCircle.value();

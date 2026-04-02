@@ -54,10 +54,11 @@ namespace we
         BodyDef.type = BodyType;
         BodyDef.linearDamping = LinearDamping;  // Prevents sliding
         
-        vec2f ActorPos = Owner->GetPosition();
+        // Apply shape offset to initial position
+        vec2f SpawnPos = Owner->GetPosition() + ShapeOffset;
         BodyDef.position = b2Vec2(
-            Physics.PixelsToMeters(ActorPos.x),
-            Physics.PixelsToMeters(ActorPos.y)
+            Physics.PixelsToMeters(SpawnPos.x),
+            Physics.PixelsToMeters(SpawnPos.y)
         );
         BodyDef.angle = 0.0f;
 
@@ -84,6 +85,7 @@ namespace we
         {
             b2CircleShape CircleShape{};
             CircleShape.m_radius = Physics.PixelsToMeters(ShapeSize.x);
+            // Note: Circle shapes can't be locally offset, so we use body position offset in CreateBody
             
             b2FixtureDef FixtureDef;
             FixtureDef.shape = &CircleShape;
@@ -102,9 +104,18 @@ namespace we
         else  // Rectangle
         {
             b2PolygonShape BoxShape{};
+            // For rectangles, we CAN offset the shape locally
+            // Convert offset to meters (negated because body is already offset)
+            b2Vec2 LocalOffset(
+                Physics.PixelsToMeters(-ShapeOffset.x),
+                Physics.PixelsToMeters(-ShapeOffset.y)
+            );
+            
             BoxShape.SetAsBox(
                 Physics.PixelsToMeters(ShapeSize.x),
-                Physics.PixelsToMeters(ShapeSize.y)
+                Physics.PixelsToMeters(ShapeSize.y),
+                LocalOffset,  // Local position offset
+                0.0f          // No rotation
             );
             
             b2FixtureDef FixtureDef;
@@ -223,6 +234,19 @@ namespace we
         }
     }
 
+    void PhysicsComponent::SetShapeOffset(vec2f Offset)
+    {
+        ShapeOffset = Offset;
+        
+        // If body exists, we need to recreate it to apply offset
+        // (simpler than trying to move existing body/fixture)
+        if (Body)
+        {
+            DestroyBody();
+            CreateBody();
+        }
+    }
+
     void PhysicsComponent::SetVelocity(vec2f Velocity)
     {
         if (!Body) return;
@@ -251,10 +275,11 @@ namespace we
         if (!Body || !Owner) return;
 
         auto& Physics = Owner->GetWorld().GetPhysics();
-        vec2f ActorPos = Owner->GetPosition();
+        // Apply offset when syncing actor position to body
+        vec2f BodyPos = Owner->GetPosition() + ShapeOffset;
         
         Body->SetTransform(
-            b2Vec2(Physics.PixelsToMeters(ActorPos.x), Physics.PixelsToMeters(ActorPos.y)),
+            b2Vec2(Physics.PixelsToMeters(BodyPos.x), Physics.PixelsToMeters(BodyPos.y)),
             0.0f  // No rotation
         );
     }
@@ -266,10 +291,13 @@ namespace we
         auto& Physics = Owner->GetWorld().GetPhysics();
         b2Vec2 Pos = Body->GetPosition();
         
-        Owner->SetPosition(vec2f(
-            Physics.MetersToPixels(Pos.x),
-            Physics.MetersToPixels(Pos.y)
-        ));
+        // Subtract offset when syncing body position back to actor
+        vec2f ActorPos(
+            Physics.MetersToPixels(Pos.x) - ShapeOffset.x,
+            Physics.MetersToPixels(Pos.y) - ShapeOffset.y
+        );
+        
+        Owner->SetPosition(ActorPos);
     }
 
     void PhysicsComponent::SetMass(float Mass)
@@ -308,7 +336,8 @@ namespace we
                 DebugCircle->setOutlineThickness(2.0f);
             }
 
-            DebugCircle->setPosition(Owner->GetPosition());
+            // Debug visual at actor position (body is offset, but debug shows relative to actor)
+            DebugCircle->setPosition(Owner->GetPosition() + ShapeOffset);
 
             // Color based on body type
             if (BodyType == b2_kinematicBody)
@@ -331,7 +360,8 @@ namespace we
                 DebugRect->setOutlineThickness(2.0f);
             }
 
-            DebugRect->setPosition(Owner->GetPosition());
+            // Debug visual at actor position (body is offset, but debug shows relative to actor)
+            DebugRect->setPosition(Owner->GetPosition() + ShapeOffset);
 
             // Color based on body type
             if (BodyType == b2_kinematicBody)

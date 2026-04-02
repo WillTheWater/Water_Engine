@@ -21,6 +21,10 @@ namespace we
 		~CollisionComponent();
 
 		void SetRadius(float RadiusPixels);
+		
+		// Shape offset from actor center (in pixels)
+		void SetShapeOffset(vec2f Offset);
+		vec2f GetShapeOffset() const { return ShapeOffset; }
 
 		// IActorComponent
 		void BeginPlay() override;
@@ -84,6 +88,7 @@ namespace we
 		Actor* Owner;
 		float Radius = 32.0f;
 		b2Body* Body = nullptr;
+		vec2f ShapeOffset{0.0f, 0.0f};
 		ECollisionChannel CollisionChannel = ECollisionChannel::Interaction;
 		bool bDebugDrawEnabled = false;
 		

@@ -47,6 +47,7 @@ namespace we
 		PhysicsComp->SetBodyType(b2_staticBody);
 		PhysicsComp->SetShapeType(PhysicsComponent::EShapeType::Circle);
 		PhysicsComp->SetShapeSize({42.0f, 42.0f});
+		PhysicsComp->SetShapeOffset({ 0, 60 });
 
 		CollComp->SetRadius(64.0f);
 		CollComp->SetCollisionChannel(ECollisionChannel::Interaction);

@@ -51,6 +51,10 @@ namespace we
         // Position (syncs body to actor position)
         void SyncBodyToActor();
         void SyncActorToBody();
+        
+        // Shape offset from actor center (in pixels)
+        void SetShapeOffset(vec2f Offset);
+        vec2f GetShapeOffset() const { return ShapeOffset; }
 
         // Mass (only meaningful for dynamic bodies)
         void SetMass(float Mass);
@@ -78,6 +82,7 @@ namespace we
         b2BodyType BodyType = b2_kinematicBody;
         EShapeType ShapeType = EShapeType::Circle;
         vec2f ShapeSize{32.0f, 32.0f};
+        vec2f ShapeOffset{0.0f, 0.0f};
         float LinearDamping = 10.0f;
         ECollisionChannel CollisionChannel = ECollisionChannel::Physics;
         bool bDebugDrawEnabled = false;
