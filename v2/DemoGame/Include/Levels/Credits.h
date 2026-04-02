@@ -8,10 +8,12 @@
 #include "Core/CoreMinimal.h"
 #include "Framework/World/World.h"
 #include "Subsystem/InputSubsystem.h"
+#include "Interface/Actor/IActorComponent.h"
 
 namespace we
 {
     class Actor;
+    class PostProcessingComponent;
 
     class Credits : public World
     {
@@ -27,7 +29,10 @@ namespace we
         void Quit();
 
     private:
-        shared<texture> BG;
-        shared<Actor> BGImage;
+        shared<texture> Ground;
+        shared<texture> Clouds;
+        shared<Actor> GroundImage;
+        shared<Actor> CloudImage;
+        shared<PostProcessingComponent> CloudsPPC;
     };
 }

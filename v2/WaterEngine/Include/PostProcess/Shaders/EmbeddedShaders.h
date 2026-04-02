@@ -463,6 +463,38 @@ namespace we::EmbeddedShader
         }
     )";
 
+    // 24b. Clouds Scroll Fragment Shader (seamless texture, no mirroring)
+    inline constexpr stringView CloudsFragment = R"(
+        #version 130
+
+        uniform sampler2D Source;           // The cloud texture (1920x388, seamless)
+        uniform float Time;                 // Accumulated time in seconds
+        
+        // Scroll speeds:
+        // 1.0 = one full texture width/height per second
+        // 0.02 = takes 50 seconds to scroll one full cycle (slow drift)
+        // Positive = scroll right/down, Negative = scroll left/up
+        uniform float ScrollSpeedX;         // Horizontal scroll speed (default: 0.02)
+        uniform float ScrollSpeedY;         // Vertical scroll speed (default: 0.0)
+
+        void main()
+        {
+            // Original texture coordinates (0.0 to 1.0)
+            vec2 originalUV = gl_TexCoord[0].xy;
+            
+            // Calculate scrolled UV coordinates
+            // fract() wraps the value to stay within 0.0-1.0 range
+            // This creates seamless looping for textures that tile perfectly
+            float scrolledU = fract(originalUV.x + Time * ScrollSpeedX);
+            float scrolledV = fract(originalUV.y + Time * ScrollSpeedY);
+            
+            vec2 scrolledUV = vec2(scrolledU, scrolledV);
+            
+            // Sample the cloud texture at the scrolled position
+            gl_FragColor = texture(Source, scrolledUV);
+        }
+    )";
+
     // =========================================================================
     // VERTEX ONLY SHADERS (Geometry/Position manipulation)
     // =========================================================================
