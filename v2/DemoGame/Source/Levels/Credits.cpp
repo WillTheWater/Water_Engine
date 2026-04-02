@@ -7,6 +7,7 @@
 #include "Levels/MainMenu.h"
 #include "Framework/World/Actor.h"
 #include "Subsystem/ResourceSubsystem.h"
+#include "Subsystem/AudioSubsystem.h"
 #include "Subsystem/InputSubsystem.h"
 #include "Component/PostProcessingComponent.h"
 #include "PostProcess/Effects/PPEClouds.h"
@@ -22,6 +23,10 @@ namespace we
 
     void Credits::BeginPlay()
     {
+        PlayAudio().StopMusic(2.5);
+        PlayAudio().StopAmbient(2.5);
+        PlayAudio().PlayMusic("Assets/Audio/Default/defaultForestMusic.ogg", 4);
+
         // Load clouds texture and set up scrolling effect
         Clouds = LoadAsset().LoadTexture("Assets/Textures/Game/clouds.png");
         CloudImage = SpawnActor<Actor>().lock();
@@ -43,21 +48,21 @@ namespace we
         DialogUI.SetDialog({
             "Welcome, traveler.",
             "You stand at the threshold of something new...",
-            "The Water Engine was born from a simple dream—",
-            "to give aspiring game developers a place to start.",
+            "The Water Engine was born from a simple dream.",
+            "The life task of it's creator Will The Water.",
             "Not buried in complexity, but clear as water.",
             "Every tool you need, flowing together naturally.",
             "Physics, rendering, input, UI... all connected.",
-            "You don't need a team of dozens.",
+            "You don't need a team.",
             "You don't need years of engine experience.",
             "You just need an idea, and the will to build it.",
-            "This demo you played? Built with Water Engine.",
-            "The characters, the world, the very ground beneath—",
+            "The demo you played? Built with the Water Engine.",
+            "The characters, the world, the very framework of it's existance.",
             "all possible because someone decided to begin.",
             "The forest ahead is yours to shape.",
             "Your story starts with a single line of code.",
-            "Welcome to Water Engine.",
-            "Make something extraordinary."
+            "Welcome to the Water Engine.",
+            "Make it extraordinary."
         });
         
         // Setup button callbacks

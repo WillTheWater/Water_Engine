@@ -47,8 +47,12 @@ namespace we
 		SettingsMenu->Initialize(Subsystem.GetSave());
 		SettingsMenu->OnBackClicked.Bind(this, &MainMenu::CloseSettings);
 
+        PlayAudio().StopMusic(2.5);
+        PlayAudio().StopAmbient(2.5);
         // Play ambient background
         PlayAudio().PlayAmbient("Assets/Audio/Default/defaultAmbient.ogg", 4);
+        // Play Music
+        PlayAudio().PlayMusic("Assets/Audio/Default/defaultMusic.ogg", 4);
     }
 
     void MainMenu::Tick(float DeltaTime)
