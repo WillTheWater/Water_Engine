@@ -9,11 +9,13 @@
 #include "Framework/World/World.h"
 #include "Subsystem/InputSubsystem.h"
 #include "Interface/Actor/IActorComponent.h"
+#include "UI/CreditsDialogUI.h"
 
 namespace we
 {
     class Actor;
     class PostProcessingComponent;
+    class BindingHandle;
 
     class Credits : public World
     {
@@ -24,6 +26,8 @@ namespace we
         void BeginPlay() override;
         void Tick(float DeltaTime) override;
         void EndPlay() override;
+        
+        void AdvanceDialog();
 
     private:
         void Quit();
@@ -34,5 +38,9 @@ namespace we
         shared<Actor> GroundImage;
         shared<Actor> CloudImage;
         shared<PostProcessingComponent> CloudsPPC;
+        
+        // Credits dialog
+        CreditsDialogUI DialogUI;
+        BindingHandle DialogBinding;
     };
 }

@@ -4,11 +4,13 @@
 // =============================================================================
 
 #include "Levels/Credits.h"
+#include "Levels/MainMenu.h"
 #include "Framework/World/Actor.h"
 #include "Subsystem/ResourceSubsystem.h"
 #include "Subsystem/InputSubsystem.h"
 #include "Component/PostProcessingComponent.h"
 #include "PostProcess/Effects/PPEClouds.h"
+#include "Input/InputActions.h"
 #include "Utility/Log.h"
 
 namespace we
@@ -35,6 +37,43 @@ namespace we
         Ground = LoadAsset().LoadTexture("Assets/Textures/Game/credits.png");
         GroundImage = SpawnActor<Actor>().lock();
         GroundImage->SetSprite(Ground);
+        
+        // Setup and auto-start credits dialog
+        DialogUI.Initialize();
+        DialogUI.SetDialog({
+            "Welcome, traveler.",
+            "You stand at the threshold of something new...",
+            "The Water Engine was born from a simple dream—",
+            "to give aspiring game developers a place to start.",
+            "Not buried in complexity, but clear as water.",
+            "Every tool you need, flowing together naturally.",
+            "Physics, rendering, input, UI... all connected.",
+            "You don't need a team of dozens.",
+            "You don't need years of engine experience.",
+            "You just need an idea, and the will to build it.",
+            "This demo you played? Built with Water Engine.",
+            "The characters, the world, the very ground beneath—",
+            "all possible because someone decided to begin.",
+            "The forest ahead is yours to shape.",
+            "Your story starts with a single line of code.",
+            "Welcome to Water Engine.",
+            "Make something extraordinary."
+        });
+        
+        // Setup button callbacks
+        DialogUI.SetOnMainMenu([this]() {
+            Subsystem.LoadWorld<MainMenu>();
+        });
+        
+        DialogUI.SetOnQuit([this]() {
+            Subsystem.Quit();
+        });
+        
+        // Bind 'E' key for dialog advancement using callback pattern
+        DialogBinding = InputController().BindAction(ACTION_INTERACT, this, &Credits::AdvanceDialog);
+        
+        // Auto-show dialog
+        DialogUI.Show();
     }
 
     void Credits::Tick(float DeltaTime)
@@ -46,14 +85,28 @@ namespace we
         }
     }
 
+    void Credits::AdvanceDialog()
+    {
+        if (!DialogUI.IsComplete())
+        {
+            DialogUI.Advance();
+        }
+    }
+
     void Credits::EndPlay()
     {
+        // Release input binding
+        DialogBinding.Release();
+        
         // Clean up cloud post-processing
         if (CloudsPPC)
         {
             CloudsPPC->EndPlay();
             CloudsPPC.reset();
         }
+        
+        // Hide dialog
+        DialogUI.Hide();
     }
 
     void Credits::Quit()
