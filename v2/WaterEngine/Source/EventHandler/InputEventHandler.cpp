@@ -49,6 +49,13 @@ namespace we
 		Input.OnReleased(Input::Keyboard{ Key.scancode });
 	}
 
+	void InputEventHandler::operator()(const event::FocusLost&)
+	{
+		// Clear all held keys when window loses focus
+		// This prevents "stuck" keys when alt-tabbing or clicking away
+		Input.ClearAllInput();
+	}
+
 	void InputEventHandler::operator()(const event::MouseMoved& Mouse)
 	{
 

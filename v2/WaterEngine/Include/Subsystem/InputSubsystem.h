@@ -53,6 +53,9 @@ namespace we
         bool Pressed(int InputAction) const;
         void OnPressed(const Input::Binding& Binding);
         void OnReleased(const Input::Binding& Binding);
+        
+        // Clear all held inputs (call when window loses focus)
+        void ClearAllInput();
 
         // Event-driven binding with RAII handle - using member function
         template<typename ClassType>

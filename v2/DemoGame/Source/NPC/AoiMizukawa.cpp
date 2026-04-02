@@ -192,13 +192,12 @@ namespace we
 		{
 			// FIRST TIME
 			DialogBox.SetDialog({
-				"Hey! Didn’t expect to see someone new out here.",
-				"I’m Aoi. Aoi Mizukawa.",
-				"Let me guess… you’re looking for the Water Engine, aren’t you?",
-				"People pass through here every now and then chasing that rumor.",
-				"If anyone actually knows the way, it’s my grandpa, Kiyoshi.",
-				"He wanders around here all day like he’s got somewhere to be.",
-				"You can find him walking about."
+				"Hey! Didn't expect to see someone new out here.",
+				"I'm Aoi. Aoi Mizukawa.",
+				"Let me guess... you're looking for the Water Engine?",
+				"People pass through here every now and then for it.",
+				"If anyone actually knows the way, it's my grandpa, Kiyoshi.",
+				"You can find him wandering around here somewhere."
 				});
 			Quest.MarkMetAoi();
 		}
@@ -216,9 +215,9 @@ namespace we
 			// FOUND GRANDPA
 			DialogBox.SetDialog({
 				"You found him already?",
-				"Let me guess… he lost something again.",
-				"It’s always something with him.",
-				"Whatever it is, it’s probably important, he won’t stop talking until it’s back in his hands."
+				"Let me guess... he lost something again.",
+				"It's always something with him.",
+				"Whatever it is, it's probably important, he won't stop talking until it's back in his hands."
 				});
 		}
 		else if (!Quest.CanExitForest())
@@ -236,7 +235,6 @@ namespace we
 			DialogBox.SetDialog({
 				"So, heading north now?",
 				"The forest up there can be intiidating, be mindful.",
-				"If the Water Engine is real, that’s where you’ll find it.",
 				"Good luck!"
 				});
 		}

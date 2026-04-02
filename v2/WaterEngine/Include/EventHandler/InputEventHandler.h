@@ -24,6 +24,8 @@ namespace we
 		void operator()(const event::KeyPressed&);
 		void operator()(const event::KeyReleased&);
 
+		void operator()(const event::FocusLost&);
+
 		void operator()(const event::MouseMoved&);
 		void operator()(const event::MouseButtonPressed&);
 		void operator()(const event::MouseButtonReleased&);

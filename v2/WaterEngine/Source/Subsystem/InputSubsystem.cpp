@@ -126,6 +126,12 @@ namespace we
         }
     }
 
+    void InputSubsystem::ClearAllInput()
+    {
+        HeldActions.clear();
+        ActionPressCount.clear();
+    }
+
     BindingHandle InputSubsystem::BindAction(int InputAction, std::function<void()> Callback)
     {
         uint64_t Token = NextToken++;

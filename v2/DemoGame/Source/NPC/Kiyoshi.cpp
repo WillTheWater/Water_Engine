@@ -238,19 +238,18 @@ namespace we
 			// Haven't spoken to Aoi yet
 			DialogBox.SetDialog({
 				"Hm? You look lost.",
-				"Best keep to the paths. The forest doesn’t like wanderers."
+				"Best keep to the paths. The forest is unforgiving to wanderers."
 				});
 		}
 		else if (!Quest.HasFoundGrandpa())
 		{
 			// First meeting after Aoi sent you
 			DialogBox.SetDialog({
-				"Ah… Aoi sent you, did she?",
-				"Name’s Kiyoshi.",
-				"You’re after the Water Engine, I take it.",
+				"Ah... Aoi sent you, did she?",
+				"I'm Kiyoshi.",
+				"You're looking for the Water Engine, I take it.",
 				"Funny thing... I used to know these woods like the back of my hand.",
-				"These day not so much.",
-				"I had a compass around here somewhere. Maybe you can help me find it.",
+				"These day not so much. I had a compass around here somewhere. Maybe you can help me find it.",
 				"Without it, north might as well be everywhere at once.",
 				"If you happen across it, bring it back to me."
 				});
@@ -261,22 +260,22 @@ namespace we
 			// Still looking for the compass
 			DialogBox.SetDialog({
 				"No compass yet?",
-				"It’s a small thing, but it’s kept me on track for years.",
-				"Check along the paths, I wouldn’t have strayed far."
+				"It's a small thing, but it's kept me on track for years.",
+				"Check along the paths, I wouldn't have strayed far."
 				});
 		}
 		else if (!Quest.CanExitForest())
 		{
 			// Found the item - give compass and unlock path
 			DialogBox.SetDialog({
-				"There it is… my compass.",
-				"Heh… still pointing true.",
+				"There it is... my compass.",
+				"Heh... still pointing true.",
 				"You know what? You can keep it.",
-				"You’ll make better use of it than I will.",
-				"If you’re heading for the Water Engine, listen carefully.",
+				"You'll make better use of it than I will.",
+				"If you're heading for the Water Engine, listen carefully.",
 				"Take the northern trail into the forest.",
-				"Don’t stray, don’t second-guess it.",
-				"Follow the path, and it’ll take you where you need to go."
+				"Don't stray, don't second-guess it.",
+				"Follow the path, and it'll take you where you need to go."
 				});
 			Quest.MarkCanExit();
 		}
@@ -287,7 +286,7 @@ namespace we
 				"Still carrying that compass?",
 				"Good.",
 				"Trust it more than your instincts in those woods.",
-				"They’ll lead you in circles."
+				"They'll lead you in circles."
 				});
 		}
 
