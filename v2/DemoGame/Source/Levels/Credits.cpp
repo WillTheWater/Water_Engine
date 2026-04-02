@@ -26,6 +26,7 @@ namespace we
         PlayAudio().StopMusic(2.5);
         PlayAudio().StopAmbient(2.5);
         PlayAudio().PlayMusic("Assets/Audio/Default/defaultForestMusic.ogg", 4);
+        PlayAudio().PlayAmbient("Assets/Audio/Default/defaultForestAmbient.ogg", 4);
 
         // Load clouds texture and set up scrolling effect
         Clouds = LoadAsset().LoadTexture("Assets/Textures/Game/clouds.png");

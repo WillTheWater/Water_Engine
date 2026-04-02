@@ -32,6 +32,7 @@ namespace we
 		PhysicsComp->SetShapeType(PhysicsComponent::EShapeType::Circle);
 		PhysicsComp->SetShapeSize({ 42.0f, 42.0f });
 		PhysicsComp->SetLinearDamping(10.0f);
+		PhysicsComp->DrawDebug();
 
 		CollComp->SetRadius(64.0f);
 		CollComp->SetCollisionChannel(ECollisionChannel::Interaction);
@@ -41,7 +42,7 @@ namespace we
 		SetScale({ 2.1,2.1 });
 
 		Character::BeginPlay();
-		QuestComp.MarkCanExit();
+		//QuestComp.MarkCanExit();
 
 		SetupAnimations();
 		SetupShadow();

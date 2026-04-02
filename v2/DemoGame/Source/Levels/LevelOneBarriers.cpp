@@ -39,6 +39,7 @@ namespace we
         });
         ForestBarrier->SetThickness(8.0f);
         ForestBarrier->SetClosed(true);
+        ForestBarrier->DrawDebug();
 
         // Hut 1 collision
         auto Hut1Barrier = InWorld.SpawnActor<Barrier>().lock();

@@ -107,10 +107,10 @@ namespace we
         Hut1TexShadow = LoadAsset().LoadTexture("Assets/Textures/Game/hut1shadow.png");
         Hut1->SetSprite(Hut1Tex);
         Hut1Shadow->SetSprite(Hut1TexShadow);
-        Hut1->SetSpriteOrigin({ 515, 815 });
-        Hut1Shadow->SetSpriteOrigin({ 515, 815 });
-        Hut1->SetPosition({742, 1335});
-        Hut1Shadow->SetPosition({742, 1335});
+        Hut1->SetSpriteOrigin({ 545, 747 });
+        Hut1Shadow->SetSpriteOrigin({ 545, 747 });
+        Hut1->SetPosition({777, 927});
+        Hut1Shadow->SetPosition({777, 927});
         Hut1Shadow->SetCustomRenderDepth(10000.f);
 
         // Hut 2
@@ -120,10 +120,10 @@ namespace we
         Hut2TexShadow = LoadAsset().LoadTexture("Assets/Textures/Game/hut2shadow.png");
         Hut2->SetSprite(Hut2Tex);
         Hut2Shadow->SetSprite(Hut2TexShadow);
-        Hut2->SetSpriteOrigin({ 475, 580 });
-        Hut2Shadow->SetSpriteOrigin({ 475, 580 });
-        Hut2->SetPosition({ 1420, 710 });
-        Hut2Shadow->SetPosition({ 1420, 710 });
+        Hut2->SetSpriteOrigin({ 556, 674 });
+        Hut2Shadow->SetSpriteOrigin({ 556, 674 });
+        Hut2->SetPosition({ 2097, 707 });
+        Hut2Shadow->SetPosition({ 2097, 707 });
         Hut2Shadow->SetCustomRenderDepth(10000.f);
 
         // Hut 3
@@ -133,10 +133,10 @@ namespace we
         Hut3TexShadow = LoadAsset().LoadTexture("Assets/Textures/Game/hut3shadow.png");
         Hut3->SetSprite(Hut3Tex);
         Hut3Shadow->SetSprite(Hut3TexShadow);
-        Hut3->SetSpriteOrigin({ 780, 760 });
-        Hut3Shadow->SetSpriteOrigin({ 780, 760 });
-        Hut3->SetPosition({ 4175, 870 });
-        Hut3Shadow->SetPosition({ 4175, 870 });
+        Hut3->SetSpriteOrigin({ 414, 606 });
+        Hut3Shadow->SetSpriteOrigin({ 414, 606 });
+        Hut3->SetPosition({ 3800, 606 });
+        Hut3Shadow->SetPosition({ 3800, 606 });
         Hut3Shadow->SetCustomRenderDepth(10000.f);
 
         InputController().Bind(PAUSE_ACTION, Input::Keyboard{ sf::Keyboard::Scan::Escape });
