@@ -484,7 +484,7 @@ namespace we::EmbeddedShader
             
             // Calculate scrolled UV coordinates
             // fract() wraps the value to stay within 0.0-1.0 range
-            // This creates seamless looping for textures that tile perfectly
+            // This creates seamless looping for textures
             float scrolledU = fract(originalUV.x + Time * ScrollSpeedX);
             float scrolledV = fract(originalUV.y + Time * ScrollSpeedY);
             
