@@ -33,7 +33,6 @@ namespace we
 		PhysicsComp->SetShapeSize({ 38.0f, 38.0f });
 		PhysicsComp->SetLinearDamping(10.0f);
 		PhysicsComp->SetShapeOffset({ 0, 60 });
-		PhysicsComp->DrawDebug();
 
 		CollComp->SetRadius(64.0f);
 		CollComp->SetCollisionChannel(ECollisionChannel::Interaction);

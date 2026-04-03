@@ -5,6 +5,7 @@
 
 #include "Interaction/Compass.h"
 #include "Component/CollisionComponent.h"
+#include "Component/PhysicsComponent.h"
 #include "Subsystem/ResourceSubsystem.h"
 #include "Player/PlayerCharacter.h"
 
@@ -29,6 +30,13 @@ namespace we
 		CollComp->SetCollisionChannel(ECollisionChannel::Interaction);
 		CollComp->BeginPlay();
 
+		PhysicsComp = make_shared<PhysicsComponent>(this);
+		PhysicsComp->SetBodyType(b2_staticBody);
+		PhysicsComp->SetShapeType(PhysicsComponent::EShapeType::Circle);
+		PhysicsComp->SetShapeSize({ 30, 40 });
+		PhysicsComp->SetShapeOffset({0,10});
+		PhysicsComp->BeginPlay();
+
 		// Initialize prompt
 		PromptUI.Initialize("Pick Up");
 		PromptUI.SetPosition(GetPosition(), { 0.f, -50.f });
@@ -43,6 +51,17 @@ namespace we
 			CollComp->EndPlay();
 		}
 		Actor::EndPlay();
+	}
+
+	void Compass::GetDrawables(vector<const drawable*>& OutDrawables) const
+	{
+		Actor::GetDrawables(OutDrawables);
+
+		if (PhysicsComp && PhysicsComp->IsDebugDrawEnabled())
+		{
+			if (const auto* Debug = PhysicsComp->DrawDebug())
+				OutDrawables.push_back(Debug);
+		}
 	}
 
 	void Compass::SetupSprite()

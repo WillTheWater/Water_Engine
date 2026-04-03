@@ -91,7 +91,7 @@ namespace we
 
         // Spawn quest item (compass)
         auto CompassItem = SpawnActor<Compass>().lock();
-        CompassItem->SetPosition({ 3000.0f, 2000.0f });
+        CompassItem->SetPosition({ 5281, 544 });
 
         // Spawn forest exit (top of level)
         auto Exit = SpawnActor<ForestExit>().lock();

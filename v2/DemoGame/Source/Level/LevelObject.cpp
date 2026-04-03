@@ -71,10 +71,10 @@ namespace we
 		PhysicsComp->BeginPlay();
 
 		// Debug Only
-		PhysicsComp->DrawDebug();
+		/*PhysicsComp->DrawDebug();
 		if (auto* LOActor = dynamic_cast<LevelObjectActor*>(MainActor.get()))
 		{
 			LOActor->SetPhysicsComp(PhysicsComp.get());
-		}
+		}*/
 	}
 }

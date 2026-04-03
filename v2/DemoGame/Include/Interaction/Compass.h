@@ -9,10 +9,12 @@
 #include "Framework/World/Actor.h"
 #include "Interaction/IInteractable.h"
 #include "UI/InteractUI.h"
-#include "Component/CollisionComponent.h"
 
 namespace we
 {
+	class PhysicsComponent;
+	class CollisionComponent;
+
 	class Compass : public Actor, public IInteractable
 	{
 	public:
@@ -27,6 +29,7 @@ namespace we
 	protected:
 		void BeginPlay() override;
 		void EndPlay() override;
+		void GetDrawables(vector<const drawable*>& OutDrawables) const override;
 
 	private:
 		void SetupSprite();
@@ -36,5 +39,6 @@ namespace we
 		shared<texture> CompassTexture;
 		optional<sprite> CompassSprite;
 		shared<CollisionComponent> CollComp;
+		shared<PhysicsComponent> PhysicsComp;
 	};
 }
