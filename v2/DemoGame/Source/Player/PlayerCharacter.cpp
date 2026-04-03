@@ -11,11 +11,14 @@
 #include "Component/CameraComponent.h"
 #include "Interaction/IInteractable.h"
 #include "Input/InputActions.h"
+#include "Input/InputBinding.h"
 #include "Subsystem/ResourceSubsystem.h"
 #include "Subsystem/InputSubsystem.h"
 #include "Core/EngineConfig.h"
 #include "Utility/Log.h"
 #include "Utility/Math.h"
+
+#include <SFML/Window/Joystick.hpp>
 
 namespace we
 {
@@ -150,6 +153,7 @@ namespace we
 	{
 		auto& Input = InputController();
 
+		// Keyboard bindings
 		Input.Bind(MOVE_UP, Input::Keyboard{ sf::Keyboard::Scan::W });
 		Input.Bind(MOVE_DOWN, Input::Keyboard{ sf::Keyboard::Scan::S });
 		Input.Bind(MOVE_LEFT, Input::Keyboard{ sf::Keyboard::Scan::A });
@@ -162,6 +166,14 @@ namespace we
 
 		Input.Bind(ACTION_INTERACT, Input::Keyboard{ sf::Keyboard::Scan::E });
 		InteractBinding = Input.BindAction(ACTION_INTERACT, this, &PlayerCharacter::TryInteract);
+
+		// Gamepad bindings
+		Input.Bind(MOVE_UP, Input::Gamepad{ GamepadButton::DPadUp });
+		Input.Bind(MOVE_DOWN, Input::Gamepad{ GamepadButton::DPadDown });
+		Input.Bind(MOVE_LEFT, Input::Gamepad{ GamepadButton::DPadLeft });
+		Input.Bind(MOVE_RIGHT, Input::Gamepad{ GamepadButton::DPadRight });
+
+		Input.Bind(ACTION_INTERACT, Input::Gamepad{ GamepadButton::South });
 	}
 
 	void PlayerCharacter::HandleInput()
@@ -171,10 +183,26 @@ namespace we
 		auto& Input = InputController();
 		vec2f InputDir{};
 
+		// Keyboard/DPad digital input
 		if (Input.Pressed(MOVE_UP)) InputDir.y -= 1.0f;
 		if (Input.Pressed(MOVE_DOWN)) InputDir.y += 1.0f;
 		if (Input.Pressed(MOVE_LEFT)) InputDir.x -= 1.0f;
 		if (Input.Pressed(MOVE_RIGHT)) InputDir.x += 1.0f;
+
+		// Analog stick input
+		if (sf::Joystick::isConnected(0))
+		{
+			float X = sf::Joystick::getAxisPosition(0, sf::Joystick::Axis::X);
+			float Y = sf::Joystick::getAxisPosition(0, sf::Joystick::Axis::Y);
+			
+			// Apply deadzone
+			const float Deadzone = 15.0f;
+			if (std::abs(X) > Deadzone || std::abs(Y) > Deadzone)
+			{
+				InputDir.x += X / 100.0f;
+				InputDir.y += Y / 100.0f;
+			}
+		}
 
 		if (InputDir.lengthSquared() > 0.0f)
 		{
