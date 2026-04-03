@@ -7,6 +7,7 @@
 #include "Levels/MainMenu.h"
 #include "Levels/Credits.h"
 #include "Levels/LevelOneBarriers.h"
+#include "Level/LevelObject.h"
 #include "Framework/World/Actor.h"
 #include "Framework/World/Character.h"
 #include "Player/PlayerCharacter.h"
@@ -138,6 +139,18 @@ namespace we
         Hut3->SetPosition({ 3800, 606 });
         Hut3Shadow->SetPosition({ 3800, 606 });
         Hut3Shadow->SetCustomRenderDepth(10000.f);
+
+        // Tree 1
+        Tree1 = we::make_unique<LevelObject>(
+            *this,
+            "Assets/Textures/Game/tree1.png",
+            "Assets/Textures/Game/tree1Shadow.png",
+            vec2f{5358, 778},
+            vec2f{384, 885},
+            80.f,
+            vec2f{0, 70}
+        );
+        Tree1->Init();
 
         InputController().Bind(PAUSE_ACTION, Input::Keyboard{ sf::Keyboard::Scan::Escape });
         PauseBinding = InputController().BindAction(PAUSE_ACTION, this, &LevelOne::TogglePauseMenu);

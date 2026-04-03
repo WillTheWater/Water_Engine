@@ -16,6 +16,7 @@ namespace we
     class CollisionActor;
     class PauseMenuUI;
     class PostProcessingComponent;
+    class LevelObject;
 
     class LevelOne : public World
     {
@@ -55,8 +56,9 @@ namespace we
         shared<Actor> Hut3Shadow;
         shared<PostProcessingComponent> WaterPPC;
         shared<Character> Character;
-        shared<CollisionActor> DynObstacle;
         unique<PauseMenuUI> PauseUI;
+        
+        unique<LevelObject> Tree1;
 
         BindingHandle PauseBinding;
     };
