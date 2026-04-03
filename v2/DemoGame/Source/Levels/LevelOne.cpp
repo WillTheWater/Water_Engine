@@ -52,7 +52,7 @@ namespace we
         WaterImage = SpawnActor<Actor>().lock();
         WaterImage->SetPosition({ 0, 2900 });
         WaterImage->SetScale({ 1.1,1 });
-        WaterPPC = make_shared<PostProcessingComponent>(WaterImage.get());
+        WaterPPC = we::make_shared<PostProcessingComponent>(WaterImage.get());
         WaterPPC->SetTexture(Water);
         WaterPPC->AddEffect(make_unique<PPEScroll>());
         WaterPPC->AddEffect(make_unique<PPEWave>());
@@ -151,6 +151,90 @@ namespace we
             vec2f{0, 70}
         );
         Tree1->Init();
+
+        // Tree 2
+        Tree2 = we::make_unique<LevelObject>(
+            *this,
+            "Assets/Textures/Game/tree2.png",
+            "Assets/Textures/Game/tree2Shadow.png",
+            vec2f{ 2500, 1024 },
+            vec2f{ 330, 580 },
+            46.f,
+            vec2f{ 10, 50 }
+        );
+        Tree2->Init();
+
+        // Tree 3
+        Tree3 = we::make_unique<LevelObject>(
+            *this,
+            "Assets/Textures/Game/tree3.png",
+            "Assets/Textures/Game/tree3Shadow.png",
+            vec2f{ 1398, 427 },
+            vec2f{ 612, 903 },
+            80.f,
+            vec2f{ 0, 70 }
+        );
+        Tree3->Init();
+
+        // Tree 4
+        Tree4 = we::make_unique<LevelObject>(
+            *this,
+            "Assets/Textures/Game/tree4.png",
+            "Assets/Textures/Game/tree4Shadow.png",
+            vec2f{ 2496, 357 },
+            vec2f{ 523, 813 },
+            80.f,
+            vec2f{ 0, 70 }
+        );
+        Tree4->Init();
+
+        // Tree 5
+        Tree5 = we::make_unique<LevelObject>(
+            *this,
+            "Assets/Textures/Game/palm1.png",
+            "Assets/Textures/Game/palm1Shadow.png",
+            vec2f{ 386, 1959 },
+            vec2f{ 385, 803 },
+            35.f,
+            vec2f{ 0, 60 }
+        );
+        Tree5->Init();
+
+        // Tree 6
+        Tree6 = we::make_unique<LevelObject>(
+            *this,
+            "Assets/Textures/Game/palm1.png",
+            "Assets/Textures/Game/palm1Shadow.png",
+            vec2f{ 3907, 1407 },
+            vec2f{ 385, 803 },
+            35.f,
+            vec2f{ 0, 60 }
+        );
+        Tree6->Init();
+
+        // Tree 7
+        Tree7 = we::make_unique<LevelObject>(
+            *this,
+            "Assets/Textures/Game/palm2.png",
+            "Assets/Textures/Game/palm2Shadow.png",
+            vec2f{ 5178, 2000 },
+            vec2f{ 556, 900 },
+            58.f,
+            vec2f{ -10, 60 }
+        );
+        Tree7->Init();
+
+        // Tree 8
+        Tree8 = we::make_unique<LevelObject>(
+            *this,
+            "Assets/Textures/Game/palm2.png",
+            "Assets/Textures/Game/palm2Shadow.png",
+            vec2f{ 1966, 1490 },
+            vec2f{ 556, 900 },
+            58.f,
+            vec2f{ -10, 60 }
+        );
+        Tree8->Init();
 
         InputController().Bind(PAUSE_ACTION, Input::Keyboard{ sf::Keyboard::Scan::Escape });
         PauseBinding = InputController().BindAction(PAUSE_ACTION, this, &LevelOne::TogglePauseMenu);

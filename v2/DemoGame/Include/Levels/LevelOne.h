@@ -59,6 +59,13 @@ namespace we
         unique<PauseMenuUI> PauseUI;
         
         unique<LevelObject> Tree1;
+        unique<LevelObject> Tree2;
+        unique<LevelObject> Tree3;
+        unique<LevelObject> Tree4;
+        unique<LevelObject> Tree5;
+        unique<LevelObject> Tree6;
+        unique<LevelObject> Tree7;
+        unique<LevelObject> Tree8;
 
         BindingHandle PauseBinding;
     };
