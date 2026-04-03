@@ -14,7 +14,7 @@ namespace we
     AudioSubsystem::AudioSubsystem()
     {
         Instance = this;
-        ChannelVolumes.fill(1.0f);
+        ChannelVolumes.fill(0.5f);  // Default 50% volume for all channels
         ChannelMuted.fill(false);
     }
 
@@ -175,6 +175,88 @@ namespace we
         }
     }
 
+    void AudioSubsystem::CrossfadeMusic(const string& Path, float Duration)
+    {
+        if (Duration <= 0.0f)
+        {
+            PlayMusic(Path);
+            return;
+        }
+
+        // Move current music to fading slot and fade it out
+        if (CurrentMusic && CurrentMusic->Music)
+        {
+            FadingMusic = std::move(CurrentMusic);
+            FadingMusic->TargetVolume = 0.0f;
+            FadingMusic->FadeSpeed = FadingMusic->CurrentVolume / Duration;
+            FadingMusic->bFadingIn = false;
+        }
+
+        // Load and start new music with fade in
+        auto MusicResource = LoadAsset().LoadMusic(Path);
+        if (!MusicResource)
+        {
+            ERROR("[Audio] Failed to load music for crossfade: {}", Path);
+            return;
+        }
+
+        CurrentMusic = make_unique<MusicTrack>();
+        CurrentMusic->Music = MusicResource;
+        CurrentMusic->Music->setLooping(true);
+        CurrentMusic->CurrentVolume = 0.0f;
+        CurrentMusic->TargetVolume = 1.0f;
+        CurrentMusic->FadeSpeed = 1.0f / Duration;
+        CurrentMusic->bFadingIn = true;
+
+        ApplyVolumeToMusic(*CurrentMusic, AudioChannel::Music);
+        
+        if (!bPaused)
+        {
+            CurrentMusic->Music->play();
+        }
+    }
+
+    void AudioSubsystem::CrossfadeAmbient(const string& Path, float Duration)
+    {
+        if (Duration <= 0.0f)
+        {
+            PlayAmbient(Path);
+            return;
+        }
+
+        // Move current ambient to fading slot and fade it out
+        if (CurrentAmbient && CurrentAmbient->Music)
+        {
+            FadingAmbient = std::move(CurrentAmbient);
+            FadingAmbient->TargetVolume = 0.0f;
+            FadingAmbient->FadeSpeed = FadingAmbient->CurrentVolume / Duration;
+            FadingAmbient->bFadingIn = false;
+        }
+
+        // Load and start new ambient with fade in
+        auto MusicResource = LoadAsset().LoadMusic(Path);
+        if (!MusicResource)
+        {
+            ERROR("[Audio] Failed to load ambient for crossfade: {}", Path);
+            return;
+        }
+
+        CurrentAmbient = make_unique<MusicTrack>();
+        CurrentAmbient->Music = MusicResource;
+        CurrentAmbient->Music->setLooping(true);
+        CurrentAmbient->CurrentVolume = 0.0f;
+        CurrentAmbient->TargetVolume = 1.0f;
+        CurrentAmbient->FadeSpeed = 1.0f / Duration;
+        CurrentAmbient->bFadingIn = true;
+
+        ApplyVolumeToMusic(*CurrentAmbient, AudioChannel::Ambient);
+        
+        if (!bPaused)
+        {
+            CurrentAmbient->Music->play();
+        }
+    }
+
     void AudioSubsystem::StopAllSFX()
     {
         for (auto& Instance : ActiveSFX)
@@ -205,6 +287,18 @@ namespace we
         StopAmbient();
         StopAllSFX();
         StopAllVoice();
+        
+        // Also stop fading tracks
+        if (FadingMusic && FadingMusic->Music)
+        {
+            FadingMusic->Music->stop();
+            FadingMusic.reset();
+        }
+        if (FadingAmbient && FadingAmbient->Music)
+        {
+            FadingAmbient->Music->stop();
+            FadingAmbient.reset();
+        }
     }
 
     void AudioSubsystem::SetMasterVolume(Volume Vol)
@@ -215,9 +309,17 @@ namespace we
         {
             ApplyVolumeToMusic(*CurrentMusic, AudioChannel::Music);
         }
+        if (FadingMusic && FadingMusic->Music)
+        {
+            ApplyVolumeToMusic(*FadingMusic, AudioChannel::Music);
+        }
         if (CurrentAmbient && CurrentAmbient->Music)
         {
             ApplyVolumeToMusic(*CurrentAmbient, AudioChannel::Ambient);
+        }
+        if (FadingAmbient && FadingAmbient->Music)
+        {
+            ApplyVolumeToMusic(*FadingAmbient, AudioChannel::Ambient);
         }
         for (auto& Instance : ActiveSFX)
         {
@@ -251,13 +353,19 @@ namespace we
         auto Index = static_cast<ulong>(Channel);
         ChannelVolumes[Index] = std::clamp(Vol, 0.0f, 1.0f);
 
-        if (Channel == AudioChannel::Music && CurrentMusic && CurrentMusic->Music)
+        if (Channel == AudioChannel::Music)
         {
-            ApplyVolumeToMusic(*CurrentMusic, Channel);
+            if (CurrentMusic && CurrentMusic->Music)
+                ApplyVolumeToMusic(*CurrentMusic, Channel);
+            if (FadingMusic && FadingMusic->Music)
+                ApplyVolumeToMusic(*FadingMusic, Channel);
         }
-        else if (Channel == AudioChannel::Ambient && CurrentAmbient && CurrentAmbient->Music)
+        else if (Channel == AudioChannel::Ambient)
         {
-            ApplyVolumeToMusic(*CurrentAmbient, Channel);
+            if (CurrentAmbient && CurrentAmbient->Music)
+                ApplyVolumeToMusic(*CurrentAmbient, Channel);
+            if (FadingAmbient && FadingAmbient->Music)
+                ApplyVolumeToMusic(*FadingAmbient, Channel);
         }
         else if (Channel == AudioChannel::SFX)
         {
@@ -325,18 +433,32 @@ namespace we
 
         bPaused = bInPaused;
 
-        // Music
+        // Music (current)
         if (CurrentMusic && CurrentMusic->Music)
         {
             if (bPaused) CurrentMusic->Music->pause();
             else CurrentMusic->Music->play();
         }
 
-        // Ambient
+        // Music (fading)
+        if (FadingMusic && FadingMusic->Music)
+        {
+            if (bPaused) FadingMusic->Music->pause();
+            else FadingMusic->Music->play();
+        }
+
+        // Ambient (current)
         if (CurrentAmbient && CurrentAmbient->Music)
         {
             if (bPaused) CurrentAmbient->Music->pause();
             else CurrentAmbient->Music->play();
+        }
+
+        // Ambient (fading)
+        if (FadingAmbient && FadingAmbient->Music)
+        {
+            if (bPaused) FadingAmbient->Music->pause();
+            else FadingAmbient->Music->play();
         }
 
         // SFX
@@ -367,14 +489,20 @@ namespace we
 
     bool AudioSubsystem::IsMusicPlaying() const
     {
-        return CurrentMusic && CurrentMusic->Music && 
+        bool CurrentPlaying = CurrentMusic && CurrentMusic->Music && 
                CurrentMusic->Music->getStatus() == sf::SoundSource::Status::Playing;
+        bool FadingPlaying = FadingMusic && FadingMusic->Music && 
+               FadingMusic->Music->getStatus() == sf::SoundSource::Status::Playing;
+        return CurrentPlaying || FadingPlaying;
     }
 
     bool AudioSubsystem::IsAmbientPlaying() const
     {
-        return CurrentAmbient && CurrentAmbient->Music && 
+        bool CurrentPlaying = CurrentAmbient && CurrentAmbient->Music && 
                CurrentAmbient->Music->getStatus() == sf::SoundSource::Status::Playing;
+        bool FadingPlaying = FadingAmbient && FadingAmbient->Music && 
+               FadingAmbient->Music->getStatus() == sf::SoundSource::Status::Playing;
+        return CurrentPlaying || FadingPlaying;
     }
 
     ulong AudioSubsystem::GetActiveSFXCount() const
@@ -389,7 +517,7 @@ namespace we
 
     void AudioSubsystem::UpdateFades(float DeltaTime)
     {
-        // Music fade
+        // Music fade (current)
         if (CurrentMusic && CurrentMusic->FadeSpeed > 0.0f)
         {
             if (CurrentMusic->bFadingIn)
@@ -413,13 +541,32 @@ namespace we
                     CurrentMusic->CurrentVolume = CurrentMusic->TargetVolume;
                     CurrentMusic->Music->stop();
                     CurrentMusic.reset();
-                    return;
                 }
-                ApplyVolumeToMusic(*CurrentMusic, AudioChannel::Music);
+                else
+                {
+                    ApplyVolumeToMusic(*CurrentMusic, AudioChannel::Music);
+                }
             }
         }
 
-        // Ambient fade
+        // Music fade (fading out during crossfade)
+        if (FadingMusic && FadingMusic->FadeSpeed > 0.0f)
+        {
+            // Always fading out
+            FadingMusic->CurrentVolume -= FadingMusic->FadeSpeed * DeltaTime;
+            if (FadingMusic->CurrentVolume <= 0.0f)
+            {
+                FadingMusic->CurrentVolume = 0.0f;
+                FadingMusic->Music->stop();
+                FadingMusic.reset();
+            }
+            else
+            {
+                ApplyVolumeToMusic(*FadingMusic, AudioChannel::Music);
+            }
+        }
+
+        // Ambient fade (current)
         if (CurrentAmbient && CurrentAmbient->FadeSpeed > 0.0f)
         {
             if (CurrentAmbient->bFadingIn)
@@ -443,9 +590,28 @@ namespace we
                     CurrentAmbient->CurrentVolume = CurrentAmbient->TargetVolume;
                     CurrentAmbient->Music->stop();
                     CurrentAmbient.reset();
-                    return;
                 }
-                ApplyVolumeToMusic(*CurrentAmbient, AudioChannel::Ambient);
+                else
+                {
+                    ApplyVolumeToMusic(*CurrentAmbient, AudioChannel::Ambient);
+                }
+            }
+        }
+
+        // Ambient fade (fading out during crossfade)
+        if (FadingAmbient && FadingAmbient->FadeSpeed > 0.0f)
+        {
+            // Always fading out
+            FadingAmbient->CurrentVolume -= FadingAmbient->FadeSpeed * DeltaTime;
+            if (FadingAmbient->CurrentVolume <= 0.0f)
+            {
+                FadingAmbient->CurrentVolume = 0.0f;
+                FadingAmbient->Music->stop();
+                FadingAmbient.reset();
+            }
+            else
+            {
+                ApplyVolumeToMusic(*FadingAmbient, AudioChannel::Ambient);
             }
         }
     }
@@ -486,11 +652,23 @@ namespace we
             CurrentMusic.reset();
         }
 
+        if (FadingMusic && FadingMusic->Music && 
+            FadingMusic->Music->getStatus() == sf::SoundSource::Status::Stopped)
+        {
+            FadingMusic.reset();
+        }
+
         if (CurrentAmbient && CurrentAmbient->Music && 
             CurrentAmbient->Music->getStatus() == sf::SoundSource::Status::Stopped &&
             CurrentAmbient->FadeSpeed == 0.0f)
         {
             CurrentAmbient.reset();
+        }
+
+        if (FadingAmbient && FadingAmbient->Music && 
+            FadingAmbient->Music->getStatus() == sf::SoundSource::Status::Stopped)
+        {
+            FadingAmbient.reset();
         }
     }
 

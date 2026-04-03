@@ -203,8 +203,10 @@ namespace we
 		if (!Save)
 			return;
 
+		float DefaultVolume = 0.5f;
+
 		// Master
-		float MasterVol = Save->Get<float>(SAVE_MASTER_VOLUME, 1.0f);
+		float MasterVol = Save->Get<float>(SAVE_MASTER_VOLUME, DefaultVolume);
 		MasterSlider->setValue(static_cast<int>(MasterVol * 100.0f));
 		PlayAudio().SetMasterVolume(MasterVol);
 
@@ -213,7 +215,7 @@ namespace we
 		PlayAudio().SetMasterMuted(MasterMuted);
 
 		// Music
-		float MusicVol = Save->Get<float>(SAVE_MUSIC_VOLUME, 1.0f);
+		float MusicVol = Save->Get<float>(SAVE_MUSIC_VOLUME, DefaultVolume);
 		MusicSlider->setValue(static_cast<int>(MusicVol * 100.0f));
 		PlayAudio().SetChannelVolume(AudioChannel::Music, MusicVol);
 
@@ -221,7 +223,7 @@ namespace we
 		PlayAudio().SetChannelMuted(AudioChannel::Music, MusicMuted);
 
 		// Ambient
-		float AmbientVol = Save->Get<float>(SAVE_AMBIENT_VOLUME, 1.0f);
+		float AmbientVol = Save->Get<float>(SAVE_AMBIENT_VOLUME, DefaultVolume);
 		AmbientSlider->setValue(static_cast<int>(AmbientVol * 100.0f));
 		PlayAudio().SetChannelVolume(AudioChannel::Ambient, AmbientVol);
 
@@ -229,7 +231,7 @@ namespace we
 		PlayAudio().SetChannelMuted(AudioChannel::Ambient, AmbientMuted);
 
 		// SFX
-		float SFXVol = Save->Get<float>(SAVE_SFX_VOLUME, 1.0f);
+		float SFXVol = Save->Get<float>(SAVE_SFX_VOLUME, DefaultVolume);
 		SFXSlider->setValue(static_cast<int>(SFXVol * 100.0f));
 		PlayAudio().SetChannelVolume(AudioChannel::SFX, SFXVol);
 
@@ -237,7 +239,7 @@ namespace we
 		PlayAudio().SetChannelMuted(AudioChannel::SFX, SFXMuted);
 
 		// Voice
-		float VoiceVol = Save->Get<float>(SAVE_VOICE_VOLUME, 1.0f);
+		float VoiceVol = Save->Get<float>(SAVE_VOICE_VOLUME, DefaultVolume);
 		VoiceSlider->setValue(static_cast<int>(VoiceVol * 100.0f));
 		PlayAudio().SetChannelVolume(AudioChannel::Voice, VoiceVol);
 
@@ -245,7 +247,7 @@ namespace we
 		PlayAudio().SetChannelMuted(AudioChannel::Voice, VoiceMuted);
 
 		// UI
-		float UIVol = Save->Get<float>(SAVE_UI_VOLUME, 1.0f);
+		float UIVol = Save->Get<float>(SAVE_UI_VOLUME, DefaultVolume);
 		UISlider->setValue(static_cast<int>(UIVol * 100.0f));
 		PlayAudio().SetChannelVolume(AudioChannel::UI, UIVol);
 
@@ -350,7 +352,6 @@ namespace we
 	{
 		if (!bInitialized)
 			return;
-		// Note: Don't hide cursor here - MainMenu/PauseMenu controls cursor visibility
 
 		auto& GUI = MakeGUI().GetScreenUI();
 		if (auto Overlay = GUI.get("SettingsOverlay"))

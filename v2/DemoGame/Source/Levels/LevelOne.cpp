@@ -66,10 +66,8 @@ namespace we
         Subsystem.GetSave().Set(SAVE_LAST_LEVEL, "LevelOne");
         
         // Load positions
-        float PlayerX = Subsystem.GetSave().Get<float>(SAVE_PLAYER_POS_X, 960.0f);
-        float PlayerY = Subsystem.GetSave().Get<float>(SAVE_PLAYER_POS_Y, 540.0f);
-        float ObstacleX = Subsystem.GetSave().Get<float>(SAVE_OBSTACLE_POS_X, 640.0f);
-        float ObstacleY = Subsystem.GetSave().Get<float>(SAVE_OBSTACLE_POS_Y, 680.0f);
+        float PlayerX = Subsystem.GetSave().Get<float>(SAVE_PLAYER_POS_X, 5510.f);
+        float PlayerY = Subsystem.GetSave().Get<float>(SAVE_PLAYER_POS_Y, 2600.f);
         
         // Test character
         Character = SpawnActor<PlayerCharacter>().lock();
@@ -342,7 +340,6 @@ namespace we
 
     void LevelOne::OnExitGame()
     {
-        LOG("[LevelOne] Loading Credits...");
         Subsystem.LoadWorld<Credits>();
     }
 }

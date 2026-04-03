@@ -27,6 +27,8 @@ namespace we
 
         void PlayMusic(const string& Path, float FadeInDuration = 0.0f);
         void PlayAmbient(const string& Path, float FadeInDuration = 0.0f);
+        void CrossfadeMusic(const string& Path, float Duration);
+        void CrossfadeAmbient(const string& Path, float Duration);
         void PlaySFX(const string& Path);
         void PlayVoice(const string& Path);
 
@@ -80,6 +82,8 @@ namespace we
         static AudioSubsystem* Instance;
         unique<MusicTrack> CurrentMusic;
         unique<MusicTrack> CurrentAmbient;
+        unique<MusicTrack> FadingMusic;
+        unique<MusicTrack> FadingAmbient;
         vector<SFXInstance> ActiveSFX;
         vector<SFXInstance> ActiveVoice;
 
