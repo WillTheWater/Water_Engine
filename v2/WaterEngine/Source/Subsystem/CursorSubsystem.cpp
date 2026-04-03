@@ -9,6 +9,8 @@
 
 namespace we
 {
+	CursorSubsystem* CursorSubsystem::Instance = nullptr;
+
 	CursorSubsystem::CursorSubsystem()
 		: CursorTexture{}
 		, CursorSprite{}
@@ -16,8 +18,14 @@ namespace we
 		, CursorSize{WEConfig.Cursor.CursorSize}
 		, bIsVisible{true}
 	{
+		Instance = this;
 		auto Cur = LoadAsset().LoadTexture(WEConfig.Cursor.DefaultCursorTexture);
 		SetTexture(Cur);
+	}
+
+	CursorSubsystem& CursorSubsystem::Get()
+	{
+		return *Instance;
 	}
 
 	void CursorSubsystem::SetTexture(shared<texture> Texture)

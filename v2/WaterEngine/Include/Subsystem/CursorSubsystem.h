@@ -13,6 +13,7 @@ namespace we
 	{
 	public:
 		explicit CursorSubsystem();
+		static CursorSubsystem& Get();
 
 		void SetTexture(shared<texture> Texture);
 
@@ -34,5 +35,9 @@ namespace we
 		vec2f CurrentPosition;
 		vec2f CursorSize;
 		bool bIsVisible;
+
+		static CursorSubsystem* Instance;
 	};
+
+	inline CursorSubsystem& GetCursor() { return CursorSubsystem::Get(); }
 }
