@@ -7,6 +7,7 @@
 #include "Subsystem/GuiSubsystem.h"
 #include "Subsystem/AudioSubsystem.h"
 #include "Subsystem/SaveSubsystem.h"
+#include "Subsystem/CursorSubsystem.h"
 #include "Config/GameConfig.h"
 
 #include <TGUI/Widgets/Button.hpp>
@@ -342,12 +343,14 @@ namespace we
 			Overlay->setVisible(true);
 
 		bVisible = true;
+		GetCursor().SetVisibility(true);
 	}
 
 	void SettingsUI::Hide()
 	{
 		if (!bInitialized)
 			return;
+		// Note: Don't hide cursor here - MainMenu/PauseMenu controls cursor visibility
 
 		auto& GUI = MakeGUI().GetScreenUI();
 		if (auto Overlay = GUI.get("SettingsOverlay"))

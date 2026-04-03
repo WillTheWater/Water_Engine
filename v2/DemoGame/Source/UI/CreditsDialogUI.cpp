@@ -5,6 +5,7 @@
 
 #include "UI/CreditsDialogUI.h"
 #include "Subsystem/GuiSubsystem.h"
+#include "Subsystem/CursorSubsystem.h"
 #include "Utility/Log.h"
 
 namespace we
@@ -116,6 +117,7 @@ namespace we
 		{
 			Background->setVisible(false);
 		}
+		GetCursor().SetVisibility(false);
 	}
 
 	bool CreditsDialogUI::IsVisible() const
@@ -183,11 +185,17 @@ namespace we
 
 		// Show buttons
 		ButtonsLayout->setVisible(true);
+
+		// Show cursor when buttons appear
+		GetCursor().SetVisibility(true);
 	}
 
 	void CreditsDialogUI::HideEndButtons()
 	{
 		ContinueArrow->setVisible(true);
 		ButtonsLayout->setVisible(false);
+
+		// Hide cursor in dialog mode
+		GetCursor().SetVisibility(false);
 	}
 }

@@ -6,6 +6,7 @@
 #include "UI/PauseMenuUI.h"
 #include "Subsystem/GuiSubsystem.h"
 #include "Subsystem/SaveSubsystem.h"
+#include "Subsystem/CursorSubsystem.h"
 
 #include <TGUI/Widgets/Button.hpp>
 #include <TGUI/Widgets/Label.hpp>
@@ -114,6 +115,7 @@ namespace we
 		
 		bVisible = true;
 		bInSettings = false;
+		GetCursor().SetVisibility(true);
 	}
 	
 	void PauseMenuUI::Hide()
@@ -130,6 +132,7 @@ namespace we
 		
 		bVisible = false;
 		bInSettings = false;
+		GetCursor().SetVisibility(false);
 	}
 	
 	void PauseMenuUI::Toggle()

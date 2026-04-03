@@ -20,6 +20,7 @@
 #include "Subsystem/InputSubsystem.h"
 #include "Subsystem/WorldSubsystem.h"
 #include "Subsystem/SaveSubsystem.h"
+#include "Subsystem/CursorSubsystem.h"
 #include "Component/PostProcessingComponent.h"
 #include "Framework/World/Barrier.h"
 #include "NPC/AoiMizukawa.h"
@@ -247,6 +248,9 @@ namespace we
         PauseUI->OnResumeClicked.Bind(this, &LevelOne::ResumeGame);
         PauseUI->OnMainMenuClicked.Bind(this, &LevelOne::ReturnToMainMenu);
         PauseUI->OnSaveAndQuitClicked.Bind(this, &LevelOne::SaveAndQuit);
+
+        // Hide cursor during gameplay
+        GetCursor().SetVisibility(false);
     }
 
     void LevelOne::Tick(float DeltaTime)

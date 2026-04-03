@@ -5,6 +5,7 @@
 
 #include "UI/MainMenuUI.h"
 #include "Subsystem/GuiSubsystem.h"
+#include "Subsystem/CursorSubsystem.h"
 #include "Utility/Log.h"
 
 #include <TGUI/Widgets/Button.hpp>
@@ -97,6 +98,7 @@ namespace we
 			Layout->setVisible(true);
 		
 		bVisible = true;
+		GetCursor().SetVisibility(true);
 	}
 	
 	void MainMenuUI::Hide()
@@ -109,6 +111,7 @@ namespace we
 			Layout->setVisible(false);
 		
 		bVisible = false;
+		// Note: Don't hide cursor here - MainMenu level always needs cursor visible
 	}
 	
 	void MainMenuUI::OnPlayClicked()

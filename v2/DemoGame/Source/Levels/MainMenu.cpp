@@ -8,6 +8,7 @@
 #include "Framework/World/Actor.h"
 #include "Subsystem/ResourceSubsystem.h"
 #include "Subsystem/AudioSubsystem.h"
+#include "Subsystem/CursorSubsystem.h"
 #include "Utility/Log.h"
 #include "UI/MainMenuUI.h"
 #include "UI/SettingsUI.h"

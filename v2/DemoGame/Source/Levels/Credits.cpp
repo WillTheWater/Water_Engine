@@ -9,6 +9,7 @@
 #include "Subsystem/ResourceSubsystem.h"
 #include "Subsystem/AudioSubsystem.h"
 #include "Subsystem/InputSubsystem.h"
+#include "Subsystem/CursorSubsystem.h"
 #include "Component/PostProcessingComponent.h"
 #include "PostProcess/Effects/PPEClouds.h"
 #include "Input/InputActions.h"
@@ -80,6 +81,9 @@ namespace we
         
         // Auto-show dialog
         DialogUI.Show();
+
+        // Cursor hidden during dialog (shown only when buttons appear)
+        GetCursor().SetVisibility(false);
     }
 
     void Credits::Tick(float DeltaTime)
