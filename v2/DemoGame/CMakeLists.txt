@@ -12,9 +12,19 @@ file(GLOB_RECURSE GAME_SOURCES
     "${CMAKE_CURRENT_SOURCE_DIR}/Source/*.cpp"
 )
 
+# Configure the icon.rc with absolute path to icon
+configure_file(
+    "${CMAKE_SOURCE_DIR}/Content/Assets/Icon/icon.rc.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/generated/icon.rc"
+)
+
+# Include the generated RC in the executable sources
+set(ICON_RC "${CMAKE_CURRENT_BINARY_DIR}/generated/icon.rc")
+
 add_executable(${DEMO_GAME}
     ${GAME_SOURCES}
     ${GAME_HEADERS}
+    ${ICON_RC}
 )
 
 target_include_directories(${DEMO_GAME} PUBLIC
