@@ -40,6 +40,7 @@ namespace we
         Subsystem.Window->OnResize.Bind(Subsystem.Camera.get(), &CameraSubsystem::SetCameraView);
         Subsystem.Window->OnMouseMove.Bind(Subsystem.Cursor.get(), &CursorSubsystem::SetPosition);
         Subsystem.Window->OnResize.Bind(Subsystem.GUI.get(), &GUISubsystem::SetWindowSize);
+        Subsystem.Window->OnResize.Bind(Subsystem.Input.get(), &InputSubsystem::OnWindowRecreated);
 
         Subsystem.Camera->OnViewUpdate.Bind(Subsystem.GUI.get(), &GUISubsystem::SetCameraView);
 

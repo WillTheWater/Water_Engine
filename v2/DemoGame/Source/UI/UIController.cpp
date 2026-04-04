@@ -28,7 +28,6 @@ namespace we
 			return;
 
 		bEnabled = true;
-		bWasConnected = sf::Joystick::isConnected(0);
 		
 		GetCursor().SetVisibility(true);
 		
@@ -41,10 +40,9 @@ namespace we
 		vec2f WorldPos = WindowToWorld(WindowCursorPos);
 		GetCursor().SetPosition(WorldPos);
 		
-		if (bWasConnected)
-		{
-			RebindSouthButton();
-		}
+		// Bind South button using InputSubsystem (event-based)
+		Input.Bind(static_cast<int>(GamepadButton::South), Input::Gamepad{ GamepadButton::South, 0 });
+		SouthPressBinding = Input.BindAction(static_cast<int>(GamepadButton::South), this, &UIController::OnSouthPressed);
 
 		LOG("UIController enabled");
 	}
@@ -65,30 +63,10 @@ namespace we
 		if (!bEnabled)
 			return;
 
-		bool bConnected = sf::Joystick::isConnected(0);
-		
-		if (!bWasConnected && bConnected)
-		{
-			RebindSouthButton();
-		}
-		bWasConnected = bConnected;
-		
-		if (bConnected)
+		if (sf::Joystick::isConnected(0))
 		{
 			PollStick(DeltaTime);
 		}
-	}
-
-	void UIController::RebindSouthButton()
-	{
-		LOG("RebindSouthButton called");
-		
-		SouthPressBinding = BindingHandle();
-		
-		Input.Bind(static_cast<int>(GamepadButton::South), Input::Gamepad{ GamepadButton::South, 0 });
-		SouthPressBinding = Input.BindAction(static_cast<int>(GamepadButton::South), this, &UIController::OnSouthPressed);
-		
-		LOG("UIController rebound South button");
 	}
 
 	vec2f UIController::WindowToWorld(vec2f WindowPos)
@@ -140,8 +118,6 @@ namespace we
 
 	void UIController::OnSouthPressed()
 	{
-		LOG("OnSouthPressed called, bEnabled={}, bWasConnected={}", bEnabled, bWasConnected);
-		
 		if (!bEnabled)
 			return;
 

@@ -25,13 +25,11 @@ namespace we
 	private:
 		void OnSouthPressed();
 		void PollStick(float DeltaTime);
-		void RebindSouthButton();
 		vec2f WindowToWorld(vec2f WindowPos);
 
 		InputSubsystem& Input;
 		BindingHandle SouthPressBinding;
 		bool bEnabled = false;
-		bool bWasConnected = false;
 		
 		vec2f WindowCursorPos{960, 540};
 		
