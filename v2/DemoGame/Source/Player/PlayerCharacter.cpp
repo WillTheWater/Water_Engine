@@ -178,7 +178,7 @@ namespace we
 
 	void PlayerCharacter::HandleInput()
 	{
-		if (!MoveComp) return;
+		if (!MoveComp || bInputBlocked) return;
 
 		auto& Input = InputController();
 		vec2f InputDir{};

@@ -228,6 +228,7 @@ namespace we
         Tree8->Init();
 
         InputController().Bind(PAUSE_ACTION, Input::Keyboard{ sf::Keyboard::Scan::Escape });
+        InputController().Bind(PAUSE_ACTION, Input::Gamepad{ GamepadButton::Start, 0 });
         PauseBinding = InputController().BindAction(PAUSE_ACTION, this, &LevelOne::TogglePauseMenu);
 
         // Initialize pause menu
@@ -264,6 +265,11 @@ namespace we
         if (TutorialUI)
         {
             TutorialUI->Tick(DeltaTime);
+        }
+        
+        if (PauseUI)
+        {
+            PauseUI->Tick(DeltaTime);
         }
     }
 
@@ -341,12 +347,12 @@ namespace we
         if (PauseUI->IsVisible())
         {
             PauseUI->Hide();
-            Subsystem.Resume();
+            if (Character) Character->SetInputBlocked(false);
         }
         else
         {
             PauseUI->Show();
-            Subsystem.Pause();
+            if (Character) Character->SetInputBlocked(true);
         }
     }
 
@@ -356,7 +362,7 @@ namespace we
         {
             PauseUI->Show();
         }
-        Subsystem.Pause();
+        // Note: Not pausing game to allow UI controller to work
     }
 
     void LevelOne::ResumeGame()
@@ -365,7 +371,8 @@ namespace we
         {
             PauseUI->Hide();
         }
-        Subsystem.Resume();
+        if (Character) Character->SetInputBlocked(false);
+        // Note: Not resuming game since we don't pause
     }
 
     void LevelOne::ReturnToMainMenu()
@@ -375,7 +382,6 @@ namespace we
             PauseUI->ClearWidgets();
             PauseUI.reset();
         }
-        Subsystem.Resume();
         Subsystem.LoadWorld<MainMenu>();
     }
 

@@ -6,6 +6,7 @@
 #pragma once
 
 #include "Core/CoreMinimal.h"
+#include "UI/UIController.h"
 #include <TGUI/TGUI.hpp>
 
 namespace we
@@ -19,6 +20,7 @@ namespace we
 		void Initialize();
 		void Show();
 		void Hide();
+		void Tick(float DeltaTime);
 		bool IsVisible() const;
 
 		// Set dialog content
@@ -56,6 +58,8 @@ namespace we
 		
 		std::function<void()> OnMainMenu;
 		std::function<void()> OnQuit;
+		
+		UIController Controller;
 		
 		static constexpr float Width = 800.0f;
 		static constexpr float Height = 280.0f;

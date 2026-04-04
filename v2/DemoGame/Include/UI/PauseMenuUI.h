@@ -8,6 +8,7 @@
 #include "Core/CoreMinimal.h"
 #include <TGUI/Widgets/Button.hpp>
 #include "UI/SettingsUI.h"
+#include "UI/UIController.h"
 #include "Utility/Delegate.h"
 
 namespace we
@@ -24,6 +25,7 @@ namespace we
 		void Show();
 		void Hide();
 		void Toggle();
+		void Tick(float DeltaTime);
 		bool IsVisible() const { return bVisible; }
 
 		Delegate<> OnResumeClicked;
@@ -45,5 +47,6 @@ namespace we
 		unique<SettingsUI> SettingsMenu;
 		bool bInSettings = false;
 		SaveSubsystem* Save = nullptr;
+		UIController Controller;
 	};
 }

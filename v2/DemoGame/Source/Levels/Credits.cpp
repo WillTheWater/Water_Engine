@@ -74,7 +74,8 @@ namespace we
             Subsystem.Quit();
         });
         
-        // Bind 'E' key for dialog advancement using callback pattern
+        // Bind 'E' key and South button for dialog advancement
+        InputController().Bind(ACTION_INTERACT, Input::Gamepad{ GamepadButton::South, 0 });
         DialogBinding = InputController().BindAction(ACTION_INTERACT, this, &Credits::AdvanceDialog);
         
         // Auto-show dialog
@@ -91,6 +92,8 @@ namespace we
         {
             CloudsPPC->Tick(DeltaTime);
         }
+        
+        DialogUI.Tick(DeltaTime);
     }
 
     void Credits::AdvanceDialog()

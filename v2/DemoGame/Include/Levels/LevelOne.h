@@ -13,7 +13,7 @@
 namespace we
 {
     class Actor;
-    class Character;
+    class PlayerCharacter;
     class CollisionActor;
     class PauseMenuUI;
     class PostProcessingComponent;
@@ -60,7 +60,7 @@ namespace we
         shared<Actor> Hut3;
         shared<Actor> Hut3Shadow;
         shared<PostProcessingComponent> WaterPPC;
-        shared<Character> Character;
+        shared<PlayerCharacter> Character;
         unique<PauseMenuUI> PauseUI;
         unique<TutorialUI> TutorialUI;
         bool bTutorialActive = false;

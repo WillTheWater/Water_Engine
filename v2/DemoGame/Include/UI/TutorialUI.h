@@ -14,8 +14,6 @@
 
 namespace we
 {
-	class WorldSubsystem;
-
 	class TutorialUI
 	{
 	public:

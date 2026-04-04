@@ -75,6 +75,7 @@ namespace we
 		// Interaction state
 		IInteractable* CurrentInteractable = nullptr;
 		bool bInDialog = false;
+		bool bInputBlocked = false;
 
 		// Shadow
 		optional<sprite> ShadowSprite;
@@ -84,6 +85,7 @@ namespace we
 	public:
 		QuestComponent& GetQuest() { return QuestComp; }
 		const QuestComponent& GetQuest() const { return QuestComp; }
+		void SetInputBlocked(bool bBlocked) { bInputBlocked = bBlocked; }
 
 	private:
 		QuestComponent QuestComp;

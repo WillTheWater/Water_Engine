@@ -73,7 +73,7 @@ namespace we
 		MoveDesc->setPosition("15%", "23%");
 		Background->add(MoveDesc);
 
-		auto MoveController = tgui::Label::create("Controller: Use D-Pad or Left Stick to move");
+		auto MoveController = tgui::Label::create("Controller: Left Stick to move");
 		MoveController->setTextSize(18);
 		MoveController->getRenderer()->setTextColor(tgui::Color::White);
 		MoveController->setPosition("15%", "30%");
@@ -92,7 +92,7 @@ namespace we
 		InteractDesc->setPosition("15%", "48%");
 		Background->add(InteractDesc);
 
-		auto InteractController = tgui::Label::create("Controller: South Button (A/X) to interact");
+		auto InteractController = tgui::Label::create("Controller: A Button (X on PlayStation) to interact");
 		InteractController->setTextSize(18);
 		InteractController->getRenderer()->setTextColor(tgui::Color::White);
 		InteractController->setPosition("15%", "55%");
@@ -111,7 +111,7 @@ namespace we
 		MenuDesc->setPosition("15%", "73%");
 		Background->add(MenuDesc);
 
-		auto MenuController = tgui::Label::create("Controller: Start Button to open Pause Menu");
+		auto MenuController = tgui::Label::create("Controller: Start/Menu Button to open Pause Menu");
 		MenuController->setTextSize(18);
 		MenuController->getRenderer()->setTextColor(tgui::Color::White);
 		MenuController->setPosition("15%", "80%");
@@ -133,10 +133,10 @@ namespace we
 
 		auto Renderer = Button->getRenderer();
 		Renderer->setBackgroundColor(tgui::Color{ 0, 16, 31 });
-		Renderer->setBackgroundColorHover(tgui::Color{ 47, 121, 142 });
+		// Removed hover color to match other buttons
 		Renderer->setBackgroundColorDown(tgui::Color{ 133, 120, 81 });
 		Renderer->setTextColor(tgui::Color::White);
-		Renderer->setTextColorHover(tgui::Color::White);
+		// Removed text hover color to match other buttons
 		Renderer->setTextColorDown(tgui::Color::White);
 		Renderer->setBorderColor(tgui::Color::White);
 		Renderer->setBorders(tgui::Outline(2));

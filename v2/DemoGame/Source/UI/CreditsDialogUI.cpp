@@ -60,10 +60,8 @@ namespace we
 		MainMenuButton->setTextSize(24);
 		MainMenuButton->setFocusable(false);
 		MainMenuButton->getRenderer()->setBackgroundColor(tgui::Color{ 0, 16, 31 });
-		MainMenuButton->getRenderer()->setBackgroundColorHover(tgui::Color{ 47, 121, 142 });
 		MainMenuButton->getRenderer()->setBackgroundColorDown(tgui::Color{ 133, 120, 81 });
 		MainMenuButton->getRenderer()->setTextColor(tgui::Color::White);
-		MainMenuButton->getRenderer()->setTextColorHover(tgui::Color::White);
 		MainMenuButton->getRenderer()->setTextColorDown(tgui::Color::White);
 		MainMenuButton->getRenderer()->setBorderColor(tgui::Color::White);
 		MainMenuButton->getRenderer()->setBorders(tgui::Outline(2));
@@ -80,10 +78,8 @@ namespace we
 		QuitButton->setTextSize(24);
 		QuitButton->setFocusable(false);
 		QuitButton->getRenderer()->setBackgroundColor(tgui::Color{ 0, 16, 31 });
-		QuitButton->getRenderer()->setBackgroundColorHover(tgui::Color{ 47, 121, 142 });
 		QuitButton->getRenderer()->setBackgroundColorDown(tgui::Color{ 133, 120, 81 });
 		QuitButton->getRenderer()->setTextColor(tgui::Color::White);
-		QuitButton->getRenderer()->setTextColorHover(tgui::Color::White);
 		QuitButton->getRenderer()->setTextColorDown(tgui::Color::White);
 		QuitButton->getRenderer()->setBorderColor(tgui::Color::White);
 		QuitButton->getRenderer()->setBorders(tgui::Outline(2));
@@ -109,6 +105,7 @@ namespace we
 		{
 			Background->setVisible(true);
 		}
+		Controller.Enable();
 	}
 
 	void CreditsDialogUI::Hide()
@@ -118,6 +115,15 @@ namespace we
 			Background->setVisible(false);
 		}
 		GetCursor().SetVisibility(false);
+		Controller.Disable();
+	}
+
+	void CreditsDialogUI::Tick(float DeltaTime)
+	{
+		if (!IsVisible())
+			return;
+		
+		Controller.Tick(DeltaTime);
 	}
 
 	bool CreditsDialogUI::IsVisible() const

@@ -116,6 +116,7 @@ namespace we
 		bVisible = true;
 		bInSettings = false;
 		GetCursor().SetVisibility(true);
+		Controller.Enable();
 	}
 	
 	void PauseMenuUI::Hide()
@@ -133,6 +134,15 @@ namespace we
 		bVisible = false;
 		bInSettings = false;
 		GetCursor().SetVisibility(false);
+		Controller.Disable();
+	}
+	
+	void PauseMenuUI::Tick(float DeltaTime)
+	{
+		if (!bVisible)
+			return;
+		
+		Controller.Tick(DeltaTime);
 	}
 	
 	void PauseMenuUI::Toggle()
