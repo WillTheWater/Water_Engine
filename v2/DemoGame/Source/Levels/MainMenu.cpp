@@ -27,10 +27,8 @@ namespace we
     {		
         BG = LoadAsset().LoadTexture("Assets/Textures/Default/defaultBackground.png");
         BGImage = SpawnActor<Actor>().lock();
-        //BGImage->SetSprite(BG);
         PPC = make_shared<PostProcessingComponent>(BGImage.get());
         PPC->SetTexture(BG);
-        //PPC->AddEffect(make_unique<PPEGrayscale>());
         PPC->AddEffect(make_unique<PPEWave>());
         PPC->BeginPlay();
 

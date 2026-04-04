@@ -257,12 +257,10 @@ namespace we
             TutorialUI->Show();
             bTutorialActive = true;
             
-            // Bind controller confirm for tutorial continue button
             TutorialConfirmBinding = InputController().BindAction(UI_CONFIRM, this, &LevelOne::OnTutorialContinue);
         }
         else
         {
-            // Hide cursor during gameplay (only if no tutorial)
             GetCursor().SetVisibility(false);
         }
     }
