@@ -28,6 +28,7 @@ namespace we
 			return;
 
 		bEnabled = true;
+		bSouthWasPressed = false;
 		
 		GetCursor().SetVisibility(true);
 		
@@ -39,10 +40,6 @@ namespace we
 		
 		vec2f WorldPos = WindowToWorld(WindowCursorPos);
 		GetCursor().SetPosition(WorldPos);
-		
-		// Bind South button using InputSubsystem (event-based)
-		Input.Bind(static_cast<int>(GamepadButton::South), Input::Gamepad{ GamepadButton::South, 0 });
-		SouthPressBinding = Input.BindAction(static_cast<int>(GamepadButton::South), this, &UIController::OnSouthPressed);
 
 		LOG("UIController enabled");
 	}
@@ -53,7 +50,6 @@ namespace we
 			return;
 
 		bEnabled = false;
-		// Don't unbind here - destructor handles it safely
 		
 		LOG("UIController disabled");
 	}
@@ -66,6 +62,7 @@ namespace we
 		if (sf::Joystick::isConnected(0))
 		{
 			PollStick(DeltaTime);
+			PollSouthButton();
 		}
 	}
 
@@ -116,19 +113,28 @@ namespace we
 		}
 	}
 
-	void UIController::OnSouthPressed()
+	void UIController::PollSouthButton()
 	{
-		if (!bEnabled)
+		// Get hardware button ID using engine's mapping
+		auto HardwareButton = Input::LogicToHardware(GamepadButton::South, 0);
+		if (!HardwareButton)
 			return;
-
-		vec2i MousePos(static_cast<int>(WindowCursorPos.x), static_cast<int>(WindowCursorPos.y));
 		
-		event::MouseButtonPressed press{ sf::Mouse::Button::Left, MousePos };
-		MakeGUI().HandleEvent(event(press));
+		bool bPressed = sf::Joystick::isButtonPressed(0, *HardwareButton);
 		
-		event::MouseButtonReleased release{ sf::Mouse::Button::Left, MousePos };
-		MakeGUI().HandleEvent(event(release));
+		if (bPressed && !bSouthWasPressed)
+		{
+			vec2i MousePos(static_cast<int>(WindowCursorPos.x), static_cast<int>(WindowCursorPos.y));
+			
+			event::MouseButtonPressed press{ sf::Mouse::Button::Left, MousePos };
+			MakeGUI().HandleEvent(event(press));
+			
+			event::MouseButtonReleased release{ sf::Mouse::Button::Left, MousePos };
+			MakeGUI().HandleEvent(event(release));
+			
+			LOG("UI Click at window {:.0f}, {:.0f}", WindowCursorPos.x, WindowCursorPos.y);
+		}
 		
-		LOG("UI Click at window {:.0f}, {:.0f}", WindowCursorPos.x, WindowCursorPos.y);
+		bSouthWasPressed = bPressed;
 	}
 }

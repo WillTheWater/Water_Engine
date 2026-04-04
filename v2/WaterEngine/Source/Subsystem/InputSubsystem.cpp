@@ -3,14 +3,8 @@
 // Copyright(C) 2026 Will The Water
 // =============================================================================
 
-// =============================================================================
-// Water Engine v2.0.0
-// Copyright(C) 2026 Will The Water
-// =============================================================================
-
 #include "Subsystem/InputSubsystem.h"
 #include "EventHandler/InputEventHandler.h"
-#include "Utility/Log.h"
 
 namespace we
 {
@@ -136,19 +130,6 @@ namespace we
     {
         HeldActions.clear();
         ActionPressCount.clear();
-    }
-
-    void InputSubsystem::OnWindowRecreated(vec2u NewSize)
-    {
-        // Clear held actions to prevent stuck keys
-        ClearAllInput();
-        
-        // Force SFML to update joystick connections
-        sf::Joystick::update();
-        
-        // Note: Joystick axis/button polling will resume automatically
-        // when HandleEvent is called on the new window
-        LOG("InputSubsystem: Window recreated, joystick handling reset");
     }
 
     BindingHandle InputSubsystem::BindAction(int InputAction, std::function<void()> Callback)

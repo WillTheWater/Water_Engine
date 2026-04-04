@@ -23,13 +23,13 @@ namespace we
 		bool IsEnabled() const { return bEnabled; }
 
 	private:
-		void OnSouthPressed();
 		void PollStick(float DeltaTime);
+		void PollSouthButton();
 		vec2f WindowToWorld(vec2f WindowPos);
 
 		InputSubsystem& Input;
-		BindingHandle SouthPressBinding;
 		bool bEnabled = false;
+		bool bSouthWasPressed = false;
 		
 		vec2f WindowCursorPos{960, 540};
 		

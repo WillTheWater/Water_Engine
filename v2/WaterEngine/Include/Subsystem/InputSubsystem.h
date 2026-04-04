@@ -56,9 +56,6 @@ namespace we
         
         // Clear all held inputs (call when window loses focus)
         void ClearAllInput();
-        
-        // Called when window is recreated (e.g., fullscreen toggle) to reinitialize joystick handling
-        void OnWindowRecreated(vec2u NewSize);
 
         // Event-driven binding with RAII handle - using member function
         template<typename ClassType>
