@@ -247,8 +247,24 @@ namespace we
         PauseUI->OnMainMenuClicked.Bind(this, &LevelOne::ReturnToMainMenu);
         PauseUI->OnSaveAndQuitClicked.Bind(this, &LevelOne::SaveAndQuit);
 
-        // Hide cursor during gameplay
-        GetCursor().SetVisibility(false);
+        // Check if tutorial should be shown (first time playing)
+        bool bTutorialCompleted = Subsystem.GetSave().Get<bool>(SAVE_TUTORIAL_COMPLETED, false);
+        if (!bTutorialCompleted)
+        {
+            TutorialUI = make_unique<we::TutorialUI>();
+            TutorialUI->Initialize();
+            TutorialUI->OnContinueClicked.Bind(this, &LevelOne::OnTutorialContinue);
+            TutorialUI->Show();
+            bTutorialActive = true;
+            
+            // Bind controller confirm for tutorial continue button
+            TutorialConfirmBinding = InputController().BindAction(UI_CONFIRM, this, &LevelOne::OnTutorialContinue);
+        }
+        else
+        {
+            // Hide cursor during gameplay (only if no tutorial)
+            GetCursor().SetVisibility(false);
+        }
     }
 
     void LevelOne::Tick(float DeltaTime)
@@ -274,6 +290,12 @@ namespace we
             PauseUI->ClearWidgets();
             PauseUI.reset();
         }
+        
+        if (TutorialUI)
+        {
+            TutorialUI->ClearWidgets();
+            TutorialUI.reset();
+        }
 
         if (WaterPPC)
         {
@@ -282,8 +304,29 @@ namespace we
         }
     }
 
+    void LevelOne::OnTutorialContinue()
+    {
+        if (!bTutorialActive)
+            return;
+        
+        Subsystem.GetSave().Set(SAVE_TUTORIAL_COMPLETED, true);
+        
+        if (TutorialUI)
+        {
+            TutorialUI->Hide();
+        }
+        bTutorialActive = false;
+        
+        TutorialConfirmBinding.Release();
+        
+        Subsystem.Resume();
+    }
+
     void LevelOne::TogglePauseMenu()
     {
+        if (bTutorialActive)
+            return;
+        
         if (PauseUI->IsVisible())
         {
             PauseUI->Hide();

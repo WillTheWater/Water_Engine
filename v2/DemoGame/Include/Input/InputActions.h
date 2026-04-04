@@ -19,5 +19,10 @@ enum InputActions : int
 	ACTION_INTERACT,	
 
 	// UI
-	PAUSE_ACTION
+	PAUSE_ACTION,
+	UI_UP,
+	UI_DOWN,
+	UI_LEFT,
+	UI_RIGHT,
+	UI_CONFIRM
 };

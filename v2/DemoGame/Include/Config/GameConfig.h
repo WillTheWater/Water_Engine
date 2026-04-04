@@ -47,4 +47,7 @@ namespace we
 	
 	// Video Settings
 	inline constexpr stringView SAVE_FULLSCREEN = "Settings:Video:Fullscreen";
+	
+	// Tutorial
+	inline constexpr stringView SAVE_TUTORIAL_COMPLETED = "DemoGame:TutorialCompleted";
 }

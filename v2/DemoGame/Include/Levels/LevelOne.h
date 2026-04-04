@@ -8,6 +8,7 @@
 #include "Core/CoreMinimal.h"
 #include "Framework/World/World.h"
 #include "Subsystem/InputSubsystem.h"
+#include "UI/TutorialUI.h"
 
 namespace we
 {
@@ -17,6 +18,7 @@ namespace we
     class PauseMenuUI;
     class PostProcessingComponent;
     class LevelObject;
+    class TutorialUI;
 
     class LevelOne : public World
     {
@@ -36,6 +38,7 @@ namespace we
         void ReturnToMainMenu();
         void SaveAndQuit();
         void OnExitGame();
+        void OnTutorialContinue();
 
     private:
         shared<texture> BG;
@@ -57,6 +60,8 @@ namespace we
         shared<PostProcessingComponent> WaterPPC;
         shared<Character> Character;
         unique<PauseMenuUI> PauseUI;
+        unique<TutorialUI> TutorialUI;
+        bool bTutorialActive = false;
         
         unique<LevelObject> Tree1;
         unique<LevelObject> Tree2;
@@ -68,5 +73,6 @@ namespace we
         unique<LevelObject> Tree8;
 
         BindingHandle PauseBinding;
+        BindingHandle TutorialConfirmBinding;
     };
 }
