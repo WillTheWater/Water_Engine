@@ -345,7 +345,7 @@ namespace we
 			Overlay->setVisible(true);
 
 		bVisible = true;
-		GetCursor().SetVisibility(true);
+		Controller.Enable();
 	}
 
 	void SettingsUI::Hide()
@@ -358,5 +358,14 @@ namespace we
 			Overlay->setVisible(false);
 
 		bVisible = false;
+		Controller.Disable();
+	}
+
+	void SettingsUI::Tick(float DeltaTime)
+	{
+		if (!bVisible)
+			return;
+
+		Controller.Tick(DeltaTime);
 	}
 }

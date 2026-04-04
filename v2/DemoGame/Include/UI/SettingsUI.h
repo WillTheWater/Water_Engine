@@ -9,6 +9,7 @@
 #include <TGUI/Widgets/Button.hpp>
 #include <TGUI/Widgets/Slider.hpp>
 #include <TGUI/Widgets/CheckBox.hpp>
+#include "UI/UIController.h"
 #include "Utility/Delegate.h"
 
 namespace we
@@ -24,6 +25,7 @@ namespace we
 		void ClearWidgets();
 		void Show();
 		void Hide();
+		void Tick(float DeltaTime);
 
 		Delegate<> OnBackClicked;
 
@@ -51,6 +53,7 @@ namespace we
 		bool bVisible = false;
 		bool bInitialized = false;
 		SaveSubsystem* Save = nullptr;
+		UIController Controller;
 
 		// Widgets
 		tgui::CheckBox::Ptr MuteCheckbox;

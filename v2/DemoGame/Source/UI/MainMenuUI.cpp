@@ -98,7 +98,7 @@ namespace we
 			Layout->setVisible(true);
 		
 		bVisible = true;
-		GetCursor().SetVisibility(true);
+		Controller.Enable();
 	}
 	
 	void MainMenuUI::Hide()
@@ -111,7 +111,15 @@ namespace we
 			Layout->setVisible(false);
 		
 		bVisible = false;
-		// Note: Don't hide cursor here - MainMenu level always needs cursor visible
+		Controller.Disable();
+	}
+	
+	void MainMenuUI::Tick(float DeltaTime)
+	{
+		if (!bVisible)
+			return;
+		
+		Controller.Tick(DeltaTime);
 	}
 	
 	void MainMenuUI::OnPlayClicked()

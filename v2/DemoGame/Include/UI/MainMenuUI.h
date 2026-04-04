@@ -7,6 +7,7 @@
 
 #include "Core/CoreMinimal.h"
 #include <TGUI/Widgets/Button.hpp>
+#include "UI/UIController.h"
 #include "Utility/Delegate.h"
 
 namespace we
@@ -20,6 +21,7 @@ namespace we
 		void ClearWidgets();
 		void Show();
 		void Hide();
+		void Tick(float DeltaTime);
 
 		Delegate<> OnPlayButtonClicked;
 		Delegate<> OnSettingsButtonClicked;
@@ -34,5 +36,6 @@ namespace we
 		
 		bool bVisible = false;
 		bool bInitialized = false;
+		UIController Controller;
 	};
 }

@@ -53,6 +53,8 @@ namespace we
     void MainMenu::Tick(float DeltaTime)
     {
         PPC->Tick(DeltaTime);
+        MenuUI->Tick(DeltaTime);
+        SettingsMenu->Tick(DeltaTime);
     }
 
     void MainMenu::EndPlay()
