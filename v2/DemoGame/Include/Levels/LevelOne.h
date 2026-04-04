@@ -39,6 +39,8 @@ namespace we
         void SaveAndQuit();
         void OnExitGame();
         void OnTutorialContinue();
+        void SpawnCharacter();
+        void ShowTutorialDelayed();
 
     private:
         shared<texture> BG;
@@ -73,6 +75,5 @@ namespace we
         unique<LevelObject> Tree8;
 
         BindingHandle PauseBinding;
-        BindingHandle TutorialConfirmBinding;
     };
 }

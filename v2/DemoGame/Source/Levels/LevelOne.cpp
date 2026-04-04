@@ -65,14 +65,6 @@ namespace we
         Subsystem.GetSave().Set(SAVE_TIMES_PLAYED, TimesPlayed);
         Subsystem.GetSave().Set(SAVE_LAST_LEVEL, "LevelOne");
         
-        // Load positions
-        float PlayerX = Subsystem.GetSave().Get<float>(SAVE_PLAYER_POS_X, 5510.f);
-        float PlayerY = Subsystem.GetSave().Get<float>(SAVE_PLAYER_POS_Y, 2600.f);
-        
-        // Test character
-        Character = SpawnActor<PlayerCharacter>().lock();
-        Character->SetPosition({PlayerX, PlayerY});
-
         auto Aoi = SpawnActor<AoiMizukawa>().lock();
         Aoi->SetPosition({ 4700, 2400 });
 
@@ -251,16 +243,13 @@ namespace we
         bool bTutorialCompleted = Subsystem.GetSave().Get<bool>(SAVE_TUTORIAL_COMPLETED, false);
         if (!bTutorialCompleted)
         {
-            TutorialUI = make_unique<we::TutorialUI>();
-            TutorialUI->Initialize();
-            TutorialUI->OnContinueClicked.Bind(this, &LevelOne::OnTutorialContinue);
-            TutorialUI->Show();
-            bTutorialActive = true;
-            
-            TutorialConfirmBinding = InputController().BindAction(UI_CONFIRM, this, &LevelOne::OnTutorialContinue);
+            // Delay tutorial show to let level finish rendering
+            GetTimer().SetTimer(weak_from_this(), &LevelOne::ShowTutorialDelayed, 0.1f);
         }
         else
         {
+            // Spawn character immediately if no tutorial
+            SpawnCharacter();
             GetCursor().SetVisibility(false);
         }
     }
@@ -270,6 +259,11 @@ namespace we
         if (WaterPPC)
         {
             WaterPPC->Tick(DeltaTime);
+        }
+        
+        if (TutorialUI)
+        {
+            TutorialUI->Tick(DeltaTime);
         }
     }
 
@@ -315,9 +309,28 @@ namespace we
         }
         bTutorialActive = false;
         
-        TutorialConfirmBinding.Release();
+        // Spawn character now that tutorial is done
+        SpawnCharacter();
         
-        Subsystem.Resume();
+        GetCursor().SetVisibility(false);
+    }
+
+    void LevelOne::ShowTutorialDelayed()
+    {
+        TutorialUI = make_unique<we::TutorialUI>();
+        TutorialUI->Initialize();
+        TutorialUI->OnContinueClicked.Bind(this, &LevelOne::OnTutorialContinue);
+        TutorialUI->Show();
+        bTutorialActive = true;
+    }
+
+    void LevelOne::SpawnCharacter()
+    {
+        float PlayerX = Subsystem.GetSave().Get<float>(SAVE_PLAYER_POS_X, 5510.f);
+        float PlayerY = Subsystem.GetSave().Get<float>(SAVE_PLAYER_POS_Y, 2600.f);
+        
+        Character = SpawnActor<PlayerCharacter>().lock();
+        Character->SetPosition({PlayerX, PlayerY});
     }
 
     void LevelOne::TogglePauseMenu()

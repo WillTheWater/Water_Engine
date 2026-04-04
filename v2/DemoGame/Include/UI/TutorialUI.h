@@ -6,6 +6,7 @@
 #pragma once
 
 #include "Core/CoreMinimal.h"
+#include "UI/UIController.h"
 #include "Utility/Delegate.h"
 #include <TGUI/Widgets/Panel.hpp>
 #include <TGUI/Widgets/Label.hpp>
@@ -13,6 +14,8 @@
 
 namespace we
 {
+	class WorldSubsystem;
+
 	class TutorialUI
 	{
 	public:
@@ -23,6 +26,7 @@ namespace we
 		void ClearWidgets();
 		void Show();
 		void Hide();
+		void Tick(float DeltaTime);
 		bool IsVisible() const { return bVisible; }
 
 		Delegate<> OnContinueClicked;
@@ -37,5 +41,6 @@ namespace we
 		bool bInitialized = false;
 		tgui::Panel::Ptr Background;
 		tgui::Button::Ptr ContinueButton;
+		UIController Controller;
 	};
 }

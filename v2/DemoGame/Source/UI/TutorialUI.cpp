@@ -6,6 +6,7 @@
 #include "UI/TutorialUI.h"
 #include "Subsystem/GuiSubsystem.h"
 #include "Subsystem/CursorSubsystem.h"
+#include "Subsystem/WorldSubsystem.h"
 
 namespace we
 {
@@ -155,6 +156,7 @@ namespace we
 			ContinueButton->setFocused(true);
 
 		GetCursor().SetVisibility(true);
+		Controller.Enable();
 	}
 
 	void TutorialUI::Hide()
@@ -165,8 +167,16 @@ namespace we
 		Background->setVisible(false);
 		bVisible = false;
 
-		// Hide cursor when closing (like PauseMenuUI)
 		GetCursor().SetVisibility(false);
+		Controller.Disable();
+	}
+
+	void TutorialUI::Tick(float DeltaTime)
+	{
+		if (!bVisible)
+			return;
+
+		Controller.Tick(DeltaTime);
 	}
 
 	void TutorialUI::OnContinuePressed()

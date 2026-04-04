@@ -115,7 +115,6 @@ namespace we
 
 	void UIController::PollSouthButton()
 	{
-		// Get hardware button ID using engine's mapping
 		auto HardwareButton = Input::LogicToHardware(GamepadButton::South, 0);
 		if (!HardwareButton)
 			return;
