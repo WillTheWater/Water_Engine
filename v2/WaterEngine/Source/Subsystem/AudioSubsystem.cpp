@@ -5,6 +5,7 @@
 
 #include "Subsystem/AudioSubsystem.h"
 #include "Subsystem/ResourceSubsystem.h"
+#include "Utility/Math.h"
 #include "Utility/Log.h"
 
 namespace we
@@ -303,7 +304,7 @@ namespace we
 
     void AudioSubsystem::SetMasterVolume(Volume Vol)
     {
-        MasterVolume = std::clamp(Vol, 0.0f, 1.0f);
+        MasterVolume = Clamp(Vol, 0.0f, 1.0f);
         
         if (CurrentMusic && CurrentMusic->Music)
         {
@@ -351,7 +352,7 @@ namespace we
         }
 
         auto Index = static_cast<ulong>(Channel);
-        ChannelVolumes[Index] = std::clamp(Vol, 0.0f, 1.0f);
+        ChannelVolumes[Index] = Clamp(Vol, 0.0f, 1.0f);
 
         if (Channel == AudioChannel::Music)
         {
