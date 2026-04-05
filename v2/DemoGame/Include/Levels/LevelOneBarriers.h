@@ -11,6 +11,5 @@ namespace we
 {
     class World;
 
-    // Helper to create all LevelOne barriers
     void CreateLevelOneBarriers(World& InWorld);
 }

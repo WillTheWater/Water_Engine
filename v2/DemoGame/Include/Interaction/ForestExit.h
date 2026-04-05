@@ -18,7 +18,6 @@ namespace we
 		ForestExit(World& OwningWorld);
 		~ForestExit();
 
-		// Fired when player with complete quest overlaps
 		Delegate<> OnExitTriggered;
 
 	protected:

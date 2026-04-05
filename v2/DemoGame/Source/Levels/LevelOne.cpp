@@ -43,7 +43,6 @@ namespace we
 
     void LevelOne::BeginPlay()
     {
-        // Load background
         BG = LoadAsset().LoadTexture("Assets/Textures/Game/world.png");
         BGImage = SpawnActor<Actor>().lock();
         BGImage->SetSprite(BG);
@@ -59,7 +58,7 @@ namespace we
         WaterPPC->AddEffect(make_unique<PPEWave>());
         WaterPPC->BeginPlay();
 
-        // Load saved data and update session counter
+        // Load saved data
         int TimesPlayed = Subsystem.GetSave().Get<int>(SAVE_TIMES_PLAYED, 0);
         TimesPlayed++;
         Subsystem.GetSave().Set(SAVE_TIMES_PLAYED, TimesPlayed);
@@ -80,11 +79,11 @@ namespace we
             {1352, 1750}
         });
 
-        // Spawn quest item (compass)
+        // Quest item
         auto CompassItem = SpawnActor<Compass>().lock();
         CompassItem->SetPosition({ 5281, 544 });
 
-        // Spawn forest exit (top of level)
+        // Forest exit
         auto Exit = SpawnActor<ForestExit>().lock();
         Exit->SetPosition({ 3050.0f, 20.0f });
         Exit->OnExitTriggered.Bind(this, &LevelOne::OnExitGame);
@@ -231,25 +230,20 @@ namespace we
         InputController().Bind(PAUSE_ACTION, Input::Gamepad{ GamepadButton::Start, 0 });
         PauseBinding = InputController().BindAction(PAUSE_ACTION, this, &LevelOne::TogglePauseMenu);
 
-        // Initialize pause menu
         PauseUI = make_unique<PauseMenuUI>();
         PauseUI->Initialize(Subsystem.GetSave());
 
-        // Bind delegates
         PauseUI->OnResumeClicked.Bind(this, &LevelOne::ResumeGame);
         PauseUI->OnMainMenuClicked.Bind(this, &LevelOne::ReturnToMainMenu);
         PauseUI->OnSaveAndQuitClicked.Bind(this, &LevelOne::SaveAndQuit);
 
-        // Check if tutorial should be shown (first time playing)
         bool bTutorialCompleted = Subsystem.GetSave().Get<bool>(SAVE_TUTORIAL_COMPLETED, false);
         if (!bTutorialCompleted)
         {
-            // Delay tutorial show to let level finish rendering
             GetTimer().SetTimer(weak_from_this(), &LevelOne::ShowTutorialDelayed, 0.1f);
         }
         else
         {
-            // Spawn character immediately if no tutorial
             SpawnCharacter();
             GetCursor().SetVisibility(false);
         }
@@ -315,7 +309,6 @@ namespace we
         }
         bTutorialActive = false;
         
-        // Spawn character now that tutorial is done
         SpawnCharacter();
         
         GetCursor().SetVisibility(false);
@@ -362,7 +355,6 @@ namespace we
         {
             PauseUI->Show();
         }
-        // Note: Not pausing game to allow UI controller to work
     }
 
     void LevelOne::ResumeGame()
@@ -372,7 +364,6 @@ namespace we
             PauseUI->Hide();
         }
         if (Character) Character->SetInputBlocked(false);
-        // Note: Not resuming game since we don't pause
     }
 
     void LevelOne::ReturnToMainMenu()

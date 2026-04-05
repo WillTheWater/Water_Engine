@@ -19,7 +19,7 @@ namespace we
 	{
 		Actor::BeginPlay();
 
-		// Setup trigger collision (invisible)
+		// Setup trigger collision
 		CollComp = make_shared<CollisionComponent>(this);
 		CollComp->SetRadius(100.0f);
 		CollComp->SetCollisionChannel(ECollisionChannel::Interaction);

@@ -46,7 +46,6 @@ namespace we
 
 	void Kiyoshi::BeginPlay()
 	{
-		// Kinematic body - moves autonomously
 		PhysicsComp->SetBodyType(b2_kinematicBody);
 		PhysicsComp->SetShapeType(PhysicsComponent::EShapeType::Circle);
 		PhysicsComp->SetShapeSize({42.0f, 42.0f});
@@ -69,7 +68,6 @@ namespace we
 		DialogBox.Initialize();
 		DialogBox.SetPosition(GetPosition(), { 0.f, -200.f });
 		
-		// Start patrol
 		if (!Waypoints.empty())
 		{
 			CurrentWaypointIndex = 0;
@@ -124,7 +122,6 @@ namespace we
 			ShadowSprite->setPosition(GetPosition() + ShadowOffset);
 		}
 		
-		// Update dialog position to follow Kiyoshi
 		if (bInDialog)
 		{
 			DialogBox.SetPosition(GetPosition(), { 0.f, -200.f });
@@ -174,7 +171,6 @@ namespace we
 			EndDialog();
 		}
 
-		// Resume patrol
 		AIState = EAIState::Waiting;
 		float WaitTime = RNG().Random(1.0f, 4.0f);
 		WaitTimer = GetTimer().SetTimer(
@@ -217,11 +213,9 @@ namespace we
 
 	void Kiyoshi::GetDrawables(vector<const drawable*>& OutDrawables) const
 	{
-		// Add SHADOW FIRST so it renders UNDER the character
 		if (ShadowSprite && ShadowTexture)
 			OutDrawables.push_back(&ShadowSprite.value());
 
-		// Then add all the normal character drawables (sprite + debug)
 		Character::GetDrawables(OutDrawables);
 	}
 
@@ -236,7 +230,6 @@ namespace we
 
 		if (!Quest.HasMetAoi())
 		{
-			// Haven't spoken to Aoi yet
 			DialogBox.SetDialog({
 				"Hm? You look lost.",
 				"Best keep to the paths. The forest is unforgiving to wanderers."
@@ -244,13 +237,12 @@ namespace we
 		}
 		else if (!Quest.HasFoundGrandpa())
 		{
-			// First meeting after Aoi sent you
 			DialogBox.SetDialog({
 				"Ah... Aoi sent you, did she?",
 				"I'm Kiyoshi.",
 				"You're looking for the Water Engine, I take it.",
 				"Funny thing... I used to know these woods like the back of my hand.",
-				"These day not so much. I had a compass around here somewhere. Maybe you can help me find it.",
+				"These days not so much. I had a compass around here somewhere. Maybe you can help me find it.",
 				"Without it, north might as well be everywhere at once.",
 				"If you happen across it, bring it back to me."
 				});
@@ -258,7 +250,6 @@ namespace we
 		}
 		else if (!Quest.HasKiyoshiItem())
 		{
-			// Still looking for the compass
 			DialogBox.SetDialog({
 				"No compass yet?",
 				"It's a small thing, but it's kept me on track for years.",
@@ -267,7 +258,6 @@ namespace we
 		}
 		else if (!Quest.CanExitForest())
 		{
-			// Found the item - give compass and unlock path
 			DialogBox.SetDialog({
 				"There it is... my compass.",
 				"Heh... still pointing true.",
@@ -282,7 +272,6 @@ namespace we
 		}
 		else
 		{
-			// Quest complete
 			DialogBox.SetDialog({
 				"Still carrying that compass?",
 				"Good.",

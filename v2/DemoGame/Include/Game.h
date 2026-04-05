@@ -18,7 +18,6 @@ namespace we
 		void StartPlay() override;
 
 	protected:
-		// Override to create our game-specific GameInstance
 		shared<GameInstance> CreateGameInstance() override;
 	};
 }

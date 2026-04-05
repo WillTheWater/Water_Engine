@@ -51,7 +51,6 @@ namespace we
 		SetupShadow();
 		BindInput();
 
-		// Configure camera
 		if (auto CamComp = GetCameraComponent())
 		{
 			CamComp->AttachTo(this);
@@ -96,9 +95,9 @@ namespace we
 	void PlayerCharacter::Tick(float DeltaTime)
 	{
 		HandleInput();
+		PollInteractButton();
 		UpdateDirectionalAnimation();
 
-		// Update shadow position
 		if (ShadowSprite)
 		{
 			ShadowSprite->setPosition(GetPosition() + ShadowOffset);
@@ -141,11 +140,9 @@ namespace we
 
 	void PlayerCharacter::GetDrawables(vector<const drawable*>& OutDrawables) const
 	{
-		// Add SHADOW FIRST so it renders UNDER the character
 		if (ShadowSprite && ShadowTexture)
 			OutDrawables.push_back(&ShadowSprite.value());
 
-		// Then add all the normal character drawables (sprite + debug)
 		Character::GetDrawables(OutDrawables);
 	}
 
@@ -168,11 +165,6 @@ namespace we
 		InteractBinding = Input.BindAction(ACTION_INTERACT, this, &PlayerCharacter::TryInteract);
 
 		// Gamepad bindings
-		Input.Bind(MOVE_UP, Input::Gamepad{ GamepadButton::DPadUp });
-		Input.Bind(MOVE_DOWN, Input::Gamepad{ GamepadButton::DPadDown });
-		Input.Bind(MOVE_LEFT, Input::Gamepad{ GamepadButton::DPadLeft });
-		Input.Bind(MOVE_RIGHT, Input::Gamepad{ GamepadButton::DPadRight });
-
 		Input.Bind(ACTION_INTERACT, Input::Gamepad{ GamepadButton::South });
 	}
 
@@ -210,11 +202,27 @@ namespace we
 		}
 	}
 
+	void PlayerCharacter::PollInteractButton()
+	{
+		if (bInputBlocked || !sf::Joystick::isConnected(0))
+			return;
+
+		auto HardwareButton = Input::LogicToHardware(GamepadButton::South, 0);
+		if (!HardwareButton)
+			return;
+
+		bool bPressed = sf::Joystick::isButtonPressed(0, *HardwareButton);
+		if (bPressed && !bInteractWasPressed)
+		{
+			TryInteract();
+		}
+		bInteractWasPressed = bPressed;
+	}
+
 	void PlayerCharacter::OnBeginOverlap(Actor* Other)
 	{
 		if (auto* Interactable = dynamic_cast<IInteractable*>(Other))
 		{
-			// Don't show prompt if already in dialog with someone
 			if (!bInDialog)
 			{
 				Interactable->ShowPrompt(this);
@@ -226,7 +234,6 @@ namespace we
 	{
 		if (auto* Interactable = dynamic_cast<IInteractable*>(Other))
 		{
-			// If walking away from current interaction, tell NPC to hide/cleanup first
 			if (Interactable == CurrentInteractable)
 			{
 				Interactable->HidePrompt(this);

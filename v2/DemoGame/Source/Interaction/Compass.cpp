@@ -24,7 +24,7 @@ namespace we
 
 		SetupSprite();
 
-		// Setup interaction collision (stored as member to keep alive)
+		// Setup interaction collision
 		CollComp = make_shared<CollisionComponent>(this);
 		CollComp->SetRadius(64.0f);
 		CollComp->SetCollisionChannel(ECollisionChannel::Interaction);

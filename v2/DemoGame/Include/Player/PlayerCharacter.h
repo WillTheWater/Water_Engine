@@ -58,6 +58,7 @@ namespace we
 		void SetupAnimations();
 		void BindInput();
 		void HandleInput();
+		void PollInteractButton();
 		void UpdateDirectionalAnimation();
 		void TryInteract();
 		void OnBeginOverlap(Actor* Other);
@@ -76,6 +77,7 @@ namespace we
 		IInteractable* CurrentInteractable = nullptr;
 		bool bInDialog = false;
 		bool bInputBlocked = false;
+		bool bInteractWasPressed = false;
 
 		// Shadow
 		optional<sprite> ShadowSprite;

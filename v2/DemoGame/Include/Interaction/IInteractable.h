@@ -17,8 +17,6 @@ namespace we
         virtual ~IInteractable() = default;
         virtual bool CanInteract(Actor* Interactor) const { return true; }
         virtual void Interact(Actor* Interactor) = 0;
-        
-        // Prompt control - called by player when overlapping
         virtual void ShowPrompt(Actor* Interactor) = 0;
         virtual void HidePrompt(Actor* Interactor) = 0;
     };

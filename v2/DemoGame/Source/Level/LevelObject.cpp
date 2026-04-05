@@ -49,11 +49,10 @@ namespace we
 
 	void LevelObject::Init()
 	{
-		// Load and store textures as members
 		MainTex = LoadAsset().LoadTexture(MainTexPath);
 		ShadowTex = LoadAsset().LoadTexture(ShadowTexPath);
 
-		// Setup shadow actor (rendered behind)
+		// Setup shadow actor
 		ShadowActor->SetSprite(ShadowTex);
 		ShadowActor->SetSpriteOrigin(SpriteOrigin);
 		ShadowActor->SetCustomRenderDepth(10000.f);

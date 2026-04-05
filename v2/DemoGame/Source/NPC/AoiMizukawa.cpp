@@ -29,12 +29,10 @@ namespace we
 
 		if (!bInDialog)
 		{
-			// Start new dialog
 			StartDialog(Player);
 		}
 		else
 		{
-			// Continue or end existing dialog
 			if (!AdvanceDialog())
 			{
 				EndDialog();
@@ -191,7 +189,6 @@ namespace we
 
 		if (!Quest.HasMetAoi())
 		{
-			// FIRST TIME
 			DialogBox.SetDialog({
 				"Hey! Didn't expect to see someone new out here.",
 				"I'm Aoi. Aoi Mizukawa.",
@@ -204,7 +201,6 @@ namespace we
 		}
 		else if (!Quest.HasFoundGrandpa())
 		{
-			// NOT FOUND GRANDPA
 			DialogBox.SetDialog({
 				"No sign of him yet?",
 				"He never stays in one place long.",
@@ -213,7 +209,6 @@ namespace we
 		}
 		else if (!Quest.HasKiyoshiItem())
 		{
-			// FOUND GRANDPA
 			DialogBox.SetDialog({
 				"You found him already?",
 				"Let me guess... he lost something again.",
@@ -223,7 +218,6 @@ namespace we
 		}
 		else if (!Quest.CanExitForest())
 		{
-			// RETURNED ITEM
 			DialogBox.SetDialog({
 				"You found grandpa's compass? Nice.",
 				"Like I said, he's always losing something.",
@@ -232,7 +226,6 @@ namespace we
 		}
 		else
 		{
-			// QUEST COMPLETE
 			DialogBox.SetDialog({
 				"So, heading north now?",
 				"The forest up there can be intiidating, be mindful.",

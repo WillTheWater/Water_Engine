@@ -74,20 +74,15 @@ namespace we
             Subsystem.Quit();
         });
         
-        // Bind 'E' key and South button for dialog advancement
         InputController().Bind(ACTION_INTERACT, Input::Gamepad{ GamepadButton::South, 0 });
         DialogBinding = InputController().BindAction(ACTION_INTERACT, this, &Credits::AdvanceDialog);
         
-        // Auto-show dialog
         DialogUI.Show();
-
-        // Cursor hidden during dialog (shown only when buttons appear)
         GetCursor().SetVisibility(false);
     }
 
     void Credits::Tick(float DeltaTime)
     {
-        // Update cloud scrolling effect
         if (CloudsPPC)
         {
             CloudsPPC->Tick(DeltaTime);
@@ -106,17 +101,14 @@ namespace we
 
     void Credits::EndPlay()
     {
-        // Release input binding
         DialogBinding.Release();
         
-        // Clean up cloud post-processing
         if (CloudsPPC)
         {
             CloudsPPC->EndPlay();
             CloudsPPC.reset();
         }
         
-        // Hide dialog
         DialogUI.Hide();
     }
 

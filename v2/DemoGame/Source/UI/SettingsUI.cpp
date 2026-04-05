@@ -131,7 +131,7 @@ namespace we
 		FullscreenRow->add(FullscreenCheckbox);
 		Layout->add(FullscreenRow);
 
-		// Spacer (pushes back button to bottom)
+		// Spacer
 		Layout->add(tgui::Label::create(""), "Spacer2");
 
 		// === BACK BUTTON ===
@@ -169,6 +169,7 @@ namespace we
 		Slider->setMaximum(100);
 		Slider->setValue(100);
 		Slider->setStep(1);
+		Slider->setFocusable(false);
 
 		auto Renderer = Slider->getRenderer();
 		Renderer->setTrackColor(tgui::Color{ 0, 16, 31 });
@@ -185,6 +186,7 @@ namespace we
 	{
 		auto Checkbox = tgui::CheckBox::create(Text);
 		Checkbox->setTextSize(18);
+		Checkbox->setFocusable(false);
 
 		auto Renderer = Checkbox->getRenderer();
 		Renderer->setBackgroundColor(tgui::Color{ 0, 16, 31 });

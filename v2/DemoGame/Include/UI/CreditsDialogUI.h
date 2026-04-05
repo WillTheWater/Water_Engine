@@ -23,13 +23,8 @@ namespace we
 		void Tick(float DeltaTime);
 		bool IsVisible() const;
 
-		// Set dialog content
 		void SetDialog(const vector<string>& Lines);
-		
-		// Advance to next line, returns false if dialog ended
 		bool Advance();
-		
-		// Check if dialog is complete
 		bool IsComplete() const;
 
 		// Button callbacks
@@ -45,8 +40,6 @@ namespace we
 		tgui::Panel::Ptr Background;
 		tgui::Label::Ptr TextLabel;
 		tgui::Label::Ptr ContinueArrow;
-		
-		// End buttons container
 		tgui::HorizontalLayout::Ptr ButtonsLayout;
 		tgui::Button::Ptr MainMenuButton;
 		tgui::Button::Ptr QuitButton;

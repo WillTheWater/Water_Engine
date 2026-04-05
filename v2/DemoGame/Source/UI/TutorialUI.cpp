@@ -54,7 +54,7 @@ namespace we
 
 		// Title
 		auto Title = tgui::Label::create("HOW TO PLAY");
-		Title->setTextSize(32);
+		Title->setTextSize(42);
 		Title->getRenderer()->setTextColor(tgui::Color::White);
 		Title->setPosition("50%", "5%");
 		Title->setOrigin(0.5f, 0.0f);
@@ -133,10 +133,8 @@ namespace we
 
 		auto Renderer = Button->getRenderer();
 		Renderer->setBackgroundColor(tgui::Color{ 0, 16, 31 });
-		// Removed hover color to match other buttons
 		Renderer->setBackgroundColorDown(tgui::Color{ 133, 120, 81 });
 		Renderer->setTextColor(tgui::Color::White);
-		// Removed text hover color to match other buttons
 		Renderer->setTextColorDown(tgui::Color::White);
 		Renderer->setBorderColor(tgui::Color::White);
 		Renderer->setBorders(tgui::Outline(2));
@@ -151,9 +149,6 @@ namespace we
 
 		Background->setVisible(true);
 		bVisible = true;
-
-		if (ContinueButton)
-			ContinueButton->setFocused(true);
 
 		GetCursor().SetVisibility(true);
 		Controller.Enable();

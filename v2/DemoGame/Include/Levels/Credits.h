@@ -38,8 +38,7 @@ namespace we
         shared<Actor> GroundImage;
         shared<Actor> CloudImage;
         shared<PostProcessingComponent> CloudsPPC;
-        
-        // Credits dialog
+       
         CreditsDialogUI DialogUI;
         BindingHandle DialogBinding;
     };

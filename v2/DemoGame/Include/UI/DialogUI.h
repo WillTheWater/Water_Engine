@@ -21,16 +21,9 @@ namespace we
 		void Hide();
 		bool IsVisible() const;
 
-		// Set entire dialog sequence
 		void SetDialog(const vector<string>& Lines);
-		
-		// Advance to next line, returns false if dialog ended
 		bool Advance();
-		
-		// Check if there's more dialog
 		bool HasMoreLines() const;
-		
-		// Get current line index
 		size_t GetCurrentLine() const { return CurrentLine; }
 
 		void SetPosition(const vec2f& WorldPos, const vec2f& Offset = {0.0f, 0.0f});
@@ -47,7 +40,7 @@ namespace we
 		vector<string> DialogLines;
 		size_t CurrentLine = 0;
 		
-		vec2f Anchor{0.5f, 0.5f};  // Centered by default
+		vec2f Anchor{0.5f, 0.5f};
 		bool bInitialized = false;
 		
 		static constexpr float Width = 400.0f;

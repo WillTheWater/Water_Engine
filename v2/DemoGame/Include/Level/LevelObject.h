@@ -13,7 +13,6 @@ namespace we
 	class Actor;
 	class PhysicsComponent;
 
-	// Custom actor that handles debug drawing for physics
 	class LevelObjectActor : public Actor
 	{
 	public:
