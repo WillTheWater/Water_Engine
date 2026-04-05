@@ -4,6 +4,7 @@
 // =============================================================================
 
 #include "UI/PauseMenuUI.h"
+#include "UI/UIStyle.h"
 #include "Subsystem/GuiSubsystem.h"
 #include "Subsystem/SaveSubsystem.h"
 #include "Subsystem/CursorSubsystem.h"
@@ -55,53 +56,32 @@ namespace we
 		auto& GUI = MakeGUI().GetScreenUI();
 		
 		// Button layout
-		auto Layout = tgui::VerticalLayout::create();
+		auto Layout = UIStyle::CreateVerticalLayout();
 		Layout->setSize({ "16%", "20%" });
 		Layout->setOrigin(0.5f, 0.5f);
 		Layout->setPosition("50%", "50%");  // Center of screen
-		Layout->getRenderer()->setSpaceBetweenWidgets(10);
-		Layout->getRenderer()->setPadding(10);
 		
 		// Resume Button
-		auto Resume = CreateButton("RESUME");
+		auto Resume = UIStyle::CreateButton("RESUME");
 		Resume->onPress([this]() { OnResume(); });
 		Layout->add(Resume, "ResumeButton");
 		
 		// Settings Button
-		auto Settings = CreateButton("SETTINGS");
+		auto Settings = UIStyle::CreateButton("SETTINGS");
 		Settings->onPress([this]() { OnSettings(); });
 		Layout->add(Settings, "SettingsButton");
 		
 		// Main Menu Button
-		auto MainMenu = CreateButton("MAIN MENU");
+		auto MainMenu = UIStyle::CreateButton("MAIN MENU");
 		MainMenu->onPress([this]() { OnMainMenu(); });
 		Layout->add(MainMenu, "MainMenuButton");
 		
 		// Save & Quit Button
-		auto SaveQuit = CreateButton("SAVE & QUIT");
+		auto SaveQuit = UIStyle::CreateButton("SAVE & QUIT");
 		SaveQuit->onPress([this]() { OnSaveAndQuit(); });
 		Layout->add(SaveQuit, "SaveQuitButton");
 		
 		GUI.add(Layout, "PauseLayout");
-	}
-	
-	tgui::Button::Ptr PauseMenuUI::CreateButton(const std::string& Text)
-	{
-		auto Button = tgui::Button::create(Text);
-		Button->setTextSize(24);
-		Button->setFocusable(false);
-		
-		auto Renderer = Button->getRenderer();
-		Renderer->setBackgroundColor(tgui::Color{0, 16, 31});
-		Renderer->setBackgroundColorHover(tgui::Color{47, 121, 142});
-		Renderer->setBackgroundColorDown(tgui::Color{133, 120, 81});
-		Renderer->setTextColor(tgui::Color::White);
-		Renderer->setTextColorHover(tgui::Color::White);
-		Renderer->setTextColorDown(tgui::Color::White);
-		Renderer->setBorderColor(tgui::Color::White);
-		Renderer->setBorders(tgui::Outline(2));
-		
-		return Button;
 	}
 	
 	void PauseMenuUI::Show()

@@ -4,6 +4,7 @@
 // =============================================================================
 
 #include "UI/DialogUI.h"
+#include "UI/UIStyle.h"
 #include "Subsystem/GuiSubsystem.h"
 
 namespace we
@@ -24,23 +25,17 @@ namespace we
 			return;
 
 		// Black background with white border
-		Background = tgui::Panel::create({Width, Height});
+		Background = UIStyle::CreatePanel({Width, Height});
 		Background->getRenderer()->setBackgroundColor({0, 0, 0, 200});
-		Background->getRenderer()->setBorderColor({255, 255, 255, 255});
-		Background->getRenderer()->setBorders({2, 2, 2, 2});
 
-		// Text label with word wrap
-		TextLabel = tgui::Label::create();
-		TextLabel->setTextSize(16);
-		TextLabel->getRenderer()->setTextColor({255, 255, 255, 255});
+		// Text label
+		TextLabel = UIStyle::CreateLabel("", UILabelStyle::Small);
 		TextLabel->setPosition({10.0f, 10.0f});
 		TextLabel->setSize({Width - 20.0f, Height - 40.0f});
-		TextLabel->setWidth(Width - 20.0f);
+		TextLabel->setAutoSize(false);
 
 		// Continue arrow (bottom right)
-		ContinueArrow = tgui::Label::create("▼");
-		ContinueArrow->setTextSize(14);
-		ContinueArrow->getRenderer()->setTextColor({255, 255, 255, 255});
+		ContinueArrow = UIStyle::CreateLabel("▼", UILabelStyle::Tiny);
 		ContinueArrow->setPosition({Width - 25.0f, Height - 25.0f});
 		ContinueArrow->setSize({20.0f, 20.0f});
 

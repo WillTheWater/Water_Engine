@@ -4,6 +4,7 @@
 // =============================================================================
 
 #include "UI/InteractUI.h"
+#include "UI/UIStyle.h"
 #include "Subsystem/GuiSubsystem.h"
 
 namespace we
@@ -24,15 +25,11 @@ namespace we
 			return;
 
 		// Black background with white border
-		Background = tgui::Panel::create({Width, Height});
+		Background = UIStyle::CreatePanel({Width, Height});
 		Background->getRenderer()->setBackgroundColor({0, 0, 0, 200});
-		Background->getRenderer()->setBorderColor({255, 255, 255, 255});
-		Background->getRenderer()->setBorders({2, 2, 2, 2});
 
 		// White centered text
-		TextLabel = tgui::Label::create(Text);
-		TextLabel->setTextSize(14);
-		TextLabel->getRenderer()->setTextColor({255, 255, 255, 255});
+		TextLabel = UIStyle::CreateLabel(Text, UILabelStyle::Tiny);
 		TextLabel->setHorizontalAlignment(tgui::HorizontalAlignment::Center);
 		TextLabel->setVerticalAlignment(tgui::VerticalAlignment::Center);
 		TextLabel->setSize({Width, Height});

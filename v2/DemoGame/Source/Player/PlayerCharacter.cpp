@@ -164,8 +164,8 @@ namespace we
 		Input.Bind(ACTION_INTERACT, Input::Keyboard{ sf::Keyboard::Scan::E });
 		InteractBinding = Input.BindAction(ACTION_INTERACT, this, &PlayerCharacter::TryInteract);
 
-		// Gamepad bindings
-		Input.Bind(ACTION_INTERACT, Input::Gamepad{ GamepadButton::South });
+		// Note: Gamepad South button is handled via hardware polling in PollInteractButton()
+		// Do NOT bind it here to avoid double-triggering
 	}
 
 	void PlayerCharacter::HandleInput()

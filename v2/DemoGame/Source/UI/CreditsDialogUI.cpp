@@ -4,6 +4,7 @@
 // =============================================================================
 
 #include "UI/CreditsDialogUI.h"
+#include "UI/UIStyle.h"
 #include "Subsystem/GuiSubsystem.h"
 #include "Subsystem/CursorSubsystem.h"
 #include "Utility/Log.h"
@@ -25,46 +26,32 @@ namespace we
 		if (bInitialized) return;
 
 		// Main background panel
-		Background = tgui::Panel::create({ Width, Height });
-		Background->getRenderer()->setBackgroundColor({ 0, 0, 0, 220 });
+		Background = UIStyle::CreatePanel({ Width, Height });
 		Background->getRenderer()->setBorderColor({ 255, 255, 255, 100 });
-		Background->getRenderer()->setBorders({ 2 });
 
 		// Text label for dialog content
-		TextLabel = tgui::Label::create();
+		TextLabel = UIStyle::CreateLabel("", UILabelStyle::Body);
 		TextLabel->setSize({ Width - 80, Height - 100 });
 		TextLabel->setPosition({ 40, 40 });
-		TextLabel->setTextSize(22);
-		TextLabel->getRenderer()->setTextColor(sf::Color::White);
 		TextLabel->setHorizontalAlignment(tgui::Label::HorizontalAlignment::Center);
 		TextLabel->setVerticalAlignment(tgui::Label::VerticalAlignment::Center);
 		Background->add(TextLabel);
 
 		// Continue arrow indicator (down triangle to match DialogUI)
-		ContinueArrow = tgui::Label::create("▼");
-		ContinueArrow->setTextSize(18);
-		ContinueArrow->getRenderer()->setTextColor({ 255, 255, 255, 255 });
+		ContinueArrow = UIStyle::CreateLabel("▼", UILabelStyle::Tiny);
 		ContinueArrow->setPosition({ Width - 35, Height - 35 });
 		ContinueArrow->setVisible(true);
 		Background->add(ContinueArrow);
 
 		// Buttons layout (horizontal, centered at bottom)
-		ButtonsLayout = tgui::HorizontalLayout::create();
+		ButtonsLayout = UIStyle::CreateHorizontalLayout();
 		ButtonsLayout->setSize({ 360, 45 });
 		ButtonsLayout->setPosition({ (Width - 360) / 2, Height - 70 });
 		ButtonsLayout->setVisible(false);
 		Background->add(ButtonsLayout);
 
-		// Main Menu button - styled to match MainMenuUI exactly
-		MainMenuButton = tgui::Button::create("Main Menu");
-		MainMenuButton->setTextSize(24);
-		MainMenuButton->setFocusable(false);
-		MainMenuButton->getRenderer()->setBackgroundColor(tgui::Color{ 0, 16, 31 });
-		MainMenuButton->getRenderer()->setBackgroundColorDown(tgui::Color{ 133, 120, 81 });
-		MainMenuButton->getRenderer()->setTextColor(tgui::Color::White);
-		MainMenuButton->getRenderer()->setTextColorDown(tgui::Color::White);
-		MainMenuButton->getRenderer()->setBorderColor(tgui::Color::White);
-		MainMenuButton->getRenderer()->setBorders(tgui::Outline(2));
+		// Main Menu button
+		MainMenuButton = UIStyle::CreateButton("Main Menu");
 		MainMenuButton->onPress([this]() {
 			if (OnMainMenu) OnMainMenu();
 		});
@@ -73,16 +60,8 @@ namespace we
 		// Spacer between buttons
 		ButtonsLayout->addSpace(0.2f);
 
-		// Quit button - styled to match MainMenuUI exactly
-		QuitButton = tgui::Button::create("Quit");
-		QuitButton->setTextSize(24);
-		QuitButton->setFocusable(false);
-		QuitButton->getRenderer()->setBackgroundColor(tgui::Color{ 0, 16, 31 });
-		QuitButton->getRenderer()->setBackgroundColorDown(tgui::Color{ 133, 120, 81 });
-		QuitButton->getRenderer()->setTextColor(tgui::Color::White);
-		QuitButton->getRenderer()->setTextColorDown(tgui::Color::White);
-		QuitButton->getRenderer()->setBorderColor(tgui::Color::White);
-		QuitButton->getRenderer()->setBorders(tgui::Outline(2));
+		// Quit button
+		QuitButton = UIStyle::CreateButton("Quit");
 		QuitButton->onPress([this]() {
 			if (OnQuit) OnQuit();
 		});

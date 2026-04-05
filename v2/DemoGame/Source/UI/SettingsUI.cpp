@@ -4,6 +4,7 @@
 // =============================================================================
 
 #include "UI/SettingsUI.h"
+#include "UI/UIStyle.h"
 #include "Subsystem/GuiSubsystem.h"
 #include "Subsystem/AudioSubsystem.h"
 #include "Subsystem/SaveSubsystem.h"
@@ -15,8 +16,6 @@
 #include <TGUI/Widgets/CheckBox.hpp>
 #include <TGUI/Widgets/Label.hpp>
 #include <TGUI/Widgets/Panel.hpp>
-#include <TGUI/Widgets/VerticalLayout.hpp>
-#include <TGUI/Widgets/HorizontalLayout.hpp>
 
 namespace we
 {
@@ -52,52 +51,49 @@ namespace we
 
 		// Background overlay (semi-transparent dark)
 		auto Overlay = tgui::Panel::create({ "100%", "100%" });
-		Overlay->getRenderer()->setBackgroundColor(tgui::Color{ 0, 0, 0, 180 });
+		Overlay->getRenderer()->setBackgroundColor(UIStyle::GetColors().PanelBackground);
 		Overlay->setPosition(0, 0);
 
-		// Main content layout
-		auto Layout = tgui::VerticalLayout::create();
-		Layout->setSize({ "30%", "60%" });
-		Layout->setOrigin(0.5f, 0.5f);
-		Layout->setPosition("50%", "50%");
-		Layout->getRenderer()->setSpaceBetweenWidgets(10);
-		Layout->getRenderer()->setPadding(20);
+		// Main content panel - no scrolling
+		auto ContentPanel = UIStyle::CreatePanel({ "30%", "60%" });
+		ContentPanel->setOrigin(0.5f, 0.5f);
+		ContentPanel->setPosition("50%", "50%");
+
+		float CurrentY = 25; // Starting Y position
+		float RowHeight = 45;  // Increased from 35 to prevent overlapping
+		float SectionSpacing = 20;  // Increased spacing between sections
+		float LabelSpacing = 8;
 
 		// === AUDIO SECTION ===
-		auto AudioLabel = tgui::Label::create("AUDIO");
-		AudioLabel->setTextSize(24);
-		AudioLabel->getRenderer()->setTextColor(tgui::Color::White);
-		Layout->add(AudioLabel);
+		auto AudioLabel = UIStyle::CreateLabel("AUDIO", UILabelStyle::Section);
+		AudioLabel->setPosition("5%", CurrentY);
+		ContentPanel->add(AudioLabel);
+		CurrentY += RowHeight;
 
-		// Mute toggle (manual positioning to avoid stretching)
-		auto MuteRow = tgui::Panel::create({ "100%", "30" });
-		MuteRow->getRenderer()->setBackgroundColor(tgui::Color::Transparent);
-		auto MuteLabel = tgui::Label::create("Mute All");
-		MuteLabel->setTextSize(18);
-		MuteLabel->setPosition(0, 5);
-		MuteLabel->getRenderer()->setTextColor(tgui::Color::White);
-		MuteRow->add(MuteLabel);
-		MuteCheckbox = CreateCheckbox("");
-		MuteCheckbox->setPosition("85%", 2);
-		MuteCheckbox->setSize(25, 25);
+		// Mute toggle
+		auto MuteLabel = UIStyle::CreateLabel("Mute All", UILabelStyle::Body);
+		MuteLabel->setPosition("5%", CurrentY);
+		ContentPanel->add(MuteLabel);
+		MuteCheckbox = UIStyle::CreateCheckbox("");
+		MuteCheckbox->setPosition("85%", CurrentY);
 		MuteCheckbox->onChange([this]() { OnMuteChanged(); });
-		MuteRow->add(MuteCheckbox);
-		Layout->add(MuteRow);
+		ContentPanel->add(MuteCheckbox);
+		CurrentY += RowHeight + LabelSpacing;
 
-		// Channel sliders
+		// Channel sliders helper
 		auto AddChannelSlider = [&](const std::string& Name, tgui::Slider::Ptr& Slider, auto Callback)
 		{
-			auto Row = tgui::HorizontalLayout::create();
-			Row->setSize({ "100%", "30" });
-			auto Label = tgui::Label::create(Name);
-			Label->setTextSize(16);
-			Label->getRenderer()->setTextColor(tgui::Color::White);
-			Label->setSize({ "80", "100%" });
-			Row->add(Label);
-			Slider = CreateSlider();
+			auto Label = UIStyle::CreateLabel(Name, UILabelStyle::Body);
+			Label->setPosition("5%", CurrentY);
+			ContentPanel->add(Label);
+			
+			Slider = UIStyle::CreateSlider();
+			Slider->setSize({ "50%", "20" });
+			Slider->setPosition("45%", CurrentY + 5);
 			Slider->onValueChange(Callback);
-			Row->add(Slider);
-			Layout->add(Row);
+			ContentPanel->add(Slider);
+			
+			CurrentY += RowHeight;
 		};
 
 		AddChannelSlider("Master", MasterSlider, [this]() { OnMasterVolumeChanged(); });
@@ -107,97 +103,33 @@ namespace we
 		AddChannelSlider("Voice", VoiceSlider, [this]() { OnVoiceVolumeChanged(); });
 		AddChannelSlider("UI", UISlider, [this]() { OnUIVolumeChanged(); });
 
-		// Spacer
-		Layout->add(tgui::Label::create(""), "Spacer1");
+		CurrentY += SectionSpacing;
 
 		// === VIDEO SECTION ===
-		auto VideoLabel = tgui::Label::create("VIDEO");
-		VideoLabel->setTextSize(24);
-		VideoLabel->getRenderer()->setTextColor(tgui::Color::White);
-		Layout->add(VideoLabel);
+		auto VideoLabel = UIStyle::CreateLabel("VIDEO", UILabelStyle::Section);
+		VideoLabel->setPosition("5%", CurrentY);
+		ContentPanel->add(VideoLabel);
+		CurrentY += RowHeight;
 
-		// Fullscreen toggle (manual positioning to avoid stretching)
-		auto FullscreenRow = tgui::Panel::create({ "100%", "30" });
-		FullscreenRow->getRenderer()->setBackgroundColor(tgui::Color::Transparent);
-		auto FullscreenLabel = tgui::Label::create("Fullscreen");
-		FullscreenLabel->setTextSize(18);
-		FullscreenLabel->setPosition(0, 5);
-		FullscreenLabel->getRenderer()->setTextColor(tgui::Color::White);
-		FullscreenRow->add(FullscreenLabel);
-		FullscreenCheckbox = CreateCheckbox("");
-		FullscreenCheckbox->setPosition("85%", 2);
-		FullscreenCheckbox->setSize(25, 25);
+		// Fullscreen toggle
+		auto FullscreenLabel = UIStyle::CreateLabel("Fullscreen", UILabelStyle::Body);
+		FullscreenLabel->setPosition("5%", CurrentY);
+		ContentPanel->add(FullscreenLabel);
+		FullscreenCheckbox = UIStyle::CreateCheckbox("");
+		FullscreenCheckbox->setPosition("85%", CurrentY);
 		FullscreenCheckbox->onChange([this]() { OnFullscreenChanged(); });
-		FullscreenRow->add(FullscreenCheckbox);
-		Layout->add(FullscreenRow);
-
-		// Spacer
-		Layout->add(tgui::Label::create(""), "Spacer2");
+		ContentPanel->add(FullscreenCheckbox);
+		CurrentY += RowHeight + SectionSpacing;
 
 		// === BACK BUTTON ===
-		auto BackButton = CreateButton("BACK");
+		auto BackButton = UIStyle::CreateButton("BACK");
+		BackButton->setSize({ "40%", "40" });
+		BackButton->setPosition("30%", "85%");
 		BackButton->onPress([this]() { OnBackPressed(); });
-		Layout->add(BackButton, "BackButton");
+		ContentPanel->add(BackButton);
 
-		Overlay->add(Layout);
+		Overlay->add(ContentPanel);
 		GUI.add(Overlay, "SettingsOverlay");
-	}
-
-	tgui::Button::Ptr SettingsUI::CreateButton(const std::string& Text)
-	{
-		auto Button = tgui::Button::create(Text);
-		Button->setTextSize(24);
-		Button->setFocusable(false);
-
-		auto Renderer = Button->getRenderer();
-		Renderer->setBackgroundColor(tgui::Color{ 0, 16, 31 });
-		Renderer->setBackgroundColorHover(tgui::Color{ 47, 121, 142 });
-		Renderer->setBackgroundColorDown(tgui::Color{ 133, 120, 81 });
-		Renderer->setTextColor(tgui::Color::White);
-		Renderer->setTextColorHover(tgui::Color::White);
-		Renderer->setTextColorDown(tgui::Color::White);
-		Renderer->setBorderColor(tgui::Color::White);
-		Renderer->setBorders(tgui::Outline(2));
-
-		return Button;
-	}
-
-	tgui::Slider::Ptr SettingsUI::CreateSlider()
-	{
-		auto Slider = tgui::Slider::create();
-		Slider->setMinimum(0);
-		Slider->setMaximum(100);
-		Slider->setValue(100);
-		Slider->setStep(1);
-		Slider->setFocusable(false);
-
-		auto Renderer = Slider->getRenderer();
-		Renderer->setTrackColor(tgui::Color{ 0, 16, 31 });
-		Renderer->setTrackColorHover(tgui::Color{ 47, 121, 142 });
-		Renderer->setThumbColor(tgui::Color{ 133, 120, 81 });
-		Renderer->setThumbColorHover(tgui::Color{ 200, 180, 120 });
-		Renderer->setBorderColor(tgui::Color::White);
-		Renderer->setBorders(tgui::Outline(2));
-
-		return Slider;
-	}
-
-	tgui::CheckBox::Ptr SettingsUI::CreateCheckbox(const std::string& Text)
-	{
-		auto Checkbox = tgui::CheckBox::create(Text);
-		Checkbox->setTextSize(18);
-		Checkbox->setFocusable(false);
-
-		auto Renderer = Checkbox->getRenderer();
-		Renderer->setBackgroundColor(tgui::Color{ 0, 16, 31 });
-		Renderer->setBackgroundColorHover(tgui::Color{ 47, 121, 142 });
-		Renderer->setBackgroundColorChecked(tgui::Color{ 133, 120, 81 });
-		Renderer->setBackgroundColorCheckedHover(tgui::Color{ 200, 180, 120 });
-		Renderer->setBorderColor(tgui::Color::White);
-		Renderer->setBorders(tgui::Outline(2));
-		Renderer->setTextColor(tgui::Color::White);
-
-		return Checkbox;
 	}
 
 	void SettingsUI::LoadSettings()
