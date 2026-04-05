@@ -29,7 +29,9 @@ namespace we
 		unique<MainMenuUI> MenuUI;
 		unique<SettingsUI> SettingsMenu;
         shared<texture> BG;
+        shared<texture> Logo;
         shared<Actor> BGImage;
+        shared<Actor> LogoImage;
         shared<PostProcessingComponent> PPC;
 
     private:

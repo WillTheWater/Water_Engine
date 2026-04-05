@@ -25,15 +25,16 @@ namespace we
 
         void GarbageCollect();
 
+        #ifdef USE_PACKED_ASSETS
+        // Public for UIStyle font loading from packed assets
+        string LoadFileData(const string& Path);
+        #endif
+
     private:
         template<typename MapType>
         void CleanCache(MapType& Cache, const string& TypeName);
 
         string ResolvePath(const string& Filename);
-        
-        #ifdef USE_PACKED_ASSETS
-        string LoadFileData(const string& Path);
-        #endif
 
     private:
         static ResourceSubsystem* Instance;

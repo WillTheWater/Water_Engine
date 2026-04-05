@@ -12,7 +12,6 @@
 #include "Framework/World/Character.h"
 #include "Player/PlayerCharacter.h"
 #include "Component/CameraComponent.h"
-#include "PostProcess/Effects/PPEScroll.h"
 #include "Component/PhysicsComponent.h"
 #include "UI/PauseMenuUI.h"
 #include "Subsystem/TimerSubsystem.h"
@@ -54,7 +53,6 @@ namespace we
         WaterImage->SetScale({ 1.1,1 });
         WaterPPC = we::make_shared<PostProcessingComponent>(WaterImage.get());
         WaterPPC->SetTexture(Water);
-        WaterPPC->AddEffect(make_unique<PPEScroll>());
         WaterPPC->AddEffect(make_unique<PPEWave>());
         WaterPPC->BeginPlay();
 

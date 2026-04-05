@@ -11,12 +11,10 @@ namespace we
 {
 	void InputEventHandler::operator()(const event::JoystickConnected& Gamepad)
 	{
-		LOG("Gamepad Connected: {}", Gamepad.joystickId);
 	}
 
 	void InputEventHandler::operator()(const event::JoystickDisconnected& Gamepad)
 	{
-		LOG("Gamepad Disonnected: {}", Gamepad.joystickId);
 	}
 
 	void InputEventHandler::operator()(const event::JoystickButtonPressed& Button)

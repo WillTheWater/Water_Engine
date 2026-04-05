@@ -13,7 +13,6 @@
 #include "UI/MainMenuUI.h"
 #include "UI/SettingsUI.h"
 #include "Component/PostProcessingComponent.h"
-#include "PostProcess/Effects/PPEGrayscale.h"
 #include "PostProcess/Effects/PPEWave.h"
 
 namespace we
@@ -31,6 +30,13 @@ namespace we
         PPC->SetTexture(BG);
         PPC->AddEffect(make_unique<PPEWave>());
         PPC->BeginPlay();
+
+        Logo = LoadAsset().LoadTexture("Assets/Textures/Default/WELogo.png");
+        LogoImage = SpawnActor<Actor>().lock();
+        LogoImage->SetSprite(Logo);
+        LogoImage->SetSpriteOrigin({ Logo->getSize().x / 2.f, Logo->getSize().y / 2.f });
+        LogoImage->SetPosition({ 1920 / 2.f, 1080 / 2.f });
+        LogoImage->SetScale({ .4, .4 });
 
 		// Main Menu UI
         MenuUI = make_unique<MainMenuUI>();

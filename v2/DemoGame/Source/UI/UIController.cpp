@@ -40,8 +40,6 @@ namespace we
 		
 		vec2f WorldPos = WindowToWorld(WindowCursorPos);
 		GetCursor().SetPosition(WorldPos);
-
-		LOG("UIController enabled");
 	}
 
 	void UIController::Disable()
@@ -50,8 +48,6 @@ namespace we
 			return;
 
 		bEnabled = false;
-		
-		LOG("UIController disabled");
 	}
 
 	void UIController::Tick(float DeltaTime)
@@ -130,8 +126,6 @@ namespace we
 			
 			event::MouseButtonReleased release{ sf::Mouse::Button::Left, MousePos };
 			MakeGUI().HandleEvent(event(release));
-			
-			LOG("UI Click at window {:.0f}, {:.0f}", WindowCursorPos.x, WindowCursorPos.y);
 		}
 		
 		bSouthWasPressed = bPressed;

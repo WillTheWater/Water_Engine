@@ -7,6 +7,8 @@
 #include "Subsystem/ResourceSubsystem.h"
 #include "Utility/Log.h"
 
+#include <cstring>
+
 #include <TGUI/Widgets/Button.hpp>
 #include <TGUI/Widgets/CheckBox.hpp>
 #include <TGUI/Widgets/Slider.hpp>
@@ -25,41 +27,66 @@ namespace we
     UISizes UIStyle::Sizes;
     shared<font> UIStyle::GameFont;
     
+    // Static buffer to keep font data alive for TGUI
+    static vector<uint8> s_FontDataBuffer;
+    
     void UIStyle::Initialize()
     {
         if (bInitialized) return;
         
-        // Resolve the font path (handles packed vs raw assets)
-        std::string ResolvedFontPath;
+        // Load font file into memory manually, then create TGUI font from bytes
+        // This avoids Windows Defender false positive triggered by tgui::Font(filepath)
+        bool bLoaded = false;
+        
         #ifdef USE_RAW_ASSETS
-            ResolvedFontPath = std::string(ASSET_ROOT_PATH) + FontPath;
+            // Debug: Load from disk directly
+            string ResolvedFontPath = string(ASSET_ROOT_PATH) + FontPath;
+            std::ifstream file(ResolvedFontPath, std::ios::binary | std::ios::ate);
+            if (file)
+            {
+                auto size = file.tellg();
+                file.seekg(0, std::ios::beg);
+                s_FontDataBuffer.resize(static_cast<ulong>(size));
+                file.read(reinterpret_cast<char*>(s_FontDataBuffer.data()), size);
+                file.close();
+                bLoaded = true;
+            }
+            else
+            {
+                WARNING("UIStyle: Failed to load font file: {}", ResolvedFontPath);
+            }
         #else
-            ResolvedFontPath = FontPath;
+            // Release: Load from packed assets via ResourceSubsystem
+            string FontData = LoadAsset().LoadFileData(FontPath);
+            if (!FontData.empty())
+            {
+                s_FontDataBuffer.resize(FontData.size());
+                memcpy(s_FontDataBuffer.data(), FontData.data(), FontData.size());
+                bLoaded = true;
+            }
+            else
+            {
+                WARNING("UIStyle: Failed to load font from pak: {}", FontPath);
+            }
         #endif
         
-        // Load custom font via ResourceSubsystem to keep it cached
-        GameFont = LoadAsset().LoadFont(FontPath);
-        if (!GameFont)
+        // Create TGUI font from memory (NO file path access!)
+        if (bLoaded && !s_FontDataBuffer.empty())
         {
-            WARNING("UIStyle: Failed to load custom font from {}", FontPath);
-        }
-        else
-        {
-            LOG("UIStyle: Loaded custom font from {}", FontPath);
-            
-            // Set TGUI global font (font object is temporary, TGUI copies it)
             try {
-                tgui::Font TGUIFont(ResolvedFontPath);
-                if (TGUIFont)
+                tgui::Font font(s_FontDataBuffer.data(), s_FontDataBuffer.size());
+                if (font)
                 {
-                    tgui::Font::setGlobalFont(TGUIFont);
-                    LOG("UIStyle: Set TGUI global font");
+                    tgui::Font::setGlobalFont(font);
                 }
             }
             catch (...) {
-                WARNING("UIStyle: Failed to set TGUI global font");
+                WARNING("UIStyle: Failed to set TGUI global font from memory");
             }
         }
+        
+        // Also load via ResourceSubsystem for potential other uses
+        GameFont = LoadAsset().LoadFont(FontPath);
         
         bInitialized = true;
     }

@@ -7,7 +7,6 @@
 
 #include "Core/CoreMinimal.h"
 #include <TGUI/Core.hpp>
-#include <TGUI/Font.hpp>
 
 // TGUI Widget forward declarations
 namespace tgui

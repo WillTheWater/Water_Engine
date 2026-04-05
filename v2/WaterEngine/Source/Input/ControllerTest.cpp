@@ -24,7 +24,6 @@ namespace we
 		GamepadId = InGamepadId;
 		bConnected = true;
 		BindButtons();
-		LOG("Controller test started on gamepad {}", GamepadId);
 	}
 
 	void ControllerTest::EndTest()
@@ -111,7 +110,6 @@ namespace we
 		float NewPovX = sf::Joystick::getAxisPosition(GamepadId, sf::Joystick::Axis::PovX);
 		float NewPovY = sf::Joystick::getAxisPosition(GamepadId, sf::Joystick::Axis::PovY);
 
-		// LOG axis changes only when they cross a threshold (deadzone)
 		const float Threshold = 15.0f;
 		const float TriggerThreshold = 1.0f; // Triggers rest at 0, go to +/-100
 		
