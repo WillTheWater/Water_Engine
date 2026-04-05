@@ -27,15 +27,12 @@ namespace we
     UISizes UIStyle::Sizes;
     shared<font> UIStyle::GameFont;
     
-    // Static buffer to keep font data alive for TGUI
-    static vector<uint8> s_FontDataBuffer;
+    static vector<uint8> FontDataBuffer;
     
     void UIStyle::Initialize()
     {
         if (bInitialized) return;
         
-        // Load font file into memory manually, then create TGUI font from bytes
-        // This avoids Windows Defender false positive triggered by tgui::Font(filepath)
         bool bLoaded = false;
         
         #ifdef USE_RAW_ASSETS
@@ -46,8 +43,8 @@ namespace we
             {
                 auto size = file.tellg();
                 file.seekg(0, std::ios::beg);
-                s_FontDataBuffer.resize(static_cast<ulong>(size));
-                file.read(reinterpret_cast<char*>(s_FontDataBuffer.data()), size);
+                FontDataBuffer.resize(static_cast<ulong>(size));
+                file.read(reinterpret_cast<char*>(FontDataBuffer.data()), size);
                 file.close();
                 bLoaded = true;
             }
@@ -60,8 +57,8 @@ namespace we
             string FontData = LoadAsset().LoadFileData(FontPath);
             if (!FontData.empty())
             {
-                s_FontDataBuffer.resize(FontData.size());
-                memcpy(s_FontDataBuffer.data(), FontData.data(), FontData.size());
+                FontDataBuffer.resize(FontData.size());
+                memcpy(FontDataBuffer.data(), FontData.data(), FontData.size());
                 bLoaded = true;
             }
             else
@@ -70,11 +67,10 @@ namespace we
             }
         #endif
         
-        // Create TGUI font from memory (NO file path access!)
-        if (bLoaded && !s_FontDataBuffer.empty())
+        if (bLoaded && !FontDataBuffer.empty())
         {
             try {
-                tgui::Font font(s_FontDataBuffer.data(), s_FontDataBuffer.size());
+                tgui::Font font(FontDataBuffer.data(), FontDataBuffer.size());
                 if (font)
                 {
                     tgui::Font::setGlobalFont(font);
@@ -85,7 +81,6 @@ namespace we
             }
         }
         
-        // Also load via ResourceSubsystem for potential other uses
         GameFont = LoadAsset().LoadFont(FontPath);
         
         bInitialized = true;
@@ -118,7 +113,7 @@ namespace we
     }
     
 
-    std::shared_ptr<tgui::Button> UIStyle::CreateButton(const std::string& Text)
+    shared<tgui::Button> UIStyle::CreateButton(const string& Text)
     {
         Initialize();
         
@@ -139,7 +134,7 @@ namespace we
         return Button;
     }
     
-    std::shared_ptr<tgui::CheckBox> UIStyle::CreateCheckbox(const std::string& Text)
+    shared<tgui::CheckBox> UIStyle::CreateCheckbox(const string& Text)
     {
         Initialize();
         
@@ -160,7 +155,7 @@ namespace we
         return Checkbox;
     }
     
-    std::shared_ptr<tgui::Slider> UIStyle::CreateSlider()
+    shared<tgui::Slider> UIStyle::CreateSlider()
     {
         Initialize();
         
@@ -182,7 +177,7 @@ namespace we
         return Slider;
     }
     
-    std::shared_ptr<tgui::Panel> UIStyle::CreatePanel(tgui::Layout2d Size)
+    shared<tgui::Panel> UIStyle::CreatePanel(tgui::Layout2d Size)
     {
         Initialize();
         
@@ -196,7 +191,7 @@ namespace we
         return Panel;
     }
     
-    std::shared_ptr<tgui::Label> UIStyle::CreateLabel(const std::string& Text, UILabelStyle Style)
+    shared<tgui::Label> UIStyle::CreateLabel(const string& Text, UILabelStyle Style)
     {
         Initialize();
         
@@ -234,7 +229,7 @@ namespace we
         return Label;
     }
     
-    std::shared_ptr<tgui::VerticalLayout> UIStyle::CreateVerticalLayout()
+    shared<tgui::VerticalLayout> UIStyle::CreateVerticalLayout()
     {
         auto Layout = tgui::VerticalLayout::create();
         Layout->getRenderer()->setSpaceBetweenWidgets(10);
@@ -242,7 +237,7 @@ namespace we
         return Layout;
     }
     
-    std::shared_ptr<tgui::HorizontalLayout> UIStyle::CreateHorizontalLayout()
+    shared<tgui::HorizontalLayout> UIStyle::CreateHorizontalLayout()
     {
         auto Layout = tgui::HorizontalLayout::create();
         Layout->getRenderer()->setSpaceBetweenWidgets(10);

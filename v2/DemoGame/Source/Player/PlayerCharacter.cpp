@@ -45,7 +45,6 @@ namespace we
 		SetScale({ 2.1,2.1 });
 
 		Character::BeginPlay();
-		//QuestComp.MarkCanExit();
 
 		SetupAnimations();
 		SetupShadow();
@@ -164,8 +163,6 @@ namespace we
 		Input.Bind(ACTION_INTERACT, Input::Keyboard{ sf::Keyboard::Scan::E });
 		InteractBinding = Input.BindAction(ACTION_INTERACT, this, &PlayerCharacter::TryInteract);
 
-		// Note: Gamepad South button is handled via hardware polling in PollInteractButton()
-		// Do NOT bind it here to avoid double-triggering
 	}
 
 	void PlayerCharacter::HandleInput()

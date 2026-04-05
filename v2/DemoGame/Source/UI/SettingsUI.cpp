@@ -81,7 +81,7 @@ namespace we
 		CurrentY += RowHeight + LabelSpacing;
 
 		// Channel sliders helper
-		auto AddChannelSlider = [&](const std::string& Name, tgui::Slider::Ptr& Slider, auto Callback)
+		auto AddChannelSlider = [&](const string& Name, tgui::Slider::Ptr& Slider, auto Callback)
 		{
 			auto Label = UIStyle::CreateLabel(Name, UILabelStyle::Body);
 			Label->setPosition("5%", CurrentY);

@@ -22,10 +22,8 @@ namespace tgui
 
 namespace we
 {
-    // Forward declare
     class ResourceSubsystem;
     
-    // Color theme structure - centralized color palette
     struct UIColorTheme
     {
         // Primary colors (Button, Checkbox, Slider track)
@@ -50,7 +48,6 @@ namespace we
         float       BorderWidth     = 2.0f;
     };
     
-    // Font size hierarchy
     struct UIFontSizes
     {
         unsigned int Title       = 52;  // "HOW TO PLAY", Main title
@@ -94,7 +91,6 @@ namespace we
         Tiny        
     };
     
-    // Centralized UI Style manager
     class UIStyle
     {
     public:
@@ -119,35 +115,32 @@ namespace we
         // WIDGET FACTORY METHODS - All styled consistently
         //=========================================================================
         
-        // Creates a standard button with full styling
-        static std::shared_ptr<tgui::Button> CreateButton(const std::string& Text);
+        static shared<tgui::Button> CreateButton(const string& Text);
         
         // Creates a standard checkbox
-        static std::shared_ptr<tgui::CheckBox> CreateCheckbox(const std::string& Text = "");
+        static shared<tgui::CheckBox> CreateCheckbox(const string& Text = "");
         
         // Creates a standard slider (0-100 range)
-        static std::shared_ptr<tgui::Slider> CreateSlider();
+        static shared<tgui::Slider> CreateSlider();
         
         // Creates a standard panel with border
-        static std::shared_ptr<tgui::Panel> CreatePanel(tgui::Layout2d Size);
+        static shared<tgui::Panel> CreatePanel(tgui::Layout2d Size);
         
         // Creates a label with specified style tier
-        static std::shared_ptr<tgui::Label> CreateLabel(const std::string& Text, UILabelStyle Style = UILabelStyle::Body);
+        static shared<tgui::Label> CreateLabel(const string& Text, UILabelStyle Style = UILabelStyle::Body);
         
         // Creates a vertical layout with standard spacing
-        static std::shared_ptr<tgui::VerticalLayout> CreateVerticalLayout();
+        static shared<tgui::VerticalLayout> CreateVerticalLayout();
         
         // Creates a horizontal layout
-        static std::shared_ptr<tgui::HorizontalLayout> CreateHorizontalLayout();
+        static shared<tgui::HorizontalLayout> CreateHorizontalLayout();
         
     private:
         static bool bInitialized;
         static UIColorTheme Colors;
         static UIFontSizes FontSizes;
         static UISizes Sizes;
-        static shared<font> GameFont;
-        static tgui::Font TGUIFont;
-        static std::string ResolvedFontPath;        
+        static shared<font> GameFont;        
         static const char* const FontPath;
     };
 }
