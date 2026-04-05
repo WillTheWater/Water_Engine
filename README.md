@@ -4,11 +4,11 @@
 
 <h1 align="center">Water Engine</h1>
 
-`v2.0.0` [IN DEVELOPMENT]
+`v2.0.0` [CURRENT RELEASE]
 
-`v1.0.0` [STABLE RELEASE]
+`v1.0.0` [LEGACY]
 
-Water Engine is a work-in-progress game engine focused on simplicity, modularity, and rapid prototyping. It provides a structured foundation for 2D games with scene handling, actor behavior, physics, and rendering support.
+Water Engine is a SFML3 2D game engine focused on simplicity, modularity, and rapid prototyping. It provides a structured foundation for 2D games with scene handling, actor behavior, physics, and rendering support.
 
 ---
 
@@ -19,7 +19,7 @@ Water Engine is a work-in-progress game engine focused on simplicity, modularity
 * **Actor Component System** for modular gameplay objects
 * **Scene Management** with clean initialization + switching
 * **Resource Manager** for textures, fonts, and assets
-* **Example Template Game Included** for getting started quickly
+* **Example Demo Game Included** for getting started
 
 ---
 
@@ -30,13 +30,9 @@ Water Engine is a work-in-progress game engine focused on simplicity, modularity
 * C++20 compatible compiler
 * CMake 3.30.3+
 
-Includes a **Template Game Project** for testing. Use it as a starting point for your own games or as a reference.
+Includes a **Demo Game Project** for testing. Use it as a starting point for your own games or as a reference.
 
 ---
-
-## 🗺️ Roadmap (v2.x)
-
-Water Engine v2 represents a complete architectural redesign and expansion, focusing on modularity, flexibility, and modern C++ practices. Planned features include:
 
 ### Core & Architecture
 - Full **refactor of engine architecture** for better modularity and maintainability  
@@ -61,13 +57,13 @@ Water Engine v2 represents a complete architectural redesign and expansion, focu
 - **spdlog** integrated for fast, flexible logging and debug output
 
 ### Input & Controllers
-- **Full controller support** (gamepads, joysticks)  
+- **Basic controller support** (gamepads, joysticks)  
 - **Event-based input** for immediate reactions  
 - **State-based input** for sustained key/button actions  
 
 ### Utilities & Developer Tools
 - Centralized **ResourceManager** for textures, fonts, and other assets  
-- Helper utilities for vectors, containers, and memory management (`unique`, `shared`, `weak`, `optional`)  
+- Helper utilities for Math, Debugging, Delegates & Timers 
 - Template game included as a **reference implementation**  
 
 ## License
