@@ -25,6 +25,7 @@ namespace we
 		void operator()(const event::MouseWheelScrolled& e);
 		void operator()(const event::KeyPressed& e);
 		void operator()(const event::KeyReleased& e);
+		void operator()(const event::TextEntered& e);
 		void operator()(const auto&) {}
 	};
 }

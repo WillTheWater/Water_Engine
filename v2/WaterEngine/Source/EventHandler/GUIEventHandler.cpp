@@ -125,4 +125,21 @@ namespace we
 		
 		Consumed = false;
 	}
+
+	void GUIEventHandler::operator()(const event::TextEntered& e)
+	{
+		if (GUI.GetScreenUI().handleEvent(e))
+		{
+			Consumed = true;
+			return;
+		}
+
+		if (GUI.GetWorldUI().handleEvent(e))
+		{
+			Consumed = true;
+			return;
+		}
+
+		Consumed = false;
+	}
 }
