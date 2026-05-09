@@ -1,5 +1,5 @@
 // =============================================================================
-// Water Engine v2.0.0
+// Water Engine v2.1.1
 // Copyright(C) 2026 Will The Water
 // =============================================================================
 
@@ -49,6 +49,20 @@ namespace we
         
         // Window icon texture path (empty = no icon)
         static constexpr const char* WindowIcon = "Assets/Icon/icon.png";
+    };
+
+    // =========================================================================
+    // Splash Screen Configuration (Release builds only)
+    // =========================================================================
+    struct SplashConfig
+    {
+        // Filename of the splash image
+        static constexpr const char* TexturePath = "Assets/Icon/SplashIcon.png";
+
+        // Animation timing (seconds)
+        static constexpr float FadeInTime = 0.5f;
+        static constexpr float HoldTime = 2.0f;
+        static constexpr float FadeOutTime = 0.5f;
     };
 
     // =========================================================================

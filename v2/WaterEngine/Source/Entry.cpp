@@ -1,5 +1,5 @@
 // =============================================================================
-// Water Engine v2.0.0
+// Water Engine v2.1.1
 // Copyright(C) 2026 Will The Water
 // =============================================================================
 
@@ -9,10 +9,18 @@
 #include "Entry.h"
 #include "Framework/WaterEngine.h"
 
+#if defined(NDEBUG) && defined(WIN32)
+#include "Utility/SplashScreen.h"
+#endif
+
 SFML_DEFINE_DISCRETE_GPU_PREFERENCE
 
 int main()
 {
+#if defined(NDEBUG) && defined(WIN32)
+	we::ShowSplash();
+#endif
+
 	auto Engine = we::GetEngine();
 	Engine->StartPlay();
 

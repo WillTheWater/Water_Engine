@@ -1,12 +1,12 @@
 # =============================================================================
-# Water Engine v2.0.0
+# Water Engine v2.1.1
 # Copyright (C) 2026 Will The Water
 # License: MIT (see LICENSE file for full text)
 # =============================================================================
 cmake_minimum_required(VERSION 3.30.3)
 
 project(WaterEngine
-    VERSION 2.0.0
+    VERSION 2.1.1
     LANGUAGES C CXX
 )
 

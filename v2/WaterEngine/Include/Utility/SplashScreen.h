@@ -5,9 +5,11 @@
 
 #pragma once
 
-#include <nlohmann/json.hpp>
-
+#ifdef NDEBUG
 namespace we
 {
-	using json = nlohmann::json;
+    // Shows the release splash screen and blocks until it finishes.
+    // Call once from main() before the engine is started.
+    void ShowSplash();
 }
+#endif // NDEBUG

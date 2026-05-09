@@ -1,5 +1,5 @@
 // =============================================================================
-// Water Engine v2.0.0
+// Water Engine v2.1.1
 // Copyright(C) 2026 Will The Water
 // =============================================================================
 
@@ -17,21 +17,24 @@ namespace we
     ResourceSubsystem::ResourceSubsystem()
     {
         Instance = this;
-        
-        #ifdef USE_PACKED_ASSETS
+
+#ifdef USE_PACKED_ASSETS
+        // SplashScreen may have already initialised PhysicsFS
+        if (!PHYSFS_isInit())
+        {
             if (!PHYSFS_init(nullptr))
             {
                 ERROR("ResourceSubsystem: Failed to initialize PhysFS");
                 return;
             }
-            
+
             if (!PHYSFS_mount(ASSET_PACK_PATH, "/", 1))
             {
                 ERROR("ResourceSubsystem: Failed to mount {}", ASSET_PACK_PATH);
                 return;
             }
-            
-        #endif
+        }
+#endif
     }
 
     ResourceSubsystem::~ResourceSubsystem()
