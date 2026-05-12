@@ -4,7 +4,7 @@
 
 <h1 align="center">Water Engine</h1>
 
-`v2.1.1` [CURRENT RELEASE]
+`v2.1.2` [CURRENT RELEASE]
 
 `v1.0.0` [LEGACY]
 
