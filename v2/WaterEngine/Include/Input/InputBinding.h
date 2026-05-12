@@ -18,14 +18,21 @@ namespace we
         DPadUp, DPadDown, DPadLeft, DPadRight
     };
 
+    enum class ScrollDirection 
+    { 
+        Up, 
+        Down 
+    };
+
     namespace Input
     {
         struct Keyboard { sf::Keyboard::Scan Key; bool operator==(const Keyboard& OtherKey) const { return Key == OtherKey.Key; }};
         struct Mouse { sf::Mouse::Button Button; bool operator==(const Mouse& OtherKey) const { return Button == OtherKey.Button; }};
         struct Gamepad { GamepadButton Button; int GamepadID = 0; bool operator==(const Gamepad& OtherKey) const { return Button == OtherKey.Button && GamepadID == OtherKey.GamepadID; }};
         struct JoystickAxis { sf::Joystick::Axis Axis; float AxisThreshold = 0.15f; int AxisID = 0; bool operator==(const JoystickAxis& OtherKey) const { return Axis == OtherKey.Axis && AxisID == OtherKey.AxisID; }};
+        struct Scroll { ScrollDirection Direction; bool operator==(const Scroll& Other) const { return Direction == Other.Direction; } };
 
-        using Binding = std::variant<Keyboard, Mouse, Gamepad, JoystickAxis>;
+        using Binding = std::variant<Keyboard, Mouse, Gamepad, JoystickAxis, Scroll>;
 
         optional<int> LogicToHardware(GamepadButton Button, int HardwareID);
         optional<GamepadButton> HardwareToLogic(int Button, int HardwareID);

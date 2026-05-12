@@ -68,4 +68,19 @@ namespace we
 	{
 		Input.OnReleased(Input::Mouse{ Button.button });
 	}
+
+	void InputEventHandler::operator()(const event::MouseWheelScrolled& Scroll)
+	{
+		if (Scroll.delta == 0.0f)
+			return;
+
+		Input::Scroll Binding{ Scroll.delta > 0.0f ? ScrollDirection::Up : ScrollDirection::Down };
+
+		int notches = std::max(1, (int)std::abs(Scroll.delta));
+		for (int i = 0; i < notches; ++i)
+		{
+			Input.OnPressed(Binding);
+			Input.OnReleased(Binding);
+		}
+	}
 }
