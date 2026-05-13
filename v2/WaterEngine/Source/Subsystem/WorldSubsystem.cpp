@@ -137,7 +137,7 @@ namespace we
                 {
                     return A.second < B.second;
                 }
-                return A.second < B.second;
+                return A.first < B.first;
             });
         
         vector<const drawable*> SortedDrawables;
