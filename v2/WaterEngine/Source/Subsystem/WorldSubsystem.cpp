@@ -105,11 +105,14 @@ namespace we
         Drawables.clear();
         Indices.clear();
         ActorDrawables.clear();
-        
+        ActorDrawables.reserve(4);
+
         if (!CurrentWorld)
             return Drawables;
-        
+
         const auto& Actors = CurrentWorld->GetActors();
+        Drawables.reserve(Actors.size() * 2);
+        Indices.reserve(Actors.size() * 2);
         
         for (uint i = 0; i < Actors.size(); ++i)
         {
