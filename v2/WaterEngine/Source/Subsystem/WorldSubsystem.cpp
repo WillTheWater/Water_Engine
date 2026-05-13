@@ -131,7 +131,14 @@ namespace we
         }
         
         std::sort(Indices.begin(), Indices.end(),
-            [](const auto& A, const auto& B) { return A.second < B.second; });
+            [](const auto& A, const auto& B)
+            {
+                if (A.second != B.second)
+                {
+                    return A.second < B.second;
+                }
+                return A.second < B.second;
+            });
         
         vector<const drawable*> SortedDrawables;
         SortedDrawables.reserve(Drawables.size());
