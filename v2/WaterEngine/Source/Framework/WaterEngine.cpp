@@ -54,13 +54,13 @@ namespace we
         Subsystem.World->SetPhysicsRef(Subsystem.Physics);
         Subsystem.World->SetCameraRef(Subsystem.Camera);
         Subsystem.World->SetSaveRef(Subsystem.Save);
-        Subsystem.World->SetGameInstanceRef(Subsystem.GameInstance);
     }
 
     void WaterEngine::StartPlay()
     {
         Subsystem.GameInstance = CreateGameInstance();
         if (Subsystem.GameInstance) { Subsystem.GameInstance->Init(Subsystem); }
+        Subsystem.World->SetGameInstanceRef(Subsystem.GameInstance);
     }
 
     bool WaterEngine::IsRunning() const
