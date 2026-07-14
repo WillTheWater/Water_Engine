@@ -1,10 +1,11 @@
 // =============================================================================
-// Water Engine v2.1.2
+// Water Engine v2.2.4
 // Copyright(C) 2026 Will The Water
 // =============================================================================
 
 #include "Subsystem/GuiSubsystem.h"
 #include "EventHandler/GUIEventHandler.h"
+#include "Subsystem/ResourceSubsystem.h"
 
 namespace we
 {
@@ -26,6 +27,15 @@ namespace we
 	{
 		ScreenUI.setTarget(ScreenUITarget);
 		WorldUI.setTarget(WorldUITarget);
+	}
+
+	void GUISubsystem::SetGlobalFont(const string& Filename)
+	{
+		auto fnt = LoadAsset().LoadTGUIFont(Filename);
+		if (!fnt) return;
+		tgui::Font::setGlobalFont(*fnt);   // default for future widgets
+		ScreenUI.setFont(*fnt);            // current gui defaults
+		WorldUI.setFont(*fnt);
 	}
 
 	void GUISubsystem::SetWindowSize(vec2u NewSize)
@@ -52,7 +62,7 @@ namespace we
 	{
 		vec2f ViewSize = vec2f{CurrentCameraView.getSize().x, CurrentCameraView.getSize().y};
 		vec2f CamTopLeft = CameraWorldPosition - ViewSize / 2.0f;
-		
+
 		float Padding = 150.0f;
 		vec2f BoundsMin = CamTopLeft - vec2f{Padding, Padding};
 		vec2f BoundsMax = CamTopLeft + ViewSize + vec2f{Padding, Padding};
@@ -61,7 +71,7 @@ namespace we
 		{
 			if (!Widget->isVisible())
 				continue;
-			
+
 			if (WorldPos.x < BoundsMin.x || WorldPos.x > BoundsMax.x ||
 			    WorldPos.y < BoundsMin.y || WorldPos.y > BoundsMax.y)
 			{

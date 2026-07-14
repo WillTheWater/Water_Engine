@@ -4,7 +4,7 @@
 
 <h1 align="center">Water Engine</h1>
 
-`v2.1.3` [CURRENT RELEASE]
+`v2.2.4` [CURRENT RELEASE]
 
 `v1.0.0` [LEGACY]
 
@@ -19,6 +19,8 @@ Water Engine is a SFML3 2D game engine focused on simplicity, modularity, and ra
 * **Actor Component System** for modular gameplay objects
 * **Scene Management** with clean initialization + switching
 * **Resource Manager** for textures, fonts, and assets
+* **Spatial Audio** with positional playback and a multi-bus mixer
+* **Post-Processing Pipeline** for fullscreen and per-sprite effects
 * **Example Demo Game Included** for getting started
 
 ---
@@ -42,10 +44,18 @@ Includes a **Demo Game Project** for testing. Use it as a starting point for you
 ### Rendering & UI
 - **2D Rendering** via SFML 3   
 - Window system supporting **borderless fullscreen, windowed, and dynamic resizing**  
-- Full support for **render scaling and aspect ratio management**
+- Full support for **render scaling and aspect ratio management**  
+- **Fullscreen post-processing** effects on the world layer  
+- **Per-sprite / animation-frame post-processing** (e.g. outlines)  
+- **Pixel-snapped, critically-damped smooth-follow camera**
 
 ### Physics & Simulation
 - **Box2D** physics engine integration   
+
+### Audio
+- **Spatial audio** with distance-attenuated positional sources and a moving listener  
+- **Multi-bus mixer** (Music, Ambient, SFX, Voice, UI) with independent volume control  
+- **Persistent looping emitters** for ambience, plus a polyphony cap on one-shot SFX  
 
 ### Resources & Config
 - **PhysicsFS** for virtual filesystem and content management 

@@ -1,5 +1,5 @@
 // =============================================================================
-// Water Engine v2.1.2
+// Water Engine v2.2.4
 // Copyright(C) 2026 Will The Water
 // =============================================================================
 
@@ -145,7 +145,7 @@ namespace we
 
         string Path = ResolvePath(Filename);
         auto Fnt = make_shared<font>();
-        
+
         #ifdef USE_RAW_ASSETS
             if (!Fnt->openFromFile(Path))
             {
@@ -164,6 +164,35 @@ namespace we
         #endif
 
         Fonts[Filename] = Fnt;
+        return Fnt;
+    }
+
+    shared<tgui::Font> ResourceSubsystem::LoadTGUIFont(const string& Filename)
+    {
+        if (TGUIFonts.contains(Filename))
+            return TGUIFonts[Filename];
+
+        string Path = ResolvePath(Filename);
+        shared<tgui::Font> Fnt;
+
+        #ifdef USE_RAW_ASSETS
+            Fnt = make_shared<tgui::Font>(Path.c_str());
+        #else
+            // Bytes must stay alive for the lifetime of the font; reuse the
+            // same Data cache LoadFont uses so a font loaded by both paths
+            // shares one buffer.
+            if (!Data.contains(Filename))
+                Data[Filename] = LoadFileData(Path);
+            const auto& bytes = Data[Filename];
+            if (bytes.empty())
+            {
+                ERROR("ResourceSubsystem: Failed to load TGUI font {}", Filename);
+                return nullptr;
+            }
+            Fnt = make_shared<tgui::Font>(bytes.data(), bytes.size());
+        #endif
+
+        TGUIFonts[Filename] = Fnt;
         return Fnt;
     }
 
@@ -217,11 +246,17 @@ namespace we
         }
     }
 
+    void ResourceSubsystem::ClearTGUIFonts()
+    {
+        TGUIFonts.clear();
+    }
+
     void ResourceSubsystem::GarbageCollect()
     {
         CleanCache(Textures, "texture");
         CleanCache(Sounds, "sound");
         CleanCache(Fonts, "font");
+        CleanCache(TGUIFonts, "tgui font");
         CleanCache(Music, "music");
     }
 }

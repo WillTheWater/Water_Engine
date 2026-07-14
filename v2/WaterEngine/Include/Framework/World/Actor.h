@@ -1,5 +1,5 @@
 // =============================================================================
-// Water Engine v2.1.2
+// Water Engine v2.2.4
 // Copyright(C) 2026 Will The Water
 // =============================================================================
 
@@ -45,7 +45,14 @@ namespace we
 		void SetTextureRect(const recti& TexRect);
 		bool HasSprite() const { return ActorSprite.has_value(); }
 		const drawable* GetDrawable() const;
-		
+
+		// Auxiliary sibling drawable (not owned). Rendered BEHIND the primary
+		// sprite at the actor's transform. Use for overlays whose source must
+		// stay independent of the actor's main sprite, e.g. an outline applied
+		// to the current animated frame.
+		void            SetAuxDrawable(const drawable* InAux) { AuxDrawable = InAux; }
+		const drawable* GetAuxDrawable() const                { return AuxDrawable; }
+
 		// Collect all drawables (sprite + debug shapes)
 		virtual void GetDrawables(vector<const drawable*>& OutDrawables) const;
 
@@ -73,6 +80,7 @@ namespace we
 
 		// Render
 		optional<sprite> ActorSprite;
+		const drawable* AuxDrawable = nullptr;   // not owned
 		optional<float> CustomDepth;
 		bool bIsVisible;
 		bool bHasBegunPlay;

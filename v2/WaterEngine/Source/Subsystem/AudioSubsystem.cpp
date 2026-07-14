@@ -1,5 +1,5 @@
 // =============================================================================
-// Water Engine v2.1.2
+// Water Engine v2.2.4
 // Copyright(C) 2026 Will The Water
 // =============================================================================
 
@@ -42,6 +42,9 @@ namespace we
         CurrentMusic = make_unique<MusicTrack>();
         CurrentMusic->Music = MusicResource;
         CurrentMusic->Music->setLooping(true);
+        // Head-locked: the listener moves through the world, so every
+        // non-positional source must ride it or it would attenuate.
+        CurrentMusic->Music->setRelativeToListener(true);
 
         if (FadeInDuration > 0.0f)
         {
@@ -76,6 +79,7 @@ namespace we
         CurrentAmbient = make_unique<MusicTrack>();
         CurrentAmbient->Music = MusicResource;
         CurrentAmbient->Music->setLooping(true);
+        CurrentAmbient->Music->setRelativeToListener(true);
 
         if (FadeInDuration > 0.0f)
         {
@@ -98,7 +102,7 @@ namespace we
         }
     }
 
-    void AudioSubsystem::PlaySFX(const string& Path)
+    void AudioSubsystem::PlaySFX(const string& Path, Volume Gain)
     {
         auto Buffer = LoadAsset().LoadSound(Path);
         if (!Buffer)
@@ -107,11 +111,15 @@ namespace we
             return;
         }
 
+        MakeRoomForSFX();
+
         SFXInstance Instance;
         Instance.Buffer = Buffer;
         Instance.Sound = make_unique<sound>(*Buffer);
-        Instance.Sound->setVolume(GetEffectiveVolume(AudioChannel::SFX) * 100.0f);
-        
+        Instance.UserVolume = Clamp(Gain, 0.0f, 1.0f);
+        Instance.Sound->setRelativeToListener(true);
+        ApplyOneShotVolume(Instance, AudioChannel::SFX);
+
         if (!bPaused)
         {
             Instance.Sound->play();
@@ -120,7 +128,164 @@ namespace we
         ActiveSFX.push_back(std::move(Instance));
     }
 
-    void AudioSubsystem::PlayVoice(const string& Path)
+    void AudioSubsystem::PlayUI(const string& Path, Volume Gain)
+    {
+        auto Buffer = LoadAsset().LoadSound(Path);
+        if (!Buffer)
+        {
+            ERROR("[Audio] Failed to load UI sound: {}", Path);
+            return;
+        }
+
+        SFXInstance Instance;
+        Instance.Buffer = Buffer;
+        Instance.Sound = make_unique<sound>(*Buffer);
+        Instance.UserVolume = Clamp(Gain, 0.0f, 1.0f);
+        Instance.Sound->setRelativeToListener(true);
+        ApplyOneShotVolume(Instance, AudioChannel::UI);
+        Instance.Sound->play();
+
+        ActiveUI.push_back(std::move(Instance));
+    }
+
+    void AudioSubsystem::SetListenerPosition(vec2f WorldPos)
+    {
+        sf::Listener::setPosition({WorldPos.x, WorldPos.y, 0.0f});
+    }
+
+    void AudioSubsystem::PlaySFX(const string& Path, vec2f WorldPos, float MinDistance, float Attenuation,
+                                 Volume Gain)
+    {
+        auto Buffer = LoadAsset().LoadSound(Path);
+        if (!Buffer)
+        {
+            ERROR("[Audio] Failed to load SFX: {}", Path);
+            return;
+        }
+
+        MakeRoomForSFX();
+
+        SFXInstance Instance;
+        Instance.Buffer = Buffer;
+        Instance.Sound = make_unique<sound>(*Buffer);
+        Instance.UserVolume = Clamp(Gain, 0.0f, 1.0f);
+        Instance.Sound->setRelativeToListener(false);
+        Instance.Sound->setPosition({WorldPos.x, WorldPos.y, 0.0f});
+        Instance.Sound->setMinDistance(MinDistance);
+        Instance.Sound->setAttenuation(Attenuation);
+        ApplyOneShotVolume(Instance, AudioChannel::SFX);
+
+        if (!bPaused)
+        {
+            Instance.Sound->play();
+        }
+
+        ActiveSFX.push_back(std::move(Instance));
+    }
+
+    AudioLoopId AudioSubsystem::PlayLoop(const string& Path, vec2f WorldPos, float MinDistance, float Attenuation)
+    {
+        auto Buffer = LoadAsset().LoadSound(Path);
+        if (!Buffer)
+        {
+            ERROR("[Audio] Failed to load loop: {}", Path);
+            return 0;
+        }
+
+        LoopInstance Instance;
+        Instance.Id = NextLoopId++;
+        Instance.Buffer = Buffer;
+        Instance.Sound = make_unique<sound>(*Buffer);
+        Instance.Sound->setLooping(true);
+        Instance.Sound->setRelativeToListener(false);
+        Instance.Sound->setPosition({WorldPos.x, WorldPos.y, 0.0f});
+        Instance.Sound->setMinDistance(MinDistance);
+        Instance.Sound->setAttenuation(Attenuation);
+        ApplyLoopVolume(Instance);
+
+        if (!bPaused)
+        {
+            Instance.Sound->play();
+        }
+
+        AudioLoopId Id = Instance.Id;
+        ActiveLoops.push_back(std::move(Instance));
+        return Id;
+    }
+
+    AudioLoopId AudioSubsystem::PlayLoop(const string& Path)
+    {
+        auto Buffer = LoadAsset().LoadSound(Path);
+        if (!Buffer)
+        {
+            ERROR("[Audio] Failed to load loop: {}", Path);
+            return 0;
+        }
+
+        LoopInstance Instance;
+        Instance.Id = NextLoopId++;
+        Instance.Buffer = Buffer;
+        Instance.Sound = make_unique<sound>(*Buffer);
+        Instance.Sound->setLooping(true);
+        Instance.Sound->setRelativeToListener(true);
+        ApplyLoopVolume(Instance);
+
+        if (!bPaused)
+        {
+            Instance.Sound->play();
+        }
+
+        AudioLoopId Id = Instance.Id;
+        ActiveLoops.push_back(std::move(Instance));
+        return Id;
+    }
+
+    void AudioSubsystem::SetLoopPosition(AudioLoopId Id, vec2f WorldPos)
+    {
+        if (LoopInstance* Loop = FindLoop(Id))
+        {
+            Loop->Sound->setPosition({WorldPos.x, WorldPos.y, 0.0f});
+        }
+    }
+
+    void AudioSubsystem::SetLoopVolume(AudioLoopId Id, Volume Vol)
+    {
+        if (LoopInstance* Loop = FindLoop(Id))
+        {
+            Loop->UserVolume = Clamp(Vol, 0.0f, 1.0f);
+            ApplyLoopVolume(*Loop);
+        }
+    }
+
+    void AudioSubsystem::StopLoop(AudioLoopId Id)
+    {
+        for (auto it = ActiveLoops.begin(); it != ActiveLoops.end(); ++it)
+        {
+            if (it->Id == Id)
+            {
+                if (it->Sound)
+                {
+                    it->Sound->stop();
+                }
+                ActiveLoops.erase(it);
+                return;
+            }
+        }
+    }
+
+    void AudioSubsystem::StopAllLoops()
+    {
+        for (auto& Loop : ActiveLoops)
+        {
+            if (Loop.Sound)
+            {
+                Loop.Sound->stop();
+            }
+        }
+        ActiveLoops.clear();
+    }
+
+    void AudioSubsystem::PlayVoice(const string& Path, Volume Gain)
     {
         auto Buffer = LoadAsset().LoadSound(Path);
         if (!Buffer)
@@ -132,8 +297,10 @@ namespace we
         SFXInstance Instance;
         Instance.Buffer = Buffer;
         Instance.Sound = make_unique<sound>(*Buffer);
-        Instance.Sound->setVolume(GetEffectiveVolume(AudioChannel::Voice) * 100.0f);
-        
+        Instance.UserVolume = Clamp(Gain, 0.0f, 1.0f);
+        Instance.Sound->setRelativeToListener(true);
+        ApplyOneShotVolume(Instance, AudioChannel::Voice);
+
         if (!bPaused)
         {
             Instance.Sound->play();
@@ -245,6 +412,7 @@ namespace we
         CurrentAmbient = make_unique<MusicTrack>();
         CurrentAmbient->Music = MusicResource;
         CurrentAmbient->Music->setLooping(true);
+        CurrentAmbient->Music->setRelativeToListener(true);
         CurrentAmbient->CurrentVolume = 0.0f;
         CurrentAmbient->TargetVolume = 1.0f;
         CurrentAmbient->FadeSpeed = 1.0f / Duration;
@@ -282,12 +450,26 @@ namespace we
         ActiveVoice.clear();
     }
 
+    void AudioSubsystem::StopAllUI()
+    {
+        for (auto& Instance : ActiveUI)
+        {
+            if (Instance.Sound)
+            {
+                Instance.Sound->stop();
+            }
+        }
+        ActiveUI.clear();
+    }
+
     void AudioSubsystem::StopAll()
     {
         StopMusic();
         StopAmbient();
         StopAllSFX();
         StopAllVoice();
+        StopAllUI();
+        StopAllLoops();
         
         // Also stop fading tracks
         if (FadingMusic && FadingMusic->Music)
@@ -324,17 +506,19 @@ namespace we
         }
         for (auto& Instance : ActiveSFX)
         {
-            if (Instance.Sound)
-            {
-                Instance.Sound->setVolume(GetEffectiveVolume(AudioChannel::SFX) * 100.0f);
-            }
+            ApplyOneShotVolume(Instance, AudioChannel::SFX);
         }
         for (auto& Instance : ActiveVoice)
         {
-            if (Instance.Sound)
-            {
-                Instance.Sound->setVolume(GetEffectiveVolume(AudioChannel::Voice) * 100.0f);
-            }
+            ApplyOneShotVolume(Instance, AudioChannel::Voice);
+        }
+        for (auto& Instance : ActiveUI)
+        {
+            ApplyOneShotVolume(Instance, AudioChannel::UI);
+        }
+        for (auto& Loop : ActiveLoops)
+        {
+            ApplyLoopVolume(Loop);
         }
     }
 
@@ -367,25 +551,30 @@ namespace we
                 ApplyVolumeToMusic(*CurrentAmbient, Channel);
             if (FadingAmbient && FadingAmbient->Music)
                 ApplyVolumeToMusic(*FadingAmbient, Channel);
+            for (auto& Loop : ActiveLoops)
+            {
+                ApplyLoopVolume(Loop);
+            }
         }
         else if (Channel == AudioChannel::SFX)
         {
             for (auto& Instance : ActiveSFX)
             {
-                if (Instance.Sound)
-                {
-                    Instance.Sound->setVolume(GetEffectiveVolume(Channel) * 100.0f);
-                }
+                ApplyOneShotVolume(Instance, Channel);
             }
         }
         else if (Channel == AudioChannel::Voice)
         {
             for (auto& Instance : ActiveVoice)
             {
-                if (Instance.Sound)
-                {
-                    Instance.Sound->setVolume(GetEffectiveVolume(Channel) * 100.0f);
-                }
+                ApplyOneShotVolume(Instance, Channel);
+            }
+        }
+        else if (Channel == AudioChannel::UI)
+        {
+            for (auto& Instance : ActiveUI)
+            {
+                ApplyOneShotVolume(Instance, Channel);
             }
         }
     }
@@ -481,6 +670,18 @@ namespace we
                 else Instance.Sound->play();
             }
         }
+
+        // Positional loops
+        for (auto& Loop : ActiveLoops)
+        {
+            if (Loop.Sound)
+            {
+                if (bPaused) Loop.Sound->pause();
+                else Loop.Sound->play();
+            }
+        }
+
+        // ActiveUI is deliberately untouched: menu clicks play while paused.
     }
 
     bool AudioSubsystem::IsPaused() const
@@ -514,6 +715,48 @@ namespace we
     ulong AudioSubsystem::GetActiveVoiceCount() const
     {
         return ActiveVoice.size();
+    }
+
+    ulong AudioSubsystem::GetActiveUICount() const
+    {
+        return ActiveUI.size();
+    }
+
+    ulong AudioSubsystem::GetActiveLoopCount() const
+    {
+        return ActiveLoops.size();
+    }
+
+    AudioSubsystem::LoopInstance* AudioSubsystem::FindLoop(AudioLoopId Id)
+    {
+        for (auto& Loop : ActiveLoops)
+        {
+            if (Loop.Id == Id)
+                return &Loop;
+        }
+        return nullptr;
+    }
+
+    void AudioSubsystem::ApplyLoopVolume(LoopInstance& Loop)
+    {
+        if (!Loop.Sound) return;
+        Loop.Sound->setVolume(GetEffectiveVolume(AudioChannel::Ambient) * Loop.UserVolume * 100.0f);
+    }
+
+    void AudioSubsystem::ApplyOneShotVolume(SFXInstance& Instance, AudioChannel Channel)
+    {
+        if (!Instance.Sound) return;
+        Instance.Sound->setVolume(GetEffectiveVolume(Channel) * Instance.UserVolume * 100.0f);
+    }
+
+    void AudioSubsystem::MakeRoomForSFX()
+    {
+        if (ActiveSFX.size() < MAX_ACTIVE_SFX)
+            return;
+
+        if (ActiveSFX.front().Sound)
+            ActiveSFX.front().Sound->stop();
+        ActiveSFX.erase(ActiveSFX.begin());
     }
 
     void AudioSubsystem::UpdateFades(float DeltaTime)
@@ -638,6 +881,19 @@ namespace we
             if (it->Sound && it->Sound->getStatus() == sf::SoundSource::Status::Stopped)
             {
                 it = ActiveVoice.erase(it);
+            }
+            else
+            {
+                ++it;
+            }
+        }
+
+        // Remove finished UI
+        for (auto it = ActiveUI.begin(); it != ActiveUI.end();)
+        {
+            if (it->Sound && it->Sound->getStatus() == sf::SoundSource::Status::Stopped)
+            {
+                it = ActiveUI.erase(it);
             }
             else
             {

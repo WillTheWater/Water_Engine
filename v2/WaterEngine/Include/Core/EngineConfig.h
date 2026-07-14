@@ -1,5 +1,5 @@
 // =============================================================================
-// Water Engine v2.1.2
+// Water Engine v2.2.4
 // Copyright(C) 2026 Will The Water
 // =============================================================================
 
@@ -42,13 +42,15 @@ namespace we
     {
         // Initial window settings
         static constexpr vec2u DefaultWindowSize{1920, 1080};
-        static constexpr const char* WindowTitle = "Water Engine";
         static constexpr bool bVSyncEnabled = true;
         static constexpr bool bMouseCursorVisible = false;
         static constexpr bool bKeyRepeatEnabled = false;
         
-        // Window icon texture path (empty = no icon)
-        static constexpr const char* WindowIcon = "Assets/Icon/icon.png";
+        // Per-executable overrides - set in GetEngine() before constructing
+        // the engine, since WindowSubsystem reads these in its constructor.
+        const char* WindowTitle = "Water Engine";
+        const char* WindowIcon  = "Assets/Icon/icon.png";
+        uint32_t WindowStyle = static_cast<uint32_t>(sf::Style::Default);
     };
 
     // =========================================================================

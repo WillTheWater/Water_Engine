@@ -1,5 +1,5 @@
 // =============================================================================
-// Water Engine v2.1.2
+// Water Engine v2.2.4
 // Copyright(C) 2026 Will The Water
 // =============================================================================
 
@@ -72,6 +72,7 @@ namespace we
         bool bSmoothFollow = false;
         float SmoothTime = 0.3f;
         vec2f SmoothedPosition;
+        vec2f SmoothVelocity = {0.0f, 0.0f};
 
         struct ShakeState
         {

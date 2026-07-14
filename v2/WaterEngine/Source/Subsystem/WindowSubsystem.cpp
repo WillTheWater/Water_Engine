@@ -1,5 +1,5 @@
 // =============================================================================
-// Water Engine v2.1.2
+// Water Engine v2.2.4
 // Copyright(C) 2026 Will The Water
 // =============================================================================
 
@@ -11,8 +11,9 @@ namespace we
 {
 	WindowSubsystem::WindowSubsystem()
 	{
+		Instance = this;
 		WindowedSize = WEConfig.Window.DefaultWindowSize;
-		create(window(WindowedSize), WEConfig.Window.WindowTitle, sf::Style::Default);
+		create(window(WindowedSize), WEConfig.Window.WindowTitle, WEConfig.Window.WindowStyle);
 		setVerticalSyncEnabled(WEConfig.Window.bVSyncEnabled);
 		setMouseCursorVisible(WEConfig.Window.bMouseCursorVisible);
 		setKeyRepeatEnabled(WEConfig.Window.bKeyRepeatEnabled);
@@ -68,7 +69,7 @@ namespace we
 			// Windowed mode
 			create(window(WindowedSize),
 				WEConfig.Window.WindowTitle,
-				sf::Style::Default);
+				WEConfig.Window.WindowStyle);
 		}
 
 		// Re-apply settings
@@ -88,5 +89,12 @@ namespace we
 	void WindowSubsystem::EventMouseMoved(vec2f NewPosition)
 	{
 		OnMouseMove.Broadcast(NewPosition);
+	}
+
+	WindowSubsystem* WindowSubsystem::Instance = nullptr;
+
+	WindowSubsystem& WindowSubsystem::Get()
+	{
+		return *Instance;
 	}
 }

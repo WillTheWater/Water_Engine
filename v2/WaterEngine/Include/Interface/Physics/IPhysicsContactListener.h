@@ -1,5 +1,5 @@
 // =============================================================================
-// Water Engine v2.1.2
+// Water Engine v2.2.4
 // Copyright(C) 2026 Will The Water
 // =============================================================================
 
@@ -16,8 +16,8 @@ namespace we
 	{
 	public:
 		virtual ~IPhysicsContactListener() = default;
-		virtual void OnComponentBeginOverlap(b2Body* OtherBody) = 0;
-		virtual void OnComponentEndOverlap(b2Body* OtherBody) = 0;
+		virtual void OnComponentBeginOverlap(ActorID OtherID) = 0;
+		virtual void OnComponentEndOverlap(ActorID OtherID) = 0;
 		
 		// Collision filtering - pure virtual
 		virtual void SetCollisionChannel(ECollisionChannel Channel) = 0;

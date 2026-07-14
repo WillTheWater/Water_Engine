@@ -1,9 +1,14 @@
 // =============================================================================
-// Water Engine v2.1.2
+// Water Engine v2.2.4
 // Copyright(C) 2026 Will The Water
 // =============================================================================
 
 #include "Framework/WaterEngine.h"
+
+// Global engine config instance. Fields with non-constexpr defaults can be
+// overridden by the executable in its GetEngine() before constructing the
+// engine (e.g. WEConfig.Window.WindowTitle = "Level Editor";).
+we::EngineConfig WEConfig;
 
 namespace we
 {
@@ -54,12 +59,17 @@ namespace we
         Subsystem.World->SetPhysicsRef(Subsystem.Physics);
         Subsystem.World->SetCameraRef(Subsystem.Camera);
         Subsystem.World->SetSaveRef(Subsystem.Save);
+        // NOTE: SetGameInstanceRef intentionally NOT called here. The GameInstance
+        // is created in StartPlay() below; wiring the world's weak ref must happen
+        // after CreateGameInstance() so the ref points at a real control block.
     }
 
     void WaterEngine::StartPlay()
     {
         Subsystem.GameInstance = CreateGameInstance();
         if (Subsystem.GameInstance) { Subsystem.GameInstance->Init(Subsystem); }
+
+        // Wire the world's weak ref now that the GameInstance actually exists.
         Subsystem.World->SetGameInstanceRef(Subsystem.GameInstance);
     }
 
@@ -79,9 +89,16 @@ namespace we
         {
             Subsystem.Window->HandleEvent(*Event);
 
-            if (Subsystem.GUI->HandleEvent(*Event)) { continue; }
+            if (Subsystem.GUI->HandleEvent(*Event))
+            {
+                // Always forward releases so InputSubsystem doesn't get stuck
+                // when tgui consumes a mouse-up.
+                if (Event->is<sf::Event::MouseButtonReleased>())
+                    Subsystem.Input->HandleEvent(*Event);
+                continue;
+            }
 
-            Subsystem.Input->HandleEvent(*Event);           
+            Subsystem.Input->HandleEvent(*Event);
         }
     }
 
@@ -100,6 +117,7 @@ namespace we
         
         float DeltaTime = Subsystem.Clock->GetDeltaTime();
         GetTimer().Update(DeltaTime);
+        if (Subsystem.GameInstance) Subsystem.GameInstance->Tick(DeltaTime);
         Subsystem.World->Tick(DeltaTime);
         Subsystem.Physics->Tick(DeltaTime);
         Subsystem.Audio->Update(DeltaTime);
@@ -122,6 +140,7 @@ namespace we
         }
         Subsystem.World.reset();
         
+        if (Subsystem.Resource) { Subsystem.Resource->ClearTGUIFonts(); }
         Subsystem.GUI.reset();
     }
 

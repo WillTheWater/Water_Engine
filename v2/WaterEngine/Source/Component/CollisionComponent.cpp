@@ -1,5 +1,5 @@
 // =============================================================================
-// Water Engine v2.1.2
+// Water Engine v2.2.4
 // Copyright(C) 2026 Will The Water
 // =============================================================================
 
@@ -144,6 +144,7 @@ namespace we
 		}
 
 		Body = nullptr;
+		OverlappingIDs.clear();
 	}
 
 	Actor* CollisionComponent::GetOwner() const
@@ -151,69 +152,52 @@ namespace we
 		return Owner;
 	}
 
-	void CollisionComponent::OnComponentBeginOverlap(b2Body* OtherBody)
+	void CollisionComponent::OnComponentBeginOverlap(ActorID OtherID)
 	{
-		Actor* OtherActor = GetActorFromBody(OtherBody);
-		if (!OtherActor || OtherActor == Owner)
+		if (!Owner || OtherID == INVALID_ACTOR_ID || OtherID == Owner->GetID())
 			return;
-		
-		if (OtherActor->IsPendingDestroy())
+
+		Actor* OtherActor = Owner->GetWorld().FindActor(OtherID);
+		if (!OtherActor || OtherActor->IsPendingDestroy())
 			return;
-		
-		OverlappingActors.insert(OtherActor);
+
+		OverlappingIDs.insert(OtherID);
 		OnBeginOverlap.Broadcast(OtherActor);
 	}
 
-	void CollisionComponent::OnComponentEndOverlap(b2Body* OtherBody)
+	void CollisionComponent::OnComponentEndOverlap(ActorID OtherID)
 	{
-		Actor* OtherActor = GetActorFromBody(OtherBody);
-		
-		if (!OtherActor)
-		{
-			CleanupDestroyedOverlaps();
+		if (OverlappingIDs.erase(OtherID) == 0)
 			return;
-		}
-		
-		OverlappingActors.erase(OtherActor);
-		OnEndOverlap.Broadcast(OtherActor);
+
+		// Broadcast only while the actor still exists; a destroyed actor's exit
+		// is silent (there is no valid pointer left to hand out).
+		if (Owner)
+			if (Actor* OtherActor = Owner->GetWorld().FindActor(OtherID))
+				OnEndOverlap.Broadcast(OtherActor);
 	}
 
 	bool CollisionComponent::IsOtherActor(Actor* CheckActor) const
 	{
 		if (!CheckActor)
 			return false;
-		
-		return OverlappingActors.find(CheckActor) != OverlappingActors.end();
+
+		return OverlappingIDs.find(CheckActor->GetID()) != OverlappingIDs.end();
 	}
 
-	void CollisionComponent::CleanupDestroyedOverlaps()
+	vector<Actor*> CollisionComponent::GetOtherActors() const
 	{
-		for (auto It = OverlappingActors.begin(); It != OverlappingActors.end();)
+		vector<Actor*> Result;
+		if (!Owner)
+			return Result;
+
+		Result.reserve(OverlappingIDs.size());
+		for (ActorID ID : OverlappingIDs)
 		{
-			if ((*It)->IsPendingDestroy())
-			{
-				OnEndOverlap.Broadcast(*It);
-				It = OverlappingActors.erase(It);
-			}
-			else
-			{
-				++It;
-			}
+			if (Actor* OtherActor = Owner->GetWorld().FindActor(ID))
+				Result.push_back(OtherActor);
 		}
-	}
-
-	Actor* CollisionComponent::GetActorFromBody(b2Body* Body) const
-	{
-		if (!Body || !Owner)
-			return nullptr;
-		
-		auto& Physics = Owner->GetWorld().GetPhysics();
-		ActorID ID = Physics.GetBodyActorID(Body);
-		
-		if (ID == INVALID_ACTOR_ID)
-			return nullptr;
-		
-		return Owner->GetWorld().FindActor(ID);
+		return Result;
 	}
 
 	const drawable* CollisionComponent::DrawDebug()

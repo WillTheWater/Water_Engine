@@ -1,5 +1,5 @@
 // =============================================================================
-// Water Engine v2.1.2
+// Water Engine v2.2.4
 // Copyright(C) 2026 Will The Water
 // =============================================================================
 
@@ -35,6 +35,10 @@ namespace we
 		void SyncWorldPositions();
 		
 		bool HandleEvent(const event& Event);
+
+		// Loads a TTF via ResourceSubsystem and applies it as the default for
+		// both GUIs and tgui::Font::setGlobalFont. Idempotent + cache-friendly.
+		void SetGlobalFont(const string& Filename);
 
 		void RequestFullscreen(bool bEnabled);
 		Delegate<bool> OnFullscreenRequested;

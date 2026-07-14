@@ -1,5 +1,5 @@
 // =============================================================================
-// Water Engine v2.1.2
+// Water Engine v2.2.4
 // Copyright(C) 2026 Will The Water
 // =============================================================================
 
@@ -38,6 +38,11 @@ namespace we
         // GUI render target access
         renderTarget& GetWorldUITarget() { return WorldUIRenderTarget; }
         renderTarget& GetScreenUITarget() { return ScreenUIRenderTarget; }
+
+        // Fullscreen post-process registration. World effects run on the world
+        // layer BEFORE the UI/cursor layers composite, so they never touch UI.
+        void AddWorldPostProcessEffect(unique<IPostProcess> Effect);
+        void ClearWorldPostProcessEffects();
 
     private:
         renderTexture WorldRenderTarget;

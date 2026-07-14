@@ -1,5 +1,5 @@
 // =============================================================================
-// Water Engine v2.1.2
+// Water Engine v2.2.4
 // Copyright(C) 2026 Will The Water
 // =============================================================================
 
@@ -65,8 +65,8 @@ namespace we
         bool IsDebugDrawEnabled() const { return bDebugDrawEnabled; }
 
         // IPhysicsContactListener (physics bodies don't use overlap callbacks)
-        void OnComponentBeginOverlap(b2Body* OtherBody) override {}
-        void OnComponentEndOverlap(b2Body* OtherBody) override {}
+        void OnComponentBeginOverlap(ActorID OtherID) override {}
+        void OnComponentEndOverlap(ActorID OtherID) override {}
         void SetCollisionChannel(ECollisionChannel Channel) override;
 
     private:

@@ -1,5 +1,5 @@
 // =============================================================================
-// Water Engine v2.1.2
+// Water Engine v2.2.4
 // Copyright(C) 2026 Will The Water
 // =============================================================================
 
@@ -7,6 +7,8 @@
 #include "Core/EngineConfig.h"
 #include "Utility/Assert.h"
 #include "Utility/Log.h"
+
+#include <cmath>
 
 namespace we
 {
@@ -50,9 +52,14 @@ namespace we
     void RenderSubsystem::SetWorldView(vec2f Center, float Zoom, float Rotation)
     {
         vec2f ViewSize = vec2f(RenderResolution) / Zoom;
-        
+
+        // Snap the center to whole device pixels (1 world unit = Zoom px) so the
+        // world doesn't render on fractional pixels as the camera moves.
+        const vec2f SnappedCenter = { std::round(Center.x * Zoom) / Zoom,
+                                      std::round(Center.y * Zoom) / Zoom };
+
         view WorldView;
-        WorldView.setCenter(Center);
+        WorldView.setCenter(SnappedCenter);
         WorldView.setSize(ViewSize);
         WorldView.setRotation(sf::radians(Rotation));
         
@@ -117,6 +124,17 @@ namespace we
         }
     }
 
+    void RenderSubsystem::AddWorldPostProcessEffect(unique<IPostProcess> Effect)
+    {
+        if (Effect)
+            WorldPostProcessEffects.push_back(std::move(Effect));
+    }
+
+    void RenderSubsystem::ClearWorldPostProcessEffects()
+    {
+        WorldPostProcessEffects.clear();
+    }
+
     void RenderSubsystem::PostProcess(renderTexture* Input, renderTexture* Output, vector<unique<IPostProcess>>& Effects)
     {
         if (Effects.empty())
@@ -136,11 +154,17 @@ namespace we
             std::swap(In, Out);
         }
 
-        if (In != Input) 
+        if (In != Input)
         {
+            // Pixel-exact blit: the world target carries the camera view, which
+            // would transform a screen-sized sprite. Use the default view for
+            // the copy-back, then restore.
+            const view SavedView = Input->getView();
+            Input->setView(Input->getDefaultView());
             Input->clear(color::Transparent);
             sprite FinalSprite(In->getTexture());
             Input->draw(FinalSprite);
+            Input->setView(SavedView);
             Input->display();
         }
         else

@@ -1,5 +1,5 @@
 // =============================================================================
-// Water Engine v2.1.2
+// Water Engine v2.2.4
 // Copyright(C) 2026 Will The Water
 // =============================================================================
 
@@ -126,12 +126,17 @@ namespace we
 
         if (bSmoothFollow)
         {
-            float t = Clamp(DeltaTime / SmoothTime, 0.0f, 1.0f);
-            SmoothedPosition = LerpVector(SmoothedPosition, TargetPos, t);
+            // Critically-damped spring smoother: frame-rate independent and
+            // converges exactly to the target instead of asymptotically creeping,
+            // which stopped cleanly but produced sub-pixel shimmer each frame.
+            SmoothedPosition = SmoothDamp(
+                SmoothedPosition, TargetPos, SmoothVelocity,
+                SmoothTime, 0.0f, DeltaTime);
         }
         else
         {
             SmoothedPosition = TargetPos;
+            SmoothVelocity = {0.0f, 0.0f};
         }
 
         if (ActiveShake)

@@ -1,5 +1,5 @@
 // =============================================================================
-// Water Engine v2.1.2
+// Water Engine v2.2.4
 // Copyright(C) 2026 Will The Water
 // =============================================================================
 
@@ -26,6 +26,9 @@ namespace we
 
 		// Called once before destruction
 		virtual void Shutdown();
+
+		// Called every frame from WaterEngine::Update().
+		virtual void Tick(float /*DeltaTime*/) {}
 
 	protected:
 		EngineSubsystem* Subsystem = nullptr;

@@ -1,5 +1,5 @@
 // =============================================================================
-// Water Engine v2.1.2
+// Water Engine v2.2.4
 // Copyright(C) 2026 Will The Water
 // =============================================================================
 
@@ -23,7 +23,7 @@ namespace we
 
         ApplyEffects();
 
-        if (Owner && ProcessedTexture)
+        if (bWriteToOwnerSprite && Owner && ProcessedTexture)
         {
             Owner->SetSprite(ProcessedTexture);
         }
@@ -38,8 +38,8 @@ namespace we
             Effect->Update(DeltaTime);
         }
         ApplyEffects();
-        
-        if (Owner && ProcessedTexture)
+
+        if (bWriteToOwnerSprite && Owner && ProcessedTexture)
         {
             Owner->SetSprite(ProcessedTexture);
         }
@@ -75,19 +75,49 @@ namespace we
         Effects.clear();
     }
 
+    void PostProcessingComponent::ForceRefresh()
+    {
+        if (Effects.empty()) return;
+        ApplyEffects();
+        if (bWriteToOwnerSprite && Owner && ProcessedTexture)
+            Owner->SetSprite(ProcessedTexture);
+    }
+
+    void PostProcessingComponent::SetSourceRect(optional<recti> FrameRect, int Padding)
+    {
+        SourceRect    = FrameRect;
+        SourcePadding = Padding;
+    }
+
     void PostProcessingComponent::ApplyEffects()
     {
-        renderTexture TempTarget;
-        TempTarget.resize(OriginalTexture->getSize());
+        if (!OriginalTexture) return;
 
+        // Pipeline target sized to the source region (sub-rect + padding when
+        // SourceRect is set, otherwise the whole texture).
+        const vec2u outSize = SourceRect.has_value()
+            ? vec2u{ static_cast<uint32_t>(SourceRect->size.x + SourcePadding * 2),
+                     static_cast<uint32_t>(SourceRect->size.y + SourcePadding * 2) }
+            : OriginalTexture->getSize();
+
+        renderTexture TempTarget;
+        TempTarget.resize(outSize);
         TempTarget.clear(color::Transparent);
-        TempTarget.draw(sprite(*OriginalTexture));
+
+        sprite src(*OriginalTexture);
+        if (SourceRect.has_value())
+        {
+            src.setTextureRect(*SourceRect);
+            src.setPosition({ static_cast<float>(SourcePadding),
+                              static_cast<float>(SourcePadding) });
+        }
+        TempTarget.draw(src);
         TempTarget.display();
 
         renderTexture PingPongTarget;
-        PingPongTarget.resize(OriginalTexture->getSize());
+        PingPongTarget.resize(outSize);
 
-        renderTexture* In = &TempTarget;
+        renderTexture* In  = &TempTarget;
         renderTexture* Out = &PingPongTarget;
 
         for (auto& Effect : Effects)

@@ -1,5 +1,5 @@
 // =============================================================================
-// Water Engine v2.1.2
+// Water Engine v2.2.4
 // Copyright(C) 2026 Will The Water
 // =============================================================================
 
@@ -7,6 +7,8 @@
 
 #include "Core/CoreMinimal.h"
 #include "Utility/Log.h"
+
+#include <TGUI/Font.hpp>
 
 namespace we
 {
@@ -18,12 +20,14 @@ namespace we
 
         static ResourceSubsystem& Get();
 
-        shared<texture>     LoadTexture(const string& Filename);
-        shared<soundBuffer> LoadSound(const string& Filename);
-        shared<font>        LoadFont(const string& Filename);
-        shared<music>       LoadMusic(const string& Filename);
+        shared<texture>      LoadTexture(const string& Filename);
+        shared<soundBuffer>  LoadSound(const string& Filename);
+        shared<font>         LoadFont(const string& Filename);
+        shared<tgui::Font>   LoadTGUIFont(const string& Filename);
+        shared<music>        LoadMusic(const string& Filename);
 
         void GarbageCollect();
+        void ClearTGUIFonts();
 
         #ifdef USE_PACKED_ASSETS
         // Public for UIStyle font loading from packed assets
@@ -42,6 +46,7 @@ namespace we
         dictionary<string, shared<texture>>     Textures;
         dictionary<string, shared<soundBuffer>> Sounds;
         dictionary<string, shared<font>>        Fonts;
+        dictionary<string, shared<tgui::Font>>  TGUIFonts;
         dictionary<string, shared<music>>       Music;
         dictionary<string, string>              Data;
     };

@@ -1,5 +1,5 @@
 // =============================================================================
-// Water Engine v2.1.2
+// Water Engine v2.2.4
 // Copyright(C) 2026 Will The Water
 // =============================================================================
 
@@ -112,6 +112,9 @@ namespace we
 
 	void Actor::GetDrawables(vector<const drawable*>& OutDrawables) const
 	{
+		// Aux first so it renders behind the primary sprite.
+		if (bIsVisible && AuxDrawable)
+			OutDrawables.push_back(AuxDrawable);
 		if (const auto* Sprite = GetDrawable())
 			OutDrawables.push_back(Sprite);
 	}

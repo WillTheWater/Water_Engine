@@ -1,5 +1,5 @@
 // =============================================================================
-// Water Engine v2.1.2
+// Water Engine v2.2.4
 // Copyright(C) 2026 Will The Water
 // =============================================================================
 
@@ -28,6 +28,8 @@ namespace we
         Delegate<vec2u> OnResize;
         Delegate<vec2f> OnMouseMove;
 
+        static WindowSubsystem& Get();
+
     private:
         friend WindowEventHandler;
 
@@ -36,5 +38,9 @@ namespace we
 
         bool bFullscreen = false;
         vec2u WindowedSize{1920, 1080};
+
+        static WindowSubsystem* Instance;
     };
+
+    inline WindowSubsystem& MakeWindow() { return WindowSubsystem::Get(); }
 }

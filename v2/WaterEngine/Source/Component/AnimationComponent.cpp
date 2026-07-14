@@ -1,5 +1,5 @@
 // =============================================================================
-// Water Engine v2.1.2
+// Water Engine v2.2.4
 // Copyright(C) 2026 Will The Water
 // =============================================================================
 
@@ -131,7 +131,7 @@ namespace we
         {
             vec2f CurrentPos = Owner->GetPosition();
             Owner->SetSprite(Sheet->Texture);
-            Owner->SetSpriteOrigin(vec2f(Sheet->FrameSize) * 0.5f);
+            Owner->SetSpriteOrigin(Sheet->Origin.value_or(vec2f(Sheet->FrameSize) * 0.5f));
             Owner->SetPosition(CurrentPos);
             LastSheetID = Anim.SpriteSheetID;
         }
@@ -181,6 +181,12 @@ namespace we
         }
 
         return false;
+    }
+
+    const SpriteSheet* AnimationComponent::GetSpriteSheet(uint8 SheetID) const
+    {
+        auto it = SpriteSheets.find(SheetID);
+        return (it != SpriteSheets.end()) ? &it->second : nullptr;
     }
 
     SpriteSheet* AnimationComponent::GetActiveSheet()

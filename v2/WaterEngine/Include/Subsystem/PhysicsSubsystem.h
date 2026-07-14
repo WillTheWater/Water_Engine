@@ -1,5 +1,5 @@
 // =============================================================================
-// Water Engine v2.1.2
+// Water Engine v2.2.4
 // Copyright(C) 2026 Will The Water
 // =============================================================================
 
@@ -18,6 +18,7 @@ class b2ContactListener;
 namespace we
 {
 	class World;
+	class CollisionComponent;
 }
 
 namespace we
@@ -46,8 +47,10 @@ namespace we
 		// Get ActorID for a body
 		ActorID GetBodyActorID(b2Body* Body) const;
 		
-		// Set current world for actor lookup during contact callbacks
-		void SetCurrentWorld(World* InWorld) { CurrentWorld = InWorld; }
+		// Set current world for actor lookup during contact callbacks. Queued
+		// contact events reference components owned by the old world, so a
+		// switch drops them.
+		void SetCurrentWorld(World* InWorld) { CurrentWorld = InWorld; ContactEventQueue.clear(); }
 		World* GetCurrentWorld() const { return CurrentWorld; }
 
 		// Scale conversion (pixels <-> meters)
@@ -76,11 +79,16 @@ namespace we
 		bool bProcessingContactEvents = false;
 
 	public:
-		// Contact event queue - deferred to end of physics step
+		// Contact event queue - deferred to end of physics step. Everything is
+		// resolved at capture time (inside the Box2D callback, while both bodies
+		// are alive); events must never be read back through a b2Body, which may
+		// be freed before the queue drains.
 		struct ContactEvent
 		{
-			b2Body* BodyA = nullptr;
-			b2Body* BodyB = nullptr;
+			CollisionComponent* CompA = nullptr;  // null = side unregistered or being torn down
+			CollisionComponent* CompB = nullptr;
+			ActorID IDA = INVALID_ACTOR_ID;
+			ActorID IDB = INVALID_ACTOR_ID;
 			bool bBegin = true;  // true = BeginContact, false = EndContact
 		};
 	private:

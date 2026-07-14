@@ -1,5 +1,5 @@
 // =============================================================================
-// Water Engine v2.1.2
+// Water Engine v2.2.4
 // Copyright(C) 2026 Will The Water
 // =============================================================================
 
@@ -50,6 +50,7 @@ namespace we
         shared<texture> Texture;
         vec2u FrameSize;
         uint FramesPerRow;
+        optional<vec2f> Origin;   // sprite origin; defaults to FrameSize/2 (center) when unset
 
         SpriteSheet() = default;
         SpriteSheet(const string& Path, vec2u InFrameSize, uint InFramesPerRow = 8);
@@ -101,6 +102,9 @@ namespace we
         }
 
         vec2u GetCurrentFrame() const { return CurrentFrame; }
+
+        // Read-only access to a registered sheet (for tools / wrappers).
+        const SpriteSheet* GetSpriteSheet(uint8 SheetID) const;
 
     private:
         void AddSpriteSheetInternal(uint8 SheetID, const SpriteSheet& Sheet);

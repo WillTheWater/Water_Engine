@@ -1,5 +1,5 @@
 // =============================================================================
-// Water Engine v2.1.2
+// Water Engine v2.2.4
 // Copyright(C) 2026 Will The Water
 // =============================================================================
 
@@ -25,36 +25,45 @@ namespace we
 
 		void BeginContact(b2Contact* Contact) override
 		{
-			if (!Listeners || !CurrentWorldPtr || !*CurrentWorldPtr || !EventQueue) return;
-
-			b2Body* BodyA = Contact->GetFixtureA()->GetBody();
-			b2Body* BodyB = Contact->GetFixtureB()->GetBody();
-
-			// Only queue if at least one body is registered for callbacks
-			bool bHasListenerA = Listeners->find(BodyA) != Listeners->end();
-			bool bHasListenerB = Listeners->find(BodyB) != Listeners->end();
-
-			if (bHasListenerA || bHasListenerB)
-			{
-				EventQueue->push_back({ BodyA, BodyB, true });
-			}
+			QueueEvent(Contact, true);
 		}
 
 		void EndContact(b2Contact* Contact) override
+		{
+			QueueEvent(Contact, false);
+		}
+
+	private:
+		// Resolve components + actor IDs NOW, while both b2Bodies are guaranteed
+		// alive (Box2D is mid-callback). A body queued for destruction is freed
+		// before the event queue drains, so nothing may be read through it later.
+		// A dying body's userdata is already zeroed, leaving its component null:
+		// its own callback is skipped, but its ID still reaches the other side so
+		// the survivor can drop it from its overlap set.
+		void QueueEvent(b2Contact* Contact, bool bBegin)
 		{
 			if (!Listeners || !CurrentWorldPtr || !*CurrentWorldPtr || !EventQueue) return;
 
 			b2Body* BodyA = Contact->GetFixtureA()->GetBody();
 			b2Body* BodyB = Contact->GetFixtureB()->GetBody();
 
-			// Only queue if at least one body is registered for callbacks
-			bool bHasListenerA = Listeners->find(BodyA) != Listeners->end();
-			bool bHasListenerB = Listeners->find(BodyB) != Listeners->end();
+			auto ItA = Listeners->find(BodyA);
+			auto ItB = Listeners->find(BodyB);
+			if (ItA == Listeners->end() && ItB == Listeners->end()) return;
 
-			if (bHasListenerA || bHasListenerB)
+			PhysicsSubsystem::ContactEvent Event;
+			Event.bBegin = bBegin;
+			if (ItA != Listeners->end())
 			{
-				EventQueue->push_back({ BodyA, BodyB, false });
+				Event.IDA   = ItA->second;
+				Event.CompA = reinterpret_cast<CollisionComponent*>(BodyA->GetUserData().pointer);
 			}
+			if (ItB != Listeners->end())
+			{
+				Event.IDB   = ItB->second;
+				Event.CompB = reinterpret_cast<CollisionComponent*>(BodyB->GetUserData().pointer);
+			}
+			EventQueue->push_back(Event);
 		}
 	};
 
@@ -90,39 +99,34 @@ namespace we
 
 	void PhysicsSubsystem::ProcessContactEvents()
 	{
-		if (!CurrentWorld || ContactEventQueue.empty()) return;
+		// No world to dispatch into: drop the events rather than let them
+		// survive into the next world, where their components no longer exist.
+		if (!CurrentWorld)
+		{
+			ContactEventQueue.clear();
+			return;
+		}
+		if (ContactEventQueue.empty()) return;
 
 		vector<ContactEvent> Events = ContactEventQueue;
 		ContactEventQueue.clear();
 
 		for (const auto& Event : Events)
 		{
-			// Handle BodyA
-			auto ItA = ContactListeners.find(Event.BodyA);
-			if (ItA != ContactListeners.end() && Event.BodyA->GetUserData().pointer)
+			if (Event.CompA && Event.IDB != INVALID_ACTOR_ID)
 			{
-				auto* CollComp = reinterpret_cast<CollisionComponent*>(Event.BodyA->GetUserData().pointer);
-				if (CollComp)
-				{
-					if (Event.bBegin)
-						CollComp->OnComponentBeginOverlap(Event.BodyB);
-					else
-						CollComp->OnComponentEndOverlap(Event.BodyB);
-				}
+				if (Event.bBegin)
+					Event.CompA->OnComponentBeginOverlap(Event.IDB);
+				else
+					Event.CompA->OnComponentEndOverlap(Event.IDB);
 			}
-			
-			// Handle BodyB
-			auto ItB = ContactListeners.find(Event.BodyB);
-			if (ItB != ContactListeners.end() && Event.BodyB->GetUserData().pointer)
+
+			if (Event.CompB && Event.IDA != INVALID_ACTOR_ID)
 			{
-				auto* CollComp = reinterpret_cast<CollisionComponent*>(Event.BodyB->GetUserData().pointer);
-				if (CollComp)
-				{
-					if (Event.bBegin)
-						CollComp->OnComponentBeginOverlap(Event.BodyA);
-					else
-						CollComp->OnComponentEndOverlap(Event.BodyA);
-				}
+				if (Event.bBegin)
+					Event.CompB->OnComponentBeginOverlap(Event.IDA);
+				else
+					Event.CompB->OnComponentEndOverlap(Event.IDA);
 			}
 		}
 	}
@@ -195,8 +199,11 @@ namespace we
 
 		for (auto* Body : PendingDestruction)
 		{
-			ContactListeners.erase(Body);
+			// DestroyBody fires EndContact synchronously; the listener map must
+			// still hold this body so the event carries the dying actor's ID to
+			// the other side (erasing first orphaned dead actors in overlap sets).
 			PhysicsWorld->DestroyBody(Body);
+			ContactListeners.erase(Body);
 		}
 		PendingDestruction.clear();
 	}
