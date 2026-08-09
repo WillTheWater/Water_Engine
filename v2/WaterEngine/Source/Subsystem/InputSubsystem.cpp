@@ -74,6 +74,20 @@ namespace we
         Bindings.emplace(InputAction, Binding);
     }
 
+    void InputSubsystem::Rebind(int InputAction, const Input::Binding& Binding)
+    {
+        Bindings.erase(InputAction);
+        Bindings.emplace(InputAction, Binding);
+    }
+
+    optional<Input::Binding> InputSubsystem::GetBinding(int InputAction) const
+    {
+        auto It = Bindings.find(InputAction);
+        if (It == Bindings.end())
+            return std::nullopt;
+        return It->second;
+    }
+
     bool InputSubsystem::Pressed(int InputAction) const
     {
         return HeldActions.contains(InputAction);

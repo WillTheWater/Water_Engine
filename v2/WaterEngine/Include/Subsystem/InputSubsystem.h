@@ -50,6 +50,10 @@ namespace we
 
         void Bind(int InputAction, const Input::Binding& Binding);
 
+        // Replaces any existing binding(s) for the action; Bind only appends.
+        void Rebind(int InputAction, const Input::Binding& Binding);
+        optional<Input::Binding> GetBinding(int InputAction) const;
+
         bool Pressed(int InputAction) const;
         void OnPressed(const Input::Binding& Binding);
         void OnReleased(const Input::Binding& Binding);
