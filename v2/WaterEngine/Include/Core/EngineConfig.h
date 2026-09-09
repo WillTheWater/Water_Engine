@@ -58,13 +58,18 @@ namespace we
     // =========================================================================
     struct SplashConfig
     {
-        // Filename of the splash image
+        // Path to the splash image inside Content.pak. ShowSplash() mounts the
+        // pak itself so this loads before ResourceSubsystem starts.
+        // Set to "" to skip the splash entirely.
         static constexpr const char* TexturePath = "Assets/Icon/SplashIcon.png";
 
         // Animation timing (seconds)
         static constexpr float FadeInTime = 0.5f;
         static constexpr float HoldTime = 2.0f;
         static constexpr float FadeOutTime = 0.5f;
+
+        // Scale the logo grows from during fade in (1.0 = no growth)
+        static constexpr float StartScale = 0.2f;
     };
 
     // =========================================================================

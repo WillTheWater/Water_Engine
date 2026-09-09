@@ -19,7 +19,7 @@ namespace we
         Instance = this;
 
 #ifdef USE_PACKED_ASSETS
-        // SplashScreen may have already initialised PhysicsFS
+        // SplashScreen may have already initialized PhysicsFS
         if (!PHYSFS_isInit())
         {
             if (!PHYSFS_init(nullptr))

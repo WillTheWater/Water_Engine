@@ -370,15 +370,12 @@ namespace we
 	{
 		if (auto CamComp = GetCameraComponent())
 		{
-			// World bounds: (0,0) to (5760, 3240)
 			constexpr vec2f WorldSize = { 5760.0f, 3240.0f };
-
-			// Viewport size (1920x1080)
 			constexpr vec2f ViewSize = { 1920.0f, 1080.0f };
 
-			// Camera center clamping - viewport half-size from edges
-			vec2f MinBounds = ViewSize / 2.0f;  // (960, 540)
-			vec2f MaxBounds = WorldSize - MinBounds;  // (4800, 2700)
+			// Clamp the camera center so the viewport never shows past the world edge
+			vec2f MinBounds = ViewSize / 2.0f;
+			vec2f MaxBounds = WorldSize - MinBounds;
 
 			CamComp->SetBounds({ MinBounds, MaxBounds - MinBounds });
 		}

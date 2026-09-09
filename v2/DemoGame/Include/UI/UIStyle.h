@@ -94,45 +94,31 @@ namespace we
     class UIStyle
     {
     public:
-        // Initialize - must be called before using any style functions
-        // Loads the custom font from Assets
+        // Loads the font and sets it as TGUI's global font. Idempotent, and the
+        // members that need the font call it themselves.
         static void Initialize();
         static bool IsInitialized();
-        
-        // Get the color theme (can be modified at runtime)
+
+        // Returned by reference, safe to modify at runtime
         static UIColorTheme& GetColors();
-        
-        // Get font sizes
         static UIFontSizes& GetFontSizes();
-        
-        // Get size constants
         static UISizes& GetSizes();
-        
-        // Get the loaded custom font
+
         static shared<font> GetFont();
-        
-        //=========================================================================
-        // WIDGET FACTORY METHODS - All styled consistently
-        //=========================================================================
-        
+
+        // =========================================================================
+        // Widget Factories
+        // =========================================================================
+
         static shared<tgui::Button> CreateButton(const string& Text);
-        
-        // Creates a standard checkbox
         static shared<tgui::CheckBox> CreateCheckbox(const string& Text = "");
-        
-        // Creates a standard slider (0-100 range)
+
+        // Range 0-100
         static shared<tgui::Slider> CreateSlider();
-        
-        // Creates a standard panel with border
+
         static shared<tgui::Panel> CreatePanel(tgui::Layout2d Size);
-        
-        // Creates a label with specified style tier
         static shared<tgui::Label> CreateLabel(const string& Text, UILabelStyle Style = UILabelStyle::Body);
-        
-        // Creates a vertical layout with standard spacing
         static shared<tgui::VerticalLayout> CreateVerticalLayout();
-        
-        // Creates a horizontal layout
         static shared<tgui::HorizontalLayout> CreateHorizontalLayout();
         
     private:

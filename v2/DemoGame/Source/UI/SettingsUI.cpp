@@ -64,7 +64,6 @@ namespace we
 		float SectionSpacing = 20;  // Increased spacing between sections
 		float LabelSpacing = 8;
 
-		// === AUDIO SECTION ===
 		auto AudioLabel = UIStyle::CreateLabel("AUDIO", UILabelStyle::Section);
 		AudioLabel->setPosition("5%", CurrentY);
 		ContentPanel->add(AudioLabel);
@@ -105,7 +104,6 @@ namespace we
 
 		CurrentY += SectionSpacing;
 
-		// === VIDEO SECTION ===
 		auto VideoLabel = UIStyle::CreateLabel("VIDEO", UILabelStyle::Section);
 		VideoLabel->setPosition("5%", CurrentY);
 		ContentPanel->add(VideoLabel);
@@ -121,7 +119,6 @@ namespace we
 		ContentPanel->add(FullscreenCheckbox);
 		CurrentY += RowHeight + SectionSpacing;
 
-		// === BACK BUTTON ===
 		auto BackButton = UIStyle::CreateButton("BACK");
 		BackButton->setSize({ "40%", "40" });
 		BackButton->setPosition("30%", "85%");
