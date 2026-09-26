@@ -17,6 +17,7 @@ namespace we
         Instance = this;
         ChannelVolumes.fill(0.5f);  // Default 50% volume for all channels
         ChannelMuted.fill(false);
+        LastDefaultDevice = sf::PlaybackDevice::getDefaultDevice();
     }
 
     AudioSubsystem& AudioSubsystem::Get()
@@ -26,8 +27,22 @@ namespace we
 
     void AudioSubsystem::Update(float DeltaTime)
     {
+        FollowDefaultDevice();
         UpdateFades(DeltaTime);
         CleanupStoppedSounds();
+    }
+
+    void AudioSubsystem::FollowDefaultDevice()
+    {
+        if (DeviceCheckClock.getElapsedTime().asSeconds() < DEVICE_CHECK_SEC) return;
+        DeviceCheckClock.restart();
+
+        const optional<string> defaultDevice = sf::PlaybackDevice::getDefaultDevice();
+        if (!defaultDevice || defaultDevice == LastDefaultDevice) return;
+
+        LastDefaultDevice = defaultDevice;
+        if (!sf::PlaybackDevice::setDevice(*defaultDevice))
+            ERROR("[Audio] Failed to switch output to: {}", *defaultDevice);
     }
 
     void AudioSubsystem::PlayMusic(const string& Path, float FadeInDuration)
@@ -42,8 +57,6 @@ namespace we
         CurrentMusic = make_unique<MusicTrack>();
         CurrentMusic->Music = MusicResource;
         CurrentMusic->Music->setLooping(true);
-        // Head-locked: the listener moves through the world, so every
-        // non-positional source must ride it or it would attenuate.
         CurrentMusic->Music->setRelativeToListener(true);
 
         if (FadeInDuration > 0.0f)
@@ -680,8 +693,6 @@ namespace we
                 else Loop.Sound->play();
             }
         }
-
-        // ActiveUI is deliberately untouched: menu clicks play while paused.
     }
 
     bool AudioSubsystem::IsPaused() const
